@@ -9,6 +9,7 @@
 #include "Components/HealthComponent.h"
 #include "Components/InputComponent.h"
 #include "Components/InteractionComponent.h"
+#include "Components/LockOnComponent.h"
 #include "Components/StaminaComponent.h"
 #include "Engine/Engine.h"
 #include "Engine/GameViewportClient.h"
@@ -40,6 +41,7 @@ AJakeCharacter::AJakeCharacter()
     WoundStateComponent = CreateDefaultSubobject<UWoundStateComponent>(TEXT("WoundStateComponent"));
     CameraStateComponent = CreateDefaultSubobject<UCameraStateComponent>(TEXT("CameraStateComponent"));
     InteractionComponent = CreateDefaultSubobject<UInteractionComponent>(TEXT("InteractionComponent"));
+    LockOnComponent = CreateDefaultSubobject<ULockOnComponent>(TEXT("LockOnComponent"));
 
     CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
     CameraBoom->SetupAttachment(RootComponent);
@@ -89,6 +91,7 @@ void AJakeCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
     PlayerInputComponent->BindAction(TEXT("Parry"), IE_Pressed, this, &AJakeCharacter::PerformParry);
     PlayerInputComponent->BindAction(TEXT("Dodge"), IE_Pressed, this, &AJakeCharacter::PerformDodge);
     PlayerInputComponent->BindAction(TEXT("Interact"), IE_Pressed, this, &AJakeCharacter::TryInteract);
+    PlayerInputComponent->BindAction(TEXT("LockOn"), IE_Pressed, this, &AJakeCharacter::ToggleLockOn);
     PlayerInputComponent->BindTouch(IE_Pressed, this, &AJakeCharacter::TouchStarted);
     PlayerInputComponent->BindTouch(IE_Repeat, this, &AJakeCharacter::TouchMoved);
     PlayerInputComponent->BindTouch(IE_Released, this, &AJakeCharacter::TouchStopped);
@@ -210,6 +213,13 @@ void AJakeCharacter::TryInteract()
         InteractionComponent->TryBeginInteraction();
 }
 
+void AJakeCharacter::ToggleLockOn()
+{
+    if (!HealthComponent->IsDead() &&
+        CameraStateComponent->CurrentMode == EPlayerCameraMode::Free)
+        LockOnComponent->ToggleLockOn();
+}
+
 void AJakeCharacter::TouchStarted(const ETouchIndex::Type FingerIndex, const FVector Location)
 {
     FVector2D ViewportSize(1920.0f, 1080.0f);
@@ -260,6 +270,7 @@ void AJakeCharacter::TouchStopped(const ETouchIndex::Type FingerIndex, const FVe
 void AJakeCharacter::OnCharacterDied(AActor* /*DamageCauser*/)
 {
     StopSprint();
+    LockOnComponent->ReleaseTarget();
     InteractionComponent->CancelActiveInteraction();
     CombatComponent->SetDead();
     GetCharacterMovement()->DisableMovement();

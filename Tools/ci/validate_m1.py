@@ -22,6 +22,8 @@ REQUIRED_FILES = (
     "Source/DarkArisen/PostureOnlyHUD.cpp",
     "Source/DarkArisen/DuelingEnemyCharacter.h",
     "Source/DarkArisen/DuelingEnemyCharacter.cpp",
+    "Source/DarkArisen/Components/LockOnComponent.h",
+    "Source/DarkArisen/Components/LockOnComponent.cpp",
     "Docs/M1_CORE_LOOP.md",
 )
 
@@ -113,12 +115,23 @@ def validate(root: Path) -> list[str]:
     _require_fragments(root / "Source/DarkArisen/GreyboxGameMode.cpp", (
         "SpawnActor<ADuelingEnemyCharacter>",
     ), errors)
+    _require_fragments(root / "Source/DarkArisen/Components/LockOnComponent.cpp", (
+        "TActorIterator<AActor>",
+        "LineTraceSingleByChannel",
+        "Health->IsDead()",
+        "Combat->CurrentState == ECombatState::Dead",
+        "Movement->bOrientRotationToMovement = !bLocked",
+    ), errors)
+    _require_fragments(root / "Source/DarkArisen/Components/LockOnComponent.h", (
+        "creates no marker, outline, widget or HUD state",
+    ), errors)
     _require_fragments(root / "Config/DefaultInput.ini", (
         'ActionName="LightAttack"',
         'ActionName="HeavyAttack"',
         'ActionName="Parry"',
         'ActionName="Dodge"',
         'ActionName="Interact"',
+        'ActionName="LockOn"',
     ), errors)
 
     source_root = root / "Source/DarkArisen"

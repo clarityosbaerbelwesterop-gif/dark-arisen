@@ -19,6 +19,7 @@
 - Light and heavy attacks now queue one sphere trace at the authored startup frame. A valid combatant receives health and posture damage exactly once; a six-frame deflection redirects posture damage to the attacker instead.
 - Successful light/heavy/parry-strike/critical contacts call Jake's Rally recovery path. Critical contacts bypass deflection and consume the full available Rally pool.
 - The C++ greybox now spawns one visible duelling enemy with awareness, pursuit, committed attacks, stamina, health, five-state posture, deflection response, death handling, and no extra HUD.
+- Lock-on chooses the best living combatant inside range, facing cone and line of sight, then smoothly owns facing until toggled or invalidated. It creates no marker, outline, widget or additional HUD element.
 
 ## Conflict rulings applied
 
@@ -31,7 +32,7 @@ The later locked rules supersede contradictory Phase 3/6 draft clauses:
 
 ## Still required before M1 acceptance
 
-- authored animation montages, animation-notify refinement of the source-level hit timing, lock-on, and wound-aware locomotion poses;
+- authored animation montages, animation-notify refinement of the source-level hit timing, and wound-aware locomotion poses;
 - physical door and pickup actors, an Examine presentation, an interaction corner widget, and persistence tests;
 - Windows UE 5.5 Development/Shipping compile, Unreal automation execution, controller/touch smoke testing, and measured 60 fps evidence.
 

@@ -13,6 +13,7 @@ class UCameraStateComponent;
 class UCombatComponent;
 class UHealthComponent;
 class UInteractionComponent;
+class ULockOnComponent;
 class USpringArmComponent;
 class UStaminaComponent;
 
@@ -42,6 +43,8 @@ public:
     TObjectPtr<UCameraStateComponent> CameraStateComponent;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Jake|Components")
     TObjectPtr<UInteractionComponent> InteractionComponent;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Jake|Components")
+    TObjectPtr<ULockOnComponent> LockOnComponent;
 
 protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Jake|Camera")
@@ -82,6 +85,7 @@ private:
     void PerformParry();
     void PerformDodge();
     void TryInteract();
+    void ToggleLockOn();
     void TouchStarted(ETouchIndex::Type FingerIndex, FVector Location);
     void TouchMoved(ETouchIndex::Type FingerIndex, FVector Location);
     void TouchStopped(ETouchIndex::Type FingerIndex, FVector Location);
