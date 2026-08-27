@@ -1,0 +1,63 @@
+<!-- Copyright (c) 2026 Dark Arisen. All Rights Reserved. -->
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#07090b">
+    <title>Dark Arisen — M0</title>
+    <style>
+        :root { color-scheme: dark; }
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+            overscroll-behavior: none;
+            touch-action: none;
+            background: #07090b;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+        #latency-badge {
+            position: fixed;
+            top: max(14px, env(safe-area-inset-top));
+            left: max(14px, env(safe-area-inset-left));
+            z-index: 1000;
+            padding: 7px 10px;
+            border: 1px solid rgba(255,255,255,.18);
+            border-radius: 6px;
+            background: rgba(7,9,11,.76);
+            color: #f2f3f4;
+            font: 600 12px/1.2 ui-monospace, SFMono-Regular, Menlo, monospace;
+            backdrop-filter: blur(10px);
+            pointer-events: none;
+        }
+        #touch-base, #touch-knob {
+            position: fixed;
+            z-index: 999;
+            display: none;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        #touch-base {
+            width: 116px;
+            height: 116px;
+            border: 1px solid rgba(255,255,255,.24);
+            background: rgba(255,255,255,.05);
+        }
+        #touch-knob {
+            width: 48px;
+            height: 48px;
+            border: 1px solid rgba(255,255,255,.38);
+            background: rgba(255,255,255,.14);
+        }
+    </style>
+</head>
+<body>
+    <div id="latency-badge" aria-live="polite">Latency —</div>
+    <div id="touch-base" aria-hidden="true"></div>
+    <div id="touch-knob" aria-hidden="true"></div>
+</body>
+</html>
+
