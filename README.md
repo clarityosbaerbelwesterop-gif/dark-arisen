@@ -4,7 +4,7 @@ Single-player third-person action RPG built in Unreal Engine 5.5 with C++ as the
 
 ## Current delivery state
 
-Milestone 0 establishes a compileable project boundary, a procedural greybox, Jake's baseline locomotion and stats, machine-enforced design-law constants, frame-time telemetry, self-hosted CI, and an automated Pixel Streaming 2 deployment path.
+Milestone 0 establishes a compileable project boundary, a procedural greybox, Jake's baseline locomotion and stats, machine-enforced design-law constants, frame-time telemetry, self-hosted CI, and an automated Pixel Streaming 2 deployment path. The first M1 source tranche adds committed combat timing, five posture states, four wound layers, camera-control policy, combat input, and duration-bearing physical interaction; its exact scope and remaining gates are recorded in `Docs/M1_CORE_LOOP.md`.
 
 This is **not yet a playable Alpha or Beta**. A build becomes mergeable only after the Windows/UE compile, Unreal tests, in-engine smoke test, iPad controls, Pixel Streaming latency, and idle-deallocation gates in `M0_CHECKLIST.md` all have recorded green evidence.
 
@@ -34,6 +34,7 @@ Cheap deterministic checks can run anywhere with Python:
 
 ```powershell
 python Tools/ci/validate_m0.py
+python Tools/ci/validate_m1.py
 python Tools/ci/design_law_audit.py
 python -m unittest discover -s Tools/ci -p "test_*.py"
 ```
@@ -42,7 +43,7 @@ Unreal compilation and automation run only on a private self-hosted Windows runn
 
 ## Pixel Streaming
 
-`Tools/streaming/` pins Epic's free Pixel Streaming 2 software, builds the custom iPad-oriented frontend, configures Flo-only tailnet HTTPS and private TURN, packages atomically, proves NVENC activation, and installs a provider-level 30-minute idle shutdown. The hardened AWS template creates no public game or admin endpoint and cannot launch without a recorded cost acknowledgement.
+`Tools/streaming/` pins Epic's free Pixel Streaming 2 software, builds the custom iPad-oriented frontend, configures HTTPS/password protection and TURN, packages atomically, proves NVENC activation, and installs a provider-level 30-minute idle shutdown.
 
 The scripts do not provision or start a paid GPU machine. Host setup, secrets, and the six release gates are documented in `Tools/streaming/README.md` and `M0_CHECKLIST.md`.
 

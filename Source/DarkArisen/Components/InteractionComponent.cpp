@@ -1,0 +1,155 @@
+// Copyright (c) 2026 Dark Arisen. All Rights Reserved.
+
+#include "Components/InteractionComponent.h"
+
+#include "CoreLoopTuning.h"
+#include "DesignLaws.h"
+#include "Engine/World.h"
+#include "GameFramework/Controller.h"
+#include "GameFramework/Pawn.h"
+
+UInteractionComponent::UInteractionComponent()
+{
+    PrimaryComponentTick.bCanEverTick = true;
+}
+
+void UInteractionComponent::TickComponent(
+    const float DeltaTime,
+    const ELevelTick TickType,
+    FActorComponentTickFunction* ThisTickFunction)
+{
+    Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+    if (ActiveTarget.IsValid())
+    {
+        AActor* Target = ActiveTarget.Get();
+        if (!Target->GetClass()->ImplementsInterface(UDarkArisenInteractable::StaticClass()) ||
+            !IDarkArisenInteractable::Execute_CanInteract(Target, GetOwner()))
+        {
+            CancelActiveInteraction();
+        }
+        else
+        {
+            InteractionTimeRemaining = FMath::Max(0.0f, InteractionTimeRemaining - DeltaTime);
+            if (InteractionTimeRemaining <= 0.0f) CompleteActiveInteraction();
+        }
+    }
+    UpdateFocus(DeltaTime);
+}
+
+bool UInteractionComponent::TryBeginInteraction()
+{
+    if (ActiveTarget.IsValid() || !FocusedTarget.IsValid()) return false;
+    AActor* Target = FocusedTarget.Get();
+    if (!Target->GetClass()->ImplementsInterface(UDarkArisenInteractable::StaticClass()) ||
+        !IDarkArisenInteractable::Execute_CanInteract(Target, GetOwner()))
+    {
+        SetFocusedTarget(nullptr);
+        return false;
+    }
+    ActiveTarget = Target;
+    InteractionTimeRemaining = FMath::Max(
+        0.0f,
+        IDarkArisenInteractable::Execute_GetInteractionDuration(Target));
+    SetPromptVisible(false);
+    IDarkArisenInteractable::Execute_BeginInteraction(Target, GetOwner());
+    OnInteractionStateChanged.Broadcast(Target, true);
+    if (InteractionTimeRemaining <= 0.0f) CompleteActiveInteraction();
+    return true;
+}
+
+void UInteractionComponent::CancelActiveInteraction()
+{
+    if (!ActiveTarget.IsValid()) return;
+    AActor* Target = ActiveTarget.Get();
+    if (Target->GetClass()->ImplementsInterface(UDarkArisenInteractable::StaticClass()))
+    {
+        IDarkArisenInteractable::Execute_CancelInteraction(Target, GetOwner());
+    }
+    ActiveTarget.Reset();
+    InteractionTimeRemaining = 0.0f;
+    OnInteractionStateChanged.Broadcast(Target, false);
+}
+
+AActor* UInteractionComponent::TraceForCandidate() const
+{
+    AActor* Owner = GetOwner();
+    UWorld* World = GetWorld();
+    if (!Owner || !World) return nullptr;
+
+    FVector ViewLocation = Owner->GetActorLocation();
+    FRotator ViewRotation = Owner->GetActorRotation();
+    if (const APawn* Pawn = Cast<APawn>(Owner))
+    {
+        if (const AController* Controller = Pawn->GetController())
+        {
+            Controller->GetPlayerViewPoint(ViewLocation, ViewRotation);
+        }
+    }
+
+    constexpr float CentimetresPerMetre = 100.0f;
+    const float RangeCentimetres =
+        DarkArisen::DesignLaws::InteractionPromptRangeMetres * CentimetresPerMetre;
+    const FVector TraceEnd = ViewLocation + ViewRotation.Vector() * RangeCentimetres;
+    FHitResult Hit;
+    FCollisionQueryParams QueryParams(SCENE_QUERY_STAT(DarkArisenInteraction), false, Owner);
+    if (!World->LineTraceSingleByChannel(
+        Hit, ViewLocation, TraceEnd, ECC_Visibility, QueryParams))
+    {
+        return nullptr;
+    }
+    AActor* Candidate = Hit.GetActor();
+    if (!Candidate ||
+        !Candidate->GetClass()->ImplementsInterface(UDarkArisenInteractable::StaticClass()) ||
+        !IDarkArisenInteractable::Execute_CanInteract(Candidate, GetOwner()))
+    {
+        return nullptr;
+    }
+    return Candidate;
+}
+
+void UInteractionComponent::UpdateFocus(const float DeltaTime)
+{
+    AActor* Candidate = ActiveTarget.IsValid() ? nullptr : TraceForCandidate();
+    if (Candidate != FocusedTarget.Get()) SetFocusedTarget(Candidate);
+    if (!bPromptVisible) return;
+    PromptTimeRemaining = FMath::Max(0.0f, PromptTimeRemaining - DeltaTime);
+    if (PromptTimeRemaining <= 0.0f) SetPromptVisible(false);
+}
+
+void UInteractionComponent::SetFocusedTarget(AActor* NewTarget)
+{
+    FocusedTarget = NewTarget;
+    PromptTimeRemaining = NewTarget
+        ? DarkArisen::CoreLoopTuning::InteractionPromptSeconds
+        : 0.0f;
+    if (!NewTarget)
+    {
+        SetPromptVisible(false);
+        return;
+    }
+    FocusedInteractionClass = IDarkArisenInteractable::Execute_GetInteractionClass(NewTarget);
+    SetPromptVisible(true);
+}
+
+void UInteractionComponent::SetPromptVisible(const bool bVisible)
+{
+    if (bPromptVisible == bVisible) return;
+    bPromptVisible = bVisible;
+    const FText Label = bPromptVisible && FocusedTarget.IsValid()
+        ? IDarkArisenInteractable::Execute_GetInteractionLabel(FocusedTarget.Get())
+        : FText::GetEmpty();
+    OnPromptChanged.Broadcast(bPromptVisible, Label);
+}
+
+void UInteractionComponent::CompleteActiveInteraction()
+{
+    if (!ActiveTarget.IsValid()) return;
+    AActor* Target = ActiveTarget.Get();
+    if (Target->GetClass()->ImplementsInterface(UDarkArisenInteractable::StaticClass()))
+    {
+        IDarkArisenInteractable::Execute_CompleteInteraction(Target, GetOwner());
+    }
+    ActiveTarget.Reset();
+    InteractionTimeRemaining = 0.0f;
+    OnInteractionStateChanged.Broadcast(Target, false);
+}

@@ -45,6 +45,22 @@ class DesignLawAuditTests(unittest.TestCase):
             bad.write_text("void Arrow() { SetGlobalTimeDilation(); }\n", encoding="utf-8")
             self.assertTrue(audit(root))
 
+    def test_attack_cancellation_helper_fails(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            bad = root / "Source/DarkArisen/Combat.cpp"
+            bad.parent.mkdir(parents=True)
+            bad.write_text("bool CanCancelAttack();\n", encoding="utf-8")
+            self.assertTrue(audit(root))
+
+    def test_impact_camera_shake_helper_fails(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            bad = root / "Source/DarkArisen/Camera.cpp"
+            bad.parent.mkdir(parents=True)
+            bad.write_text("void CameraShakeOnImpact();\n", encoding="utf-8")
+            self.assertTrue(audit(root))
+
     def test_custom_actor_time_dilation_fails(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

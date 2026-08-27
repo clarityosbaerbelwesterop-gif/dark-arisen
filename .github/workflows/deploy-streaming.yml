@@ -34,6 +34,7 @@ jobs:
         shell: pwsh
         run: |
           python Tools/ci/validate_m0.py
+          python Tools/ci/validate_m1.py
           python Tools/ci/design_law_audit.py
 
       - name: Package and deploy

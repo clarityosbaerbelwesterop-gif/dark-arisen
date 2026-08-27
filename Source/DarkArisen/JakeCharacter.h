@@ -3,17 +3,20 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/WoundStateComponent.h"
 #include "GameFramework/Character.h"
 #include "InputCoreTypes.h"
 #include "JakeCharacter.generated.h"
 
 class UCameraComponent;
+class UCameraStateComponent;
 class UCombatComponent;
 class UHealthComponent;
+class UInteractionComponent;
 class USpringArmComponent;
 class UStaminaComponent;
 
-/** M0 player pawn: weighted third-person locomotion, gamepad input, and native two-zone touch. */
+/** M1 player pawn: weighted locomotion, committed combat, wounds, camera policy, and touch. */
 UCLASS()
 class DARKARISEN_API AJakeCharacter : public ACharacter
 {
@@ -21,7 +24,6 @@ class DARKARISEN_API AJakeCharacter : public ACharacter
 
 public:
     AJakeCharacter();
-
     virtual void BeginPlay() override;
     virtual void Tick(float DeltaSeconds) override;
     virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
@@ -30,17 +32,20 @@ public:
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Jake|Components")
     TObjectPtr<UHealthComponent> HealthComponent;
-
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Jake|Components")
     TObjectPtr<UStaminaComponent> StaminaComponent;
-
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Jake|Components")
     TObjectPtr<UCombatComponent> CombatComponent;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Jake|Components")
+    TObjectPtr<UWoundStateComponent> WoundStateComponent;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Jake|Components")
+    TObjectPtr<UCameraStateComponent> CameraStateComponent;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Jake|Components")
+    TObjectPtr<UInteractionComponent> InteractionComponent;
 
 protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Jake|Camera")
     TObjectPtr<USpringArmComponent> CameraBoom;
-
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Jake|Camera")
     TObjectPtr<UCameraComponent> FollowCamera;
 
@@ -59,20 +64,32 @@ private:
     float BaseTurnRate = 45.0f;
     float BaseLookUpRate = 45.0f;
     float TouchLookSensitivity = 0.12f;
+    float RunSpeedCentimetresPerSecond = 330.0f;
+    float SprintSpeedCentimetresPerSecond = 600.0f;
 
     void MoveForward(float Value);
     void MoveRight(float Value);
+    void Turn(float Value);
+    void LookUp(float Value);
     void TurnAtRate(float Rate);
     void LookUpAtRate(float Rate);
     void StartSprint();
     void StopSprint();
+    void StartJump();
+    void StopJump();
+    void PerformLightAttack();
+    void PerformHeavyAttack();
+    void PerformParry();
+    void PerformDodge();
+    void TryInteract();
     void TouchStarted(ETouchIndex::Type FingerIndex, FVector Location);
     void TouchMoved(ETouchIndex::Type FingerIndex, FVector Location);
     void TouchStopped(ETouchIndex::Type FingerIndex, FVector Location);
 
     UFUNCTION()
     void OnCharacterDied(AActor* DamageCauser);
-
     UFUNCTION()
     void OnStaminaDepleted();
+    UFUNCTION()
+    void OnWoundLayerChanged(EWoundLayer PreviousLayer, EWoundLayer NewLayer);
 };

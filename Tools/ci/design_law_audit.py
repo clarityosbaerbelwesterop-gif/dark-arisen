@@ -27,8 +27,22 @@ PROHIBITED_IDENTIFIERS: tuple[tuple[str, re.Pattern[str]], ...] = (
         r"\b(?:HealthBarWidget|StaminaBarWidget|AmmoCounterWidget|CombatMiniMap|DamageNumber)\b",
         re.I,
     )),
-    ("No interaction highlight", re.compile(r"\b(?:SetRenderCustomDepth|RenderCustomDepth)\b")),
-    ("No cinematic action vocabulary", re.compile(r"\b(?:KillCam|FinisherCamera|SpeedRamp|DutchAngle)\b", re.I)),
+    ("No interaction highlight", re.compile(
+        r"\b(?:SetRenderCustomDepth|RenderCustomDepth|HighlightNearbyLoot|FocusModeHighlight)\b",
+        re.I,
+    )),
+    ("No generic loot-container shortcut", re.compile(
+        r"\b(?:TakeAllLoot|GenericLootContainer|LootBarrel)\b",
+        re.I,
+    )),
+    ("No action cancellation", re.compile(
+        r"\b(?:CancelIntoDodge|CancelIntoBlock|CanCancelAttack)\b",
+        re.I,
+    )),
+    ("No cinematic action vocabulary", re.compile(
+        r"\b(?:KillCam|FinisherCamera|SpeedRamp|DutchAngle|ShakeOnDamage|CameraShakeOnImpact)\b",
+        re.I,
+    )),
     ("No dynamic music", re.compile(r"\b(?:DynamicMusic|AdaptiveMusic|MusicStinger)\b", re.I)),
     ("No fast travel over water", re.compile(r"\b(?:WaterFastTravel|FastTravelAcrossWater)\b", re.I)),
     ("No interface navigation aids", re.compile(r"\b(?:MiniMap|QuestMarker|DamageNumber)\b", re.I)),
