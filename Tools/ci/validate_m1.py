@@ -62,6 +62,9 @@ def validate(root: Path) -> list[str]:
         "Health < HurtHealthThreshold",
         "Stamina < WindedStaminaThreshold",
         "!bKatanaEquipped",
+        "Profile.bLimp = true",
+        "Profile.bStaggerRun = true",
+        "Profile.bWeaponDrag = true",
     ), errors)
     _require_fragments(root / "Source/DarkArisen/Components/CameraStateComponent.h", (
         "Free,",
@@ -104,6 +107,9 @@ def validate(root: Path) -> list[str]:
     ), errors)
     _require_fragments(root / "Source/DarkArisen/JakeCharacter.cpp", (
         "HealthComponent->bRallyEnabled = true",
+        "MaximumWoundCameraDriftCentimetres * Instability",
+        "CameraBoom->SocketOffset = BaseCameraSocketOffset + LowFrequencyDrift",
+        "WoundStateComponent->GetPresentationProfile()",
     ), errors)
     _require_fragments(root / "Source/DarkArisen/DuelingEnemyCharacter.cpp", (
         "AwarenessRangeCentimetres",

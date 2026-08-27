@@ -19,6 +19,27 @@ enum class EWoundLayer : uint8
     Failing
 };
 
+USTRUCT(BlueprintType)
+struct FWoundPresentationProfile
+{
+    GENERATED_BODY()
+
+    UPROPERTY(BlueprintReadOnly)
+    float MovementSpeedScale = 1.0f;
+    UPROPERTY(BlueprintReadOnly)
+    float CameraInstabilityAlpha = 0.0f;
+    UPROPERTY(BlueprintReadOnly)
+    bool bAudibleBreathing = false;
+    UPROPERTY(BlueprintReadOnly)
+    bool bFavoursSide = false;
+    UPROPERTY(BlueprintReadOnly)
+    bool bLimp = false;
+    UPROPERTY(BlueprintReadOnly)
+    bool bStaggerRun = false;
+    UPROPERTY(BlueprintReadOnly)
+    bool bWeaponDrag = false;
+};
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
     FOnWoundLayerChanged, EWoundLayer, PreviousLayer, EWoundLayer, NewLayer);
 
@@ -46,7 +67,11 @@ public:
     UFUNCTION(BlueprintPure, Category = "Wounds|Camera")
     float GetCameraInstabilityAlpha() const;
 
+    UFUNCTION(BlueprintPure, Category = "Wounds|Presentation")
+    FWoundPresentationProfile GetPresentationProfile() const;
+
     static EWoundLayer EvaluateLayer(float HealthFraction, float StaminaFraction);
+    static FWoundPresentationProfile GetPresentationProfileForLayer(EWoundLayer Layer);
 
     UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Wounds")
     EWoundLayer CurrentLayer = EWoundLayer::None;

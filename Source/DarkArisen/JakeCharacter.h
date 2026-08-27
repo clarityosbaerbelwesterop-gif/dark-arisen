@@ -69,6 +69,12 @@ private:
     float TouchLookSensitivity = 0.12f;
     float RunSpeedCentimetresPerSecond = 330.0f;
     float SprintSpeedCentimetresPerSecond = 600.0f;
+    FVector BaseCameraSocketOffset = FVector(0.0f, 45.0f, 70.0f);
+    float WoundCameraPhase = 0.0f;
+
+    /** DESIGN-GAP: amplitude is a tuning lever in camera_system.md with no locked value. */
+    UPROPERTY(EditDefaultsOnly, Category = "Jake|Camera", meta = (ClampMin = "0.0"))
+    float MaximumWoundCameraDriftCentimetres = 3.0f;
 
     void MoveForward(float Value);
     void MoveRight(float Value);
@@ -86,6 +92,8 @@ private:
     void PerformDodge();
     void TryInteract();
     void ToggleLockOn();
+    void UpdateWoundPresentation(float DeltaSeconds);
+    void ApplyWoundLocomotion();
     void TouchStarted(ETouchIndex::Type FingerIndex, FVector Location);
     void TouchMoved(ETouchIndex::Type FingerIndex, FVector Location);
     void TouchStopped(ETouchIndex::Type FingerIndex, FVector Location);

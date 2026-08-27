@@ -46,7 +46,7 @@ AJakeCharacter::AJakeCharacter()
     CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
     CameraBoom->SetupAttachment(RootComponent);
     CameraBoom->TargetArmLength = 360.0f;
-    CameraBoom->SocketOffset = FVector(0.0f, 45.0f, 70.0f);
+    CameraBoom->SocketOffset = BaseCameraSocketOffset;
     CameraBoom->bUsePawnControlRotation = true;
     FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
     FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
@@ -60,11 +60,13 @@ void AJakeCharacter::BeginPlay()
     StaminaComponent->OnStaminaDepleted.AddDynamic(this, &AJakeCharacter::OnStaminaDepleted);
     WoundStateComponent->OnWoundLayerChanged.AddDynamic(
         this, &AJakeCharacter::OnWoundLayerChanged);
+    ApplyWoundLocomotion();
 }
 
 void AJakeCharacter::Tick(const float DeltaSeconds)
 {
     Super::Tick(DeltaSeconds);
+    UpdateWoundPresentation(DeltaSeconds);
     if (!TouchMovement.IsNearlyZero())
     {
         MoveForward(TouchMovement.X);
@@ -157,15 +159,15 @@ void AJakeCharacter::StartSprint()
         CombatComponent->CurrentState == ECombatState::Idle &&
         !InteractionComponent->IsInteracting())
     {
-        GetCharacterMovement()->MaxWalkSpeed = SprintSpeedCentimetresPerSecond;
         StaminaComponent->SetSprinting(true);
+        ApplyWoundLocomotion();
     }
 }
 
 void AJakeCharacter::StopSprint()
 {
-    GetCharacterMovement()->MaxWalkSpeed = RunSpeedCentimetresPerSecond;
     StaminaComponent->SetSprinting(false);
+    ApplyWoundLocomotion();
 }
 
 void AJakeCharacter::StartJump()
@@ -218,6 +220,27 @@ void AJakeCharacter::ToggleLockOn()
     if (!HealthComponent->IsDead() &&
         CameraStateComponent->CurrentMode == EPlayerCameraMode::Free)
         LockOnComponent->ToggleLockOn();
+}
+
+void AJakeCharacter::UpdateWoundPresentation(const float DeltaSeconds)
+{
+    const float Instability = CameraStateComponent->WoundInstabilityAlpha;
+    WoundCameraPhase += DeltaSeconds;
+    const float Amplitude = MaximumWoundCameraDriftCentimetres * Instability;
+    const FVector LowFrequencyDrift(
+        FMath::Sin(WoundCameraPhase * 2.1f) * Amplitude * 0.35f,
+        FMath::Sin(WoundCameraPhase * 1.3f) * Amplitude,
+        FMath::Sin(WoundCameraPhase * 0.8f) * Amplitude * 0.55f);
+    CameraBoom->SocketOffset = BaseCameraSocketOffset + LowFrequencyDrift;
+}
+
+void AJakeCharacter::ApplyWoundLocomotion()
+{
+    const FWoundPresentationProfile Profile = WoundStateComponent->GetPresentationProfile();
+    const float SpeedScale = Profile.MovementSpeedScale;
+    GetCharacterMovement()->MaxWalkSpeed = StaminaComponent->IsSprinting()
+        ? SprintSpeedCentimetresPerSecond * SpeedScale
+        : RunSpeedCentimetresPerSecond * SpeedScale;
 }
 
 void AJakeCharacter::TouchStarted(const ETouchIndex::Type FingerIndex, const FVector Location)
@@ -288,4 +311,5 @@ void AJakeCharacter::OnWoundLayerChanged(
     const EWoundLayer /*NewLayer*/)
 {
     if (!WoundStateComponent->IsSprintAllowed()) StopSprint();
+    ApplyWoundLocomotion();
 }

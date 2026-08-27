@@ -20,6 +20,8 @@
 - Successful light/heavy/parry-strike/critical contacts call Jake's Rally recovery path. Critical contacts bypass deflection and consume the full available Rally pool.
 - The C++ greybox now spawns one visible duelling enemy with awareness, pursuit, committed attacks, stamina, health, five-state posture, deflection response, death handling, and no extra HUD.
 - Lock-on chooses the best living combatant inside range, facing cone and line of sight, then smoothly owns facing until toggled or invalidated. It creates no marker, outline, widget or additional HUD element.
+- Every wound layer exposes an animation-ready physical profile: breathing, favoured side, limp, stagger-run and weapon drag. Jake applies the deterioration to locomotion even when the Katana keeps its clean animation set.
+- The camera boom receives only subtle low-frequency wound drift, scaled exclusively by the wound layer. There is no damage event, impact shake, critical zoom or kill framing path.
 
 ## Conflict rulings applied
 
@@ -32,8 +34,10 @@ The later locked rules supersede contradictory Phase 3/6 draft clauses:
 
 ## Still required before M1 acceptance
 
-- authored animation montages, animation-notify refinement of the source-level hit timing, and wound-aware locomotion poses;
+- authored animation assets/poses and animation-notify refinement of the source-level hit timing;
 - physical door and pickup actors, an Examine presentation, an interaction corner widget, and persistence tests;
 - Windows UE 5.5 Development/Shipping compile, Unreal automation execution, controller/touch smoke testing, and measured 60 fps evidence.
 
 No runtime gate may be inferred from static checks. This tranche is intentionally kept inside the existing private draft PR and must not be merged on its own.
+
+`DESIGN-GAP:` the source specifies wound-driven low-frequency camera instability and locomotion degradation but gives no numeric amplitude or speed multipliers. Conservative editable defaults are present for playtesting; Flo's feel review must lock them before M1 acceptance.

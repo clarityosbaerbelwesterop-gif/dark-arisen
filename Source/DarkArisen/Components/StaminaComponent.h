@@ -34,6 +34,9 @@ public:
     UFUNCTION(BlueprintCallable, Category = "Stamina")
     void SetSprinting(bool bSprintActive);
 
+    UFUNCTION(BlueprintPure, Category = "Stamina")
+    bool IsSprinting() const { return bSprinting; }
+
     UFUNCTION(BlueprintCallable, Category = "Stamina")
     void SetRegenMultiplier(float Multiplier);
 

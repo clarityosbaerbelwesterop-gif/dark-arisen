@@ -125,6 +125,17 @@ bool FDarkArisenM1WoundLayersSpec::RunTest(const FString& Parameters)
         Wounds->CurrentLayer = EWoundLayer::Failing;
         TestFalse(TEXT("Failing state blocks sprint"), Wounds->IsSprintAllowed());
     }
+    const FWoundPresentationProfile Bad =
+        UWoundStateComponent::GetPresentationProfileForLayer(EWoundLayer::Bad);
+    const FWoundPresentationProfile Failing =
+        UWoundStateComponent::GetPresentationProfileForLayer(EWoundLayer::Failing);
+    TestTrue(TEXT("Bad layer visibly limps"), Bad.bLimp);
+    TestTrue(TEXT("Bad layer uses stagger-run"), Bad.bStaggerRun);
+    TestTrue(TEXT("Failing layer drags weapon"), Failing.bWeaponDrag);
+    TestTrue(TEXT("Deterioration lowers movement speed"),
+        Failing.MovementSpeedScale < Bad.MovementSpeedScale);
+    TestTrue(TEXT("Failing reaches full wound camera drive"),
+        FMath::IsNearlyEqual(Failing.CameraInstabilityAlpha, 1.0f));
     return true;
 }
 

@@ -37,7 +37,8 @@ This file is the progress index. Detailed acceptance criteria remain authoritati
 - [x] One greybox duelling enemy with pursuit, committed attacks, posture and death.
 - [ ] Authored montages and animation-notify timing.
 - [x] Lock-on with living-combatant, range, facing and line-of-sight validation; no marker/HUD.
-- [ ] Wound-aware locomotion/camera presentation.
+- [x] Animation-ready wound presentation profile and wound-only low-frequency camera drift.
+- [ ] Authored wound-aware locomotion animation assets and final feel tuning.
 - [ ] Physical doors/pickups, Examine presentation, corner widget and persistence tests.
 - [ ] Five-minute encounter at measured 60 fps with controller/touch evidence.
 

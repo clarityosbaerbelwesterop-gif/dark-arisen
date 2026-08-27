@@ -50,14 +50,48 @@ bool UWoundStateComponent::ShouldUseWoundedAnimationSet(const bool bKatanaEquipp
 
 float UWoundStateComponent::GetCameraInstabilityAlpha() const
 {
-    switch (CurrentLayer)
+    return GetPresentationProfile().CameraInstabilityAlpha;
+}
+
+FWoundPresentationProfile UWoundStateComponent::GetPresentationProfile() const
+{
+    return GetPresentationProfileForLayer(CurrentLayer);
+}
+
+FWoundPresentationProfile UWoundStateComponent::GetPresentationProfileForLayer(
+    const EWoundLayer Layer)
+{
+    FWoundPresentationProfile Profile;
+    switch (Layer)
     {
-    case EWoundLayer::Winded: return 0.25f;
-    case EWoundLayer::Hurt: return 0.50f;
-    case EWoundLayer::Bad: return 0.75f;
-    case EWoundLayer::Failing: return 1.0f;
-    default: return 0.0f;
+    case EWoundLayer::Winded:
+        Profile.MovementSpeedScale = 0.97f;
+        Profile.CameraInstabilityAlpha = 0.25f;
+        Profile.bAudibleBreathing = true;
+        break;
+    case EWoundLayer::Hurt:
+        Profile.MovementSpeedScale = 0.92f;
+        Profile.CameraInstabilityAlpha = 0.50f;
+        Profile.bFavoursSide = true;
+        break;
+    case EWoundLayer::Bad:
+        Profile.MovementSpeedScale = 0.80f;
+        Profile.CameraInstabilityAlpha = 0.75f;
+        Profile.bFavoursSide = true;
+        Profile.bLimp = true;
+        Profile.bStaggerRun = true;
+        break;
+    case EWoundLayer::Failing:
+        Profile.MovementSpeedScale = 0.65f;
+        Profile.CameraInstabilityAlpha = 1.0f;
+        Profile.bFavoursSide = true;
+        Profile.bLimp = true;
+        Profile.bWeaponDrag = true;
+        break;
+    default:
+        break;
     }
+    return Profile;
 }
 
 EWoundLayer UWoundStateComponent::EvaluateLayer(
