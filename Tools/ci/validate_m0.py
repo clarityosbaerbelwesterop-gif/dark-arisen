@@ -122,6 +122,7 @@ def validate(root: Path) -> list[str]:
             "-NoTextureStreaming",
             "-ResX=1920",
             "-ResY=1080",
+            "-PixelStreamingWebRTCMaxFps=60",
             "-UserDir=",
         ):
             if flag not in launch:

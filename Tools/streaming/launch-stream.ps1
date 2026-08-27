@@ -46,6 +46,7 @@ $Arguments = @(
     "-ResX=1920",
     "-ResY=1080",
     "-ForceRes",
+    "-PixelStreamingWebRTCMaxFps=60",
     "-AudioMixer",
     "-UserDir=`"$UserDataRoot`"",
     "-AbsLog=$GameLog"
