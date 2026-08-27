@@ -19,6 +19,7 @@ class UAnimMontage;
 class UQuestJournalComponent;
 class USpringArmComponent;
 class UStaminaComponent;
+class UWaterBreathComponent;
 
 /** M1 player pawn: weighted locomotion, committed combat, wounds, camera policy, and touch. */
 UCLASS()
@@ -52,6 +53,8 @@ public:
     TObjectPtr<UQuestJournalComponent> QuestJournalComponent;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Jake|Components")
     TObjectPtr<UHeatExposureComponent> HeatExposureComponent;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Jake|Components")
+    TObjectPtr<UWaterBreathComponent> WaterBreathComponent;
 
 protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Jake|Camera")

@@ -13,9 +13,11 @@
 #include "Components/LockOnComponent.h"
 #include "Components/QuestJournalComponent.h"
 #include "Components/StaminaComponent.h"
+#include "Components/WaterBreathComponent.h"
 #include "Components/WoundStateComponent.h"
 #include "CoreLoopTuning.h"
 #include "DesignLaws.h"
+#include "Dungeons/CenoteFirstMotherComponent.h"
 #include "Interaction/InteractionPersistence.h"
 #include "Interaction/PhysicalDoorActor.h"
 
@@ -471,6 +473,52 @@ bool FDarkArisenM2IsabelCruzStateSpec::RunTest(const FString& Parameters)
         TestEqual(TEXT("Death remains distinct from mercy"),
             Combat->CurrentState, ECombatState::Dead);
     }
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(
+    FDarkArisenM2CenoteContractSpec,
+    "DarkArisen.M2.CenoteContract",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FDarkArisenM2CenoteContractSpec::RunTest(const FString& Parameters)
+{
+    TestTrue(TEXT("Bare breath is thirty seconds"), FMath::IsNearlyEqual(
+        UWaterBreathComponent::GetMaximumBreathSecondsForTier(EWaterBreathTier::Bare),
+        30.0f));
+    TestTrue(TEXT("Trained breath is sixty seconds"), FMath::IsNearlyEqual(
+        UWaterBreathComponent::GetMaximumBreathSecondsForTier(EWaterBreathTier::Trained),
+        60.0f));
+    TestTrue(TEXT("Master breath is ninety seconds"), FMath::IsNearlyEqual(
+        UWaterBreathComponent::GetMaximumBreathSecondsForTier(EWaterBreathTier::Master),
+        90.0f));
+
+    TestTrue(TEXT("Image timing resets outside the chamber"), FMath::IsNearlyZero(
+        UCenoteFirstMotherComponent::EvaluateGreenGoldWitnessSeconds(
+            3.0f, 1.0f, false, true, 5.0f)));
+    TestTrue(TEXT("Image timing resets outside the sunlight hour"), FMath::IsNearlyZero(
+        UCenoteFirstMotherComponent::EvaluateGreenGoldWitnessSeconds(
+            3.0f, 1.0f, true, false, 5.0f)));
+    TestTrue(TEXT("Image timing completes only in room and window"), FMath::IsNearlyEqual(
+        UCenoteFirstMotherComponent::EvaluateGreenGoldWitnessSeconds(
+            3.0f, 3.0f, true, true, 5.0f),
+        5.0f));
+
+    UCenoteFirstMotherComponent* Cenote = NewObject<UCenoteFirstMotherComponent>();
+    TestTrue(TEXT("Cenote state component created"), Cenote != nullptr);
+    if (!Cenote) return false;
+    TestFalse(TEXT("Return cannot open before Keeper resolution"),
+        Cenote->OpenMandatoryReturnShortcut());
+    TestTrue(TEXT("Cenote lip entry is recorded once"), Cenote->MarkEnteredAtSinkholeLip());
+    TestTrue(TEXT("Rexan water routing can resolve after entry"),
+        Cenote->MarkWaterRoutingSolved());
+    TestTrue(TEXT("Keeper outcome must be explicit"),
+        Cenote->ResolveKeeperBelow(TEXT("KeeperDrivenOff")));
+    TestTrue(TEXT("Mandatory Return opens after the floor"),
+        Cenote->OpenMandatoryReturnShortcut());
+    Cenote->bGreenGoldImageWitnessed = true;
+    TestTrue(TEXT("All required independent beats complete the dungeon"),
+        Cenote->IsDungeonComplete());
     return true;
 }
 

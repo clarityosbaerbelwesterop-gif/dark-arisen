@@ -56,6 +56,17 @@ class M2SourceContractValidationTests(unittest.TestCase):
             findings = validate(root)
             self.assertTrue(any("OnHeatChanged" in finding for finding in findings))
 
+    def test_cenote_music_cue_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            dungeons = root / "Source/DarkArisen/Dungeons"
+            dungeons.mkdir(parents=True)
+            (dungeons / "CenoteFirstMotherComponent.h").write_text(
+                "class UMusicCue;", encoding="utf-8")
+            (dungeons / "CenoteFirstMotherComponent.cpp").write_text("", encoding="utf-8")
+            findings = validate(root)
+            self.assertTrue(any("MusicCue" in finding for finding in findings))
+
 
 if __name__ == "__main__":
     unittest.main()

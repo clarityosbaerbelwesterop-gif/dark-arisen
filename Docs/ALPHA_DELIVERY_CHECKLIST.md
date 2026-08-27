@@ -50,6 +50,9 @@ This file is the progress index. Detailed acceptance criteria remain authoritati
 ## M2 — Vertical slice
 
 - [ ] Rexa jungle region slice, settlement, Cenote dungeon and required traversal.
+- [x] Native 30/60/90-second breath tiers, equipment exception and HUD-free drowning damage path.
+- [x] Native Cenote state for lip entry, Rexan water routing, exact-hour image gating, Keeper outcome and mandatory Return dependency.
+- [ ] Authored Cenote level, water devices/currents/swimming, green-gold lighting, Keeper creature/AI/animation, offerings decision and no-marker/no-music runtime proof.
 - [ ] Isabel Cruz boss with killed/spared/avoided outcomes and four-second death hold.
 - [x] Native Isabel Cruz state with locked Duty/List/1846 thresholds, fail-closed mercy/avoidance conditions, distinct non-hostile resolution and the existing four-second hold path.
 - [x] HUD-free native heat pressure with authored cistern/shade/exposed states; provisional numeric rates remain marked `DESIGN-GAP`.

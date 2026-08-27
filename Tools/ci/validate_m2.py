@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Deterministic source contract for the native M2 quest, heat and proof-boss tranche."""
+"""Deterministic source contract for the native M2 quest, environment and encounter tranche."""
 
 from __future__ import annotations
 
@@ -15,6 +15,10 @@ REQUIRED_FILES = (
     "Source/DarkArisen/Components/HeatExposureComponent.cpp",
     "Source/DarkArisen/Bosses/IsabelCruzCharacter.h",
     "Source/DarkArisen/Bosses/IsabelCruzCharacter.cpp",
+    "Source/DarkArisen/Components/WaterBreathComponent.h",
+    "Source/DarkArisen/Components/WaterBreathComponent.cpp",
+    "Source/DarkArisen/Dungeons/CenoteFirstMotherComponent.h",
+    "Source/DarkArisen/Dungeons/CenoteFirstMotherComponent.cpp",
     "Docs/M2_VERTICAL_SLICE.md",
 )
 
@@ -65,6 +69,7 @@ def validate(root: Path) -> list[str]:
     _require_fragments(root / "Source/DarkArisen/JakeCharacter.cpp", (
         'CreateDefaultSubobject<UQuestJournalComponent>(TEXT("QuestJournalComponent"))',
         'CreateDefaultSubobject<UHeatExposureComponent>(TEXT("HeatExposureComponent"))',
+        'CreateDefaultSubobject<UWaterBreathComponent>(TEXT("WaterBreathComponent"))',
     ), errors)
     heat_header = root / "Source/DarkArisen/Components/HeatExposureComponent.h"
     heat_source = root / "Source/DarkArisen/Components/HeatExposureComponent.cpp"
@@ -124,6 +129,10 @@ def validate(root: Path) -> list[str]:
         "DarkArisen.M2.IsabelCruzState",
         "Sixty-five percent enters List",
         "Spared combatant cannot be locked or hit",
+        "DarkArisen.M2.CenoteContract",
+        "Bare breath is thirty seconds",
+        "Image timing resets outside the sunlight hour",
+        "Mandatory Return opens after the floor",
     ), errors)
 
     quest_text = "\n".join(
@@ -161,6 +170,58 @@ def validate(root: Path) -> list[str]:
     ):
         if forbidden in mechanics_text:
             errors.append(f"M2 heat/boss source contract forbids: {forbidden}")
+
+    breath_header = root / "Source/DarkArisen/Components/WaterBreathComponent.h"
+    breath_source = root / "Source/DarkArisen/Components/WaterBreathComponent.cpp"
+    cenote_header = root / "Source/DarkArisen/Dungeons/CenoteFirstMotherComponent.h"
+    cenote_source = root / "Source/DarkArisen/Dungeons/CenoteFirstMotherComponent.cpp"
+    _require_fragments(breath_header, (
+        "Bare,",
+        "Trained,",
+        "Master,",
+        "Equipment",
+        "exposes no meter or warning event",
+        "DrowningDamagePerSecond",
+        "DESIGN-GAP",
+    ), errors)
+    _require_fragments(breath_source, (
+        "case EWaterBreathTier::Bare: return 30.0f",
+        "case EWaterBreathTier::Trained: return 60.0f",
+        "case EWaterBreathTier::Master: return 90.0f",
+        "ERallyDamageClass::Environmental",
+    ), errors)
+    _require_fragments(cenote_header, (
+        "MarkEnteredAtSinkholeLip",
+        "MarkWaterRoutingSolved",
+        "SetGreenGoldSunlightWindowActive",
+        "ResolveKeeperBelow",
+        "OpenMandatoryReturnShortcut",
+        "IsDungeonComplete",
+        "SaveGame",
+        "DESIGN-GAP",
+    ), errors)
+    _require_fragments(cenote_source, (
+        "bPlayerInImageChamber",
+        "bGreenGoldSunlightWindowActive",
+        "bKeeperEncounterResolved && bReturnShortcutOpened",
+        "if (!bKeeperEncounterResolved || bReturnShortcutOpened) return false",
+    ), errors)
+    cenote_text = "\n".join(
+        path.read_text(encoding="utf-8")
+        for path in (breath_header, breath_source, cenote_header, cenote_source)
+        if path.is_file()
+    )
+    for forbidden in (
+        "QuestMarker",
+        "MapMarker",
+        "AudioLog",
+        "OnBreathChanged",
+        "OnDungeonCompleted",
+        "PlaySound",
+        "MusicCue",
+    ):
+        if forbidden in cenote_text:
+            errors.append(f"M2 Cenote source contract forbids: {forbidden}")
     return errors
 
 
@@ -170,11 +231,11 @@ def main() -> int:
     args = parser.parse_args()
     errors = validate(args.root.resolve())
     if errors:
-        print("M2 quest-foundation validation failed:", file=sys.stderr)
+        print("M2 quest/environment/encounter validation failed:", file=sys.stderr)
         for error in errors:
             print(f"- {error}", file=sys.stderr)
         return 1
-    print("M2 quest, heat and proof-boss source validation passed.")
+    print("M2 quest, environment and encounter source validation passed.")
     return 0
 
 

@@ -24,6 +24,11 @@
 - Spared and avoided are a distinct non-hostile combat state, so mercy is not represented as a fake death and lock-on/hit resolution reject the resolved actor.
 - Killing Cruz invokes the existing four-second anchored hold. The actor creates no slow motion, music cue, kill camera, lifespan cleanup or forced view target.
 - Encounter phase and resolution state are `SaveGame` data. This actor still performs no unauthorised disk write.
+- Native water-breath state locks the source-defined bare/trained/master limits to 30/60/90 seconds and treats authored equipment as indefinite.
+- Head submersion depletes breath and then applies environmental drowning damage without a meter, warning delegate or failure card. The undocumented damage cadence remains `DESIGN-GAP`.
+- The Cenote has independent, saveable records for lip entry, Rexan water routing, the green-gold image, the Keeper Below outcome and the mandatory Return shortcut.
+- The green-gold image accumulates witness time only while Jake is inside its chamber and the external world-time owner confirms the catalog's exact one-hour sunlight window. Leaving either condition resets the attempt.
+- The Return cannot open before the Keeper encounter has an explicit outcome; completion requires every independent Cenote beat.
 
 ## Canon conflict rulings
 
@@ -41,7 +46,8 @@ The current handoff and later Phase 11 laws supersede conflicting older Rexa dra
 - A physical, held, handwritten journal presentation and local-direction dialogue integration.
 - Three authored Turn quests and one authored Standing variant using this runtime.
 - Approximately 1 km² of Rexa jungle, a forty-person settlement and the required traversal/vegetation physics.
-- The Cenote of the First Mother with no marker, no music, no explanatory logs, one primary water/drowning hazard, its green-gold timed image and mandatory return shortcut.
+- Authored Cenote geometry, environmental lip discovery, water-routing devices, swimming/current physics, image lighting, Keeper Below creature/AI/animation, offerings/ownership choice and physical Return shortcut.
+- In-engine proof that the Cenote contains no marker, ambient music or explanatory log and that all required beats persist; source state alone is insufficient.
 - Authored heat/cistern trigger volumes, Fuerte San Rafael geometry, route logic, combat animations, three-phase dialogue, cabinet/list/report rewards and controller-tested balance.
 - In-engine proof that killed, spared and fort-surrender avoidance routes each persist and drive their authored quest/world consequences; source state alone is insufficient.
 - Windows UE 5.5 compilation, Unreal automation, complete two-hour play evidence and measured 60 fps.

@@ -15,6 +15,7 @@
 #include "Components/LockOnComponent.h"
 #include "Components/QuestJournalComponent.h"
 #include "Components/StaminaComponent.h"
+#include "Components/WaterBreathComponent.h"
 #include "Engine/Engine.h"
 #include "Engine/GameViewportClient.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -50,6 +51,8 @@ AJakeCharacter::AJakeCharacter()
         CreateDefaultSubobject<UQuestJournalComponent>(TEXT("QuestJournalComponent"));
     HeatExposureComponent =
         CreateDefaultSubobject<UHeatExposureComponent>(TEXT("HeatExposureComponent"));
+    WaterBreathComponent =
+        CreateDefaultSubobject<UWaterBreathComponent>(TEXT("WaterBreathComponent"));
 
     CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
     CameraBoom->SetupAttachment(RootComponent);

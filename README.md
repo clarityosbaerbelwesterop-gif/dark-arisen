@@ -4,7 +4,7 @@ Single-player third-person action RPG built in Unreal Engine 5.5 with C++ as the
 
 ## Current delivery state
 
-Milestone 0 establishes a compileable project boundary, a procedural greybox, Jake's baseline locomotion and stats, machine-enforced design-law constants, frame-time telemetry, self-hosted CI, and an automated Pixel Streaming 2 deployment path. The M1 source tranche adds committed combat timing, five posture states, four wound layers, camera-control policy, combat input, duration-bearing physical interaction and a native animation bridge. The first M2 source tranche adds a markerless six-trigger quest state and chronological, fallible journal foundation. Exact scope and remaining gates are recorded in `Docs/M1_CORE_LOOP.md` and `Docs/M2_VERTICAL_SLICE.md`.
+Milestone 0 establishes a compileable project boundary, a procedural greybox, Jake's baseline locomotion and stats, machine-enforced design-law constants, frame-time telemetry, self-hosted CI, and an automated Pixel Streaming 2 deployment path. The M1 source tranche adds committed combat timing, five posture states, four wound layers, camera-control policy, combat input, duration-bearing physical interaction and a native animation bridge. Current M2 source adds the markerless quest/journal foundation, Isabel Cruz encounter state, fort heat pressure, water breath/drowning and Cenote progress contracts. Exact scope and remaining gates are recorded in `Docs/M1_CORE_LOOP.md` and `Docs/M2_VERTICAL_SLICE.md`.
 
 This is **not yet a playable Alpha or Beta**. A build becomes mergeable only after the Windows/UE compile, Unreal tests, in-engine smoke test, iPad controls, Pixel Streaming latency, and idle-deallocation gates in `M0_CHECKLIST.md` all have recorded green evidence.
 
