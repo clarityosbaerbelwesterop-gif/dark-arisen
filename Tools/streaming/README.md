@@ -18,7 +18,7 @@ The older Caddy/password path remains available for another reviewed provider, b
 
 1. Complete the quote/approval and private AWS order in `aws/README.md`; no resource may be launched before it.
 2. Apply the one-user tailnet policy, join the Windows Server 2022 NVIDIA host once, revoke the one-off key, and install the exact reviewed GRID driver.
-3. Install UE 5.5, Git, Python, and NSSM on the retained `D:` volume.
+3. Install UE 5.5, Git, Python, NSSM, AWS CLI v2, the required AWS Tools for PowerShell modules, and the private runner on the retained `D:` volume.
 4. Set `PIXEL_STREAMING_INFRA_ROOT`, `UE55_ROOT`, unique TURN secrets, and the chosen provider identity.
 5. Run `bootstrap-infrastructure.ps1`.
 6. Run `install-services.ps1 -PrivateTailnet` with the AWS shutdown adapter.
