@@ -7,6 +7,7 @@
 #include "CombatComponent.generated.h"
 
 class UStaminaComponent;
+class UHealthComponent;
 
 UENUM(BlueprintType)
 enum class EWeaponSlot : uint8
@@ -51,6 +52,41 @@ enum class EPostureVisualState : uint8
     Failing,
     BrokenImminent,
     Broken
+};
+
+UENUM(BlueprintType)
+enum class ECombatHitKind : uint8
+{
+    Light,
+    Heavy,
+    ParryStrike,
+    Critical
+};
+
+USTRUCT(BlueprintType)
+struct FCombatHitProfile
+{
+    GENERATED_BODY()
+
+    FCombatHitProfile() = default;
+    FCombatHitProfile(
+        const float InHealthDamage,
+        const float InPostureDamage,
+        const float InDeflectedPostureDamage)
+        : HealthDamage(InHealthDamage),
+          PostureDamage(InPostureDamage),
+          DeflectedPostureDamage(InDeflectedPostureDamage)
+    {
+    }
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    float HealthDamage = 0.0f;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    float PostureDamage = 0.0f;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    float DeflectedPostureDamage = 0.0f;
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCombatStateChanged, ECombatState, NewState);
@@ -122,7 +158,15 @@ public:
     UFUNCTION(BlueprintPure, Category = "Combat|Loadout")
     bool IsKatanaEquipped() const { return CurrentMelee == EWeaponSlot::CrystalKatana; }
 
+    /** Resolves one authored melee contact. Returns false when the target is invalid. */
+    UFUNCTION(BlueprintCallable, Category = "Combat|Hit")
+    bool ResolveHitAgainst(AActor* Target, ECombatHitKind HitKind);
+
+    UFUNCTION(BlueprintCallable, Category = "Combat|Hit")
+    bool ResolveCriticalHit(AActor* Target);
+
     static EPostureVisualState EvaluatePostureVisualState(float RemainingFraction);
+    static FCombatHitProfile GetHitProfile(ECombatHitKind HitKind);
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat|Posture")
     float MaxPosture = 100.0f;
@@ -155,6 +199,13 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|Rache", SaveGame)
     bool bRacheUnlocked = false;
 
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat|Hit", meta = (ClampMin = "0.0"))
+    float MeleeTraceStartCentimetres = 70.0f;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat|Hit", meta = (ClampMin = "0.0"))
+    float MeleeTraceEndCentimetres = 220.0f;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat|Hit", meta = (ClampMin = "1.0"))
+    float MeleeTraceRadiusCentimetres = 42.0f;
+
     UPROPERTY(BlueprintAssignable, Category = "Combat|Events")
     FOnCombatStateChanged OnStateChanged;
     UPROPERTY(BlueprintAssignable, Category = "Combat|Events")
@@ -169,11 +220,18 @@ public:
 private:
     UPROPERTY()
     TObjectPtr<UStaminaComponent> CachedStamina;
+    UPROPERTY()
+    TObjectPtr<UHealthComponent> CachedHealth;
     float DeflectionWindowRemaining = 0.0f;
     float RacheRealSecondsRemaining = 0.0f;
     float PostureRegenDelayRemaining = 0.0f;
+    float PendingHitDelayRemaining = 0.0f;
+    ECombatHitKind PendingHitKind = ECombatHitKind::Light;
+    bool bHasPendingHit = false;
 
     bool BeginCommittedAction(ECombatState NewState, float StaminaCost, float DurationSeconds);
+    void QueueMeleeHit(ECombatHitKind HitKind);
+    bool TraceAndResolvePendingHit();
     void CompleteStagger();
     void RefreshPostureVisualState();
     void SetState(ECombatState NewState);

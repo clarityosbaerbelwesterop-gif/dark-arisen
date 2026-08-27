@@ -5,6 +5,7 @@
 #include "Components/DirectionalLightComponent.h"
 #include "Components/SkyLightComponent.h"
 #include "DarkArisen.h"
+#include "DuelingEnemyCharacter.h"
 #include "Engine/DirectionalLight.h"
 #include "Engine/SkyLight.h"
 #include "Engine/StaticMesh.h"
@@ -102,4 +103,7 @@ void AGreyboxGameMode::BuildGreybox()
     }
 
     World->SpawnActor<AFrameTimeTelemetryActor>();
+    World->SpawnActor<ADuelingEnemyCharacter>(
+        FVector(650.0f, 0.0f, 120.0f),
+        FRotator(0.0f, 180.0f, 0.0f));
 }

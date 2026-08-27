@@ -20,6 +20,8 @@ REQUIRED_FILES = (
     "Source/DarkArisen/Interaction/DarkArisenInteractable.cpp",
     "Source/DarkArisen/PostureOnlyHUD.h",
     "Source/DarkArisen/PostureOnlyHUD.cpp",
+    "Source/DarkArisen/DuelingEnemyCharacter.h",
+    "Source/DarkArisen/DuelingEnemyCharacter.cpp",
     "Docs/M1_CORE_LOOP.md",
 )
 
@@ -82,6 +84,10 @@ def validate(root: Path) -> list[str]:
         "DesignLaws::DeflectionWindowSeconds",
         "PostureBreakVulnerabilitySeconds",
         "PostureVisualState == EPostureVisualState::Broken",
+        "SweepMultiByChannel",
+        "ResolveHitAgainst",
+        "RecoverRally(RecoveryAction)",
+        "TargetCombat->IsDeflectionWindowOpen()",
     ), errors)
     _require_fragments(root / "Source/DarkArisen/Components/HealthComponent.cpp", (
         "RallyWindowRemaining = RallyWindowSeconds",
@@ -96,6 +102,16 @@ def validate(root: Path) -> list[str]:
     ), errors)
     _require_fragments(root / "Source/DarkArisen/JakeCharacter.cpp", (
         "HealthComponent->bRallyEnabled = true",
+    ), errors)
+    _require_fragments(root / "Source/DarkArisen/DuelingEnemyCharacter.cpp", (
+        "AwarenessRangeCentimetres",
+        "AttackRangeCentimetres",
+        "CombatComponent->PerformLightAttack()",
+        "OnDied.AddDynamic",
+        "DisableMovement",
+    ), errors)
+    _require_fragments(root / "Source/DarkArisen/GreyboxGameMode.cpp", (
+        "SpawnActor<ADuelingEnemyCharacter>",
     ), errors)
     _require_fragments(root / "Config/DefaultInput.ini", (
         'ActionName="LightAttack"',

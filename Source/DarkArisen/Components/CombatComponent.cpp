@@ -2,10 +2,12 @@
 
 #include "Components/CombatComponent.h"
 
+#include "Components/HealthComponent.h"
 #include "Components/StaminaComponent.h"
 #include "CoreLoopTuning.h"
 #include "DesignLaws.h"
 #include "GameFramework/Actor.h"
+#include "Engine/World.h"
 #include "Kismet/GameplayStatics.h"
 
 namespace
@@ -27,6 +29,7 @@ void UCombatComponent::BeginPlay()
 {
     Super::BeginPlay();
     CachedStamina = GetOwner() ? GetOwner()->FindComponentByClass<UStaminaComponent>() : nullptr;
+    CachedHealth = GetOwner() ? GetOwner()->FindComponentByClass<UHealthComponent>() : nullptr;
     CurrentPosture = FMath::Clamp(CurrentPosture, 0.0f, MaxPosture);
     RefreshPostureVisualState();
 }
@@ -54,6 +57,15 @@ void UCombatComponent::TickComponent(
         {
             if (CurrentState == ECombatState::Staggered) CompleteStagger();
             else FinishAction();
+        }
+    }
+    if (bHasPendingHit)
+    {
+        PendingHitDelayRemaining = FMath::Max(0.0f, PendingHitDelayRemaining - DeltaTime);
+        if (PendingHitDelayRemaining <= 0.0f)
+        {
+            TraceAndResolvePendingHit();
+            bHasPendingHit = false;
         }
     }
     if (CurrentState == ECombatState::Idle && CurrentPosture > 0.0f)
@@ -98,14 +110,20 @@ void UCombatComponent::AddPostureDamage(const float Amount)
 
 bool UCombatComponent::PerformLightAttack()
 {
-    return BeginCommittedAction(
-        ECombatState::LightAttacking, LightAttackStaminaCost, GetMinimumCommitmentSeconds());
+    if (!BeginCommittedAction(
+        ECombatState::LightAttacking, LightAttackStaminaCost, GetMinimumCommitmentSeconds()))
+        return false;
+    QueueMeleeHit(ECombatHitKind::Light);
+    return true;
 }
 
 bool UCombatComponent::PerformHeavyAttack()
 {
-    return BeginCommittedAction(
-        ECombatState::HeavyAttacking, HeavyAttackStaminaCost, GetMinimumCommitmentSeconds());
+    if (!BeginCommittedAction(
+        ECombatState::HeavyAttacking, HeavyAttackStaminaCost, GetMinimumCommitmentSeconds()))
+        return false;
+    QueueMeleeHit(ECombatHitKind::Heavy);
+    return true;
 }
 
 bool UCombatComponent::PerformParry()
@@ -140,7 +158,55 @@ void UCombatComponent::SetDead()
     StopRache();
     DeflectionWindowRemaining = 0.0f;
     ActionCommitmentRemaining = 0.0f;
+    bHasPendingHit = false;
+    PendingHitDelayRemaining = 0.0f;
     SetState(ECombatState::Dead);
+}
+
+bool UCombatComponent::ResolveHitAgainst(AActor* Target, const ECombatHitKind HitKind)
+{
+    AActor* Owner = GetOwner();
+    if (!IsValid(Owner) || !IsValid(Target) || Target == Owner ||
+        CurrentState == ECombatState::Dead) return false;
+
+    UHealthComponent* TargetHealth = Target->FindComponentByClass<UHealthComponent>();
+    UCombatComponent* TargetCombat = Target->FindComponentByClass<UCombatComponent>();
+    if (!TargetHealth || !TargetCombat || TargetHealth->IsDead() ||
+        TargetCombat->CurrentState == ECombatState::Dead) return false;
+
+    const FCombatHitProfile Profile = GetHitProfile(HitKind);
+    if (TargetCombat->IsDeflectionWindowOpen() && HitKind != ECombatHitKind::Critical)
+    {
+        AddPostureDamage(Profile.DeflectedPostureDamage);
+        if (UHealthComponent* DefenderHealth = Target->FindComponentByClass<UHealthComponent>())
+            DefenderHealth->RecoverRally(ERallyRecoveryAction::ParryStrike);
+        return true;
+    }
+
+    TargetHealth->ApplyDamageWithRally(
+        Profile.HealthDamage,
+        Owner,
+        ERallyDamageClass::StandardEnemy);
+    TargetCombat->AddPostureDamage(Profile.PostureDamage);
+
+    if (CachedHealth)
+    {
+        ERallyRecoveryAction RecoveryAction = ERallyRecoveryAction::LightHit;
+        switch (HitKind)
+        {
+        case ECombatHitKind::Heavy: RecoveryAction = ERallyRecoveryAction::HeavyHit; break;
+        case ECombatHitKind::ParryStrike: RecoveryAction = ERallyRecoveryAction::ParryStrike; break;
+        case ECombatHitKind::Critical: RecoveryAction = ERallyRecoveryAction::Critical; break;
+        default: break;
+        }
+        CachedHealth->RecoverRally(RecoveryAction);
+    }
+    return true;
+}
+
+bool UCombatComponent::ResolveCriticalHit(AActor* Target)
+{
+    return ResolveHitAgainst(Target, ECombatHitKind::Critical);
 }
 
 void UCombatComponent::EquipWeapon(const EWeaponSlot Slot)
@@ -235,6 +301,18 @@ EPostureVisualState UCombatComponent::EvaluatePostureVisualState(const float Rem
     return EPostureVisualState::Broken;
 }
 
+FCombatHitProfile UCombatComponent::GetHitProfile(const ECombatHitKind HitKind)
+{
+    switch (HitKind)
+    {
+    case ECombatHitKind::Light: return {24.0f, 18.0f, 32.0f};
+    case ECombatHitKind::Heavy: return {42.0f, 34.0f, 48.0f};
+    case ECombatHitKind::ParryStrike: return {36.0f, 45.0f, 0.0f};
+    case ECombatHitKind::Critical: return {72.0f, 100.0f, 0.0f};
+    default: return {};
+    }
+}
+
 bool UCombatComponent::BeginCommittedAction(
     const ECombatState NewState,
     const float StaminaCost,
@@ -245,6 +323,45 @@ bool UCombatComponent::BeginCommittedAction(
     ActionCommitmentRemaining = DurationSeconds;
     SetState(NewState);
     return true;
+}
+
+void UCombatComponent::QueueMeleeHit(const ECombatHitKind HitKind)
+{
+    PendingHitKind = HitKind;
+    PendingHitDelayRemaining = DarkArisen::CoreLoopTuning::FramesToSeconds(GetStartupFrames());
+    bHasPendingHit = true;
+}
+
+bool UCombatComponent::TraceAndResolvePendingHit()
+{
+    AActor* Owner = GetOwner();
+    UWorld* World = GetWorld();
+    if (!Owner || !World) return false;
+
+    const FVector Forward = Owner->GetActorForwardVector().GetSafeNormal();
+    const FVector Start = Owner->GetActorLocation() + Forward * MeleeTraceStartCentimetres;
+    const FVector End = Owner->GetActorLocation() + Forward * MeleeTraceEndCentimetres;
+    FCollisionQueryParams QueryParams(SCENE_QUERY_STAT(DarkArisenMeleeHit), false, Owner);
+    TArray<FHitResult> Hits;
+    if (!World->SweepMultiByChannel(
+        Hits,
+        Start,
+        End,
+        FQuat::Identity,
+        ECC_Pawn,
+        FCollisionShape::MakeSphere(MeleeTraceRadiusCentimetres),
+        QueryParams)) return false;
+
+    Hits.Sort([Owner](const FHitResult& Left, const FHitResult& Right)
+    {
+        return FVector::DistSquared(Owner->GetActorLocation(), Left.ImpactPoint) <
+            FVector::DistSquared(Owner->GetActorLocation(), Right.ImpactPoint);
+    });
+    for (const FHitResult& Hit : Hits)
+    {
+        if (ResolveHitAgainst(Hit.GetActor(), PendingHitKind)) return true;
+    }
+    return false;
 }
 
 void UCombatComponent::CompleteStagger()

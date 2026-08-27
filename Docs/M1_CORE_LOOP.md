@@ -1,6 +1,6 @@
 # M1 core-loop implementation record
 
-**Status:** first source tranche; not a vertical slice, Alpha, or Beta  
+**Status:** active source implementation; not yet a vertical slice, Alpha, or Beta  
 **Engine:** Unreal Engine 5.5  
 **Authority:** `Docs/DesignAuthority.md`, current engineering handoff, `animation system.md`, `camera system.md`, `interaction system.md`, `docs/design/mechanics/combat_feel.md`, and `docs/design/physics/movement_physics.md`
 
@@ -16,6 +16,9 @@
 - Movement or damage cancels an in-progress interaction. No target-rendering mutation, world-space prompt, fade, or generic loot-container path exists.
 - Jake owns the authored three-second Rally window. Damage-source recovery ranges from 70% for standard attacks to 0% for poison; landed light/heavy/parry-strike/critical hooks recover 15/25/40/100% of the currently available Rally pool.
 - The native combat HUD draws one posture indicator only. It has no health, stamina, Rally, ammo, boss bar, minimap, damage-number, or status-icon path.
+- Light and heavy attacks now queue one sphere trace at the authored startup frame. A valid combatant receives health and posture damage exactly once; a six-frame deflection redirects posture damage to the attacker instead.
+- Successful light/heavy/parry-strike/critical contacts call Jake's Rally recovery path. Critical contacts bypass deflection and consume the full available Rally pool.
+- The C++ greybox now spawns one visible duelling enemy with awareness, pursuit, committed attacks, stamina, health, five-state posture, deflection response, death handling, and no extra HUD.
 
 ## Conflict rulings applied
 
@@ -28,7 +31,7 @@ The later locked rules supersede contradictory Phase 3/6 draft clauses:
 
 ## Still required before M1 acceptance
 
-- authored animation montages, hit traces, damage resolution that calls the Rally recovery hooks, one complete enemy, lock-on, and wound-aware locomotion poses;
+- authored animation montages, animation-notify refinement of the source-level hit timing, lock-on, and wound-aware locomotion poses;
 - physical door and pickup actors, an Examine presentation, an interaction corner widget, and persistence tests;
 - Windows UE 5.5 Development/Shipping compile, Unreal automation execution, controller/touch smoke testing, and measured 60 fps evidence.
 

@@ -79,6 +79,23 @@ bool FDarkArisenM1RallyTuningSpec::RunTest(const FString& Parameters)
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
+    FDarkArisenM1HitProfilesSpec,
+    "DarkArisen.M1.HitProfiles",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FDarkArisenM1HitProfilesSpec::RunTest(const FString& Parameters)
+{
+    const FCombatHitProfile Light = UCombatComponent::GetHitProfile(ECombatHitKind::Light);
+    const FCombatHitProfile Heavy = UCombatComponent::GetHitProfile(ECombatHitKind::Heavy);
+    const FCombatHitProfile Critical = UCombatComponent::GetHitProfile(ECombatHitKind::Critical);
+    TestTrue(TEXT("Light damage is positive"), Light.HealthDamage > 0.0f);
+    TestTrue(TEXT("Heavy exceeds light health damage"), Heavy.HealthDamage > Light.HealthDamage);
+    TestTrue(TEXT("Heavy exceeds light posture damage"), Heavy.PostureDamage > Light.PostureDamage);
+    TestTrue(TEXT("Critical breaks baseline posture"), Critical.PostureDamage >= 100.0f);
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(
     FDarkArisenM1WoundLayersSpec,
     "DarkArisen.M1.WoundLayers",
     EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
