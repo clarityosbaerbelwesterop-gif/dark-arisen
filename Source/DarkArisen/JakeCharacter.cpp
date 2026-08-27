@@ -94,6 +94,7 @@ void AJakeCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
     PlayerInputComponent->BindAction(TEXT("Dodge"), IE_Pressed, this, &AJakeCharacter::PerformDodge);
     PlayerInputComponent->BindAction(TEXT("Interact"), IE_Pressed, this, &AJakeCharacter::TryInteract);
     PlayerInputComponent->BindAction(TEXT("LockOn"), IE_Pressed, this, &AJakeCharacter::ToggleLockOn);
+    PlayerInputComponent->BindAction(TEXT("Rache"), IE_Pressed, this, &AJakeCharacter::TryActivateRache);
     PlayerInputComponent->BindTouch(IE_Pressed, this, &AJakeCharacter::TouchStarted);
     PlayerInputComponent->BindTouch(IE_Repeat, this, &AJakeCharacter::TouchMoved);
     PlayerInputComponent->BindTouch(IE_Released, this, &AJakeCharacter::TouchStopped);
@@ -154,6 +155,14 @@ void AJakeCharacter::LookUpAtRate(const float Rate)
 
 void AJakeCharacter::StartSprint()
 {
+    if (const APlayerController* PlayerController = Cast<APlayerController>(GetController()))
+    {
+        if (PlayerController->IsInputKeyDown(EKeys::Gamepad_RightThumbstick))
+        {
+            TryActivateRache();
+            return;
+        }
+    }
     if (!HealthComponent->IsDead() && StaminaComponent->CurrentStamina > 0.0f &&
         WoundStateComponent->IsSprintAllowed() &&
         CombatComponent->CurrentState == ECombatState::Idle &&
@@ -217,9 +226,25 @@ void AJakeCharacter::TryInteract()
 
 void AJakeCharacter::ToggleLockOn()
 {
+    if (const APlayerController* PlayerController = Cast<APlayerController>(GetController()))
+    {
+        if (PlayerController->IsInputKeyDown(EKeys::Gamepad_LeftThumbstick))
+        {
+            TryActivateRache();
+            return;
+        }
+    }
     if (!HealthComponent->IsDead() &&
         CameraStateComponent->CurrentMode == EPlayerCameraMode::Free)
         LockOnComponent->ToggleLockOn();
+}
+
+void AJakeCharacter::TryActivateRache()
+{
+    if (HealthComponent->IsDead() || InteractionComponent->IsInteracting() ||
+        CameraStateComponent->CurrentMode != EPlayerCameraMode::Free) return;
+    StopSprint();
+    CombatComponent->StartRache();
 }
 
 void AJakeCharacter::UpdateWoundPresentation(const float DeltaSeconds)
@@ -295,6 +320,7 @@ void AJakeCharacter::OnCharacterDied(AActor* /*DamageCauser*/)
     StopSprint();
     LockOnComponent->ReleaseTarget();
     InteractionComponent->CancelActiveInteraction();
+    CameraStateComponent->EnterDeathHold();
     CombatComponent->SetDead();
     GetCharacterMovement()->DisableMovement();
     if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))

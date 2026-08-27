@@ -101,6 +101,8 @@ void UCombatComponent::AddPostureDamage(const float Amount)
     if (PostureVisualState == EPostureVisualState::Broken)
     {
         DeflectionWindowRemaining = 0.0f;
+        bHasPendingHit = false;
+        PendingHitDelayRemaining = 0.0f;
         ActionCommitmentRemaining =
             DarkArisen::CoreLoopTuning::PostureBreakVulnerabilitySeconds;
         SetState(ECombatState::Staggered);

@@ -6,23 +6,23 @@
 
 ## Delivered in this tranche
 
-- Jake has callable keyboard/gamepad inputs for light attack, heavy attack, parry, directional dodge/backstep, jump, sprint, and interaction.
+- Jake has callable keyboard/gamepad inputs for light attack, heavy attack, parry, directional dodge/backstep, jump, sprint, interaction, and unlock-gated Rache (R on keyboard; L3+R3 on gamepad).
 - Combat actions are mutually exclusive and retain a weight-class commitment timer. The six-frame deflection window remains locked at 60 fps.
 - Weapon timing exposes the authored Light, Medium, Heavy, Great, and Polearm startup/recovery values. The Cutlass begins as Medium; the Crystal Katana is Light.
 - Posture drives the five authored visual states: Set, Pressed, Failing, Broken-imminent, and Broken. A break owns a 1.4-second vulnerability and resets to half posture afterward.
 - Health and stamina drive Winded, Hurt, Bad, and Failing layers. Failing blocks sprint. The Crystal Katana suppresses only the wounded animation-set swap; it does not erase Jake's physical condition.
-- Camera control has Free, Anchored, and Authored modes. Anchored refuses look input while preserving movement; Authored refuses both. The four-second death hold and six-second emergence anchor are explicit entry points.
+- Camera control has Free, Anchored, and Authored modes. Anchored refuses look input while preserving movement; Authored refuses both. Jake's death path now enters the four-second Hold; the six-second emergence anchor remains an explicit entry point.
 - Interaction traces only to 1.4 metres, emits one corner-prompt event for four seconds, and runs Begin/Complete/Cancel over a real duration. The default Take duration is 0.6 seconds.
 - Movement or damage cancels an in-progress interaction. No target-rendering mutation, world-space prompt, fade, or generic loot-container path exists.
 - Jake owns the authored three-second Rally window. Damage-source recovery ranges from 70% for standard attacks to 0% for poison; landed light/heavy/parry-strike/critical hooks recover 15/25/40/100% of the currently available Rally pool.
 - The native combat HUD draws one posture indicator only. It has no health, stamina, Rally, ammo, boss bar, minimap, damage-number, or status-icon path.
-- Light and heavy attacks now queue one sphere trace at the authored startup frame. A valid combatant receives health and posture damage exactly once; a six-frame deflection redirects posture damage to the attacker instead.
+- Light and heavy attacks now queue one sphere trace at the authored startup frame. A valid combatant receives health and posture damage exactly once; a six-frame deflection redirects posture damage to the attacker instead. A posture break clears the interrupted combatant's queued contact so a strike cannot land during its broken vulnerability.
 - Successful light/heavy/parry-strike/critical contacts call Jake's Rally recovery path. Critical contacts bypass deflection and consume the full available Rally pool.
 - The C++ greybox now spawns one visible duelling enemy with awareness, pursuit, committed attacks, stamina, health, five-state posture, deflection response, death handling, and no extra HUD.
-- Lock-on chooses the best living combatant inside range, facing cone and line of sight, then smoothly owns facing until toggled or invalidated. It creates no marker, outline, widget or additional HUD element.
+- Lock-on chooses the best living combatant inside the authored 20 m acquisition range, facing cone and line of sight, then smoothly owns facing until toggled, invalidated, or outside the 25 m retention leash. It creates no marker, outline, widget or additional HUD element.
 - Every wound layer exposes an animation-ready physical profile: breathing, favoured side, limp, stagger-run and weapon drag. Jake applies the deterioration to locomotion even when the Katana keeps its clean animation set.
 - The camera boom receives only subtle low-frequency wound drift, scaled exclusively by the wound layer. There is no damage event, impact shake, critical zoom or kill framing path.
-- The greybox contains an interruptible physical door, a 0.6-second physical pickup and a held Examine document. The document uses player-paced Anchored camera while the world remains visible.
+- The greybox contains an interruptible physical door, a 0.6-second physical pickup and a held Examine document. The document uses player-paced Anchored camera while the world remains visible; destroying or invalidating the target now releases that presentation safely instead of stranding the camera.
 - The HUD renders the sole four-second interaction prompt in the screen corner and a translucent Examine reading surface; neither path mutates, highlights or outlines a world target.
 - Door open/broken and pickup taken states can be captured/restored by stable IDs into a SaveGame snapshot. The snapshot performs no disk write and therefore cannot bypass the locked chapter/rest autosave policy.
 - Authored attack montages have a native contact notify that consumes the queued hit exactly once. The startup-frame timer remains only as a functional greybox fallback when no montage asset exists.

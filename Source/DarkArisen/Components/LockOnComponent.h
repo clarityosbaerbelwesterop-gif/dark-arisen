@@ -35,7 +35,10 @@ public:
     AActor* GetCurrentTarget() const { return CurrentTarget; }
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "LockOn", meta = (ClampMin = "100.0"))
-    float MaximumRangeCentimetres = 1600.0f;
+    float MaximumAcquisitionRangeCentimetres = 2000.0f;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "LockOn", meta = (ClampMin = "100.0"))
+    float MaximumRetentionRangeCentimetres = 2500.0f;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "LockOn", meta = (ClampMin = "0.0", ClampMax = "1.0"))
     float MinimumFacingDot = 0.35f;

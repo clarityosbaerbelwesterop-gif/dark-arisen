@@ -92,6 +92,7 @@ def validate(root: Path) -> list[str]:
         "Execute_CancelInteraction",
         "EnterAnchoredUntilReleased",
         "OnExaminePresentationChanged.Broadcast",
+        "bExaminePresentationActive && !ActiveExamineTarget.IsValid()",
     ), errors)
     _require_fragments(root / "Source/DarkArisen/Components/CombatComponent.cpp", (
         "CurrentState != ECombatState::Idle",
@@ -106,6 +107,7 @@ def validate(root: Path) -> list[str]:
         "RecoverRally(RecoveryAction)",
         "TargetCombat->IsDeflectionWindowOpen()",
         "ResolveQueuedMeleeHitFromAnimation",
+        "bHasPendingHit = false",
     ), errors)
     _require_fragments(root / "Source/DarkArisen/Components/HealthComponent.cpp", (
         "RallyWindowRemaining = RallyWindowSeconds",
@@ -125,6 +127,10 @@ def validate(root: Path) -> list[str]:
         "MaximumWoundCameraDriftCentimetres * Instability",
         "CameraBoom->SocketOffset = BaseCameraSocketOffset + LowFrequencyDrift",
         "WoundStateComponent->GetPresentationProfile()",
+        "CameraStateComponent->EnterDeathHold()",
+        "Gamepad_RightThumbstick",
+        "Gamepad_LeftThumbstick",
+        "CombatComponent->StartRache()",
     ), errors)
     _require_fragments(root / "Source/DarkArisen/DuelingEnemyCharacter.cpp", (
         "AwarenessRangeCentimetres",
@@ -173,6 +179,8 @@ def validate(root: Path) -> list[str]:
         "Health->IsDead()",
         "Combat->CurrentState == ECombatState::Dead",
         "Movement->bOrientRotationToMovement = !bLocked",
+        "MaximumAcquisitionRangeCentimetres",
+        "MaximumRetentionRangeCentimetres",
     ), errors)
     _require_fragments(root / "Source/DarkArisen/Components/LockOnComponent.h", (
         "creates no marker, outline, widget or HUD state",
@@ -184,6 +192,7 @@ def validate(root: Path) -> list[str]:
         'ActionName="Dodge"',
         'ActionName="Interact"',
         'ActionName="LockOn"',
+        'ActionName="Rache"',
     ), errors)
 
     source_root = root / "Source/DarkArisen"

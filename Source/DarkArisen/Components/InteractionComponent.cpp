@@ -20,6 +20,10 @@ void UInteractionComponent::TickComponent(
     FActorComponentTickFunction* ThisTickFunction)
 {
     Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+    if (bExaminePresentationActive && !ActiveExamineTarget.IsValid())
+    {
+        CloseExaminePresentation();
+    }
     if (ActiveTarget.IsValid())
     {
         AActor* Target = ActiveTarget.Get();
@@ -39,7 +43,7 @@ void UInteractionComponent::TickComponent(
 
 bool UInteractionComponent::TryBeginInteraction()
 {
-    if (ActiveExamineTarget.IsValid())
+    if (bExaminePresentationActive)
     {
         CloseExaminePresentation();
         return true;
@@ -65,7 +69,7 @@ bool UInteractionComponent::TryBeginInteraction()
 
 void UInteractionComponent::CancelActiveInteraction()
 {
-    if (ActiveExamineTarget.IsValid()) CloseExaminePresentation();
+    if (bExaminePresentationActive) CloseExaminePresentation();
     if (!ActiveTarget.IsValid()) return;
     AActor* Target = ActiveTarget.Get();
     if (Target->GetClass()->ImplementsInterface(UDarkArisenInteractable::StaticClass()))
@@ -116,7 +120,7 @@ AActor* UInteractionComponent::TraceForCandidate() const
 
 void UInteractionComponent::UpdateFocus(const float DeltaTime)
 {
-    AActor* Candidate = (ActiveTarget.IsValid() || ActiveExamineTarget.IsValid())
+    AActor* Candidate = (ActiveTarget.IsValid() || bExaminePresentationActive)
         ? nullptr : TraceForCandidate();
     if (Candidate != FocusedTarget.Get()) SetFocusedTarget(Candidate);
     if (!bPromptVisible) return;
@@ -170,6 +174,7 @@ void UInteractionComponent::BeginExaminePresentation(AActor* Target)
     if (!IsValid(Target) ||
         !Target->GetClass()->ImplementsInterface(UDarkArisenInteractable::StaticClass())) return;
     ActiveExamineTarget = Target;
+    bExaminePresentationActive = true;
     ExamineTitle = IDarkArisenInteractable::Execute_GetExamineTitle(Target);
     ExamineBody = IDarkArisenInteractable::Execute_GetExamineBody(Target);
     if (UCameraStateComponent* Camera =
@@ -180,10 +185,12 @@ void UInteractionComponent::BeginExaminePresentation(AActor* Target)
 
 void UInteractionComponent::CloseExaminePresentation()
 {
-    if (!ActiveExamineTarget.IsValid()) return;
+    if (!bExaminePresentationActive) return;
     AActor* Target = ActiveExamineTarget.Get();
-    if (Target->GetClass()->ImplementsInterface(UDarkArisenInteractable::StaticClass()))
+    if (IsValid(Target) &&
+        Target->GetClass()->ImplementsInterface(UDarkArisenInteractable::StaticClass()))
         IDarkArisenInteractable::Execute_CancelInteraction(Target, GetOwner());
+    bExaminePresentationActive = false;
     ActiveExamineTarget.Reset();
     ExamineTitle = FText::GetEmpty();
     ExamineBody = FText::GetEmpty();

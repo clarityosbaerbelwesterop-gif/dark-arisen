@@ -7,6 +7,7 @@
 #include "Components/CameraStateComponent.h"
 #include "Components/CombatComponent.h"
 #include "Components/HealthComponent.h"
+#include "Components/LockOnComponent.h"
 #include "Components/StaminaComponent.h"
 #include "Components/WoundStateComponent.h"
 #include "CoreLoopTuning.h"
@@ -199,6 +200,24 @@ bool FDarkArisenM1CameraPolicySpec::RunTest(const FString& Parameters)
         Camera->CurrentMode, EPlayerCameraMode::Anchored);
     TestTrue(TEXT("Player-paced anchor has no timer"), Camera->AnchoredTimeRemaining < 0.0f);
     TestTrue(TEXT("Player-paced Examine preserves movement"), Camera->AllowsMoveInput());
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(
+    FDarkArisenM1LockOnLeashSpec,
+    "DarkArisen.M1.LockOnLeash",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FDarkArisenM1LockOnLeashSpec::RunTest(const FString& Parameters)
+{
+    const ULockOnComponent* LockOn = NewObject<ULockOnComponent>();
+    TestTrue(TEXT("Lock-on component created"), LockOn != nullptr);
+    TestTrue(TEXT("Acquisition range is twenty metres"), LockOn && FMath::IsNearlyEqual(
+        LockOn->MaximumAcquisitionRangeCentimetres, 2000.0f));
+    TestTrue(TEXT("Retention leash is twenty-five metres"), LockOn && FMath::IsNearlyEqual(
+        LockOn->MaximumRetentionRangeCentimetres, 2500.0f));
+    TestTrue(TEXT("Retention leash exceeds acquisition range"), LockOn &&
+        LockOn->MaximumRetentionRangeCentimetres > LockOn->MaximumAcquisitionRangeCentimetres);
     return true;
 }
 

@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -36,12 +37,126 @@ REQUIRED_FILES = (
     "Tools/streaming/launch-stream.ps1",
     "Tools/streaming/deploy.ps1",
     "Tools/streaming/collect-host-evidence.ps1",
+    "Tools/streaming/aws/private-single-player.yaml",
+    "Tools/streaming/aws/tailnet-policy.example.hujson",
+    "Tools/streaming/aws/join-private-tailnet.ps1",
+    "Tools/streaming/install-services.ps1",
     "Tools/ci/verify-runner.ps1",
     ".github/workflows/ci.yml",
     ".github/workflows/deploy-streaming.yml",
 )
 
 LFS_PATTERNS = ("*.uasset", "*.umap", "*.fbx", "*.wav")
+
+
+def _text_section(text: str, start: str, end: str) -> str:
+    """Return one indentation-delimited contract section, or an empty string."""
+    start_index = text.find(start)
+    if start_index < 0:
+        return ""
+    end_index = text.find(end, start_index + len(start))
+    return text[start_index:end_index if end_index >= 0 else len(text)]
+
+
+def validate_private_aws_text(
+    template: str,
+    policy: str,
+    join_script: str,
+    install_services: str,
+) -> list[str]:
+    """Fail closed when the optional AWS path stops being private or cost gated."""
+    errors: list[str] = []
+
+    ingress = _text_section(
+        template,
+        "SecurityGroupIngress:",
+        "SecurityGroupEgress:",
+    )
+    if not ingress:
+        errors.append("private AWS template is missing SecurityGroupIngress")
+    else:
+        ports = {
+            int(match)
+            for match in re.findall(r"(?:FromPort|ToPort):\s*(\d+)", ingress)
+        }
+        for port in sorted(ports - {41641}):
+            errors.append(f"private AWS ingress exposes forbidden public port {port}")
+        for fragment in (
+            "IpProtocol: udp",
+            "FromPort: 41641",
+            "ToPort: 41641",
+            "CidrIp: 0.0.0.0/0",
+        ):
+            if fragment not in ingress:
+                errors.append(f"private AWS WireGuard ingress requirement missing: {fragment}")
+
+    for fragment in (
+        "AllowedPattern: \"^APPROVED-",
+        "I_ACKNOWLEDGE_AWS_CHARGES",
+        "HttpTokens: required",
+        "DeletionPolicy: Retain",
+        "UpdateReplacePolicy: Retain",
+        "Encrypted: true",
+        "NO_PUBLIC_GAME_RDP_SSH_WINRM_HTTPS_OR_TURN_INGRESS",
+    ):
+        if fragment not in template:
+            errors.append(f"private AWS safety requirement missing: {fragment}")
+    for forbidden in (
+        "AWS::EC2::KeyPair",
+        "KeyName:",
+        "MasterUserPassword",
+    ):
+        if forbidden in template:
+            errors.append(f"private AWS template contains forbidden credential/admin path: {forbidden}")
+
+    if re.search(r'"(?:src|dst)"\s*:\s*\[\s*"\*"', policy):
+        errors.append("private tailnet policy contains a wildcard source or destination")
+    if any(
+        identity in policy
+        for identity in (
+            "autogroup:member",
+            "autogroup:members",
+            "autogroup:everyone",
+            "autogroup:shared",
+        )
+    ):
+        errors.append("private tailnet policy contains a broad identity")
+    for fragment in (
+        '"tag:dark-arisen"',
+        '"dst": ["tag:dark-arisen"]',
+        '"tcp:443"',
+        '"udp:49160-49200"',
+    ):
+        if fragment not in policy:
+            errors.append(f"private tailnet policy requirement missing: {fragment}")
+
+    funnel_enablement = re.compile(
+        r"(?im)^\s*&\s+\$[A-Za-z][A-Za-z0-9]*\s+funnel\s+(?!reset\b)"
+    )
+    if funnel_enablement.search(join_script) or funnel_enablement.search(install_services):
+        errors.append("Tailscale Funnel must never be enabled for the private game link")
+    for fragment in (
+        '"--auth-key=file:$AuthKeyPath"',
+        "$TailscaleExe funnel reset",
+        "$TailscaleExe serve --bg --https=443 http://127.0.0.1:8080",
+        "Remove-Item -LiteralPath $AuthKeyPath -Force",
+        '"DARKARISEN_PRIVATE_OVERLAY", "1", "Machine"',
+    ):
+        if fragment not in join_script:
+            errors.append(f"private tailnet join requirement missing: {fragment}")
+
+    for fragment in (
+        "[switch]$PrivateTailnet",
+        'if ($PrivateTailnet)',
+        '"100.64.0.0/10"',
+        '"fd7a:115c:a1e0::/48"',
+        "$TailscalePath funnel reset",
+        '-LocalPort "8080,8888,8889"',
+    ):
+        if fragment not in install_services:
+            errors.append(f"private streaming service requirement missing: {fragment}")
+
+    return errors
 
 
 def validate(root: Path) -> list[str]:
@@ -158,6 +273,17 @@ def validate(root: Path) -> list[str]:
             errors.append("Pixel Streaming Infrastructure must remain pinned for UE 5.5")
         if "-ValidateOnly" not in streaming_text:
             errors.append("provider shutdown adapters must support a non-destructive validation mode")
+
+    private_aws_paths = (
+        root / "Tools/streaming/aws/private-single-player.yaml",
+        root / "Tools/streaming/aws/tailnet-policy.example.hujson",
+        root / "Tools/streaming/aws/join-private-tailnet.ps1",
+        root / "Tools/streaming/install-services.ps1",
+    )
+    if all(path.is_file() for path in private_aws_paths):
+        errors.extend(validate_private_aws_text(*(
+            path.read_text(encoding="utf-8") for path in private_aws_paths
+        )))
 
     return errors
 

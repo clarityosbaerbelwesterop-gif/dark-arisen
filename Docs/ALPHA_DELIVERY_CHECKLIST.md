@@ -24,19 +24,19 @@ This file is the progress index. Detailed acceptance criteria remain authoritati
 - [x] Design laws, deterministic validators, frame telemetry and private runner workflow exist.
 - [x] Private one-player Pixel Streaming deployment path and idle deallocation are implemented in source.
 - [ ] Windows UE 5.5 compile, Unreal tests and in-engine smoke evidence.
-- [ ] Explicitly approved GPU host and cost ceiling.
-- [ ] Private iPad stream, NVENC, TURN, latency and shutdown evidence.
+- [ ] Flo/operator-selected GPU host with any cost explicitly approved outside the repository.
+- [ ] Flo/operator-created private iPad link plus NVENC, TURN, latency and shutdown evidence.
 
 ## M1 — Core loop
 
-- [x] Keyboard, gamepad and two-zone touch movement/combat inputs.
+- [x] Keyboard, gamepad and two-zone touch movement/combat inputs, including unlock-gated Rache activation.
 - [x] Committed light/heavy/parry/dodge actions with no cancelling and locked six-frame deflection.
 - [x] Five posture states, four wound layers and Crystal Katana animation exception.
 - [x] Three-second Rally model and posture-only native HUD.
 - [x] Startup-timed melee trace, health/posture resolution, deflection and Rally-on-contact.
 - [x] One greybox duelling enemy with pursuit, committed attacks, posture and death.
 - [ ] Authored montages and animation-notify timing.
-- [x] Lock-on with living-combatant, range, facing and line-of-sight validation; no marker/HUD.
+- [x] Lock-on with living-combatant, 20 m acquisition/25 m retention leash, facing and line-of-sight validation; no marker/HUD.
 - [x] Animation-ready wound presentation profile and wound-only low-frequency camera drift.
 - [x] Native montage contact notify with exactly-once hit consumption and greybox fallback.
 - [ ] Authored wound-aware locomotion animation assets and final feel tuning.
@@ -83,7 +83,7 @@ This file is the progress index. Detailed acceptance criteria remain authoritati
 - [ ] Assassin network, reconstruction, NPC populations, fauna and remaining authored content.
 - [ ] All 19 authored cutscenes and all 22 playable moments implemented.
 - [ ] Dialogue lock, casting matrix, pronunciation guide and subtitle pass complete.
-- [ ] Voice usage rights and exact cost approved by Flo before generation.
+- [ ] AI Voice Generator confirms zero cost and acceptable commercial usage rights before generation; any charge or unclear term requires Flo's explicit approval.
 - [ ] Distinct human-sounding voice assets generated, reviewed and integrated.
 
 ## M8 — Platform, packaging and Alpha sign-off
@@ -93,13 +93,13 @@ This file is the progress index. Detailed acceptance criteria remain authoritati
 - [ ] Accessibility, remapping, subtitle sizing and permitted difficulty settings.
 - [ ] Full regression, performance, save migration, privacy and content-completeness passes.
 - [ ] Private UE 5.5 Alpha ZIP and checksum delivered to Flo.
-- [ ] Private browser play link delivered only after successful deployment and access denial test.
+- [ ] Flo imports/deploys the ZIP on his chosen GPU service and privately completes the browser-link access-denial test; the link is never published in the repository.
 
 ## Current blockers outside source authoring
 
 - No matching private Windows UE 5.5 GitHub runner is accepting the queued workflow.
-- No paid/free GPU entitlement has been proven and approved for deployment.
-- No voice generation may begin before dialogue lock, rights review and explicit cost approval.
+- Flo will handle the GPU and private browser link; no host/runtime evidence has been supplied yet.
+- The AI Voice Generator is expected to be free, but no generation may begin before dialogue lock plus zero-cost and commercial-rights verification.
 - PS5 packaging/certification requires Sony programme access and hardware not present in this workspace.
 
 Source work may continue in PR #4 under Flo's current direction, but blocked runtime evidence must never be marked complete by inference.

@@ -92,6 +92,7 @@ private:
     void PerformDodge();
     void TryInteract();
     void ToggleLockOn();
+    void TryActivateRache();
     void UpdateWoundPresentation(float DeltaSeconds);
     void ApplyWoundLocomotion();
     void TouchStarted(ETouchIndex::Type FingerIndex, FVector Location);

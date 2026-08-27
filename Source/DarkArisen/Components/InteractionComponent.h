@@ -37,7 +37,7 @@ public:
     UFUNCTION(BlueprintPure, Category = "Interaction")
     bool IsInteracting() const
     {
-        return ActiveTarget.IsValid() || ActiveExamineTarget.IsValid();
+        return ActiveTarget.IsValid() || bExaminePresentationActive;
     }
 
     UFUNCTION(BlueprintPure, Category = "Interaction|Prompt")
@@ -47,7 +47,7 @@ public:
     FText GetPromptLabel() const { return VisiblePromptLabel; }
 
     UFUNCTION(BlueprintPure, Category = "Interaction|Examine")
-    bool IsExamineVisible() const { return ActiveExamineTarget.IsValid(); }
+    bool IsExamineVisible() const { return bExaminePresentationActive; }
 
     UFUNCTION(BlueprintPure, Category = "Interaction|Examine")
     FText GetExamineTitle() const { return ExamineTitle; }
@@ -79,6 +79,7 @@ private:
     TWeakObjectPtr<AActor> ActiveExamineTarget;
     float PromptTimeRemaining = 0.0f;
     bool bPromptVisible = false;
+    bool bExaminePresentationActive = false;
 
     UPROPERTY()
     FText VisiblePromptLabel;

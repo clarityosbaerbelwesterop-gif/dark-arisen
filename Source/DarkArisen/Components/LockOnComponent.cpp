@@ -73,7 +73,7 @@ bool ULockOnComponent::AcquireBestTarget()
         const float DistanceScore = Offset.SizeSquared();
         const float FacingPenalty =
             (1.0f - FVector::DotProduct(Owner->GetActorForwardVector(), Offset.GetSafeNormal())) *
-            FMath::Square(MaximumRangeCentimetres);
+            FMath::Square(MaximumAcquisitionRangeCentimetres);
         const float Score = DistanceScore + FacingPenalty;
         if (Score < BestScore)
         {
@@ -108,7 +108,10 @@ bool ULockOnComponent::IsEligibleTarget(AActor* Candidate, const bool bRequireFa
         return false;
 
     const FVector Offset = Candidate->GetActorLocation() - Owner->GetActorLocation();
-    if (Offset.SizeSquared() > FMath::Square(MaximumRangeCentimetres)) return false;
+    const float MaximumRange = bRequireFacing
+        ? MaximumAcquisitionRangeCentimetres
+        : FMath::Max(MaximumAcquisitionRangeCentimetres, MaximumRetentionRangeCentimetres);
+    if (Offset.SizeSquared() > FMath::Square(MaximumRange)) return false;
     if (bRequireFacing && FVector::DotProduct(
         Owner->GetActorForwardVector(), Offset.GetSafeNormal()) < MinimumFacingDot) return false;
 
