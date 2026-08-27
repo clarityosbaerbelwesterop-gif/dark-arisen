@@ -1,0 +1,107 @@
+#!/usr/bin/env python3
+"""Deterministic source contract for the markerless M2 quest foundation."""
+
+from __future__ import annotations
+
+import argparse
+import sys
+from pathlib import Path
+
+
+REQUIRED_FILES = (
+    "Source/DarkArisen/Components/QuestJournalComponent.h",
+    "Source/DarkArisen/Components/QuestJournalComponent.cpp",
+    "Docs/M2_VERTICAL_SLICE.md",
+)
+
+
+def _require_fragments(path: Path, fragments: tuple[str, ...], errors: list[str]) -> None:
+    if not path.is_file():
+        return
+    text = path.read_text(encoding="utf-8")
+    for fragment in fragments:
+        if fragment not in text:
+            errors.append(f"{path.name} requirement missing: {fragment}")
+
+
+def validate(root: Path) -> list[str]:
+    errors: list[str] = []
+    for relative in REQUIRED_FILES:
+        if not (root / relative).is_file():
+            errors.append(f"missing M2 quest-foundation file: {relative}")
+
+    header = root / "Source/DarkArisen/Components/QuestJournalComponent.h"
+    source = root / "Source/DarkArisen/Components/QuestJournalComponent.cpp"
+    _require_fragments(header, (
+        "Conversation,",
+        "Overheard,",
+        "Object,",
+        "Proximity,",
+        "WorldState,",
+        "Absence,",
+        "bSilentAtActivation",
+        "bRequiresSpokenAgreement",
+        "bInitialEntryDistorted",
+        "ExpirationDurationMinutes",
+        "MutuallyExclusiveQuestIds",
+        "SearchJournal",
+        "SaveGame",
+    ), errors)
+    _require_fragments(source, (
+        "RuntimeState->Lifecycle != EQuestLifecycle::Dormant",
+        "Definition->bRequiresSpokenAgreement && !bSpokenAgreementConfirmed",
+        "Definition->bSilentAtActivation",
+        "ApplyMutualExclusions",
+        "AppendJournalCorrection",
+        "Entry.Sequence = NextJournalSequence++",
+        "ProcessExpirations",
+        "RuntimeState.OutcomeId = ExpiredOutcomeId",
+        "ESearchCase::IgnoreCase",
+    ), errors)
+    _require_fragments(root / "Source/DarkArisen/JakeCharacter.cpp", (
+        'CreateDefaultSubobject<UQuestJournalComponent>(TEXT("QuestJournalComponent"))',
+    ), errors)
+    _require_fragments(root / "Source/DarkArisen/Tests/DesignLawsSpec.cpp", (
+        "DarkArisen.M2.MarkerlessQuestFoundation",
+        "Exactly six authored activation triggers",
+        "Silent activation adds no journal entry",
+        "Expiry is an outcome, not a failure state",
+    ), errors)
+
+    quest_text = "\n".join(
+        path.read_text(encoding="utf-8")
+        for path in (header, source)
+        if path.is_file()
+    )
+    for forbidden in (
+        "OnQuestActivated",
+        "OnJournalEntryAdded",
+        "Quest Added",
+        "Quest Failed",
+        "AddQuestMarker",
+        "GenerateRadiantQuest",
+        "SetViewTarget",
+        "PlaySound",
+        "JournalEntries.Sort",
+    ):
+        if forbidden in quest_text:
+            errors.append(f"markerless quest foundation forbids: {forbidden}")
+    return errors
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[2])
+    args = parser.parse_args()
+    errors = validate(args.root.resolve())
+    if errors:
+        print("M2 quest-foundation validation failed:", file=sys.stderr)
+        for error in errors:
+            print(f"- {error}", file=sys.stderr)
+        return 1
+    print("M2 markerless quest-foundation validation passed.")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -29,6 +29,7 @@ No source is deleted. A legacy source remains useful for names, tone, imagery, a
 | Music | No reactive music, stingers, or adaptive layers | `cutscene catalog.md` |
 | End credits | Main-story completion is followed by full credits with music; the cue must remain non-reactive and be approved/licensed before integration | Flo's current written direction; `cutscene catalog.md` music law |
 | Cinematics | Nineteen authored cutscenes; twenty-two listed moments must remain playable | `cutscene catalog.md` |
+| Quests and journal | Six invisible activation modes; no markers, acceptance UI, failure screens, reminders or consequence cards; Jake's chronological notebook may remain wrong until a later correction | `quest activation.md`, `quest design philosophy.md` |
 | Travel | No fast travel over water; only the three authored land entries | `travel system.md`, current engineering handoff |
 | Saves | Autosave only on chapter boundary or rest; suppressed from the false letter through the dock | `time and rest.md`, current engineering handoff |
 | Progression | Body, Craft, and Standing do not convert; no respec | `progression overview.md`, `skill tree.md` |

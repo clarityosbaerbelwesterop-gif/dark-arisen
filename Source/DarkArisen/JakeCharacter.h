@@ -15,6 +15,7 @@ class UHealthComponent;
 class UInteractionComponent;
 class ULockOnComponent;
 class UAnimMontage;
+class UQuestJournalComponent;
 class USpringArmComponent;
 class UStaminaComponent;
 
@@ -46,6 +47,8 @@ public:
     TObjectPtr<UInteractionComponent> InteractionComponent;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Jake|Components")
     TObjectPtr<ULockOnComponent> LockOnComponent;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Jake|Components")
+    TObjectPtr<UQuestJournalComponent> QuestJournalComponent;
 
 protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Jake|Camera")

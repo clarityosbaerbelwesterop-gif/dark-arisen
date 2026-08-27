@@ -46,6 +46,7 @@ PROHIBITED_IDENTIFIERS: tuple[tuple[str, re.Pattern[str]], ...] = (
     ("No dynamic music", re.compile(r"\b(?:DynamicMusic|AdaptiveMusic|MusicStinger)\b", re.I)),
     ("No fast travel over water", re.compile(r"\b(?:WaterFastTravel|FastTravelAcrossWater)\b", re.I)),
     ("No interface navigation aids", re.compile(r"\b(?:MiniMap|QuestMarker|DamageNumber)\b", re.I)),
+    ("No radiant quest generator", re.compile(r"\bGenerateRadiantQuest\b", re.I)),
     ("No systemic romance", re.compile(r"\bRomanceSystem\b", re.I)),
     ("The undercroft is never authored", re.compile(r"\b(?:UndercroftMap|UndercroftLevel)\b", re.I)),
 )

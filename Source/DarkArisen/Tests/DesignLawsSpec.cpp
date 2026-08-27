@@ -9,6 +9,7 @@
 #include "Components/CombatComponent.h"
 #include "Components/HealthComponent.h"
 #include "Components/LockOnComponent.h"
+#include "Components/QuestJournalComponent.h"
 #include "Components/StaminaComponent.h"
 #include "Components/WoundStateComponent.h"
 #include "CoreLoopTuning.h"
@@ -273,6 +274,135 @@ bool FDarkArisenM1InteractionContractSpec::RunTest(const FString& Parameters)
         TestEqual(TEXT("Interaction snapshot preserves state bits"),
             Snapshot->StateByPersistentId.FindRef(TEXT("M1.TestDoor")), 3);
     }
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(
+    FDarkArisenM2MarkerlessQuestFoundationSpec,
+    "DarkArisen.M2.MarkerlessQuestFoundation",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FDarkArisenM2MarkerlessQuestFoundationSpec::RunTest(const FString& Parameters)
+{
+    TestEqual(TEXT("Exactly six authored activation triggers"),
+        static_cast<uint8>(EQuestActivationTrigger::Count), static_cast<uint8>(6));
+    UQuestJournalComponent* Journal = NewObject<UQuestJournalComponent>();
+    TestTrue(TEXT("Quest journal component created"), Journal != nullptr);
+    if (!Journal) return false;
+
+    FQuestActivationDefinition Conversation;
+    Conversation.QuestId = TEXT("M2.Test.Conversation");
+    Conversation.Trigger = EQuestActivationTrigger::Conversation;
+    Conversation.InitialEntryId = TEXT("M2.Entry.Conversation");
+    Conversation.InitialJakeText = FText::FromString(TEXT("She mentioned the old ford."));
+    Conversation.InitialDirections = FText::FromString(TEXT("East of the split cedar."));
+    Conversation.MutuallyExclusiveQuestIds.Add(TEXT("M2.Test.OtherPath"));
+
+    FQuestActivationDefinition OtherPath;
+    OtherPath.QuestId = TEXT("M2.Test.OtherPath");
+    OtherPath.Trigger = EQuestActivationTrigger::Object;
+    OtherPath.bSilentAtActivation = true;
+
+    TestTrue(TEXT("Conversation definition registered"),
+        Journal->RegisterQuestDefinition(Conversation));
+    TestTrue(TEXT("Excluded definition registered"),
+        Journal->RegisterQuestDefinition(OtherPath));
+    TestTrue(TEXT("Conversation activates without an accept button"), Journal->ActivateQuest(
+        Conversation.QuestId, EQuestActivationTrigger::Conversation, 100, false));
+    TestEqual(TEXT("Normal activation writes exactly one chronological note"),
+        Journal->GetJournalEntries().Num(), 1);
+
+    FQuestRuntimeState RuntimeState;
+    TestTrue(TEXT("Conversation state can be read"),
+        Journal->TryGetQuestState(Conversation.QuestId, RuntimeState));
+    TestEqual(TEXT("Conversation is active"), RuntimeState.Lifecycle, EQuestLifecycle::Active);
+    TestTrue(TEXT("Excluded path state can be read"),
+        Journal->TryGetQuestState(OtherPath.QuestId, RuntimeState));
+    TestEqual(TEXT("Mutual exclusion is silent and persistent"),
+        RuntimeState.Lifecycle, EQuestLifecycle::Unavailable);
+
+    UQuestJournalComponent* ReverseJournal = NewObject<UQuestJournalComponent>();
+    TestTrue(TEXT("Reverse exclusion journal created"), ReverseJournal != nullptr);
+    if (ReverseJournal)
+    {
+        TestTrue(TEXT("Reverse conversation definition registered"),
+            ReverseJournal->RegisterQuestDefinition(Conversation));
+        TestTrue(TEXT("Reverse other-path definition registered"),
+            ReverseJournal->RegisterQuestDefinition(OtherPath));
+        TestTrue(TEXT("Either side can establish a mutual exclusion"),
+            ReverseJournal->ActivateQuest(
+                OtherPath.QuestId, EQuestActivationTrigger::Object, 100, false));
+        TestTrue(TEXT("Reverse excluded state can be read"),
+            ReverseJournal->TryGetQuestState(Conversation.QuestId, RuntimeState));
+        TestEqual(TEXT("Mutual exclusion is symmetric"),
+            RuntimeState.Lifecycle, EQuestLifecycle::Unavailable);
+    }
+
+    FQuestActivationDefinition Silent;
+    Silent.QuestId = TEXT("M2.Test.Silent");
+    Silent.Trigger = EQuestActivationTrigger::Proximity;
+    Silent.bSilentAtActivation = true;
+    TestTrue(TEXT("Silent definition registered"), Journal->RegisterQuestDefinition(Silent));
+    TestTrue(TEXT("Proximity activation succeeds silently"), Journal->ActivateQuest(
+        Silent.QuestId, EQuestActivationTrigger::Proximity, 120, false));
+    TestEqual(TEXT("Silent activation adds no journal entry"),
+        Journal->GetJournalEntries().Num(), 1);
+    TestTrue(TEXT("Later knowledge reveals the silent quest"), Journal->RevealSilentQuest(
+        Silent.QuestId,
+        TEXT("M2.Entry.Rumour"),
+        FText::FromString(TEXT("They said the bridge was north.")),
+        FText::FromString(TEXT("North of the flooded field.")),
+        360,
+        true));
+    TestTrue(TEXT("A later correction appends instead of erasing the rumour"),
+        Journal->AppendJournalCorrection(
+            Silent.QuestId,
+            TEXT("M2.Entry.Correction"),
+            FText::FromString(TEXT("The bridge is west, not north.")),
+            FText::FromString(TEXT("West of the flooded field.")),
+            420));
+    const TArray<FQuestJournalEntry> Entries = Journal->GetJournalEntries();
+    TestEqual(TEXT("Rumour and correction both remain"), Entries.Num(), 3);
+    if (Entries.Num() >= 3)
+    {
+        TestTrue(TEXT("Rumour remains marked distorted"), Entries[1].bDistorted);
+        TestTrue(TEXT("Correction is explicitly chronological"),
+            Entries[2].bCorrection && Entries[2].Sequence > Entries[1].Sequence);
+    }
+    TestEqual(TEXT("Plain notebook search finds the correction"),
+        Journal->SearchJournal(TEXT("west")).Num(), 1);
+
+    FQuestActivationDefinition Contract;
+    Contract.QuestId = TEXT("M2.Test.Contract");
+    Contract.Trigger = EQuestActivationTrigger::Conversation;
+    Contract.bRequiresSpokenAgreement = true;
+    Contract.InitialEntryId = TEXT("M2.Entry.Contract");
+    Contract.InitialJakeText = FText::FromString(TEXT("I gave my word."));
+    TestTrue(TEXT("Contract definition registered"),
+        Journal->RegisterQuestDefinition(Contract));
+    TestFalse(TEXT("Contract cannot start before the spoken agreement"), Journal->ActivateQuest(
+        Contract.QuestId, EQuestActivationTrigger::Conversation, 500, false));
+    TestTrue(TEXT("Spoken agreement starts the contract"), Journal->ActivateQuest(
+        Contract.QuestId, EQuestActivationTrigger::Conversation, 500, true));
+
+    FQuestActivationDefinition Expiring;
+    Expiring.QuestId = TEXT("M2.Test.Expiring");
+    Expiring.Trigger = EQuestActivationTrigger::WorldState;
+    Expiring.bSilentAtActivation = true;
+    Expiring.ExpirationDurationMinutes = 30;
+    TestTrue(TEXT("Expiring definition registered"),
+        Journal->RegisterQuestDefinition(Expiring));
+    TestTrue(TEXT("World-state quest activates"), Journal->ActivateQuest(
+        Expiring.QuestId, EQuestActivationTrigger::WorldState, 600, false));
+    TestEqual(TEXT("No early expiry"), Journal->ProcessExpirations(629), 0);
+    TestEqual(TEXT("Expiry resolves without a warning entry"),
+        Journal->ProcessExpirations(630), 1);
+    TestTrue(TEXT("Expired state can be read"),
+        Journal->TryGetQuestState(Expiring.QuestId, RuntimeState));
+    TestEqual(TEXT("Expiry is an outcome, not a failure state"),
+        RuntimeState.Lifecycle, EQuestLifecycle::Resolved);
+    TestEqual(TEXT("Expiry added no journal notification"),
+        Journal->GetJournalEntries().Num(), 4);
     return true;
 }
 

@@ -12,6 +12,7 @@
 #include "Components/InputComponent.h"
 #include "Components/InteractionComponent.h"
 #include "Components/LockOnComponent.h"
+#include "Components/QuestJournalComponent.h"
 #include "Components/StaminaComponent.h"
 #include "Engine/Engine.h"
 #include "Engine/GameViewportClient.h"
@@ -44,6 +45,8 @@ AJakeCharacter::AJakeCharacter()
     CameraStateComponent = CreateDefaultSubobject<UCameraStateComponent>(TEXT("CameraStateComponent"));
     InteractionComponent = CreateDefaultSubobject<UInteractionComponent>(TEXT("InteractionComponent"));
     LockOnComponent = CreateDefaultSubobject<ULockOnComponent>(TEXT("LockOnComponent"));
+    QuestJournalComponent =
+        CreateDefaultSubobject<UQuestJournalComponent>(TEXT("QuestJournalComponent"));
 
     CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
     CameraBoom->SetupAttachment(RootComponent);

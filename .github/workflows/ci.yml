@@ -1,4 +1,4 @@
-name: M0-M1 CI
+name: M0-M2 CI
 
 on:
   push:
@@ -38,6 +38,10 @@ jobs:
       - name: Validate M1 core-loop contract
         shell: pwsh
         run: python Tools/ci/validate_m1.py
+
+      - name: Validate M2 markerless quest foundation
+        shell: pwsh
+        run: python Tools/ci/validate_m2.py
 
       - name: Audit design-law prohibitions
         shell: pwsh

@@ -51,7 +51,8 @@ This file is the progress index. Detailed acceptance criteria remain authoritati
 
 - [ ] Rexa jungle region slice, settlement, Cenote dungeon and required traversal.
 - [ ] Isabel Cruz boss with killed/spared/avoided outcomes and four-second death hold.
-- [ ] Physical journal, six invisible quest activation paths, three Turns and one Standing mission.
+- [x] Native markerless quest state with all six activation modes, silent activation, fallible chronological journal data, internal expiry outcomes and mutual exclusion.
+- [ ] Physical held journal presentation, local-direction dialogue, three authored Turns and one authored Standing mission.
 - [ ] Two-hour evidence run satisfying the M2 merge gate.
 
 ## M3 — Ship
