@@ -39,6 +39,21 @@ public:
     UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
     FText GetInteractionLabel() const;
 
+    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction|Examine")
+    FText GetExamineTitle() const;
+
+    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction|Examine")
+    FText GetExamineBody() const;
+
+    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction|Persistence")
+    FName GetPersistentInteractionId() const;
+
+    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction|Persistence")
+    int32 CapturePersistentState() const;
+
+    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction|Persistence")
+    void RestorePersistentState(int32 StateBits);
+
     UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
     void BeginInteraction(AActor* Interactor);
 

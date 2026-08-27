@@ -11,6 +11,11 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
     FOnInteractionPromptChanged, bool, bVisible, const FText&, Label);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
     FOnInteractionStateChanged, AActor*, Target, bool, bInteracting);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(
+    FOnExaminePresentationChanged,
+    bool, bVisible,
+    const FText&, Title,
+    const FText&, Body);
 
 /** Finds one looked-at target at arm's reach and runs its physical duration. */
 UCLASS(ClassGroup = (DarkArisen), meta = (BlueprintSpawnableComponent))
@@ -30,7 +35,25 @@ public:
     void CancelActiveInteraction();
 
     UFUNCTION(BlueprintPure, Category = "Interaction")
-    bool IsInteracting() const { return ActiveTarget.IsValid(); }
+    bool IsInteracting() const
+    {
+        return ActiveTarget.IsValid() || ActiveExamineTarget.IsValid();
+    }
+
+    UFUNCTION(BlueprintPure, Category = "Interaction|Prompt")
+    bool IsPromptVisible() const { return bPromptVisible; }
+
+    UFUNCTION(BlueprintPure, Category = "Interaction|Prompt")
+    FText GetPromptLabel() const { return VisiblePromptLabel; }
+
+    UFUNCTION(BlueprintPure, Category = "Interaction|Examine")
+    bool IsExamineVisible() const { return ActiveExamineTarget.IsValid(); }
+
+    UFUNCTION(BlueprintPure, Category = "Interaction|Examine")
+    FText GetExamineTitle() const { return ExamineTitle; }
+
+    UFUNCTION(BlueprintPure, Category = "Interaction|Examine")
+    FText GetExamineBody() const { return ExamineBody; }
 
     UFUNCTION(BlueprintPure, Category = "Interaction")
     AActor* GetFocusedTarget() const { return FocusedTarget.Get(); }
@@ -47,15 +70,28 @@ public:
     UPROPERTY(BlueprintAssignable, Category = "Interaction|Events")
     FOnInteractionStateChanged OnInteractionStateChanged;
 
+    UPROPERTY(BlueprintAssignable, Category = "Interaction|Events")
+    FOnExaminePresentationChanged OnExaminePresentationChanged;
+
 private:
     TWeakObjectPtr<AActor> FocusedTarget;
     TWeakObjectPtr<AActor> ActiveTarget;
+    TWeakObjectPtr<AActor> ActiveExamineTarget;
     float PromptTimeRemaining = 0.0f;
     bool bPromptVisible = false;
+
+    UPROPERTY()
+    FText VisiblePromptLabel;
+    UPROPERTY()
+    FText ExamineTitle;
+    UPROPERTY()
+    FText ExamineBody;
 
     AActor* TraceForCandidate() const;
     void UpdateFocus(float DeltaTime);
     void SetFocusedTarget(AActor* NewTarget);
     void SetPromptVisible(bool bVisible);
     void CompleteActiveInteraction();
+    void BeginExaminePresentation(AActor* Target);
+    void CloseExaminePresentation();
 };

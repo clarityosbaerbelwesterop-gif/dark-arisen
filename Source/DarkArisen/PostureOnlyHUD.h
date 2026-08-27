@@ -20,4 +20,9 @@ public:
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Posture")
     FLinearColor SetColor = FLinearColor(0.82f, 0.62f, 0.10f, 0.92f);
+
+private:
+    void DrawPosture();
+    void DrawInteractionPrompt();
+    void DrawExaminePresentation();
 };

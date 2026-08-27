@@ -27,9 +27,15 @@ void UCameraStateComponent::TickComponent(
     WoundInstabilityAlpha = CachedWoundState
         ? CachedWoundState->GetCameraInstabilityAlpha()
         : 0.0f;
-    if (CurrentMode != EPlayerCameraMode::Anchored) return;
+    if (CurrentMode != EPlayerCameraMode::Anchored || AnchoredTimeRemaining < 0.0f) return;
     AnchoredTimeRemaining = FMath::Max(0.0f, AnchoredTimeRemaining - DeltaTime);
     if (AnchoredTimeRemaining <= 0.0f) ReleaseToFree();
+}
+
+void UCameraStateComponent::EnterAnchoredUntilReleased()
+{
+    AnchoredTimeRemaining = -1.0f;
+    SetMode(EPlayerCameraMode::Anchored);
 }
 
 void UCameraStateComponent::EnterAnchored(const float DurationSeconds)

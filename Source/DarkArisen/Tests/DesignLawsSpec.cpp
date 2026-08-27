@@ -11,6 +11,8 @@
 #include "Components/WoundStateComponent.h"
 #include "CoreLoopTuning.h"
 #include "DesignLaws.h"
+#include "Interaction/InteractionPersistence.h"
+#include "Interaction/PhysicalDoorActor.h"
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
     FDarkArisenDesignLawsSpec,
@@ -192,6 +194,11 @@ bool FDarkArisenM1CameraPolicySpec::RunTest(const FString& Parameters)
     Camera->EnterAuthored();
     TestFalse(TEXT("Authored refuses look"), Camera->AllowsLookInput());
     TestFalse(TEXT("Authored refuses movement"), Camera->AllowsMoveInput());
+    Camera->EnterAnchoredUntilReleased();
+    TestEqual(TEXT("Player-paced Examine is anchored"),
+        Camera->CurrentMode, EPlayerCameraMode::Anchored);
+    TestTrue(TEXT("Player-paced anchor has no timer"), Camera->AnchoredTimeRemaining < 0.0f);
+    TestTrue(TEXT("Player-paced Examine preserves movement"), Camera->AllowsMoveInput());
     return true;
 }
 
@@ -209,6 +216,17 @@ bool FDarkArisenM1InteractionContractSpec::RunTest(const FString& Parameters)
         FMath::IsNearlyEqual(CoreLoopTuning::InteractionPromptSeconds, 4.0f));
     TestTrue(TEXT("Default take duration is six tenths"),
         FMath::IsNearlyEqual(CoreLoopTuning::DefaultTakeSeconds, 0.6f));
+    TestEqual(TEXT("Door open state uses first bit"), APhysicalDoorActor::OpenStateBit, 1);
+    TestEqual(TEXT("Door broken state uses second bit"), APhysicalDoorActor::BrokenStateBit, 2);
+    UInteractionStateSnapshot* Snapshot = NewObject<UInteractionStateSnapshot>();
+    TestTrue(TEXT("Interaction snapshot created"), Snapshot != nullptr);
+    if (Snapshot)
+    {
+        Snapshot->StateByPersistentId.Add(TEXT("M1.TestDoor"),
+            APhysicalDoorActor::OpenStateBit | APhysicalDoorActor::BrokenStateBit);
+        TestEqual(TEXT("Interaction snapshot preserves state bits"),
+            Snapshot->StateByPersistentId.FindRef(TEXT("M1.TestDoor")), 3);
+    }
     return true;
 }
 

@@ -22,6 +22,9 @@
 - Lock-on chooses the best living combatant inside range, facing cone and line of sight, then smoothly owns facing until toggled or invalidated. It creates no marker, outline, widget or additional HUD element.
 - Every wound layer exposes an animation-ready physical profile: breathing, favoured side, limp, stagger-run and weapon drag. Jake applies the deterioration to locomotion even when the Katana keeps its clean animation set.
 - The camera boom receives only subtle low-frequency wound drift, scaled exclusively by the wound layer. There is no damage event, impact shake, critical zoom or kill framing path.
+- The greybox contains an interruptible physical door, a 0.6-second physical pickup and a held Examine document. The document uses player-paced Anchored camera while the world remains visible.
+- The HUD renders the sole four-second interaction prompt in the screen corner and a translucent Examine reading surface; neither path mutates, highlights or outlines a world target.
+- Door open/broken and pickup taken states can be captured/restored by stable IDs into a SaveGame snapshot. The snapshot performs no disk write and therefore cannot bypass the locked chapter/rest autosave policy.
 
 ## Conflict rulings applied
 
@@ -35,7 +38,7 @@ The later locked rules supersede contradictory Phase 3/6 draft clauses:
 ## Still required before M1 acceptance
 
 - authored animation assets/poses and animation-notify refinement of the source-level hit timing;
-- physical door and pickup actors, an Examine presentation, an interaction corner widget, and persistence tests;
+- authored hand/door/pickup animation assets and in-engine persistence/presentation tests;
 - Windows UE 5.5 Development/Shipping compile, Unreal automation execution, controller/touch smoke testing, and measured 60 fps evidence.
 
 No runtime gate may be inferred from static checks. This tranche is intentionally kept inside the existing private draft PR and must not be merged on its own.

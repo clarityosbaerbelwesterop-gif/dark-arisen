@@ -32,6 +32,7 @@ public:
         FActorComponentTickFunction* ThisTickFunction) override;
 
     UFUNCTION(BlueprintCallable, Category = "Camera|Mode") void EnterAnchored(float DurationSeconds);
+    UFUNCTION(BlueprintCallable, Category = "Camera|Mode") void EnterAnchoredUntilReleased();
     UFUNCTION(BlueprintCallable, Category = "Camera|Mode") void EnterDeathHold();
     UFUNCTION(BlueprintCallable, Category = "Camera|Mode") void EnterEmergenceAnchor();
     UFUNCTION(BlueprintCallable, Category = "Camera|Mode") void EnterAuthored();

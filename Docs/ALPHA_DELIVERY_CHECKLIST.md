@@ -39,7 +39,9 @@ This file is the progress index. Detailed acceptance criteria remain authoritati
 - [x] Lock-on with living-combatant, range, facing and line-of-sight validation; no marker/HUD.
 - [x] Animation-ready wound presentation profile and wound-only low-frequency camera drift.
 - [ ] Authored wound-aware locomotion animation assets and final feel tuning.
-- [ ] Physical doors/pickups, Examine presentation, corner widget and persistence tests.
+- [x] Physical greybox door/pickup, held Examine presentation and four-second corner prompt.
+- [x] Stable-ID interaction SaveGame snapshot capture/restore without an unauthorised disk write.
+- [ ] Authored interaction animation assets and in-engine persistence/presentation evidence.
 - [ ] Five-minute encounter at measured 60 fps with controller/touch evidence.
 
 ## M2 — Vertical slice

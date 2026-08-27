@@ -24,6 +24,30 @@ FText IDarkArisenInteractable::GetInteractionLabel_Implementation() const
     return NSLOCTEXT("DarkArisenInteraction", "DefaultVerb", "Interact");
 }
 
+FText IDarkArisenInteractable::GetExamineTitle_Implementation() const
+{
+    return FText::GetEmpty();
+}
+
+FText IDarkArisenInteractable::GetExamineBody_Implementation() const
+{
+    return FText::GetEmpty();
+}
+
+FName IDarkArisenInteractable::GetPersistentInteractionId_Implementation() const
+{
+    return NAME_None;
+}
+
+int32 IDarkArisenInteractable::CapturePersistentState_Implementation() const
+{
+    return 0;
+}
+
+void IDarkArisenInteractable::RestorePersistentState_Implementation(const int32 /*StateBits*/)
+{
+}
+
 void IDarkArisenInteractable::BeginInteraction_Implementation(AActor* /*Interactor*/)
 {
 }

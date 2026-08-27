@@ -24,6 +24,14 @@ REQUIRED_FILES = (
     "Source/DarkArisen/DuelingEnemyCharacter.cpp",
     "Source/DarkArisen/Components/LockOnComponent.h",
     "Source/DarkArisen/Components/LockOnComponent.cpp",
+    "Source/DarkArisen/Interaction/PhysicalDoorActor.h",
+    "Source/DarkArisen/Interaction/PhysicalDoorActor.cpp",
+    "Source/DarkArisen/Interaction/PhysicalPickupActor.h",
+    "Source/DarkArisen/Interaction/PhysicalPickupActor.cpp",
+    "Source/DarkArisen/Interaction/ExamineDocumentActor.h",
+    "Source/DarkArisen/Interaction/ExamineDocumentActor.cpp",
+    "Source/DarkArisen/Interaction/InteractionPersistence.h",
+    "Source/DarkArisen/Interaction/InteractionPersistence.cpp",
     "Docs/M1_CORE_LOOP.md",
 )
 
@@ -80,6 +88,8 @@ def validate(root: Path) -> list[str]:
         "Execute_BeginInteraction",
         "Execute_CompleteInteraction",
         "Execute_CancelInteraction",
+        "EnterAnchoredUntilReleased",
+        "OnExaminePresentationChanged.Broadcast",
     ), errors)
     _require_fragments(root / "Source/DarkArisen/Components/CombatComponent.cpp", (
         "CurrentState != ECombatState::Idle",
@@ -104,6 +114,8 @@ def validate(root: Path) -> list[str]:
     _require_fragments(root / "Source/DarkArisen/PostureOnlyHUD.cpp", (
         "PermittedCombatHudElements == 1",
         "GetPostureRemainingFraction",
+        "IsPromptVisible",
+        "IsExamineVisible",
     ), errors)
     _require_fragments(root / "Source/DarkArisen/JakeCharacter.cpp", (
         "HealthComponent->bRallyEnabled = true",
@@ -120,6 +132,31 @@ def validate(root: Path) -> list[str]:
     ), errors)
     _require_fragments(root / "Source/DarkArisen/GreyboxGameMode.cpp", (
         "SpawnActor<ADuelingEnemyCharacter>",
+        "SpawnActor<APhysicalDoorActor>",
+        "SpawnActor<APhysicalPickupActor>",
+        "SpawnActor<AExamineDocumentActor>",
+    ), errors)
+    _require_fragments(root / "Source/DarkArisen/Interaction/PhysicalDoorActor.cpp", (
+        "FInterpConstantTo",
+        "OpenStateBit",
+        "BrokenStateBit",
+        "SetSimulatePhysics(true)",
+    ), errors)
+    _require_fragments(root / "Source/DarkArisen/Interaction/PhysicalPickupActor.cpp", (
+        "DefaultTakeSeconds",
+        "VInterpTo",
+        "bTaken",
+        "ApplyTakenState",
+    ), errors)
+    _require_fragments(root / "Source/DarkArisen/Interaction/ExamineDocumentActor.cpp", (
+        "AttachToActor",
+        "KeepWorldTransform",
+        "GetExamineBody_Implementation",
+    ), errors)
+    _require_fragments(root / "Source/DarkArisen/Interaction/InteractionPersistence.cpp", (
+        "CapturePersistentState",
+        "RestorePersistentState",
+        "StateByPersistentId",
     ), errors)
     _require_fragments(root / "Source/DarkArisen/Components/LockOnComponent.cpp", (
         "TActorIterator<AActor>",

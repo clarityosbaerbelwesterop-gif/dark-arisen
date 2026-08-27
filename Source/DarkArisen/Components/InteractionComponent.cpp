@@ -2,6 +2,7 @@
 
 #include "Components/InteractionComponent.h"
 
+#include "Components/CameraStateComponent.h"
 #include "CoreLoopTuning.h"
 #include "DesignLaws.h"
 #include "Engine/World.h"
@@ -38,6 +39,11 @@ void UInteractionComponent::TickComponent(
 
 bool UInteractionComponent::TryBeginInteraction()
 {
+    if (ActiveExamineTarget.IsValid())
+    {
+        CloseExaminePresentation();
+        return true;
+    }
     if (ActiveTarget.IsValid() || !FocusedTarget.IsValid()) return false;
     AActor* Target = FocusedTarget.Get();
     if (!Target->GetClass()->ImplementsInterface(UDarkArisenInteractable::StaticClass()) ||
@@ -59,6 +65,7 @@ bool UInteractionComponent::TryBeginInteraction()
 
 void UInteractionComponent::CancelActiveInteraction()
 {
+    if (ActiveExamineTarget.IsValid()) CloseExaminePresentation();
     if (!ActiveTarget.IsValid()) return;
     AActor* Target = ActiveTarget.Get();
     if (Target->GetClass()->ImplementsInterface(UDarkArisenInteractable::StaticClass()))
@@ -109,7 +116,8 @@ AActor* UInteractionComponent::TraceForCandidate() const
 
 void UInteractionComponent::UpdateFocus(const float DeltaTime)
 {
-    AActor* Candidate = ActiveTarget.IsValid() ? nullptr : TraceForCandidate();
+    AActor* Candidate = (ActiveTarget.IsValid() || ActiveExamineTarget.IsValid())
+        ? nullptr : TraceForCandidate();
     if (Candidate != FocusedTarget.Get()) SetFocusedTarget(Candidate);
     if (!bPromptVisible) return;
     PromptTimeRemaining = FMath::Max(0.0f, PromptTimeRemaining - DeltaTime);
@@ -135,21 +143,55 @@ void UInteractionComponent::SetPromptVisible(const bool bVisible)
 {
     if (bPromptVisible == bVisible) return;
     bPromptVisible = bVisible;
-    const FText Label = bPromptVisible && FocusedTarget.IsValid()
+    VisiblePromptLabel = bPromptVisible && FocusedTarget.IsValid()
         ? IDarkArisenInteractable::Execute_GetInteractionLabel(FocusedTarget.Get())
         : FText::GetEmpty();
-    OnPromptChanged.Broadcast(bPromptVisible, Label);
+    OnPromptChanged.Broadcast(bPromptVisible, VisiblePromptLabel);
 }
 
 void UInteractionComponent::CompleteActiveInteraction()
 {
     if (!ActiveTarget.IsValid()) return;
     AActor* Target = ActiveTarget.Get();
+    EInteractionClass InteractionClass = EInteractionClass::Take;
     if (Target->GetClass()->ImplementsInterface(UDarkArisenInteractable::StaticClass()))
     {
+        InteractionClass = IDarkArisenInteractable::Execute_GetInteractionClass(Target);
         IDarkArisenInteractable::Execute_CompleteInteraction(Target, GetOwner());
     }
     ActiveTarget.Reset();
     InteractionTimeRemaining = 0.0f;
     OnInteractionStateChanged.Broadcast(Target, false);
+    if (InteractionClass == EInteractionClass::Examine) BeginExaminePresentation(Target);
+}
+
+void UInteractionComponent::BeginExaminePresentation(AActor* Target)
+{
+    if (!IsValid(Target) ||
+        !Target->GetClass()->ImplementsInterface(UDarkArisenInteractable::StaticClass())) return;
+    ActiveExamineTarget = Target;
+    ExamineTitle = IDarkArisenInteractable::Execute_GetExamineTitle(Target);
+    ExamineBody = IDarkArisenInteractable::Execute_GetExamineBody(Target);
+    if (UCameraStateComponent* Camera =
+        GetOwner()->FindComponentByClass<UCameraStateComponent>())
+        Camera->EnterAnchoredUntilReleased();
+    OnExaminePresentationChanged.Broadcast(true, ExamineTitle, ExamineBody);
+}
+
+void UInteractionComponent::CloseExaminePresentation()
+{
+    if (!ActiveExamineTarget.IsValid()) return;
+    AActor* Target = ActiveExamineTarget.Get();
+    if (Target->GetClass()->ImplementsInterface(UDarkArisenInteractable::StaticClass()))
+        IDarkArisenInteractable::Execute_CancelInteraction(Target, GetOwner());
+    ActiveExamineTarget.Reset();
+    ExamineTitle = FText::GetEmpty();
+    ExamineBody = FText::GetEmpty();
+    if (UCameraStateComponent* Camera =
+        GetOwner()->FindComponentByClass<UCameraStateComponent>())
+    {
+        if (Camera->CurrentMode == EPlayerCameraMode::Anchored)
+            Camera->ReleaseToFree();
+    }
+    OnExaminePresentationChanged.Broadcast(false, ExamineTitle, ExamineBody);
 }
