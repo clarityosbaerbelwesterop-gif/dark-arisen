@@ -2,6 +2,8 @@
 
 #include "JakeCharacter.h"
 
+#include "Animation/AnimInstance.h"
+#include "Animation/AnimMontage.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CameraStateComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -195,26 +197,33 @@ void AJakeCharacter::StopJump()
 
 void AJakeCharacter::PerformLightAttack()
 {
-    if (!HealthComponent->IsDead() && !InteractionComponent->IsInteracting())
-        CombatComponent->PerformLightAttack();
+    if (HealthComponent->IsDead() || InteractionComponent->IsInteracting() ||
+        !CombatComponent->PerformLightAttack()) return;
+    if (TryPlayActionMontage(LightAttackMontage))
+        CombatComponent->RouteQueuedMeleeHitToAnimationNotify();
 }
 
 void AJakeCharacter::PerformHeavyAttack()
 {
-    if (!HealthComponent->IsDead() && !InteractionComponent->IsInteracting())
-        CombatComponent->PerformHeavyAttack();
+    if (HealthComponent->IsDead() || InteractionComponent->IsInteracting() ||
+        !CombatComponent->PerformHeavyAttack()) return;
+    if (TryPlayActionMontage(HeavyAttackMontage))
+        CombatComponent->RouteQueuedMeleeHitToAnimationNotify();
 }
 
 void AJakeCharacter::PerformParry()
 {
-    if (!HealthComponent->IsDead() && !InteractionComponent->IsInteracting())
-        CombatComponent->PerformParry();
+    if (HealthComponent->IsDead() || InteractionComponent->IsInteracting() ||
+        !CombatComponent->PerformParry()) return;
+    TryPlayActionMontage(ParryMontage);
 }
 
 void AJakeCharacter::PerformDodge()
 {
     if (HealthComponent->IsDead() || InteractionComponent->IsInteracting()) return;
-    CombatComponent->PerformDodge(GetLastMovementInputVector().GetSafeNormal());
+    const FVector Direction = GetLastMovementInputVector().GetSafeNormal();
+    if (!CombatComponent->PerformDodge(Direction)) return;
+    TryPlayActionMontage(Direction.IsNearlyZero() ? BackstepMontage : DodgeMontage);
 }
 
 void AJakeCharacter::TryInteract()
@@ -245,6 +254,13 @@ void AJakeCharacter::TryActivateRache()
         CameraStateComponent->CurrentMode != EPlayerCameraMode::Free) return;
     StopSprint();
     CombatComponent->StartRache();
+}
+
+bool AJakeCharacter::TryPlayActionMontage(UAnimMontage* Montage)
+{
+    if (!Montage || !GetMesh()) return false;
+    UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+    return AnimInstance && AnimInstance->Montage_Play(Montage) > 0.0f;
 }
 
 void AJakeCharacter::UpdateWoundPresentation(const float DeltaSeconds)

@@ -169,6 +169,10 @@ public:
     UFUNCTION(BlueprintCallable, Category = "Combat|Hit")
     bool ResolveQueuedMeleeHitFromAnimation(ECombatHitKind HitKind);
 
+    /** Disables the greybox frame timer after an authored montage starts successfully. */
+    UFUNCTION(BlueprintCallable, Category = "Combat|Hit")
+    void RouteQueuedMeleeHitToAnimationNotify();
+
     static EPostureVisualState EvaluatePostureVisualState(float RemainingFraction);
     static FCombatHitProfile GetHitProfile(ECombatHitKind HitKind);
 
@@ -232,9 +236,11 @@ private:
     float PendingHitDelayRemaining = 0.0f;
     ECombatHitKind PendingHitKind = ECombatHitKind::Light;
     bool bHasPendingHit = false;
+    bool bPendingHitUsesFrameFallback = true;
 
     bool BeginCommittedAction(ECombatState NewState, float StaminaCost, float DurationSeconds);
     void QueueMeleeHit(ECombatHitKind HitKind);
+    void ClearQueuedMeleeHit();
     bool TraceAndResolvePendingHit();
     void CompleteStagger();
     void RefreshPostureVisualState();

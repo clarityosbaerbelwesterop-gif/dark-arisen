@@ -27,6 +27,7 @@ No source is deleted. A legacy source remains useful for names, tone, imagery, a
 | Interaction | No highlights and no fade-to-black; one four-second corner prompt at 1.4 m | `interaction system.md`, current engineering handoff |
 | Time dilation | Only player-triggered Rache, 0.30 time scale, five real seconds, Chapter 9+ | `camera system.md`, current engineering handoff |
 | Music | No reactive music, stingers, or adaptive layers | `cutscene catalog.md` |
+| End credits | Main-story completion is followed by full credits with music; the cue must remain non-reactive and be approved/licensed before integration | Flo's current written direction; `cutscene catalog.md` music law |
 | Cinematics | Nineteen authored cutscenes; twenty-two listed moments must remain playable | `cutscene catalog.md` |
 | Travel | No fast travel over water; only the three authored land entries | `travel system.md`, current engineering handoff |
 | Saves | Autosave only on chapter boundary or rest; suppressed from the false letter through the dock | `time and rest.md`, current engineering handoff |

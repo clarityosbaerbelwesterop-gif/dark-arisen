@@ -14,6 +14,7 @@ class UCombatComponent;
 class UHealthComponent;
 class UInteractionComponent;
 class ULockOnComponent;
+class UAnimMontage;
 class USpringArmComponent;
 class UStaminaComponent;
 
@@ -51,6 +52,18 @@ protected:
     TObjectPtr<USpringArmComponent> CameraBoom;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Jake|Camera")
     TObjectPtr<UCameraComponent> FollowCamera;
+
+    /** Authored assets are assigned in Jake's Blueprint; native state remains authoritative. */
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Jake|Animation")
+    TObjectPtr<UAnimMontage> LightAttackMontage;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Jake|Animation")
+    TObjectPtr<UAnimMontage> HeavyAttackMontage;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Jake|Animation")
+    TObjectPtr<UAnimMontage> ParryMontage;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Jake|Animation")
+    TObjectPtr<UAnimMontage> DodgeMontage;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Jake|Animation")
+    TObjectPtr<UAnimMontage> BackstepMontage;
 
 private:
     struct FTouchState
@@ -93,6 +106,7 @@ private:
     void TryInteract();
     void ToggleLockOn();
     void TryActivateRache();
+    bool TryPlayActionMontage(UAnimMontage* Montage);
     void UpdateWoundPresentation(float DeltaSeconds);
     void ApplyWoundLocomotion();
     void TouchStarted(ETouchIndex::Type FingerIndex, FVector Location);

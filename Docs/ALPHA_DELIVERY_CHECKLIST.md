@@ -3,7 +3,7 @@
 **Delivery branch:** `feature/pr4-full-game-delivery`  
 **Pull request:** #4  
 **Engine:** Unreal Engine 5.5  
-**Artifact definition:** the first Alpha is the complete, private UE 5.5 game project and a reproducibly packaged Windows build containing every approved M0–M8 system and all authorised game content. A source-only scaffold, greybox, vertical slice, or streaming configuration is not an Alpha.
+**Artifact definition:** the first Alpha is the complete, private UE 5.5 game project plus separately verified Windows and PS5 target artifacts containing every approved M0–M8 system and all authorised game content. A source-only scaffold, greybox, vertical slice, streaming configuration, or Windows build renamed as a PS5 build is not an Alpha. Arcware is a Windows Pixel Streaming test path, not a PS5 emulator.
 
 This file is the progress index. Detailed acceptance criteria remain authoritative in `M0_CHECKLIST.md` and `Docs/Handoff/ENGINEERING_HANDOFF.md`. A checkbox is marked only when its required source and runtime evidence both exist.
 
@@ -17,6 +17,7 @@ This file is the progress index. Detailed acceptance criteria remain authoritati
 - [ ] The packaged project is archived as a private UE 5.5 ZIP and its checksum is recorded.
 - [ ] The complete content manifest is reconciled against the design source register.
 - [ ] Flo explicitly approves the Alpha candidate after the first full-game playthrough.
+- [ ] Completing the main story enters a full credits sequence with an approved non-reactive music cue and complete third-party/tool/music attribution.
 
 ## M0 — Foundation
 
@@ -39,6 +40,7 @@ This file is the progress index. Detailed acceptance criteria remain authoritati
 - [x] Lock-on with living-combatant, 20 m acquisition/25 m retention leash, facing and line-of-sight validation; no marker/HUD.
 - [x] Animation-ready wound presentation profile and wound-only low-frequency camera drift.
 - [x] Native montage contact notify with exactly-once hit consumption and greybox fallback.
+- [x] Native animation-state bridge plus light/heavy/parry/dodge/backstep montage slots; a running attack montage owns contact timing and a missing notify fails closed.
 - [ ] Authored wound-aware locomotion animation assets and final feel tuning.
 - [x] Physical greybox door/pickup, held Examine presentation and four-second corner prompt.
 - [x] Stable-ID interaction SaveGame snapshot capture/restore without an unauthorised disk write.
@@ -85,6 +87,7 @@ This file is the progress index. Detailed acceptance criteria remain authoritati
 - [ ] Dialogue lock, casting matrix, pronunciation guide and subtitle pass complete.
 - [ ] AI Voice Generator confirms zero cost and acceptable commercial usage rights before generation; any charge or unclear term requires Flo's explicit approval.
 - [ ] Distinct human-sounding voice assets generated, reviewed and integrated.
+- [ ] End-credits names, ordering, music composition/source, licence and cost are approved; no cue is invented or purchased without Flo.
 
 ## M8 — Platform, packaging and Alpha sign-off
 
@@ -92,8 +95,11 @@ This file is the progress index. Detailed acceptance criteria remain authoritati
 - [ ] PS5 dev-kit work, DualSense features, TRC and certification when external access exists.
 - [ ] Accessibility, remapping, subtitle sizing and permitted difficulty settings.
 - [ ] Full regression, performance, save migration, privacy and content-completeness passes.
-- [ ] Private UE 5.5 Alpha ZIP and checksum delivered to Flo.
-- [ ] Flo imports/deploys the ZIP on his chosen GPU service and privately completes the browser-link access-denial test; the link is never published in the repository.
+- [ ] Private UE 5.5 source-project ZIP and checksum delivered to Flo.
+- [ ] Separate Arcware-ready Windows Shipping ZIP and checksum delivered to Flo; it contains no secrets, server credentials or public-link configuration.
+- [ ] Flo imports/deploys the Windows ZIP on his chosen GPU service and privately completes the browser-link access-denial test; the link is never published in the repository.
+- [ ] PlayStation Partner registration/GDPA, authorised PS5 SDK and dev/test-kit access exist outside the repository.
+- [ ] A native PS5 test package is built and verified in the authorised PlayStation environment, then delivered privately in the platform-permitted form with a checksum. It is tested on PS5 development/test hardware, not Arcware.
 
 ## Current blockers outside source authoring
 
@@ -101,5 +107,7 @@ This file is the progress index. Detailed acceptance criteria remain authoritati
 - Flo will handle the GPU and private browser link; no host/runtime evidence has been supplied yet.
 - The AI Voice Generator is expected to be free, but no generation may begin before dialogue lock plus zero-cost and commercial-rights verification.
 - PS5 packaging/certification requires Sony programme access and hardware not present in this workspace.
+- Arcware documents Unreal Engine application upload and browser Pixel Streaming; it cannot supply PS5 SDK validation or emulate a PS5 package.
+- The repository contains no canonical credits list or approved end-credits music cue yet. Flo's current direction requires both, but the cue, rights and any cost remain an explicit approval gate.
 
 Source work may continue in PR #4 under Flo's current direction, but blocked runtime evidence must never be marked complete by inference.

@@ -4,6 +4,7 @@
 
 #include "Misc/AutomationTest.h"
 
+#include "Animation/DarkArisenAnimInstance.h"
 #include "Components/CameraStateComponent.h"
 #include "Components/CombatComponent.h"
 #include "Components/HealthComponent.h"
@@ -139,6 +140,32 @@ bool FDarkArisenM1WoundLayersSpec::RunTest(const FString& Parameters)
         Failing.MovementSpeedScale < Bad.MovementSpeedScale);
     TestTrue(TEXT("Failing reaches full wound camera drive"),
         FMath::IsNearlyEqual(Failing.CameraInstabilityAlpha, 1.0f));
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(
+    FDarkArisenM1AnimationBridgeDefaultsSpec,
+    "DarkArisen.M1.AnimationBridgeDefaults",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FDarkArisenM1AnimationBridgeDefaultsSpec::RunTest(const FString& Parameters)
+{
+    const UDarkArisenAnimInstance* Animation = GetDefault<UDarkArisenAnimInstance>();
+    TestTrue(TEXT("Animation bridge created"), Animation != nullptr);
+    TestEqual(TEXT("Default combat state is idle"),
+        Animation ? Animation->CombatState : ECombatState::Dead, ECombatState::Idle);
+    TestEqual(TEXT("Default weight class is medium"),
+        Animation ? Animation->WeaponWeightClass : EWeaponWeightClass::Great,
+        EWeaponWeightClass::Medium);
+    TestEqual(TEXT("Default posture reads set"),
+        Animation ? Animation->PostureVisualState : EPostureVisualState::Broken,
+        EPostureVisualState::Set);
+    TestEqual(TEXT("Default wound layer is none"),
+        Animation ? Animation->WoundLayer : EWoundLayer::Failing, EWoundLayer::None);
+    TestFalse(TEXT("Default animation set is not wounded"),
+        Animation && Animation->bUseWoundedAnimationSet);
+    TestFalse(TEXT("Default loadout is not the Katana"),
+        Animation && Animation->bKatanaEquipped);
     return true;
 }
 

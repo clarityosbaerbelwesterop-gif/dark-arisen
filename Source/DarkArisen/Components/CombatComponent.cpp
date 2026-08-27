@@ -59,13 +59,13 @@ void UCombatComponent::TickComponent(
             else FinishAction();
         }
     }
-    if (bHasPendingHit)
+    if (bHasPendingHit && bPendingHitUsesFrameFallback)
     {
         PendingHitDelayRemaining = FMath::Max(0.0f, PendingHitDelayRemaining - DeltaTime);
         if (PendingHitDelayRemaining <= 0.0f)
         {
             TraceAndResolvePendingHit();
-            bHasPendingHit = false;
+            ClearQueuedMeleeHit();
         }
     }
     if (CurrentState == ECombatState::Idle && CurrentPosture > 0.0f)
@@ -101,8 +101,7 @@ void UCombatComponent::AddPostureDamage(const float Amount)
     if (PostureVisualState == EPostureVisualState::Broken)
     {
         DeflectionWindowRemaining = 0.0f;
-        bHasPendingHit = false;
-        PendingHitDelayRemaining = 0.0f;
+        ClearQueuedMeleeHit();
         ActionCommitmentRemaining =
             DarkArisen::CoreLoopTuning::PostureBreakVulnerabilitySeconds;
         SetState(ECombatState::Staggered);
@@ -152,6 +151,7 @@ void UCombatComponent::FinishAction()
 {
     if (CurrentState == ECombatState::Dead || ActionCommitmentRemaining > 0.0f ||
         DeflectionWindowRemaining > 0.0f) return;
+    ClearQueuedMeleeHit();
     SetState(ECombatState::Idle);
 }
 
@@ -160,8 +160,7 @@ void UCombatComponent::SetDead()
     StopRache();
     DeflectionWindowRemaining = 0.0f;
     ActionCommitmentRemaining = 0.0f;
-    bHasPendingHit = false;
-    PendingHitDelayRemaining = 0.0f;
+    ClearQueuedMeleeHit();
     SetState(ECombatState::Dead);
 }
 
@@ -215,9 +214,13 @@ bool UCombatComponent::ResolveQueuedMeleeHitFromAnimation(const ECombatHitKind H
 {
     if (!bHasPendingHit || PendingHitKind != HitKind) return false;
     const bool bResolved = TraceAndResolvePendingHit();
-    bHasPendingHit = false;
-    PendingHitDelayRemaining = 0.0f;
+    ClearQueuedMeleeHit();
     return bResolved;
+}
+
+void UCombatComponent::RouteQueuedMeleeHitToAnimationNotify()
+{
+    if (bHasPendingHit) bPendingHitUsesFrameFallback = false;
 }
 
 void UCombatComponent::EquipWeapon(const EWeaponSlot Slot)
@@ -341,6 +344,14 @@ void UCombatComponent::QueueMeleeHit(const ECombatHitKind HitKind)
     PendingHitKind = HitKind;
     PendingHitDelayRemaining = DarkArisen::CoreLoopTuning::FramesToSeconds(GetStartupFrames());
     bHasPendingHit = true;
+    bPendingHitUsesFrameFallback = true;
+}
+
+void UCombatComponent::ClearQueuedMeleeHit()
+{
+    bHasPendingHit = false;
+    bPendingHitUsesFrameFallback = true;
+    PendingHitDelayRemaining = 0.0f;
 }
 
 bool UCombatComponent::TraceAndResolvePendingHit()

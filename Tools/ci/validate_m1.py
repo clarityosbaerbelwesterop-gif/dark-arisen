@@ -34,6 +34,8 @@ REQUIRED_FILES = (
     "Source/DarkArisen/Interaction/InteractionPersistence.cpp",
     "Source/DarkArisen/Animation/AnimNotify_ResolveCombatHit.h",
     "Source/DarkArisen/Animation/AnimNotify_ResolveCombatHit.cpp",
+    "Source/DarkArisen/Animation/DarkArisenAnimInstance.h",
+    "Source/DarkArisen/Animation/DarkArisenAnimInstance.cpp",
     "Docs/M1_CORE_LOOP.md",
 )
 
@@ -107,7 +109,9 @@ def validate(root: Path) -> list[str]:
         "RecoverRally(RecoveryAction)",
         "TargetCombat->IsDeflectionWindowOpen()",
         "ResolveQueuedMeleeHitFromAnimation",
-        "bHasPendingHit = false",
+        "RouteQueuedMeleeHitToAnimationNotify",
+        "bPendingHitUsesFrameFallback",
+        "ClearQueuedMeleeHit()",
     ), errors)
     _require_fragments(root / "Source/DarkArisen/Components/HealthComponent.cpp", (
         "RallyWindowRemaining = RallyWindowSeconds",
@@ -131,6 +135,10 @@ def validate(root: Path) -> list[str]:
         "Gamepad_RightThumbstick",
         "Gamepad_LeftThumbstick",
         "CombatComponent->StartRache()",
+        "TryPlayActionMontage(LightAttackMontage)",
+        "TryPlayActionMontage(HeavyAttackMontage)",
+        "RouteQueuedMeleeHitToAnimationNotify()",
+        "Direction.IsNearlyZero() ? BackstepMontage : DodgeMontage",
     ), errors)
     _require_fragments(root / "Source/DarkArisen/DuelingEnemyCharacter.cpp", (
         "AwarenessRangeCentimetres",
@@ -172,6 +180,17 @@ def validate(root: Path) -> list[str]:
         "Resolve Heavy Hit",
         "Resolve Parry Strike",
         "Resolve Critical Hit",
+    ), errors)
+    _require_fragments(root / "Source/DarkArisen/Animation/DarkArisenAnimInstance.cpp", (
+        "GroundSpeedCentimetresPerSecond",
+        "Movement->IsFalling()",
+        "Movement->GetCurrentAcceleration()",
+        "Combat->CurrentState",
+        "Combat->CurrentWeightClass",
+        "Combat->PostureVisualState",
+        "Wounds->GetWoundLayer()",
+        "Wounds->GetPresentationProfile()",
+        "Wounds->ShouldUseWoundedAnimationSet(bKatanaEquipped)",
     ), errors)
     _require_fragments(root / "Source/DarkArisen/Components/LockOnComponent.cpp", (
         "TActorIterator<AActor>",
