@@ -51,6 +51,9 @@ This file is the progress index. Detailed acceptance criteria remain authoritati
 
 - [ ] Rexa jungle region slice, settlement, Cenote dungeon and required traversal.
 - [ ] Isabel Cruz boss with killed/spared/avoided outcomes and four-second death hold.
+- [x] Native Isabel Cruz state with locked Duty/List/1846 thresholds, fail-closed mercy/avoidance conditions, distinct non-hostile resolution and the existing four-second hold path.
+- [x] HUD-free native heat pressure with authored cistern/shade/exposed states; provisional numeric rates remain marked `DESIGN-GAP`.
+- [ ] Authored Fuerte San Rafael arena, heat volumes, routes, combat/dialogue animation, cabinet/list/report rewards and three-resolution persistence evidence.
 - [x] Native markerless quest state with all six activation modes, silent activation, fallible chronological journal data, internal expiry outcomes and mutual exclusion.
 - [ ] Physical held journal presentation, local-direction dialogue, three authored Turns and one authored Standing mission.
 - [ ] Two-hour evidence run satisfying the M2 merge gate.

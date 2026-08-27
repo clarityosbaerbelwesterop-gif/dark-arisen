@@ -12,8 +12,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from validate_m2 import validate
 
 
-class M2QuestFoundationValidationTests(unittest.TestCase):
-    def test_checked_in_project_satisfies_m2_quest_contract(self) -> None:
+class M2SourceContractValidationTests(unittest.TestCase):
+    def test_checked_in_project_satisfies_m2_source_contract(self) -> None:
         root = Path(__file__).resolve().parents[2]
         self.assertEqual(validate(root), [])
 
@@ -33,6 +33,28 @@ class M2QuestFoundationValidationTests(unittest.TestCase):
             (component / "QuestJournalComponent.cpp").write_text("", encoding="utf-8")
             findings = validate(root)
             self.assertTrue(any("OnQuestActivated" in finding for finding in findings))
+
+    def test_boss_lifespan_cleanup_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            bosses = root / "Source/DarkArisen/Bosses"
+            bosses.mkdir(parents=True)
+            (bosses / "IsabelCruzCharacter.h").write_text("", encoding="utf-8")
+            (bosses / "IsabelCruzCharacter.cpp").write_text(
+                "SetLifeSpan(4.0f);", encoding="utf-8")
+            findings = validate(root)
+            self.assertTrue(any("SetLifeSpan" in finding for finding in findings))
+
+    def test_heat_widget_signal_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            components = root / "Source/DarkArisen/Components"
+            components.mkdir(parents=True)
+            (components / "HeatExposureComponent.h").write_text(
+                "void OnHeatChanged();", encoding="utf-8")
+            (components / "HeatExposureComponent.cpp").write_text("", encoding="utf-8")
+            findings = validate(root)
+            self.assertTrue(any("OnHeatChanged" in finding for finding in findings))
 
 
 if __name__ == "__main__":

@@ -196,7 +196,7 @@ def validate(root: Path) -> list[str]:
         "TActorIterator<AActor>",
         "LineTraceSingleByChannel",
         "Health->IsDead()",
-        "Combat->CurrentState == ECombatState::Dead",
+        "!Combat->IsCombatTargetable()",
         "Movement->bOrientRotationToMovement = !bLocked",
         "MaximumAcquisitionRangeCentimetres",
         "MaximumRetentionRangeCentimetres",

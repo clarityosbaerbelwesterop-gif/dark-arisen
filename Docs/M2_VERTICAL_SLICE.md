@@ -1,6 +1,6 @@
 # M2 vertical-slice implementation record
 
-**Status:** markerless quest-foundation source only; not a vertical slice, Alpha, or Beta  
+**Status:** native quest, heat and Isabel Cruz proof-state source; not a vertical slice, Alpha, or Beta  
 **Engine:** Unreal Engine 5.5  
 **Authority:** current engineering handoff, `quest activation.md`, `quest design philosophy.md`, `mission types.md`, `dungeon design philosophy.md`, `regional dungeon catalog.md`, `colonial war bosses.md`, and `Docs/DesignAuthority.md`
 
@@ -16,6 +16,14 @@
 - Mutual exclusions make dormant alternatives unavailable without a point-of-no-return warning.
 - Runtime quest state and journal entries are `SaveGame` data only. This component performs no disk write and cannot bypass the chapter/rest autosave law.
 - Jake owns the component, but no physical journal asset or presentation has been claimed.
+- Jake now owns a HUD-free heat-exposure component that distinguishes inactive space, cool cisterns, shade galleries and exposed heat.
+- Cisterns recover heat pressure, shade accumulates it more slowly than exposed space, severe pressure impairs stamina regeneration and can apply environmental damage.
+- The design sources do not lock numerical heat rates. Every provisional rate is an editable `DESIGN-GAP` and is not acceptance evidence.
+- Isabel Cruz has native Duty, List and 1846 phase state at the locked 65% and 30% health thresholds.
+- The encounter records exactly three authored resolutions: killed, spared during a posture break, or avoided only when external fort state proves surrender before combat.
+- Spared and avoided are a distinct non-hostile combat state, so mercy is not represented as a fake death and lock-on/hit resolution reject the resolved actor.
+- Killing Cruz invokes the existing four-second anchored hold. The actor creates no slow motion, music cue, kill camera, lifespan cleanup or forced view target.
+- Encounter phase and resolution state are `SaveGame` data. This actor still performs no unauthorised disk write.
 
 ## Canon conflict rulings
 
@@ -34,7 +42,8 @@ The current handoff and later Phase 11 laws supersede conflicting older Rexa dra
 - Three authored Turn quests and one authored Standing variant using this runtime.
 - Approximately 1 km² of Rexa jungle, a forty-person settlement and the required traversal/vegetation physics.
 - The Cenote of the First Mother with no marker, no music, no explanatory logs, one primary water/drowning hazard, its green-gold timed image and mandatory return shortcut.
-- Comandante Isabel Cruz's heat/cistern arena, three phases, cabinet/list rewards, killed/spared/avoided paths and four-second Style D death hold.
+- Authored heat/cistern trigger volumes, Fuerte San Rafael geometry, route logic, combat animations, three-phase dialogue, cabinet/list/report rewards and controller-tested balance.
+- In-engine proof that killed, spared and fort-surrender avoidance routes each persist and drive their authored quest/world consequences; source state alone is insufficient.
 - Windows UE 5.5 compilation, Unreal automation, complete two-hour play evidence and measured 60 fps.
 
 No runtime, authored content or presentation gate may be inferred from this source foundation.

@@ -5,9 +5,11 @@
 #include "Misc/AutomationTest.h"
 
 #include "Animation/DarkArisenAnimInstance.h"
+#include "Bosses/IsabelCruzCharacter.h"
 #include "Components/CameraStateComponent.h"
 #include "Components/CombatComponent.h"
 #include "Components/HealthComponent.h"
+#include "Components/HeatExposureComponent.h"
 #include "Components/LockOnComponent.h"
 #include "Components/QuestJournalComponent.h"
 #include "Components/StaminaComponent.h"
@@ -403,6 +405,72 @@ bool FDarkArisenM2MarkerlessQuestFoundationSpec::RunTest(const FString& Paramete
         RuntimeState.Lifecycle, EQuestLifecycle::Resolved);
     TestEqual(TEXT("Expiry added no journal notification"),
         Journal->GetJournalEntries().Num(), 4);
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(
+    FDarkArisenM2HeatRhythmSpec,
+    "DarkArisen.M2.HeatRhythm",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FDarkArisenM2HeatRhythmSpec::RunTest(const FString& Parameters)
+{
+    const float Shade = UHeatExposureComponent::EvaluateNextHeatStress(
+        0.5f, EHeatExposureZone::ShadeGallery, 10.0f, 0.01f, 0.035f, 0.1f);
+    const float Exposed = UHeatExposureComponent::EvaluateNextHeatStress(
+        0.5f, EHeatExposureZone::ExposedHeat, 10.0f, 0.01f, 0.035f, 0.1f);
+    const float Cistern = UHeatExposureComponent::EvaluateNextHeatStress(
+        0.5f, EHeatExposureZone::CoolCistern, 10.0f, 0.01f, 0.035f, 0.1f);
+    TestTrue(TEXT("Shade accumulates heat"), Shade > 0.5f);
+    TestTrue(TEXT("Exposed heat builds faster than shade"), Exposed > Shade);
+    TestTrue(TEXT("Cistern recovers heat stress"), Cistern < 0.5f);
+    TestTrue(TEXT("Heat stress clamps at one"), FMath::IsNearlyEqual(
+        UHeatExposureComponent::EvaluateNextHeatStress(
+            0.99f, EHeatExposureZone::ExposedHeat, 10.0f, 0.01f, 0.035f, 0.1f),
+        1.0f));
+    TestTrue(TEXT("Heat stress clamps at zero"), FMath::IsNearlyZero(
+        UHeatExposureComponent::EvaluateNextHeatStress(
+            0.01f, EHeatExposureZone::CoolCistern, 10.0f, 0.01f, 0.035f, 0.1f)));
+    TestTrue(TEXT("Severe heat reduces stamina regeneration"),
+        UHeatExposureComponent::EvaluateStaminaRegenMultiplier(1.0f, 0.35f) <
+        UHeatExposureComponent::EvaluateStaminaRegenMultiplier(0.0f, 0.35f));
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(
+    FDarkArisenM2IsabelCruzStateSpec,
+    "DarkArisen.M2.IsabelCruzState",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FDarkArisenM2IsabelCruzStateSpec::RunTest(const FString& Parameters)
+{
+    TestTrue(TEXT("List threshold is locked at sixty-five percent"), FMath::IsNearlyEqual(
+        AIsabelCruzCharacter::ListPhaseHealthFraction, 0.65f));
+    TestTrue(TEXT("1846 threshold is locked at thirty percent"), FMath::IsNearlyEqual(
+        AIsabelCruzCharacter::EighteenFortySixPhaseHealthFraction, 0.30f));
+    TestEqual(TEXT("Above sixty-five percent is Duty"),
+        AIsabelCruzCharacter::EvaluatePhase(0.6501f), EIsabelCruzPhase::Duty);
+    TestEqual(TEXT("Sixty-five percent enters List"),
+        AIsabelCruzCharacter::EvaluatePhase(0.65f), EIsabelCruzPhase::List);
+    TestEqual(TEXT("Above thirty percent remains List"),
+        AIsabelCruzCharacter::EvaluatePhase(0.3001f), EIsabelCruzPhase::List);
+    TestEqual(TEXT("Thirty percent enters 1846"),
+        AIsabelCruzCharacter::EvaluatePhase(0.30f), EIsabelCruzPhase::EighteenFortySix);
+
+    UCombatComponent* Combat = NewObject<UCombatComponent>();
+    TestTrue(TEXT("Combat component created for mercy state"), Combat != nullptr);
+    if (Combat)
+    {
+        TestTrue(TEXT("Living combatant begins targetable"), Combat->IsCombatTargetable());
+        Combat->SetNonHostile();
+        TestEqual(TEXT("Mercy has a distinct non-hostile state"),
+            Combat->CurrentState, ECombatState::NonHostile);
+        TestFalse(TEXT("Spared combatant cannot be locked or hit"),
+            Combat->IsCombatTargetable());
+        Combat->SetDead();
+        TestEqual(TEXT("Death remains distinct from mercy"),
+            Combat->CurrentState, ECombatState::Dead);
+    }
     return true;
 }
 

@@ -12,6 +12,7 @@ class UCameraComponent;
 class UCameraStateComponent;
 class UCombatComponent;
 class UHealthComponent;
+class UHeatExposureComponent;
 class UInteractionComponent;
 class ULockOnComponent;
 class UAnimMontage;
@@ -49,6 +50,8 @@ public:
     TObjectPtr<ULockOnComponent> LockOnComponent;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Jake|Components")
     TObjectPtr<UQuestJournalComponent> QuestJournalComponent;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Jake|Components")
+    TObjectPtr<UHeatExposureComponent> HeatExposureComponent;
 
 protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Jake|Camera")

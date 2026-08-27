@@ -9,6 +9,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/CombatComponent.h"
 #include "Components/HealthComponent.h"
+#include "Components/HeatExposureComponent.h"
 #include "Components/InputComponent.h"
 #include "Components/InteractionComponent.h"
 #include "Components/LockOnComponent.h"
@@ -47,6 +48,8 @@ AJakeCharacter::AJakeCharacter()
     LockOnComponent = CreateDefaultSubobject<ULockOnComponent>(TEXT("LockOnComponent"));
     QuestJournalComponent =
         CreateDefaultSubobject<UQuestJournalComponent>(TEXT("QuestJournalComponent"));
+    HeatExposureComponent =
+        CreateDefaultSubobject<UHeatExposureComponent>(TEXT("HeatExposureComponent"));
 
     CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
     CameraBoom->SetupAttachment(RootComponent);

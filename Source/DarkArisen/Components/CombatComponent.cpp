@@ -92,7 +92,7 @@ void UCombatComponent::TickComponent(
 
 void UCombatComponent::AddPostureDamage(const float Amount)
 {
-    if (Amount <= 0.0f || CurrentState == ECombatState::Dead ||
+    if (Amount <= 0.0f || !IsCombatTargetable() ||
         CurrentState == ECombatState::Staggered) return;
     CurrentPosture = FMath::Clamp(
         CurrentPosture + Amount * FMath::Max(0.0f, PoiseMultiplier), 0.0f, MaxPosture);
@@ -149,7 +149,7 @@ bool UCombatComponent::PerformDodge(const FVector& Direction)
 
 void UCombatComponent::FinishAction()
 {
-    if (CurrentState == ECombatState::Dead || ActionCommitmentRemaining > 0.0f ||
+    if (!IsCombatTargetable() || ActionCommitmentRemaining > 0.0f ||
         DeflectionWindowRemaining > 0.0f) return;
     ClearQueuedMeleeHit();
     SetState(ECombatState::Idle);
@@ -164,16 +164,26 @@ void UCombatComponent::SetDead()
     SetState(ECombatState::Dead);
 }
 
+void UCombatComponent::SetNonHostile()
+{
+    if (CurrentState == ECombatState::Dead) return;
+    StopRache();
+    DeflectionWindowRemaining = 0.0f;
+    ActionCommitmentRemaining = 0.0f;
+    ClearQueuedMeleeHit();
+    SetState(ECombatState::NonHostile);
+}
+
 bool UCombatComponent::ResolveHitAgainst(AActor* Target, const ECombatHitKind HitKind)
 {
     AActor* Owner = GetOwner();
     if (!IsValid(Owner) || !IsValid(Target) || Target == Owner ||
-        CurrentState == ECombatState::Dead) return false;
+        !IsCombatTargetable()) return false;
 
     UHealthComponent* TargetHealth = Target->FindComponentByClass<UHealthComponent>();
     UCombatComponent* TargetCombat = Target->FindComponentByClass<UCombatComponent>();
     if (!TargetHealth || !TargetCombat || TargetHealth->IsDead() ||
-        TargetCombat->CurrentState == ECombatState::Dead) return false;
+        !TargetCombat->IsCombatTargetable()) return false;
 
     const FCombatHitProfile Profile = GetHitProfile(HitKind);
     if (TargetCombat->IsDeflectionWindowOpen() && HitKind != ECombatHitKind::Critical)

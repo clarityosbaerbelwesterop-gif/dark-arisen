@@ -41,6 +41,7 @@ enum class ECombatState : uint8
     Dodging,
     Backstepping,
     Staggered,
+    NonHostile,
     Dead
 };
 
@@ -130,6 +131,9 @@ public:
     void FinishAction();
     UFUNCTION(BlueprintCallable, Category = "Combat|State")
     void SetDead();
+    /** Permanently leaves combat without fabricating a death. Used by authored mercy routes. */
+    UFUNCTION(BlueprintCallable, Category = "Combat|State")
+    void SetNonHostile();
 
     UFUNCTION(BlueprintCallable, Category = "Combat|Loadout")
     void EquipWeapon(EWeaponSlot Slot);
@@ -147,6 +151,11 @@ public:
     bool IsDeflectionWindowOpen() const { return DeflectionWindowRemaining > 0.0f; }
     UFUNCTION(BlueprintPure, Category = "Combat|State")
     bool IsActionCommitted() const { return ActionCommitmentRemaining > 0.0f; }
+    UFUNCTION(BlueprintPure, Category = "Combat|State")
+    bool IsCombatTargetable() const
+    {
+        return CurrentState != ECombatState::Dead && CurrentState != ECombatState::NonHostile;
+    }
     UFUNCTION(BlueprintPure, Category = "Combat|Timing")
     int32 GetStartupFrames() const;
     UFUNCTION(BlueprintPure, Category = "Combat|Timing")

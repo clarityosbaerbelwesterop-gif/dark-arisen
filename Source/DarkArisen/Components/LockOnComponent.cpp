@@ -104,7 +104,7 @@ bool ULockOnComponent::IsEligibleTarget(AActor* Candidate, const bool bRequireFa
     if (!Owner || !World || !IsValid(Candidate) || Candidate == Owner) return false;
     const UHealthComponent* Health = Candidate->FindComponentByClass<UHealthComponent>();
     const UCombatComponent* Combat = Candidate->FindComponentByClass<UCombatComponent>();
-    if (!Health || !Combat || Health->IsDead() || Combat->CurrentState == ECombatState::Dead)
+    if (!Health || !Combat || Health->IsDead() || !Combat->IsCombatTargetable())
         return false;
 
     const FVector Offset = Candidate->GetActorLocation() - Owner->GetActorLocation();

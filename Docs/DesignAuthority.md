@@ -30,6 +30,8 @@ No source is deleted. A legacy source remains useful for names, tone, imagery, a
 | End credits | Main-story completion is followed by full credits with music; the cue must remain non-reactive and be approved/licensed before integration | Flo's current written direction; `cutscene catalog.md` music law |
 | Cinematics | Nineteen authored cutscenes; twenty-two listed moments must remain playable | `cutscene catalog.md` |
 | Quests and journal | Six invisible activation modes; no markers, acceptance UI, failure screens, reminders or consequence cards; Jake's chronological notebook may remain wrong until a later correction | `quest activation.md`, `quest design philosophy.md` |
+| M2 Isabel Cruz | Duty/List/1846 phases cross at 65% and 30%; killed, spared and fort-surrender avoidance remain distinct outcomes; the death path holds four seconds without spectacle additions | `colonial war bosses.md`, current engineering handoff |
+| M2 fort heat | Fuerte San Rafael alternates exposed pressure, shade galleries and cool cistern recovery; exact rates remain an explicit tuning gap until runtime acceptance | `lava_heat_physics.md`, `castle_catalog.md`, current engineering handoff |
 | Travel | No fast travel over water; only the three authored land entries | `travel system.md`, current engineering handoff |
 | Saves | Autosave only on chapter boundary or rest; suppressed from the false letter through the dock | `time and rest.md`, current engineering handoff |
 | Progression | Body, Craft, and Standing do not convert; no respec | `progression overview.md`, `skill tree.md` |
