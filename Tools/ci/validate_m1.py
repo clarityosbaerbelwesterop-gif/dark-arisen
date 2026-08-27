@@ -32,6 +32,8 @@ REQUIRED_FILES = (
     "Source/DarkArisen/Interaction/ExamineDocumentActor.cpp",
     "Source/DarkArisen/Interaction/InteractionPersistence.h",
     "Source/DarkArisen/Interaction/InteractionPersistence.cpp",
+    "Source/DarkArisen/Animation/AnimNotify_ResolveCombatHit.h",
+    "Source/DarkArisen/Animation/AnimNotify_ResolveCombatHit.cpp",
     "Docs/M1_CORE_LOOP.md",
 )
 
@@ -103,6 +105,7 @@ def validate(root: Path) -> list[str]:
         "ResolveHitAgainst",
         "RecoverRally(RecoveryAction)",
         "TargetCombat->IsDeflectionWindowOpen()",
+        "ResolveQueuedMeleeHitFromAnimation",
     ), errors)
     _require_fragments(root / "Source/DarkArisen/Components/HealthComponent.cpp", (
         "RallyWindowRemaining = RallyWindowSeconds",
@@ -157,6 +160,12 @@ def validate(root: Path) -> list[str]:
         "CapturePersistentState",
         "RestorePersistentState",
         "StateByPersistentId",
+    ), errors)
+    _require_fragments(root / "Source/DarkArisen/Animation/AnimNotify_ResolveCombatHit.cpp", (
+        "ResolveQueuedMeleeHitFromAnimation(HitKind)",
+        "Resolve Heavy Hit",
+        "Resolve Parry Strike",
+        "Resolve Critical Hit",
     ), errors)
     _require_fragments(root / "Source/DarkArisen/Components/LockOnComponent.cpp", (
         "TActorIterator<AActor>",

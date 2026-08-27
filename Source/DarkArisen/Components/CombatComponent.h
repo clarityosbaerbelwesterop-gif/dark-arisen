@@ -165,6 +165,10 @@ public:
     UFUNCTION(BlueprintCallable, Category = "Combat|Hit")
     bool ResolveCriticalHit(AActor* Target);
 
+    /** Animation notify path. Consumes the queued hit so the timing fallback cannot double-hit. */
+    UFUNCTION(BlueprintCallable, Category = "Combat|Hit")
+    bool ResolveQueuedMeleeHitFromAnimation(ECombatHitKind HitKind);
+
     static EPostureVisualState EvaluatePostureVisualState(float RemainingFraction);
     static FCombatHitProfile GetHitProfile(ECombatHitKind HitKind);
 

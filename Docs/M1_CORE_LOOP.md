@@ -25,6 +25,7 @@
 - The greybox contains an interruptible physical door, a 0.6-second physical pickup and a held Examine document. The document uses player-paced Anchored camera while the world remains visible.
 - The HUD renders the sole four-second interaction prompt in the screen corner and a translucent Examine reading surface; neither path mutates, highlights or outlines a world target.
 - Door open/broken and pickup taken states can be captured/restored by stable IDs into a SaveGame snapshot. The snapshot performs no disk write and therefore cannot bypass the locked chapter/rest autosave policy.
+- Authored attack montages have a native contact notify that consumes the queued hit exactly once. The startup-frame timer remains only as a functional greybox fallback when no montage asset exists.
 
 ## Conflict rulings applied
 
@@ -37,7 +38,7 @@ The later locked rules supersede contradictory Phase 3/6 draft clauses:
 
 ## Still required before M1 acceptance
 
-- authored animation assets/poses and animation-notify refinement of the source-level hit timing;
+- authored animation assets/poses wired to the native contact notify;
 - authored hand/door/pickup animation assets and in-engine persistence/presentation tests;
 - Windows UE 5.5 Development/Shipping compile, Unreal automation execution, controller/touch smoke testing, and measured 60 fps evidence.
 

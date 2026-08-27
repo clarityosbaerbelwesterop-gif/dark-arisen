@@ -209,6 +209,15 @@ bool UCombatComponent::ResolveCriticalHit(AActor* Target)
     return ResolveHitAgainst(Target, ECombatHitKind::Critical);
 }
 
+bool UCombatComponent::ResolveQueuedMeleeHitFromAnimation(const ECombatHitKind HitKind)
+{
+    if (!bHasPendingHit || PendingHitKind != HitKind) return false;
+    const bool bResolved = TraceAndResolvePendingHit();
+    bHasPendingHit = false;
+    PendingHitDelayRemaining = 0.0f;
+    return bResolved;
+}
+
 void UCombatComponent::EquipWeapon(const EWeaponSlot Slot)
 {
     if (CurrentState != ECombatState::Idle || Slot == EWeaponSlot::None) return;

@@ -38,6 +38,7 @@ This file is the progress index. Detailed acceptance criteria remain authoritati
 - [ ] Authored montages and animation-notify timing.
 - [x] Lock-on with living-combatant, range, facing and line-of-sight validation; no marker/HUD.
 - [x] Animation-ready wound presentation profile and wound-only low-frequency camera drift.
+- [x] Native montage contact notify with exactly-once hit consumption and greybox fallback.
 - [ ] Authored wound-aware locomotion animation assets and final feel tuning.
 - [x] Physical greybox door/pickup, held Examine presentation and four-second corner prompt.
 - [x] Stable-ID interaction SaveGame snapshot capture/restore without an unauthorised disk write.
