@@ -1,6 +1,7 @@
 [CmdletBinding()]
 param(
-    [string]$StatusUrl = "http://127.0.0.1:8080/api/status",
+    [string]$StatusUrl = "",
+    [int]$PlayerPort = 8080,
     [int]$IdleMinutes = 30,
     [string]$ShutdownCommand = $env:DARKARISEN_SHUTDOWN_COMMAND
 )
@@ -14,11 +15,26 @@ if ([string]::IsNullOrWhiteSpace($ShutdownCommand) -or
     throw "A provider shutdown command is mandatory; Windows shutdown alone may continue billing."
 }
 
+function Get-PlayerCount {
+    if (-not [string]::IsNullOrWhiteSpace($StatusUrl)) {
+        $Status = Invoke-RestMethod -Uri $StatusUrl -Method Get -TimeoutSec 5
+        return [int]$Status.player_count
+    }
+
+    # Caddy or Tailscale Serve proxies each active player's signalling
+    # WebSocket from loopback to the private player port. The streamer uses a
+    # different port, so it cannot keep the billed host alive by itself.
+    $Connections = @(
+        Get-NetTCPConnection -LocalPort $PlayerPort -State Established -ErrorAction Stop |
+            Where-Object { $_.RemoteAddress -in @("127.0.0.1", "::1") }
+    )
+    return $Connections.Count
+}
+
 $IdleSince = Get-Date
 while ($true) {
     try {
-        $Status = Invoke-RestMethod -Uri $StatusUrl -Method Get -TimeoutSec 5
-        if ([int]$Status.player_count -gt 0) {
+        if ((Get-PlayerCount) -gt 0) {
             $IdleSince = Get-Date
         } elseif (((Get-Date) - $IdleSince).TotalMinutes -ge $IdleMinutes) {
             & $ShutdownCommand
@@ -31,4 +47,3 @@ while ($true) {
     }
     Start-Sleep -Seconds 30
 }
-

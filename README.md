@@ -42,7 +42,7 @@ Unreal compilation and automation run only on a private self-hosted Windows runn
 
 ## Pixel Streaming
 
-`Tools/streaming/` pins Epic's free Pixel Streaming 2 software, builds the custom iPad-oriented frontend, configures HTTPS/password protection and TURN, packages atomically, proves NVENC activation, and installs a provider-level 30-minute idle shutdown.
+`Tools/streaming/` pins Epic's free Pixel Streaming 2 software, builds the custom iPad-oriented frontend, configures Flo-only tailnet HTTPS and private TURN, packages atomically, proves NVENC activation, and installs a provider-level 30-minute idle shutdown. The hardened AWS template creates no public game or admin endpoint and cannot launch without a recorded cost acknowledgement.
 
 The scripts do not provision or start a paid GPU machine. Host setup, secrets, and the six release gates are documented in `Tools/streaming/README.md` and `M0_CHECKLIST.md`.
 

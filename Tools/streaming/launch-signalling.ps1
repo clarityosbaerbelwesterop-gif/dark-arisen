@@ -56,7 +56,10 @@ $Configuration = @{
     homepage = "player.html"
     https = $false
     https_redirect = $false
-    rest_api = $true
+    # Player state is observed from local WebSocket connections by the idle
+    # watcher. Keeping the REST API disabled prevents it from being proxied by
+    # the tailnet-only HTTPS endpoint.
+    rest_api = $false
     peer_options = $PeerOptions
     log_config = $false
     stdin = $false

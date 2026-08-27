@@ -1,0 +1,23 @@
+{
+  // Replace this exact placeholder with Flo's actual Tailscale login before applying.
+  // This is the complete policy for a dedicated Dark Arisen tailnet. Do not add
+  // the default allow-all ACL/grant and do not merge this into a policy that has
+  // wildcard access to tag:dark-arisen.
+  "tagOwners": {
+    "tag:dark-arisen": ["FLO_TAILSCALE_LOGIN@example.invalid"],
+  },
+
+  // Tailscale policy is deny-by-default. No wildcard source or destination is used.
+  "grants": [
+    {
+      "src": ["FLO_TAILSCALE_LOGIN@example.invalid"],
+      "dst": ["tag:dark-arisen"],
+      "ip": [
+        "tcp:443",
+        "tcp:3478",
+        "udp:3478",
+        "udp:49160-49200",
+      ],
+    },
+  ],
+}

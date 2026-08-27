@@ -12,10 +12,11 @@
 - Added a procedural greybox and JSON frame-time telemetry against the 16.6 ms budget.
 - Encoded the twelve load-bearing design laws in constants, static assertions, Unreal automation tests, and a deterministic source audit.
 - Added private self-hosted CI so the repo does not rely on exhausted GitHub-hosted Actions minutes.
-- Added the complete M0 Pixel Streaming automation path: pinned Epic frontend/infrastructure, secure signalling/TURN, iPad UI, NVENC proof, versioned deployment/rollback, services, firewall rules, evidence collection, and provider-level idle stop.
+- Added the complete M0 Pixel Streaming automation path: pinned Epic frontend/infrastructure, secure signalling/private TURN, iPad UI, NVENC proof, versioned deployment/rollback, services, firewall rules, evidence collection, and provider-level idle stop.
 - Read and indexed all 185 repository documents, including the extensionless DOCX GDD, and added the two current handoff sources to the repository.
 - Recorded the canon hierarchy, legacy conflicts, malformed paths, and five unresolved explicit cross-references.
-- Selected AWS G6.2xlarge in Frankfurt as the provisional M0 host architecture with EBS-backed saves; this is not a provisioning authorization.
+- Selected AWS G6.2xlarge in Frankfurt as the provisional M0 host architecture with EBS-backed saves; added a strict-private Windows Server 2022 CloudFormation/Tailscale implementation that cannot launch without cost approval. This is not a provisioning authorization.
+- Audited the supplied AWS UE4 sample and SkyPilot. Neither supplies free GPU capacity; SkyPilot is BYOC orchestration and is not the selected Windows UE runtime.
 
 ## Deliberately not done
 
@@ -29,8 +30,8 @@
 
 1. Attach a private Windows UE 5.5 self-hosted runner and let the feature PR execute compile/tests.
 2. Resolve any real UE compiler or automation failures; do not suppress checks.
-3. Provide the already-created Epic GPU-host link if one exists, or explicitly approve the provider, exact quote, persistent-disk estimate, and cost ceiling in `Docs/GpuBackendDecision.md`.
-4. Configure machine-scoped secrets and provider identity according to `Tools/streaming/README.md`.
+3. Provide the already-created Epic GPU-host entitlement if one exists, or explicitly approve the provider, exact quote, persistent-disk estimate, and cost ceiling in `Docs/GpuBackendDecision.md`.
+4. Apply the exact one-user tailnet policy and configure machine-scoped secrets/provider identity according to `Tools/streaming/aws/README.md`.
 5. Deploy the PR revision, run `collect-host-evidence.ps1`, and capture all six gates in `M0_CHECKLIST.md`.
 6. Merge only after all evidence is green, first to `develop` and then to `main` at milestone completion.
 

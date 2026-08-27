@@ -1,0 +1,411 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >-
+  Dark Arisen single-player Windows GPU host. This template deliberately exposes
+  no game, HTTPS, TURN, RDP, SSH, or WinRM port to the public internet. UDP 41641
+  is the only inbound transport rule and carries authenticated Tailscale traffic.
+
+Metadata:
+  SafetyBoundary:
+    Cost: Paid EC2, EBS, public IPv4, and data transfer can be created by this template.
+    Approval: Launch only after Flo has approved the exact AWS quote and monthly cap.
+    Privacy: Apply the accompanying deny-by-default tailnet policy before joining the host.
+
+Parameters:
+  ApprovalReference:
+    Type: String
+    AllowedPattern: "^APPROVED-[A-Za-z0-9._-]{6,64}$"
+    ConstraintDescription: Supply the recorded approval reference, beginning with APPROVED-.
+    Description: Required record that Flo approved the exact quote and monthly cap.
+
+  ChargeAcknowledgement:
+    Type: String
+    AllowedValues:
+      - I_ACKNOWLEDGE_AWS_CHARGES
+    Description: Explicit acknowledgement that this stack creates billable AWS resources.
+
+  InstanceType:
+    Type: String
+    Default: g6.2xlarge
+    AllowedValues:
+      - g6.2xlarge
+      - g5.2xlarge
+    Description: Full-GPU Windows host selected for the first private playthrough.
+
+  WindowsAmiParameter:
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: /aws/service/ami-windows-latest/Windows_Server-2022-English-Full-Base
+    Description: AWS-maintained Windows Server 2022 AMI public parameter.
+
+  RootVolumeGiB:
+    Type: Number
+    Default: 220
+    MinValue: 160
+    MaxValue: 512
+
+  DataVolumeGiB:
+    Type: Number
+    Default: 500
+    MinValue: 500
+    MaxValue: 2048
+    Description: Persistent encrypted project, UE, release, save, and telemetry volume.
+
+  VpcCidr:
+    Type: String
+    Default: 10.77.0.0/24
+    AllowedPattern: "^(10\\.(?:[0-9]{1,3}\\.){2}[0-9]{1,3}/(?:1[6-9]|2[0-8]))$"
+
+  SubnetCidr:
+    Type: String
+    Default: 10.77.0.0/26
+    AllowedPattern: "^(10\\.(?:[0-9]{1,3}\\.){2}[0-9]{1,3}/(?:2[4-8]))$"
+
+  ProtectFromTermination:
+    Type: String
+    Default: "true"
+    AllowedValues:
+      - "true"
+      - "false"
+    Description: Protects against accidental termination; provider stop remains allowed.
+
+  TailscaleAuthParameterArn:
+    Type: String
+    AllowedPattern: "^arn:aws[a-zA-Z-]*:ssm:[a-z0-9-]+:[0-9]{12}:parameter/.+$"
+    Description: >-
+      ARN of an existing SecureString containing a one-off, pre-approved auth key
+      tagged tag:dark-arisen. The stack does not create, print, or output the secret.
+
+  TailscaleMsiUrl:
+    Type: String
+    Default: https://pkgs.tailscale.com/stable/tailscale-setup-1.102.3-amd64.msi
+    AllowedPattern: "^https://pkgs\\.tailscale\\.com/stable/tailscale-setup-[0-9.]+-amd64\\.msi$"
+
+  TailscaleMsiSha256:
+    Type: String
+    NoEcho: true
+    AllowedPattern: "^[A-Fa-f0-9]{64}$"
+    Description: SHA-256 from the official MSI URL with .sha256 appended.
+
+  NvidiaDriverS3Key:
+    Type: String
+    AllowedPattern: "^latest/[A-Za-z0-9._/-]+\\.exe$"
+    Description: Exact reviewed GRID driver key in ec2-windows-nvidia-drivers.
+
+Conditions:
+  TerminationProtectionEnabled: !Equals [!Ref ProtectFromTermination, "true"]
+
+Resources:
+  Vpc:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref VpcCidr
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
+      InstanceTenancy: default
+      Tags:
+        - Key: Name
+          Value: dark-arisen-private
+        - Key: DarkArisenManaged
+          Value: "true"
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: dark-arisen-private-egress
+
+  InternetGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      InternetGatewayId: !Ref InternetGateway
+      VpcId: !Ref Vpc
+
+  GpuSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Select [0, !GetAZs ""]
+      CidrBlock: !Ref SubnetCidr
+      MapPublicIpOnLaunch: false
+      VpcId: !Ref Vpc
+      Tags:
+        - Key: Name
+          Value: dark-arisen-gpu
+
+  RouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref Vpc
+      Tags:
+        - Key: Name
+          Value: dark-arisen-private-egress
+
+  DefaultIpv4Route:
+    Type: AWS::EC2::Route
+    DependsOn: InternetGatewayAttachment
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+      RouteTableId: !Ref RouteTable
+
+  GpuSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref RouteTable
+      SubnetId: !Ref GpuSubnet
+
+  PrivateGameSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: No public game or admin ingress; Tailscale encrypted transport only
+      VpcId: !Ref Vpc
+      SecurityGroupIngress:
+        - Description: Tailscale WireGuard transport; not a game, TURN, HTTPS, or admin port
+          IpProtocol: udp
+          FromPort: 41641
+          ToPort: 41641
+          CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+        - Description: HTTPS for SSM, Tailscale control and DERP, GitHub, and package retrieval
+          IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+        - Description: HTTP only for vendor redirects and Windows package retrieval
+          IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - Description: DNS over TCP
+          IpProtocol: tcp
+          FromPort: 53
+          ToPort: 53
+          CidrIp: 0.0.0.0/0
+        - Description: DNS, time sync, Tailscale NAT traversal, and WebRTC egress
+          IpProtocol: udp
+          FromPort: 0
+          ToPort: 65535
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: dark-arisen-no-public-game-ingress
+
+  GpuHostRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonSSMManagedInstanceCore
+      Policies:
+        - PolicyName: ReadOneTailscaleBootstrapSecret
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: ssm:GetParameter
+                Resource: !Ref TailscaleAuthParameterArn
+        - PolicyName: ReadOneReviewedNvidiaDriver
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: s3:GetObject
+                Resource: !Sub arn:${AWS::Partition}:s3:::ec2-windows-nvidia-drivers/${NvidiaDriverS3Key}
+        - PolicyName: StopOnlyTaggedDarkArisenHosts
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: ReadInstanceIdentity
+                Effect: Allow
+                Action: ec2:DescribeInstances
+                Resource: "*"
+              - Sid: StopManagedHost
+                Effect: Allow
+                Action: ec2:StopInstances
+                Resource: !Sub arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:instance/*
+                Condition:
+                  StringEquals:
+                    ec2:ResourceTag/DarkArisenManaged: "true"
+
+  GpuHostInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles:
+        - !Ref GpuHostRole
+
+  PersistentDataVolume:
+    Type: AWS::EC2::Volume
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      AvailabilityZone: !Select [0, !GetAZs ""]
+      Encrypted: true
+      Iops: 3000
+      Size: !Ref DataVolumeGiB
+      Throughput: 125
+      VolumeType: gp3
+      Tags:
+        - Key: Name
+          Value: dark-arisen-persistent-data
+        - Key: DarkArisenManaged
+          Value: "true"
+        - Key: ContainsPlayerData
+          Value: "true"
+
+  GpuHost:
+    Type: AWS::EC2::Instance
+    Properties:
+      BlockDeviceMappings:
+        - DeviceName: /dev/sda1
+          Ebs:
+            DeleteOnTermination: true
+            Encrypted: true
+            Iops: 3000
+            Throughput: 125
+            VolumeSize: !Ref RootVolumeGiB
+            VolumeType: gp3
+      DisableApiTermination: !If [TerminationProtectionEnabled, true, false]
+      EbsOptimized: true
+      IamInstanceProfile: !Ref GpuHostInstanceProfile
+      ImageId: !Ref WindowsAmiParameter
+      InstanceInitiatedShutdownBehavior: stop
+      InstanceType: !Ref InstanceType
+      Monitoring: false
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: true
+          DeleteOnTermination: true
+          DeviceIndex: "0"
+          GroupSet:
+            - !Ref PrivateGameSecurityGroup
+          SubnetId: !Ref GpuSubnet
+      MetadataOptions:
+        HttpEndpoint: enabled
+        HttpProtocolIpv6: disabled
+        HttpPutResponseHopLimit: 1
+        HttpTokens: required
+        InstanceMetadataTags: disabled
+      PropagateTagsToVolumeOnCreation: true
+      Tags:
+        - Key: Name
+          Value: dark-arisen-alpha-private
+        - Key: DarkArisenManaged
+          Value: "true"
+        - Key: SinglePlayerOnly
+          Value: "true"
+        - Key: ApprovalReference
+          Value: !Ref ApprovalReference
+      UserData:
+        Fn::Base64: !Sub |
+          <powershell>
+          Set-StrictMode -Version Latest
+          $ErrorActionPreference = "Stop"
+
+          $RuntimeRoot = "C:\ProgramData\DarkArisen"
+          New-Item -ItemType Directory -Path $RuntimeRoot -Force | Out-Null
+
+          foreach ($DisplayGroup in @("Remote Desktop", "Windows Remote Management")) {
+              Get-NetFirewallRule -DisplayGroup $DisplayGroup -ErrorAction SilentlyContinue |
+                  Disable-NetFirewallRule -ErrorAction SilentlyContinue
+          }
+
+          $MsiPath = Join-Path $RuntimeRoot "tailscale-setup-amd64.msi"
+          Invoke-WebRequest -UseBasicParsing -Uri '${TailscaleMsiUrl}' -OutFile $MsiPath
+          $ActualHash = (Get-FileHash -LiteralPath $MsiPath -Algorithm SHA256).Hash
+          if ($ActualHash -ne '${TailscaleMsiSha256}'.ToUpperInvariant()) {
+              throw "Tailscale MSI SHA-256 mismatch."
+          }
+          $Signature = Get-AuthenticodeSignature -FilePath $MsiPath
+          if ($Signature.Status -ne "Valid" -or
+              $Signature.SignerCertificate.Subject -notmatch "(^|, )O=Tailscale Inc(,|$)") {
+              throw "Tailscale MSI does not have the expected valid publisher signature."
+          }
+          $Installer = Start-Process -FilePath msiexec.exe -ArgumentList @(
+              "/i", $MsiPath, "/quiet", "/norestart"
+          ) -Wait -PassThru
+          if ($Installer.ExitCode -notin @(0, 3010)) {
+              throw "Tailscale installation failed with exit code $($Installer.ExitCode)."
+          }
+          Remove-Item -LiteralPath $MsiPath -Force
+
+          $TailscaleService = Get-Service -Name Tailscale -ErrorAction Stop
+          Set-Service -Name $TailscaleService.Name -StartupType Automatic
+          if ($TailscaleService.Status -ne "Running") { Start-Service -Name $TailscaleService.Name }
+
+          $SsmService = Get-Service -Name AmazonSSMAgent -ErrorAction Stop
+          Set-Service -Name $SsmService.Name -StartupType Automatic
+          if ($SsmService.Status -ne "Running") { Start-Service -Name $SsmService.Name }
+
+          $Token = Invoke-RestMethod -Method Put -Uri "http://169.254.169.254/latest/api/token" `
+              -Headers @{"X-aws-ec2-metadata-token-ttl-seconds"="21600"}
+          $MetadataHeaders = @{"X-aws-ec2-metadata-token"=$Token}
+          $InstanceId = Invoke-RestMethod -Method Get `
+              -Uri "http://169.254.169.254/latest/meta-data/instance-id" -Headers $MetadataHeaders
+          [Environment]::SetEnvironmentVariable("DARKARISEN_AWS_INSTANCE_ID", $InstanceId, "Machine")
+          [Environment]::SetEnvironmentVariable("AWS_REGION", "${AWS::Region}", "Machine")
+
+          $ExpectedSerial = '${PersistentDataVolume}'.Replace("-", "").ToLowerInvariant()
+          $DataDisk = $null
+          for ($Attempt = 0; $Attempt -lt 90 -and $null -eq $DataDisk; $Attempt++) {
+              Update-HostStorageCache
+              $DataDisk = Get-Disk | Where-Object {
+                  $Serial = ("$($_.SerialNumber)" -replace "[^A-Za-z0-9]", "").ToLowerInvariant()
+                  $Serial.StartsWith($ExpectedSerial)
+              } | Select-Object -First 1
+              if ($null -eq $DataDisk) { Start-Sleep -Seconds 10 }
+          }
+          if ($null -eq $DataDisk) { throw "The retained EBS data volume was not detected." }
+
+          if ($DataDisk.IsOffline) { Set-Disk -Number $DataDisk.Number -IsOffline $false }
+          if ($DataDisk.IsReadOnly) { Set-Disk -Number $DataDisk.Number -IsReadOnly $false }
+          if ($DataDisk.PartitionStyle -eq "RAW") {
+              Initialize-Disk -Number $DataDisk.Number -PartitionStyle GPT -PassThru |
+                  New-Partition -UseMaximumSize -DriveLetter D |
+                  Format-Volume -FileSystem NTFS -NewFileSystemLabel "DarkArisenData" `
+                      -AllocationUnitSize 65536 -Confirm:$false | Out-Null
+          }
+
+          $DataPartition = Get-Partition -DiskNumber $DataDisk.Number |
+              Where-Object DriveLetter | Select-Object -First 1
+          if ($null -eq $DataPartition) { throw "The retained data volume has no mounted partition." }
+          $DataRoot = "$($DataPartition.DriveLetter):\DarkArisen"
+          foreach ($Directory in @("Project", "Unreal", "Deployments", "UserData", "Telemetry", "Backups")) {
+              New-Item -ItemType Directory -Path (Join-Path $DataRoot $Directory) -Force | Out-Null
+          }
+          [Environment]::SetEnvironmentVariable("DARKARISEN_DATA_ROOT", $DataRoot, "Machine")
+
+          @{
+              approval_reference = '${ApprovalReference}'
+              data_root = $DataRoot
+              instance_id = $InstanceId
+              public_game_ingress = $false
+              tailscale_installed = $true
+              tailscale_joined = $false
+          } | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $RuntimeRoot "host-bootstrap.json") -Encoding UTF8
+          </powershell>
+
+  PersistentDataVolumeAttachment:
+    Type: AWS::EC2::VolumeAttachment
+    Properties:
+      Device: /dev/sdf
+      InstanceId: !Ref GpuHost
+      VolumeId: !Ref PersistentDataVolume
+
+Outputs:
+  InstanceId:
+    Description: Use this identifier with Systems Manager; no public admin endpoint is created.
+    Value: !Ref GpuHost
+
+  PersistentDataVolumeId:
+    Description: Retained encrypted volume containing all non-rebuildable host data.
+    Value: !Ref PersistentDataVolume
+
+  SecurityPosture:
+    Value: NO_PUBLIC_GAME_RDP_SSH_WINRM_HTTPS_OR_TURN_INGRESS
+
+  NextStep:
+    Value: APPLY_TAILNET_POLICY_THEN_RUN_JOIN_SCRIPT_OVER_SSM

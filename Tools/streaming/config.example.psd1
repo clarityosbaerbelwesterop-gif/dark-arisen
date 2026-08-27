@@ -7,8 +7,9 @@
     # Put RuntimeRoot/UserData on persistent provider storage. Never use local
     # instance-store/NVMe for saves because it is erased when some VMs stop.
     NssmPath = "C:\Tools\nssm\win64\nssm.exe"
+    # Caddy is needed only for the legacy public-password provider path.
     CaddyPath = "C:\Tools\caddy\caddy.exe"
 
     # Provider shutdown adapter. It must deallocate/stop billing, not merely shut down Windows.
-    ShutdownCommand = "C:\DarkArisen\repo\Tools\streaming\providers\azure-deallocate.ps1"
+    ShutdownCommand = "D:\DarkArisen\Project\Tools\streaming\providers\aws-stop-instance.ps1"
 }
