@@ -41,6 +41,17 @@ python -m unittest discover -s Tools/ci -p "test_*.py"
 
 Unreal compilation and automation run only on a private self-hosted Windows runner labelled `Windows`, `X64`, `ue5.5`, and `dark-arisen`. This avoids GitHub-hosted Actions minutes; it does not bypass or weaken CI.
 
+### Attach an existing Windows machine without cloud spend
+
+1. Install the licensed Unreal Engine 5.5 build, Git LFS and Python on a dedicated Windows x64 machine.
+2. Set the machine-level `UE55_ROOT` environment variable to that UE 5.5 installation.
+3. In the private repository, open **Settings → Actions → Runners → New self-hosted runner** and follow GitHub's one-time Windows registration commands. Never commit or paste the registration token into a file or PR.
+4. Add the custom labels `ue5.5` and `dark-arisen`; GitHub supplies `self-hosted`, `Windows`, and `X64`.
+5. Run `./Tools/ci/verify-runner.ps1` locally. It fails closed on the wrong engine version, missing tools, non-Windows/non-x64 hosts, or insufficient disk.
+6. Start the runner service. The queued PR #4 workflow will be claimed automatically.
+
+This path uses existing hardware and no cloud GPU. It does not create a Pixel Streaming host; streaming remains a separate private and cost-gated deployment step.
+
 ## Pixel Streaming
 
 `Tools/streaming/` pins Epic's free Pixel Streaming 2 software, builds the custom iPad-oriented frontend, configures HTTPS/password protection and TURN, packages atomically, proves NVENC activation, and installs a provider-level 30-minute idle shutdown.

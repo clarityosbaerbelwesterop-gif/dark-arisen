@@ -27,6 +27,10 @@ jobs:
           fetch-depth: 1
           lfs: true
 
+      - name: Verify private Windows UE 5.5 runner
+        shell: pwsh
+        run: ./Tools/ci/verify-runner.ps1
+
       - name: Validate M0 repository contract
         shell: pwsh
         run: python Tools/ci/validate_m0.py

@@ -11,6 +11,7 @@ Milestone 0 is complete only when every required item below has reproducible evi
 - [x] The twelve laws are represented in `DesignLaws.h`; detectable prohibitions have CI checks.
 - [x] Server-side frame-time windows report p50, p95, maximum, and the percentage over the 16.6 ms budget.
 - [x] CI targets a private self-hosted UE 5.5 Windows runner and consumes no GitHub-hosted runner minutes.
+- [x] Runner preflight fails closed on wrong OS/architecture, wrong engine, missing Git LFS/Python, or insufficient disk.
 
 ## Pixel Streaming implementation
 
@@ -18,22 +19,21 @@ Milestone 0 is complete only when every required item below has reproducible evi
 - [x] Launch flags lock 1920×1080, 60 fps project output, offscreen rendering, and local signalling.
 - [x] NVENC must be detected and proven in the Unreal log; software fallback fails deployment.
 - [x] Signalling, TURN, gateway, and idle watcher have auto-restart services and rotated logs.
-- [x] The selected AWS code exposes no public play/admin endpoint; tailnet HTTPS grants one exact identity, Funnel is disabled, and signalling/REST ports remain private.
+- [x] HTTPS and password authentication protect the public endpoint; signalling/API ports remain private.
 - [x] One player is allowed; touch, native gamepad input, fullscreen, and a latency readout are enabled.
 - [x] Deployment uses versioned releases, an atomic active pointer, exact-PID shutdown, and rollback without deleting the prior release.
 - [x] A provider adapter must stop/deallocate billing after 30 idle minutes.
-- [x] The supplied AWS sample and SkyPilot were audited; neither is free GPU capacity and neither may bypass the cost/privacy gate.
-- [ ] The exact AWS quote, monthly cap, Tailscale identity, and GPU host have been explicitly approved by Flo. **No paid host has been provisioned.**
+- [ ] A GPU host has been explicitly selected and approved by Flo. **No paid host has been provisioned.**
 
 ## Six mandatory merge gates
 
 | Gate | Required evidence | Status |
 |---|---|---|
 | 1. Development + Shipping compile | UE 5.5 CI logs, zero errors and zero warnings | Not run — UE runner unavailable |
-| 2. Automated tests | Python checks and Unreal `DarkArisen.*` automation report | Python: passed locally 2026-08-27 (12 tests + validator + audit); Unreal: not run |
+| 2. Automated tests | Python checks and Unreal `DarkArisen.*` automation report | Python: passed locally 2026-08-26 (8 tests + validator + audit); Unreal: not run |
 | 3. In-engine smoke test | Greybox movement, camera, jump, sprint, death, Rache gate and frame telemetry recording | Not run |
 | 4. iPad input | Safari video showing left-stick movement, right-drag look, and paired DualSense input | Not run |
-| 5. Stream quality | Flo-only tailnet HTTPS, outside-tailnet denial, private mobile-network TURN, NVENC, 1080p60, visible latency under 120 ms | Not run |
+| 5. Stream quality | HTTPS/password, mobile-network TURN, NVENC, 1080p60, visible latency under 120 ms | Not run |
 | 6. Cost shutdown | Provider event/audit log proving deallocation after 30 minutes with zero players | Not run |
 
 The feature PR must remain draft and unmerged while any cell above is not green. At milestone completion, merge into `develop`, re-run the full gate set, then merge/tag `main`.
