@@ -55,6 +55,30 @@ bool FDarkArisenBaselineStatsSpec::RunTest(const FString& Parameters)
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
+    FDarkArisenM1RallyTuningSpec,
+    "DarkArisen.M1.RallyTuning",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FDarkArisenM1RallyTuningSpec::RunTest(const FString& Parameters)
+{
+    TestTrue(TEXT("Standard damage is seventy percent recoverable"), FMath::IsNearlyEqual(
+        UHealthComponent::GetRallyFractionForDamageClass(ERallyDamageClass::StandardEnemy),
+        0.70f));
+    TestTrue(TEXT("Boss damage is fifty percent recoverable"), FMath::IsNearlyEqual(
+        UHealthComponent::GetRallyFractionForDamageClass(ERallyDamageClass::Boss),
+        0.50f));
+    TestTrue(TEXT("Poison cannot be rallied"), FMath::IsNearlyZero(
+        UHealthComponent::GetRallyFractionForDamageClass(ERallyDamageClass::Poison)));
+    TestTrue(TEXT("Light hit recovers fifteen percent"), FMath::IsNearlyEqual(
+        UHealthComponent::GetRecoveryFractionForAction(ERallyRecoveryAction::LightHit),
+        0.15f));
+    TestTrue(TEXT("Critical recovers all available rally"), FMath::IsNearlyEqual(
+        UHealthComponent::GetRecoveryFractionForAction(ERallyRecoveryAction::Critical),
+        1.0f));
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(
     FDarkArisenM1WoundLayersSpec,
     "DarkArisen.M1.WoundLayers",
     EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)

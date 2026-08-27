@@ -34,6 +34,7 @@ AJakeCharacter::AJakeCharacter()
     Movement->BrakingDecelerationWalking = 1400.0f;
 
     HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
+    HealthComponent->bRallyEnabled = true;
     StaminaComponent = CreateDefaultSubobject<UStaminaComponent>(TEXT("StaminaComponent"));
     CombatComponent = CreateDefaultSubobject<UCombatComponent>(TEXT("CombatComponent"));
     WoundStateComponent = CreateDefaultSubobject<UWoundStateComponent>(TEXT("WoundStateComponent"));

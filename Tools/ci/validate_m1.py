@@ -18,6 +18,8 @@ REQUIRED_FILES = (
     "Source/DarkArisen/Components/InteractionComponent.cpp",
     "Source/DarkArisen/Interaction/DarkArisenInteractable.h",
     "Source/DarkArisen/Interaction/DarkArisenInteractable.cpp",
+    "Source/DarkArisen/PostureOnlyHUD.h",
+    "Source/DarkArisen/PostureOnlyHUD.cpp",
     "Docs/M1_CORE_LOOP.md",
 )
 
@@ -80,6 +82,20 @@ def validate(root: Path) -> list[str]:
         "DesignLaws::DeflectionWindowSeconds",
         "PostureBreakVulnerabilitySeconds",
         "PostureVisualState == EPostureVisualState::Broken",
+    ), errors)
+    _require_fragments(root / "Source/DarkArisen/Components/HealthComponent.cpp", (
+        "RallyWindowRemaining = RallyWindowSeconds",
+        "ERallyDamageClass::StandardEnemy: return 0.70f",
+        "ERallyDamageClass::Poison: return 0.0f",
+        "ERallyRecoveryAction::LightHit: return 0.15f",
+        "ERallyRecoveryAction::Critical: return 1.0f",
+    ), errors)
+    _require_fragments(root / "Source/DarkArisen/PostureOnlyHUD.cpp", (
+        "PermittedCombatHudElements == 1",
+        "GetPostureRemainingFraction",
+    ), errors)
+    _require_fragments(root / "Source/DarkArisen/JakeCharacter.cpp", (
+        "HealthComponent->bRallyEnabled = true",
     ), errors)
     _require_fragments(root / "Config/DefaultInput.ini", (
         'ActionName="LightAttack"',

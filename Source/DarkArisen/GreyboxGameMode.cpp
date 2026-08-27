@@ -11,6 +11,7 @@
 #include "Engine/StaticMeshActor.h"
 #include "FrameTimeTelemetryActor.h"
 #include "JakeCharacter.h"
+#include "PostureOnlyHUD.h"
 
 namespace
 {
@@ -39,6 +40,7 @@ namespace
 AGreyboxGameMode::AGreyboxGameMode()
 {
     DefaultPawnClass = AJakeCharacter::StaticClass();
+    HUDClass = APostureOnlyHUD::StaticClass();
 }
 
 void AGreyboxGameMode::InitGame(
@@ -101,4 +103,3 @@ void AGreyboxGameMode::BuildGreybox()
 
     World->SpawnActor<AFrameTimeTelemetryActor>();
 }
-

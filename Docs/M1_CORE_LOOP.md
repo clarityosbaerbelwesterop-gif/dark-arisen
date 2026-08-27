@@ -14,6 +14,8 @@
 - Camera control has Free, Anchored, and Authored modes. Anchored refuses look input while preserving movement; Authored refuses both. The four-second death hold and six-second emergence anchor are explicit entry points.
 - Interaction traces only to 1.4 metres, emits one corner-prompt event for four seconds, and runs Begin/Complete/Cancel over a real duration. The default Take duration is 0.6 seconds.
 - Movement or damage cancels an in-progress interaction. No target-rendering mutation, world-space prompt, fade, or generic loot-container path exists.
+- Jake owns the authored three-second Rally window. Damage-source recovery ranges from 70% for standard attacks to 0% for poison; landed light/heavy/parry-strike/critical hooks recover 15/25/40/100% of the currently available Rally pool.
+- The native combat HUD draws one posture indicator only. It has no health, stamina, Rally, ammo, boss bar, minimap, damage-number, or status-icon path.
 
 ## Conflict rulings applied
 
@@ -26,7 +28,7 @@ The later locked rules supersede contradictory Phase 3/6 draft clauses:
 
 ## Still required before M1 acceptance
 
-- authored animation montages, hit traces, damage resolution, rally, one complete enemy, lock-on, wound-aware locomotion poses, and the posture-only HUD;
+- authored animation montages, hit traces, damage resolution that calls the Rally recovery hooks, one complete enemy, lock-on, and wound-aware locomotion poses;
 - physical door and pickup actors, an Examine presentation, an interaction corner widget, and persistence tests;
 - Windows UE 5.5 Development/Shipping compile, Unreal automation execution, controller/touch smoke testing, and measured 60 fps evidence.
 
