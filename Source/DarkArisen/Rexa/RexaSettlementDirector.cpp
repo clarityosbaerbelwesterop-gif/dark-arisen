@@ -9,11 +9,12 @@
 #include "Rexa/RexaSettlementResident.h"
 #include "Rexa/RexaSettlementRoster.h"
 #include "World/CombatProximitySubsystem.h"
+#include "World/DarkArisenWorldRulesSubsystem.h"
 
 ARexaSettlementDirector::ARexaSettlementDirector()
 {
     PrimaryActorTick.bCanEverTick = true;
-    PrimaryActorTick.bStartWithTickEnabled = false;
+    PrimaryActorTick.bStartWithTickEnabled = true;
     SceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("SceneRoot"));
     SetRootComponent(SceneRoot);
     ResidentClass = ARexaSettlementResident::StaticClass();
@@ -26,6 +27,9 @@ void ARexaSettlementDirector::BeginPlay()
         GetWorld() ? GetWorld()->GetSubsystem<UCombatProximitySubsystem>() : nullptr)
         Proximity->RegisterResponder(this);
     if (bSpawnOnBeginPlay) SpawnAuthoredSettlement();
+    if (UDarkArisenWorldRulesSubsystem* WorldRules =
+        GetWorld() ? GetWorld()->GetSubsystem<UDarkArisenWorldRulesSubsystem>() : nullptr)
+        ApplyGameMinute(WorldRules->GetTotalWorldMinutes());
 }
 
 void ARexaSettlementDirector::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -40,7 +44,19 @@ void ARexaSettlementDirector::EndPlay(const EEndPlayReason::Type EndPlayReason)
 void ARexaSettlementDirector::Tick(const float DeltaSeconds)
 {
     Super::Tick(DeltaSeconds);
-    if (!bCombatResponseActive) return;
+
+    if (!bCombatResponseActive)
+    {
+        if (UDarkArisenWorldRulesSubsystem* WorldRules =
+            GetWorld() ? GetWorld()->GetSubsystem<UDarkArisenWorldRulesSubsystem>() : nullptr)
+        {
+            const int64 CanonicalGameMinute = WorldRules->GetTotalWorldMinutes();
+            if (CanonicalGameMinute != LastAppliedGameMinute)
+                ApplyGameMinute(CanonicalGameMinute);
+        }
+        return;
+    }
+
     CombatElapsedSeconds += FMath::Max(0.0f, DeltaSeconds);
     CombatSilenceRemainingSeconds -= FMath::Max(0.0f, DeltaSeconds);
     if (!bChildrenShelteredForPersistentCombat &&
@@ -92,7 +108,10 @@ bool ARexaSettlementDirector::SpawnAuthoredSettlement()
         }
         SpawnedResidents.Add(Spawned);
     }
-    return SpawnedResidents.Num() == URexaSettlementRoster::RequiredResidentCount;
+    const bool bCompleteRoster =
+        SpawnedResidents.Num() == URexaSettlementRoster::RequiredResidentCount;
+    if (bCompleteRoster) SetActorTickEnabled(true);
+    return bCompleteRoster;
 }
 
 void ARexaSettlementDirector::ClearSpawnedSettlement()
@@ -106,6 +125,7 @@ void ARexaSettlementDirector::ClearSpawnedSettlement()
     bChildrenShelteredForPersistentCombat = false;
     CombatElapsedSeconds = 0.0f;
     CombatSilenceRemainingSeconds = 0.0f;
+    LastAppliedGameMinute = -1;
     SetActorTickEnabled(false);
 }
 
@@ -245,8 +265,12 @@ bool ARexaSettlementDirector::EndCombatResponse()
     bChildrenShelteredForPersistentCombat = false;
     CombatElapsedSeconds = 0.0f;
     CombatSilenceRemainingSeconds = 0.0f;
-    SetActorTickEnabled(false);
-    if (LastAppliedGameMinute >= 0) ApplyGameMinute(LastAppliedGameMinute);
+
+    const UDarkArisenWorldRulesSubsystem* WorldRules =
+        GetWorld() ? GetWorld()->GetSubsystem<UDarkArisenWorldRulesSubsystem>() : nullptr;
+    const int64 RestoreGameMinute =
+        WorldRules ? WorldRules->GetTotalWorldMinutes() : LastAppliedGameMinute;
+    if (RestoreGameMinute >= 0) ApplyGameMinute(RestoreGameMinute);
     return true;
 }
 
