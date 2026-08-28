@@ -67,6 +67,73 @@ class M2SourceContractValidationTests(unittest.TestCase):
             findings = validate(root)
             self.assertTrue(any("MusicCue" in finding for finding in findings))
 
+    def test_radiant_rexa_mission_generator_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            missions = root / "Source/DarkArisen/Missions"
+            missions.mkdir(parents=True)
+            (missions / "RexaM2MissionCatalog.h").write_text(
+                "void GenerateRadiantQuest();", encoding="utf-8")
+            (missions / "RexaM2MissionCatalog.cpp").write_text("", encoding="utf-8")
+            findings = validate(root)
+            self.assertTrue(any("GenerateRadiantQuest" in finding for finding in findings))
+
+    def test_physical_journal_objective_checkbox_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            interaction = root / "Source/DarkArisen/Interaction"
+            interaction.mkdir(parents=True)
+            (interaction / "PhysicalJournalActor.h").write_text(
+                "bool ObjectiveCheckbox;", encoding="utf-8")
+            (interaction / "PhysicalJournalActor.cpp").write_text("", encoding="utf-8")
+            findings = validate(root)
+            self.assertTrue(any("ObjectiveCheckbox" in finding for finding in findings))
+
+    def test_generated_rexa_residents_are_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            rexa = root / "Source/DarkArisen/Rexa"
+            rexa.mkdir(parents=True)
+            (rexa / "RexaSettlementRoster.h").write_text("", encoding="utf-8")
+            (rexa / "RexaSettlementRoster.cpp").write_text(
+                "FRandomStream PopulationSeed;", encoding="utf-8")
+            findings = validate(root)
+            self.assertTrue(any("FRandomStream" in finding for finding in findings))
+
+    def test_rexa_roster_must_author_exactly_forty_people(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            rexa = root / "Source/DarkArisen/Rexa"
+            rexa.mkdir(parents=True)
+            (rexa / "RexaSettlementRoster.h").write_text("", encoding="utf-8")
+            (rexa / "RexaSettlementRoster.cpp").write_text(
+                "Residents.Add(Resident(", encoding="utf-8")
+            findings = validate(root)
+            self.assertTrue(any("exactly 40 residents" in finding for finding in findings))
+
+    def test_child_ragdoll_enablement_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            rexa = root / "Source/DarkArisen/Rexa"
+            rexa.mkdir(parents=True)
+            (rexa / "RexaSettlementResident.h").write_text("", encoding="utf-8")
+            (rexa / "RexaSettlementResident.cpp").write_text(
+                "ChildMesh->SetSimulatePhysics(true);", encoding="utf-8")
+            findings = validate(root)
+            self.assertTrue(any("SetSimulatePhysics(true)" in finding for finding in findings))
+
+    def test_settlement_combat_component_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            rexa = root / "Source/DarkArisen/Rexa"
+            rexa.mkdir(parents=True)
+            (rexa / "RexaSettlementResident.h").write_text("", encoding="utf-8")
+            (rexa / "RexaSettlementResident.cpp").write_text(
+                "CreateDefaultSubobject<UCombatComponent>();", encoding="utf-8")
+            findings = validate(root)
+            self.assertTrue(any(
+                "CreateDefaultSubobject<UCombatComponent>" in finding for finding in findings))
+
 
 if __name__ == "__main__":
     unittest.main()

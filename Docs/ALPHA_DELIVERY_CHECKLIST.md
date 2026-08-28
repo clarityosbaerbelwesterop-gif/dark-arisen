@@ -1,20 +1,20 @@
 # Dark Arisen Alpha delivery checklist
 
-**Delivery branch:** `feature/pr4-full-game-delivery`  
-**Pull request:** #4  
+**Delivery branch:** `feature/m2-rexa-vertical-slice`  
+**Merged source history:** PR #4 → `develop`; PR #5 → `main` on 2026-08-28. Neither merge proves the still-missing runtime or Alpha gates.  
 **Engine:** Unreal Engine 5.5  
-**Artifact definition:** the first Alpha is the complete, private UE 5.5 game project plus separately verified Windows and PS5 target artifacts containing every approved M0–M8 system and all authorised game content. A source-only scaffold, greybox, vertical slice, streaming configuration, or Windows build renamed as a PS5 build is not an Alpha. Arcware is a Windows Pixel Streaming test path, not a PS5 emulator.
+**Artifact definition:** the first Alpha is the complete private UE 5.5 game plus two separately verified, content-identical Shipping artifacts: `DarkArisen-Alpha-Windows-Arcware.zip` and `DarkArisen-Alpha-Linux-x86_64.zip`. The exact source archive accompanies them. A scaffold, greybox, vertical slice, streaming configuration or untested candidate is not an Alpha. Native PS5 work is deferred to Beta and is not an Alpha deliverable.
 
 This file is the progress index. Detailed acceptance criteria remain authoritative in `M0_CHECKLIST.md` and `Docs/Handoff/ENGINEERING_HANDOFF.md`. A checkbox is marked only when its required source and runtime evidence both exist.
 
 ## Non-negotiable delivery gates
 
-- [ ] Windows Development and Shipping builds compile in UE 5.5 with zero game-module warnings.
+- [ ] Windows and Linux Development/Shipping builds compile in UE 5.5 with zero game-module warnings.
 - [ ] Python and Unreal automation suites pass on the exact delivery commit.
 - [ ] Frame-time evidence meets the 60 fps floor in every milestone benchmark.
 - [ ] The design-law audit passes and the combat HUD still contains posture only.
 - [ ] Flo completes the private iPad/Pixel Streaming playtest.
-- [ ] The packaged project is archived as a private UE 5.5 ZIP and its checksum is recorded.
+- [ ] The source project and both packaged targets are archived privately and every checksum is recorded.
 - [ ] The complete content manifest is reconciled against the design source register.
 - [ ] Flo explicitly approves the Alpha candidate after the first full-game playthrough.
 - [ ] Completing the main story enters a full credits sequence with an approved non-reactive music cue and complete third-party/tool/music attribution.
@@ -24,7 +24,7 @@ This file is the progress index. Detailed acceptance criteria remain authoritati
 - [x] UE 5.5 C++ project, targets, configs, Git LFS and native greybox exist.
 - [x] Design laws, deterministic validators, frame telemetry and private runner workflow exist.
 - [x] Private one-player Pixel Streaming deployment path and idle deallocation are implemented in source.
-- [ ] Windows UE 5.5 compile, Unreal tests and in-engine smoke evidence.
+- [ ] Windows and Linux UE 5.5 compile, Unreal tests and in-engine smoke evidence.
 - [ ] Flo/operator-selected GPU host with any cost explicitly approved outside the repository.
 - [ ] Flo/operator-created private iPad link plus NVENC, TURN, latency and shutdown evidence.
 
@@ -50,6 +50,9 @@ This file is the progress index. Detailed acceptance criteria remain authoritati
 ## M2 — Vertical slice
 
 - [ ] Rexa jungle region slice, settlement, Cenote dungeon and required traversal.
+- [x] Exact native forty-person Las Raíces roster, locked 16/12/8/4 census, authored purpose anchors, fail-closed spawn boundary and protected-child damage/physics exclusions.
+- [x] Native settlement-scoped anchor registry and AI path-request boundary with missing/duplicate/unsheltered-midday failures and no competing world clock.
+- [ ] Authored settlement level/anchor placement, observed schedule navigation, four ambient-dialogue layers, population reactions, 50 m child flee/removal and forty-resident runtime proof.
 - [x] Native 30/60/90-second breath tiers, equipment exception and HUD-free drowning damage path.
 - [x] Native Cenote state for lip entry, Rexan water routing, exact-hour image gating, Keeper outcome and mandatory Return dependency.
 - [ ] Authored Cenote level, water devices/currents/swimming, green-gold lighting, Keeper creature/AI/animation, offerings decision and no-marker/no-music runtime proof.
@@ -58,6 +61,7 @@ This file is the progress index. Detailed acceptance criteria remain authoritati
 - [x] HUD-free native heat pressure with authored cistern/shade/exposed states; provisional numeric rates remain marked `DESIGN-GAP`.
 - [ ] Authored Fuerte San Rafael arena, heat volumes, routes, combat/dialogue animation, cabinet/list/report rewards and three-resolution persistence evidence.
 - [x] Native markerless quest state with all six activation modes, silent activation, fallible chronological journal data, internal expiry outcomes and mutual exclusion.
+- [x] Four finite authored Rexa mission definitions, multi-voice local directions and physical chronological-notebook source boundary.
 - [ ] Physical held journal presentation, local-direction dialogue, three authored Turns and one authored Standing mission.
 - [ ] Two-hour evidence run satisfying the M2 merge gate.
 
@@ -99,22 +103,28 @@ This file is the progress index. Detailed acceptance criteria remain authoritati
 ## M8 — Platform, packaging and Alpha sign-off
 
 - [ ] Windows platform integrations, achievements, cloud saves and controller configuration.
-- [ ] PS5 dev-kit work, DualSense features, TRC and certification when external access exists.
+- [ ] Linux x86_64 platform integration, controller configuration, saves and parity with Windows.
 - [ ] Accessibility, remapping, subtitle sizing and permitted difficulty settings.
 - [ ] Full regression, performance, save migration, privacy and content-completeness passes.
 - [ ] Private UE 5.5 source-project ZIP and checksum delivered to Flo.
-- [ ] Separate Arcware-ready Windows Shipping ZIP and checksum delivered to Flo; it contains no secrets, server credentials or public-link configuration.
+- [ ] Private Windows Shipping candidate and checksum produced from the exact accepted commit; it contains no secrets, server credentials or public-link configuration.
+- [ ] Private Linux x86_64 Shipping candidate and checksum produced from the same commit and complete content manifest.
+- [ ] Complete native Windows and Linux start-to-credits playthroughs pass against the recorded candidate hashes.
 - [ ] Flo imports/deploys the Windows ZIP on his chosen GPU service and privately completes the browser-link access-denial test; the link is never published in the repository.
-- [ ] PlayStation Partner registration/GDPA, authorised PS5 SDK and dev/test-kit access exist outside the repository.
-- [ ] A native PS5 test package is built and verified in the authorised PlayStation environment, then delivered privately in the platform-permitted form with a checksum. It is tested on PS5 development/test hardware, not Arcware.
+- [ ] Acceptance evidence records every gate and Flo's approval; the immutable candidates are promoted to `DarkArisen-Alpha-Windows-Arcware.zip` and `DarkArisen-Alpha-Linux-x86_64.zip` with unchanged hashes.
+
+## Post-Alpha / Beta — native PS5
+
+- [ ] PlayStation Partner registration/GDPA, authorised Sony tools and PS5 dev/test-kit access exist outside the repository.
+- [ ] Native PS5 work, DualSense features, TRC and certification are implemented against the accepted Alpha content baseline.
+- [ ] A native PS5 Beta package is built and tested in the authorised PlayStation environment, then delivered privately in the platform-permitted form with a checksum. It is never represented by an Arcware stream or converted PC ZIP.
 
 ## Current blockers outside source authoring
 
-- No matching private Windows UE 5.5 GitHub runner is accepting the queued workflow.
+- No matching private Windows UE 5.5 GitHub runner is accepting main workflow run #22 / job `98789832571`; GitHub reports an empty runner name for the required labels. No verified Linux UE 5.5 runner has been supplied either.
+- The active Codex workspace is Linux but has no licensed UE 5.5 installation, and it has no Windows environment. Pixel Streaming starts only after a packaged Unreal application exists and cannot manufacture either Alpha build.
 - Flo will handle the GPU and private browser link; no host/runtime evidence has been supplied yet.
 - The AI Voice Generator is expected to be free, but no generation may begin before dialogue lock plus zero-cost and commercial-rights verification.
-- PS5 packaging/certification requires Sony programme access and hardware not present in this workspace.
-- Arcware documents Unreal Engine application upload and browser Pixel Streaming; it cannot supply PS5 SDK validation or emulate a PS5 package.
 - The repository contains no canonical credits list or approved end-credits music cue yet. Flo's current direction requires both, but the cue, rights and any cost remain an explicit approval gate.
 
-Source work may continue in PR #4 under Flo's current direction, but blocked runtime evidence must never be marked complete by inference.
+Source work continues on `feature/m2-rexa-vertical-slice` under Flo's current direction, but blocked runtime evidence must never be marked complete by inference.

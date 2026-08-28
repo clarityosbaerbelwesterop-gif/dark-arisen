@@ -19,6 +19,18 @@ REQUIRED_FILES = (
     "Source/DarkArisen/Components/WaterBreathComponent.cpp",
     "Source/DarkArisen/Dungeons/CenoteFirstMotherComponent.h",
     "Source/DarkArisen/Dungeons/CenoteFirstMotherComponent.cpp",
+    "Source/DarkArisen/Missions/RexaM2MissionCatalog.h",
+    "Source/DarkArisen/Missions/RexaM2MissionCatalog.cpp",
+    "Source/DarkArisen/Interaction/PhysicalJournalActor.h",
+    "Source/DarkArisen/Interaction/PhysicalJournalActor.cpp",
+    "Source/DarkArisen/Rexa/RexaSettlementRoster.h",
+    "Source/DarkArisen/Rexa/RexaSettlementRoster.cpp",
+    "Source/DarkArisen/Rexa/RexaSettlementAnchor.h",
+    "Source/DarkArisen/Rexa/RexaSettlementAnchor.cpp",
+    "Source/DarkArisen/Rexa/RexaSettlementResident.h",
+    "Source/DarkArisen/Rexa/RexaSettlementResident.cpp",
+    "Source/DarkArisen/Rexa/RexaSettlementDirector.h",
+    "Source/DarkArisen/Rexa/RexaSettlementDirector.cpp",
     "Docs/M2_VERTICAL_SLICE.md",
 )
 
@@ -133,7 +145,194 @@ def validate(root: Path) -> list[str]:
         "Bare breath is thirty seconds",
         "Image timing resets outside the sunlight hour",
         "Mandatory Return opens after the floor",
+        "DarkArisen.M2.RexaAuthoredMissions",
+        "Exactly three authored Turn quests",
+        "Exactly one authored Standing variant",
+        "Standing variant is finite authored salvage",
+        "DarkArisen.M2.RexaSettlementRoster",
+        "Las Raices has exactly forty authored residents",
+        "Five authored children are protected",
+        "Residents have no combat component and cannot be locked on",
+        "Every tropical midday purpose is explicitly sheltered",
+        "Schedule anchors never add blocking collision",
     ), errors)
+
+    mission_header = root / "Source/DarkArisen/Missions/RexaM2MissionCatalog.h"
+    mission_source = root / "Source/DarkArisen/Missions/RexaM2MissionCatalog.cpp"
+    physical_journal_header = root / "Source/DarkArisen/Interaction/PhysicalJournalActor.h"
+    physical_journal_source = root / "Source/DarkArisen/Interaction/PhysicalJournalActor.cpp"
+    _require_fragments(mission_header, (
+        "EQuestStructuralTier",
+        "EStandingMissionType",
+        "FLocalDirectionVariant",
+        "FRexaM2MissionDefinition",
+        "GetAuthoredMissions",
+        "AppendLocalDirection",
+        "AuthoredOutcomeIds",
+    ), errors)
+    _require_fragments(mission_source, (
+        'TEXT("Rexa.Turn.EmptyHammock")',
+        'TEXT("Rexa.Turn.ThreeCutsInStone")',
+        'TEXT("Rexa.Turn.SaltLedger")',
+        'TEXT("Rexa.Standing.Salvage.SanTelmoBell")',
+        "Mission.Activation.bRequiresSpokenAgreement = true",
+        "Mission.StandingType = EStandingMissionType::Salvage",
+        "return TurnCount == 3 && StandingCount == 1",
+    ), errors)
+    _require_fragments(physical_journal_header, (
+        "APhysicalJournalActor",
+        "SetSearchQuery",
+        "BuildChronologicalPages",
+    ), errors)
+    _require_fragments(physical_journal_source, (
+        '"Jake\'s notebook"',
+        "Journal->GetJournalEntries()",
+        "Journal->SearchJournal(SearchQuery)",
+        'TEXT("Day %lld — %02lld:%02lld\\n")',
+    ), errors)
+    _require_fragments(root / "Source/DarkArisen/JakeCharacter.cpp", (
+        "URexaM2MissionCatalog::RegisterAuthoredMissions(QuestJournalComponent)",
+    ), errors)
+    _require_fragments(root / "Source/DarkArisen/GreyboxGameMode.cpp", (
+        "World->SpawnActor<APhysicalJournalActor>",
+    ), errors)
+
+    roster_header = root / "Source/DarkArisen/Rexa/RexaSettlementRoster.h"
+    roster_source = root / "Source/DarkArisen/Rexa/RexaSettlementRoster.cpp"
+    anchor_header = root / "Source/DarkArisen/Rexa/RexaSettlementAnchor.h"
+    anchor_source = root / "Source/DarkArisen/Rexa/RexaSettlementAnchor.cpp"
+    resident_header = root / "Source/DarkArisen/Rexa/RexaSettlementResident.h"
+    resident_source = root / "Source/DarkArisen/Rexa/RexaSettlementResident.cpp"
+    director_header = root / "Source/DarkArisen/Rexa/RexaSettlementDirector.h"
+    director_source = root / "Source/DarkArisen/Rexa/RexaSettlementDirector.cpp"
+    _require_fragments(roster_header, (
+        "RequiredResidentCount = 40",
+        "RequiredIndigenousCount = 16",
+        "RequiredMixedCount = 12",
+        "RequiredImperialCount = 8",
+        "RequiredSailorTraderCount = 4",
+        "GetPurposeAnchorAtGameMinute",
+        "KnowledgeIds",
+        "bProtectedChild",
+        "GetAuthoredResidents",
+        "IsRosterValid",
+    ), errors)
+    _require_fragments(roster_source, (
+        "Indigenous Rexan — sixteen residents (40%)",
+        "Mixed Rexan — twelve residents (30%)",
+        "Imperial colonists — eight residents (20%)",
+        "Sailors and traders — four residents (10%)",
+        "ChildCount == 5",
+        'TEXT("Raices.RiverChild")',
+        'TEXT("Raices.DockWorker")',
+        'TEXT("Raices.WreckDiver")',
+    ), errors)
+    if roster_source.is_file():
+        roster_text = roster_source.read_text(encoding="utf-8")
+        resident_count = roster_text.count("Residents.Add(Resident(")
+        if resident_count != 40:
+            errors.append(
+                f"RexaSettlementRoster.cpp must author exactly 40 residents; found {resident_count}")
+        expected_census = {
+            "Heritage::IndigenousRexan": 16,
+            "Heritage::MixedRexan": 12,
+            "Heritage::ImperialColonist": 8,
+            "Heritage::SailorTrader": 4,
+            "Age::Child": 5,
+        }
+        for token, expected_count in expected_census.items():
+            actual_count = roster_text.count(token)
+            if actual_count != expected_count:
+                errors.append(
+                    f"RexaSettlementRoster.cpp census requires {expected_count} {token}; "
+                    f"found {actual_count}")
+    _require_fragments(resident_header, (
+        "ARexaSettlementResident",
+        "LaunchCharacter",
+        "TakeDamage",
+        "InitializeFromDefinition",
+        "RefreshPurposeAnchor",
+        "MoveToPurposeAnchor",
+        "ClearPurposeRoute",
+        "IsProtectedChildRuntime",
+    ), errors)
+    _require_fragments(resident_source, (
+        'Tags.AddUnique(TEXT("Rexa.NonCombatant"))',
+        'Tags.AddUnique(TEXT("Rexa.ProtectedChild"))',
+        "if (!bDefinitionInitialized || ResidentDefinition.bProtectedChild) return",
+        "if (!bDefinitionInitialized || ResidentDefinition.bProtectedChild) return 0.0f",
+        "SetCanBeDamaged(!ResidentDefinition.bProtectedChild)",
+        "FindComponentByClass<UHealthComponent>() == nullptr",
+        "FindComponentByClass<UCombatComponent>() == nullptr",
+        "Movement->bEnablePhysicsInteraction = false",
+        "GreyboxBody->SetCollisionEnabled(ECollisionEnabled::NoCollision)",
+        "AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned",
+        "ResidentController->MoveToActor",
+        "EPathFollowingRequestResult::Failed",
+        "ResidentController->StopMovement()",
+    ), errors)
+    _require_fragments(anchor_header, (
+        "ARexaSettlementAnchor",
+        "SettlementId",
+        "AnchorId",
+        "bShelteredFromMiddayHeat",
+        "bChildSafetyDestination",
+        "IsAuthoredAnchorValid",
+    ), errors)
+    _require_fragments(anchor_source, (
+        "SetActorEnableCollision(false)",
+        "InSettlementId.IsNone() || InAnchorId.IsNone()",
+        "!GetActorLocation().ContainsNaN()",
+    ), errors)
+    _require_fragments(director_header, (
+        "ARexaSettlementDirector",
+        "SpawnAuthoredSettlement",
+        "ClearSpawnedSettlement",
+        "GetSpawnedResidentCount",
+        "ApplyGameMinute",
+        "BuildAnchorRegistry",
+    ), errors)
+    _require_fragments(director_source, (
+        "URexaSettlementRoster::GetAuthoredResidents()",
+        "URexaSettlementRoster::IsRosterValid(Residents)",
+        "World->SpawnActor<ARexaSettlementResident>",
+        "Spawned->InitializeFromDefinition(Definition)",
+        "ClearSpawnedSettlement()",
+        "URexaSettlementRoster::RequiredResidentCount",
+        "TActorIterator<ARexaSettlementAnchor>",
+        "OutAnchors.Contains(Anchor->AnchorId)",
+        "bMidday && !(*Anchor)->bShelteredFromMiddayHeat",
+        "Command.Resident->MoveToPurposeAnchor",
+        "Resident->ClearPurposeRoute()",
+    ), errors)
+    _require_fragments(root / "Source/DarkArisen/DarkArisen.Build.cs", (
+        '"AIModule"',
+    ), errors)
+    settlement_text = "\n".join(
+        path.read_text(encoding="utf-8")
+        for path in (
+            roster_header,
+            roster_source,
+            anchor_header,
+            anchor_source,
+            resident_header,
+            resident_source,
+            director_header,
+            director_source,
+        )
+        if path.is_file()
+    )
+    for forbidden in (
+        "FMath::Rand",
+        "FRandomStream",
+        "GenerateResident",
+        "CreateDefaultSubobject<UHealthComponent>",
+        "CreateDefaultSubobject<UCombatComponent>",
+        "SetSimulatePhysics(true)",
+        "TeleportTo(",
+    ):
+        if forbidden in settlement_text:
+            errors.append(f"authored Rexa settlement source forbids: {forbidden}")
 
     quest_text = "\n".join(
         path.read_text(encoding="utf-8")
@@ -153,6 +352,28 @@ def validate(root: Path) -> list[str]:
     ):
         if forbidden in quest_text:
             errors.append(f"markerless quest foundation forbids: {forbidden}")
+
+    authored_mission_text = "\n".join(
+        path.read_text(encoding="utf-8")
+        for path in (
+            mission_header,
+            mission_source,
+            physical_journal_header,
+            physical_journal_source,
+        )
+        if path.is_file()
+    )
+    for forbidden in (
+        "GenerateRadiantQuest",
+        "AddQuestMarker",
+        "Quest Added",
+        "Quest Failed",
+        "ObjectiveCheckbox",
+        "CompletionPercentage",
+        "OnMissionActivated",
+    ):
+        if forbidden in authored_mission_text:
+            errors.append(f"authored Rexa mission content forbids: {forbidden}")
 
     mechanics_text = "\n".join(
         path.read_text(encoding="utf-8")

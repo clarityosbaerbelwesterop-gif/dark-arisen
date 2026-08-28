@@ -21,7 +21,7 @@ No source is deleted. A legacy source remains useful for names, tone, imagery, a
 | Area | Canonical decision | Primary authority |
 |---|---|---|
 | Engine | Unreal Engine 5.5 for M0; evaluate upgrades only as a separate compatibility milestone | Current engineering handoff and Pixel Streaming setup |
-| Shipping platforms | Windows PC and PlayStation 5; no Xbox, Switch, or mobile build target | Current engineering handoff |
+| Shipping platforms | Alpha packages target Windows and Linux PC; native PlayStation 5 begins in Beta with authorised Sony tools; no Xbox, Switch, or mobile build target | Flo's current written direction and engineering handoff |
 | Performance | 60 fps is the hard floor; six-frame deflection window | `technical targets.md`, `animation system.md` |
 | Combat HUD | Posture is the only permitted combat HUD element | Current engineering handoff, `technical targets.md` |
 | Interaction | No highlights and no fade-to-black; one four-second corner prompt at 1.4 m | `interaction system.md`, current engineering handoff |

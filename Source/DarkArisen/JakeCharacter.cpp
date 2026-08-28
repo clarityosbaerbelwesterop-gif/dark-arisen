@@ -16,11 +16,13 @@
 #include "Components/QuestJournalComponent.h"
 #include "Components/StaminaComponent.h"
 #include "Components/WaterBreathComponent.h"
+#include "DarkArisen.h"
 #include "Engine/Engine.h"
 #include "Engine/GameViewportClient.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Missions/RexaM2MissionCatalog.h"
 #include "UnrealClient.h"
 
 AJakeCharacter::AJakeCharacter()
@@ -67,6 +69,10 @@ AJakeCharacter::AJakeCharacter()
 void AJakeCharacter::BeginPlay()
 {
     Super::BeginPlay();
+    if (!URexaM2MissionCatalog::RegisterAuthoredMissions(QuestJournalComponent))
+    {
+        UE_LOG(LogDarkArisen, Error, TEXT("The authored Rexa M2 mission catalog failed closed."));
+    }
     HealthComponent->OnDied.AddDynamic(this, &AJakeCharacter::OnCharacterDied);
     StaminaComponent->OnStaminaDepleted.AddDynamic(this, &AJakeCharacter::OnStaminaDepleted);
     WoundStateComponent->OnWoundLayerChanged.AddDynamic(

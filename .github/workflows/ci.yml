@@ -15,8 +15,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  verify:
-    name: UE 5.5 compile, tests, and design laws
+  verify-windows:
+    name: Windows UE 5.5 compile, tests, and design laws
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: [self-hosted, Windows, X64, ue5.5, dark-arisen]
     timeout-minutes: 120
@@ -43,6 +43,10 @@ jobs:
         shell: pwsh
         run: python Tools/ci/validate_m2.py
 
+      - name: Validate Alpha platform contract
+        shell: pwsh
+        run: python Tools/ci/validate_alpha_platforms.py
+
       - name: Audit design-law prohibitions
         shell: pwsh
         run: python Tools/ci/design_law_audit.py
@@ -60,3 +64,53 @@ jobs:
         if: github.event_name == 'pull_request'
         shell: pwsh
         run: ./Tools/ci/build-unreal.ps1 -RunAutomationTests
+
+  verify-linux:
+    name: Linux UE 5.5 compile, tests, and design laws
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: [self-hosted, Linux, X64, ue5.5, dark-arisen]
+    timeout-minutes: 120
+    steps:
+      - name: Check out source and LFS content
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          lfs: true
+
+      - name: Verify private Linux UE 5.5 runner
+        shell: bash
+        run: ./Tools/ci/verify-linux-runner.sh
+
+      - name: Validate M0 repository contract
+        shell: bash
+        run: python3 Tools/ci/validate_m0.py
+
+      - name: Validate M1 core-loop contract
+        shell: bash
+        run: python3 Tools/ci/validate_m1.py
+
+      - name: Validate M2 source contract
+        shell: bash
+        run: python3 Tools/ci/validate_m2.py
+
+      - name: Validate Alpha platform contract
+        shell: bash
+        run: python3 Tools/ci/validate_alpha_platforms.py
+
+      - name: Audit design-law prohibitions
+        shell: bash
+        run: python3 Tools/ci/design_law_audit.py
+
+      - name: Regression-test repository validators
+        shell: bash
+        run: python3 -m unittest discover -s Tools/ci -p "test_*.py"
+
+      - name: Compile Linux Development and Shipping
+        if: github.event_name == 'push'
+        shell: bash
+        run: ./Tools/ci/build-unreal-linux.sh
+
+      - name: Compile Linux and run Unreal automation tests
+        if: github.event_name == 'pull_request'
+        shell: bash
+        run: ./Tools/ci/build-unreal-linux.sh --run-automation-tests
