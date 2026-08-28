@@ -133,7 +133,7 @@ public:
     UFUNCTION(BlueprintPure, Category="Progression|Craft")
     int32 GetRegisteredSkillNodeCount() const { return SkillNodeDefinitions.Num(); }
 
-    UFUNCTION(BlueprintPure, Category="Progression|Teachers")
+    /** C++ validation/catalog authority only; intentionally not a Blueprint/UI list. */
     static const TArray<FName>& GetCanonicalTeacherIds();
 
     UFUNCTION(BlueprintCallable, Category="Economy")
@@ -143,7 +143,7 @@ public:
     bool SpendCurrency(EDarkArisenCurrency Currency, int64 Amount);
 
     UFUNCTION(BlueprintPure, Category="Economy")
-    const FCurrencyWallet& GetWallet() const { return Wallet; }
+    FCurrencyWallet GetWallet() const { return Wallet; }
 
     UFUNCTION(BlueprintCallable, Category="Social")
     void SetGreetingState(FName SocialContextId, ESocialGreetingState NewState);
