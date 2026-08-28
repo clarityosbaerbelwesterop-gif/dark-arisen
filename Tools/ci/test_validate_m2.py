@@ -67,6 +67,28 @@ class M2SourceContractValidationTests(unittest.TestCase):
             findings = validate(root)
             self.assertTrue(any("MusicCue" in finding for finding in findings))
 
+    def test_radiant_rexa_mission_generator_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            missions = root / "Source/DarkArisen/Missions"
+            missions.mkdir(parents=True)
+            (missions / "RexaM2MissionCatalog.h").write_text(
+                "void GenerateRadiantQuest();", encoding="utf-8")
+            (missions / "RexaM2MissionCatalog.cpp").write_text("", encoding="utf-8")
+            findings = validate(root)
+            self.assertTrue(any("GenerateRadiantQuest" in finding for finding in findings))
+
+    def test_physical_journal_objective_checkbox_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            interaction = root / "Source/DarkArisen/Interaction"
+            interaction.mkdir(parents=True)
+            (interaction / "PhysicalJournalActor.h").write_text(
+                "bool ObjectiveCheckbox;", encoding="utf-8")
+            (interaction / "PhysicalJournalActor.cpp").write_text("", encoding="utf-8")
+            findings = validate(root)
+            self.assertTrue(any("ObjectiveCheckbox" in finding for finding in findings))
+
 
 if __name__ == "__main__":
     unittest.main()

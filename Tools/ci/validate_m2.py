@@ -19,6 +19,10 @@ REQUIRED_FILES = (
     "Source/DarkArisen/Components/WaterBreathComponent.cpp",
     "Source/DarkArisen/Dungeons/CenoteFirstMotherComponent.h",
     "Source/DarkArisen/Dungeons/CenoteFirstMotherComponent.cpp",
+    "Source/DarkArisen/Missions/RexaM2MissionCatalog.h",
+    "Source/DarkArisen/Missions/RexaM2MissionCatalog.cpp",
+    "Source/DarkArisen/Interaction/PhysicalJournalActor.h",
+    "Source/DarkArisen/Interaction/PhysicalJournalActor.cpp",
     "Docs/M2_VERTICAL_SLICE.md",
 )
 
@@ -133,6 +137,50 @@ def validate(root: Path) -> list[str]:
         "Bare breath is thirty seconds",
         "Image timing resets outside the sunlight hour",
         "Mandatory Return opens after the floor",
+        "DarkArisen.M2.RexaAuthoredMissions",
+        "Exactly three authored Turn quests",
+        "Exactly one authored Standing variant",
+        "Standing variant is finite authored salvage",
+    ), errors)
+
+    mission_header = root / "Source/DarkArisen/Missions/RexaM2MissionCatalog.h"
+    mission_source = root / "Source/DarkArisen/Missions/RexaM2MissionCatalog.cpp"
+    physical_journal_header = root / "Source/DarkArisen/Interaction/PhysicalJournalActor.h"
+    physical_journal_source = root / "Source/DarkArisen/Interaction/PhysicalJournalActor.cpp"
+    _require_fragments(mission_header, (
+        "EQuestStructuralTier",
+        "EStandingMissionType",
+        "FLocalDirectionVariant",
+        "FRexaM2MissionDefinition",
+        "GetAuthoredMissions",
+        "AppendLocalDirection",
+        "AuthoredOutcomeIds",
+    ), errors)
+    _require_fragments(mission_source, (
+        'TEXT("Rexa.Turn.EmptyHammock")',
+        'TEXT("Rexa.Turn.ThreeCutsInStone")',
+        'TEXT("Rexa.Turn.SaltLedger")',
+        'TEXT("Rexa.Standing.Salvage.SanTelmoBell")',
+        "Mission.Activation.bRequiresSpokenAgreement = true",
+        "Mission.StandingType = EStandingMissionType::Salvage",
+        "return TurnCount == 3 && StandingCount == 1",
+    ), errors)
+    _require_fragments(physical_journal_header, (
+        "APhysicalJournalActor",
+        "SetSearchQuery",
+        "BuildChronologicalPages",
+    ), errors)
+    _require_fragments(physical_journal_source, (
+        '"Jake\'s notebook"',
+        "Journal->GetJournalEntries()",
+        "Journal->SearchJournal(SearchQuery)",
+        'TEXT("Day %lld — %02lld:%02lld\\n")',
+    ), errors)
+    _require_fragments(root / "Source/DarkArisen/JakeCharacter.cpp", (
+        "URexaM2MissionCatalog::RegisterAuthoredMissions(QuestJournalComponent)",
+    ), errors)
+    _require_fragments(root / "Source/DarkArisen/GreyboxGameMode.cpp", (
+        "World->SpawnActor<APhysicalJournalActor>",
     ), errors)
 
     quest_text = "\n".join(
@@ -153,6 +201,28 @@ def validate(root: Path) -> list[str]:
     ):
         if forbidden in quest_text:
             errors.append(f"markerless quest foundation forbids: {forbidden}")
+
+    authored_mission_text = "\n".join(
+        path.read_text(encoding="utf-8")
+        for path in (
+            mission_header,
+            mission_source,
+            physical_journal_header,
+            physical_journal_source,
+        )
+        if path.is_file()
+    )
+    for forbidden in (
+        "GenerateRadiantQuest",
+        "AddQuestMarker",
+        "Quest Added",
+        "Quest Failed",
+        "ObjectiveCheckbox",
+        "CompletionPercentage",
+        "OnMissionActivated",
+    ):
+        if forbidden in authored_mission_text:
+            errors.append(f"authored Rexa mission content forbids: {forbidden}")
 
     mechanics_text = "\n".join(
         path.read_text(encoding="utf-8")

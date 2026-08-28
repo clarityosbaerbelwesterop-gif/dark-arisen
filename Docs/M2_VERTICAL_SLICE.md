@@ -1,6 +1,6 @@
 # M2 vertical-slice implementation record
 
-**Status:** native quest, heat and Isabel Cruz proof-state source; not a vertical slice, Alpha, or Beta  
+**Status:** native quest/environment/boss state plus first authored Rexa mission and physical-notebook source; not a vertical slice, Alpha, or Beta  
 **Engine:** Unreal Engine 5.5  
 **Authority:** current engineering handoff, `quest activation.md`, `quest design philosophy.md`, `mission types.md`, `dungeon design philosophy.md`, `regional dungeon catalog.md`, `colonial war bosses.md`, and `Docs/DesignAuthority.md`
 
@@ -29,6 +29,11 @@
 - The Cenote has independent, saveable records for lip entry, Rexan water routing, the green-gold image, the Keeper Below outcome and the mandatory Return shortcut.
 - The green-gold image accumulates witness time only while Jake is inside its chamber and the external world-time owner confirms the catalog's exact one-hour sunlight window. Leaving either condition resets the attempt.
 - The Return cannot open before the Keeper encounter has an explicit outcome; completion requires every independent Cenote beat.
+- Added three finite, named Rexa Turn definitions: *The Empty Hammock*, *Three Cuts in Stone* and *The Salt Ledger*. Each has stable IDs, multiple local direction voices and authored outcome IDs rather than generic objectives.
+- Added one finite Standing salvage variant, *The San Telmo Bell*. It begins only after a spoken fictional handshake and is one authored pool member, never a generated/repeating job.
+- The absence Turn activates silently; the overheard Turn enters as a distorted rumour; asking a local appends what that person actually said to the chronological notebook without solving navigation.
+- Added a physical notebook actor that is held through the existing anchored Examine path and renders dated first-person journal entries in order. Plain-text search remains the only tracking concession.
+- Jake registers the four authored definitions fail-closed and the native test room exposes the physical notebook for later UE runtime proof.
 
 ## Canon conflict rulings
 
@@ -43,8 +48,8 @@ The current handoff and later Phase 11 laws supersede conflicting older Rexa dra
 ## Still required before M2 acceptance
 
 - M1 runtime acceptance remains a dependency.
-- A physical, held, handwritten journal presentation and local-direction dialogue integration.
-- Three authored Turn quests and one authored Standing variant using this runtime.
+- Final handwritten page art, page-turn/hand animation, subtitle/accessibility presentation and controller-tested physical-journal evidence. The native held presentation is source-complete but not visually accepted.
+- World actors, conversations, route beats, consequences and persistence evidence for all three authored Turns and the Standing salvage variant. Catalog/state source alone is not completed quest content.
 - Approximately 1 km² of Rexa jungle, a forty-person settlement and the required traversal/vegetation physics.
 - Authored Cenote geometry, environmental lip discovery, water-routing devices, swimming/current physics, image lighting, Keeper Below creature/AI/animation, offerings/ownership choice and physical Return shortcut.
 - In-engine proof that the Cenote contains no marker, ambient music or explanatory log and that all required beats persist; source state alone is insufficient.

@@ -20,6 +20,7 @@
 #include "Dungeons/CenoteFirstMotherComponent.h"
 #include "Interaction/InteractionPersistence.h"
 #include "Interaction/PhysicalDoorActor.h"
+#include "Missions/RexaM2MissionCatalog.h"
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
     FDarkArisenDesignLawsSpec,
@@ -407,6 +408,74 @@ bool FDarkArisenM2MarkerlessQuestFoundationSpec::RunTest(const FString& Paramete
         RuntimeState.Lifecycle, EQuestLifecycle::Resolved);
     TestEqual(TEXT("Expiry added no journal notification"),
         Journal->GetJournalEntries().Num(), 4);
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(
+    FDarkArisenM2RexaAuthoredMissionsSpec,
+    "DarkArisen.M2.RexaAuthoredMissions",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FDarkArisenM2RexaAuthoredMissionsSpec::RunTest(const FString& Parameters)
+{
+    const TArray<FRexaM2MissionDefinition> Missions =
+        URexaM2MissionCatalog::GetAuthoredMissions();
+    TestTrue(TEXT("Rexa authored catalog validates"),
+        URexaM2MissionCatalog::IsCatalogValid(Missions));
+    TestEqual(TEXT("M2 has exactly four authored missions"), Missions.Num(), 4);
+
+    int32 TurnCount = 0;
+    int32 StandingCount = 0;
+    for (const FRexaM2MissionDefinition& Mission : Missions)
+    {
+        if (Mission.Tier == EQuestStructuralTier::Turn) ++TurnCount;
+        else ++StandingCount;
+        TestTrue(TEXT("Every mission has at least two local direction voices"),
+            Mission.LocalDirections.Num() >= 2);
+        TestTrue(TEXT("Every mission resolves through authored outcomes"),
+            Mission.AuthoredOutcomeIds.Num() >= 2);
+    }
+    TestEqual(TEXT("Exactly three authored Turn quests"), TurnCount, 3);
+    TestEqual(TEXT("Exactly one authored Standing variant"), StandingCount, 1);
+    TestEqual(TEXT("Standing variant is finite authored salvage"),
+        Missions.Last().StandingType, EStandingMissionType::Salvage);
+
+    UQuestJournalComponent* Journal = NewObject<UQuestJournalComponent>();
+    TestTrue(TEXT("Rexa catalog journal created"), Journal != nullptr);
+    if (!Journal) return false;
+    TestTrue(TEXT("Four authored definitions register"),
+        URexaM2MissionCatalog::RegisterAuthoredMissions(Journal));
+
+    TestTrue(TEXT("Absence begins the empty-hammock Turn silently"),
+        Journal->ActivateQuest(
+            TEXT("Rexa.Turn.EmptyHammock"), EQuestActivationTrigger::Absence, 100, false));
+    TestEqual(TEXT("Silent absence writes nothing by itself"),
+        Journal->GetJournalEntries().Num(), 0);
+    TestTrue(TEXT("A local answer gives the first findable direction"),
+        URexaM2MissionCatalog::AppendLocalDirection(
+            Journal, TEXT("Rexa.Turn.EmptyHammock"), TEXT("Raices.NetMender"), 110));
+    TestEqual(TEXT("Local knowledge becomes one chronological note"),
+        Journal->GetJournalEntries().Num(), 1);
+
+    TestTrue(TEXT("Overheard three-cuts rumour activates"), Journal->ActivateQuest(
+        TEXT("Rexa.Turn.ThreeCutsInStone"), EQuestActivationTrigger::Overheard, 120, false));
+    const TArray<FQuestJournalEntry> Entries = Journal->GetJournalEntries();
+    TestEqual(TEXT("Overheard rumour appends a note"), Entries.Num(), 2);
+    TestTrue(TEXT("Overheard rumour remains explicitly distorted"),
+        Entries.Num() == 2 && Entries.Last().bDistorted);
+
+    TestFalse(TEXT("Standing work cannot begin without spoken agreement"),
+        Journal->ActivateQuest(
+            TEXT("Rexa.Standing.Salvage.SanTelmoBell"),
+            EQuestActivationTrigger::Conversation,
+            130,
+            false));
+    TestTrue(TEXT("Spoken handshake begins the authored salvage variant"),
+        Journal->ActivateQuest(
+            TEXT("Rexa.Standing.Salvage.SanTelmoBell"),
+            EQuestActivationTrigger::Conversation,
+            130,
+            true));
     return true;
 }
 

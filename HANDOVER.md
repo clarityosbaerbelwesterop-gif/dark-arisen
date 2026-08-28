@@ -25,6 +25,7 @@
 - Added HUD-free heat pressure plus native Cenote breath/drowning and independent water-routing, green-gold image, Keeper-outcome and mandatory-Return state.
 - Locked Alpha delivery to two content-identical UE 5.5 Shipping targets, Windows x64 and Linux x86_64, with native PS5 deferred to the authorised Sony Beta path.
 - Added dual private self-hosted Windows/Linux CI, fail-closed Linux runner/build checks, private candidate packaging, secret scanning, SHA-256 manifests and evidence-gated immutable Alpha promotion. No package has been produced or uploaded.
+- Added the first four finite authored Rexa mission definitions (three Turns and one spoken-agreement Standing salvage variant), multi-voice local directions and a physical chronological notebook actor. World encounters, final art/animation and runtime acceptance remain open.
 
 ## Deliberately not done
 
