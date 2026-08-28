@@ -4,6 +4,9 @@
 
 #include "Components/SceneComponent.h"
 #include "Engine/World.h"
+#include "Interaction/PhysicalMapActor.h"
+#include "Ship/SeaPassageComponent.h"
+#include "Ship/ShipHouseholdComponent.h"
 #include "World/DarkArisenWorldRulesSubsystem.h"
 
 ALaLiberacionShip::ALaLiberacionShip()
@@ -26,6 +29,9 @@ ALaLiberacionShip::ALaLiberacionShip()
     HoldDeckRoot->SetupAttachment(ShipRoot);
 
     VoyageComponent = CreateDefaultSubobject<UShipVoyageComponent>(TEXT("VoyageComponent"));
+    HouseholdComponent = CreateDefaultSubobject<UShipHouseholdComponent>(TEXT("HouseholdComponent"));
+    SeaPassageComponent = CreateDefaultSubobject<USeaPassageComponent>(TEXT("SeaPassageComponent"));
+    PhysicalMapClass = APhysicalMapActor::StaticClass();
 }
 
 void ALaLiberacionShip::BeginPlay()
@@ -34,6 +40,9 @@ void ALaLiberacionShip::BeginPlay()
     ensureAlwaysMsgf(
         HasCompleteFourDeckStructure(),
         TEXT("La Liberacion requires exactly four authored deck attachment roots."));
+    ensureAlwaysMsgf(
+        SpawnPhysicalMap(),
+        TEXT("La Liberacion requires a physical held map on the upper/great-cabin deck."));
 }
 
 USceneComponent* ALaLiberacionShip::GetDeckRoot(const EShipDeck Deck) const
@@ -79,4 +88,35 @@ bool ALaLiberacionShip::HasCompleteFourDeckStructure() const
         && MidDeckRoot != nullptr
         && HoldDeckRoot != nullptr
         && UShipVoyageComponent::GetRequiredDeckCount() == 4;
+}
+
+bool ALaLiberacionShip::SpawnPhysicalMap()
+{
+    if (IsValid(PhysicalMap))
+    {
+        return true;
+    }
+
+    UWorld* World = GetWorld();
+    if (!World || !UpperDeckRoot || !PhysicalMapClass)
+    {
+        return false;
+    }
+
+    FActorSpawnParameters Parameters;
+    Parameters.Owner = this;
+    Parameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+    PhysicalMap = World->SpawnActor<APhysicalMapActor>(
+        PhysicalMapClass,
+        UpperDeckRoot->GetComponentTransform(),
+        Parameters);
+    if (!PhysicalMap)
+    {
+        return false;
+    }
+
+    PhysicalMap->AttachToComponent(
+        UpperDeckRoot,
+        FAttachmentTransformRules::KeepWorldTransform);
+    return true;
 }
