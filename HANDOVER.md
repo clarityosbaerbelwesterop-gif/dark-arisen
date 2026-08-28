@@ -23,6 +23,8 @@
 - Added the markerless six-trigger quest/journal foundation, including silent activation, fallible chronological notes, internal expiry outcomes and mutual exclusion.
 - Added native M2 state for Isabel Cruz's locked Duty/List/1846 thresholds, killed/spared/avoided outcomes, non-hostile mercy state and four-second death hold.
 - Added HUD-free heat pressure plus native Cenote breath/drowning and independent water-routing, green-gold image, Keeper-outcome and mandatory-Return state.
+- Locked Alpha delivery to two content-identical UE 5.5 Shipping targets, Windows x64 and Linux x86_64, with native PS5 deferred to the authorised Sony Beta path.
+- Added dual private self-hosted Windows/Linux CI, fail-closed Linux runner/build checks, private candidate packaging, secret scanning, SHA-256 manifests and evidence-gated immutable Alpha promotion. No package has been produced or uploaded.
 
 ## Deliberately not done
 
@@ -30,12 +32,13 @@
 - No credential or voice-generation job was created. Flo expects the connected AI Voice Generator to be free, but generation remains blocked until dialogue lock and a verified zero-cost/commercial-rights check.
 - No Unreal compile, package, browser stream, iPad input test, or provider deallocation test is claimed as passed.
 - No Alpha/Beta or full-content build is claimed. M0 is the prerequisite for visible iteration, not the full game.
+- No PS5 package is part of Alpha. Native PS5 work starts in Beta only with authorised Sony tools and development/test hardware.
 - UE 5.8 was not adopted during M0 because the approved handoff and Pixel Streaming infrastructure are pinned to 5.5; an upgrade requires a separate compatibility milestone.
 
 ## Next operator actions
 
-1. Attach a private Windows UE 5.5 self-hosted runner and let queued main workflow run #22 execute compile/tests. Its job currently has no assigned runner.
-2. Resolve any real UE compiler or automation failures; do not suppress checks.
+1. Attach private Windows x64 and Linux x86_64 UE 5.5 self-hosted runners. Main workflow run #22 still needs the Windows labels; successor PRs require both jobs.
+2. Resolve any real UE compiler or automation failures on both platforms; do not suppress checks.
 3. Flo selects and operates the GPU host and creates the private browser link. Repository work supplies the reviewed project, packaging/deployment scripts, and eventual private ZIP; it does not provision or publish the endpoint.
 4. On Flo's selected host, apply the exact one-user access policy and configure machine-scoped secrets/provider identity according to the relevant private deployment guide.
 5. Deploy the exact PR revision, run `collect-host-evidence.ps1`, and capture all six gates in `M0_CHECKLIST.md` without placing the private URL or password in GitHub.
@@ -44,6 +47,6 @@
 ## Known external blockers
 
 - The repository currently exposes no active Unreal/GPU host or matching self-hosted runner. Main workflow run #22 / job `98789832571` is queued with an empty runner name for `self-hosted, Windows, X64, ue5.5, dark-arisen`.
-- This Codex workspace is Linux and contains no licensed Unreal Engine 5.5 Windows toolchain. Pixel Streaming transports an already packaged Windows Unreal application; it cannot compile that application or create a PS5 package.
+- This Codex workspace is Linux but contains no licensed Unreal Engine 5.5 installation and no Windows environment. Pixel Streaming transports an already packaged application; it cannot compile the Windows or Linux Alpha.
 - GitHub-hosted Actions availability is account-scoped; this repo had no workflows or historical runs before M0. The new workflow intentionally requires a self-hosted machine.
 - Pixel Streaming Infrastructure is free software hosted on GitHub. Epic's documentation does not include a free external GPU computer with it; if Flo has a separate Epic-host entitlement, its concrete instance/dashboard URL is required.

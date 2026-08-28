@@ -19,6 +19,7 @@ M0 exposes a single-player Unreal instance only inside a private Tailscale tailn
 - Preserve the inbound block rule for TCP 8080, 8888, and 8889. Provider security groups must not expose HTTPS or TURN publicly; Windows Firewall limits private ports to tailnet address ranges.
 - Treat `C:\ProgramData\DarkArisen` as sensitive. Runtime TURN/signalling files are ACL-restricted to the service identity and SYSTEM.
 - Keep the repository, packaged game, play URL, screenshots, evidence containing hostnames, and retained EBS volume private. Do not use public buckets, releases, artifacts, issues, or PR comments.
+- Keep Windows/Linux candidates and final Alpha ZIPs on owner-controlled private storage. CI deliberately has no `actions/upload-artifact` step; packaging records local SHA-256 sidecars instead.
 
 ## Cost boundary
 
@@ -27,6 +28,8 @@ Repository scripts may build and validate without provisioning infrastructure. C
 The idle watcher must invoke a validated provider adapter that stops or deallocates the billed resource. A Windows shutdown is not sufficient. The final gate requires provider-side evidence after 30 minutes with zero players.
 
 SkyPilot, GPU marketplaces, and vendor “free tier” or credit claims are not provisioning authorization. They require the same exact quote, Windows/NVENC/persistence/privacy review, and explicit approval before credentials or artifacts are provided.
+
+Native PS5 tooling and packages are outside Alpha scope. In Beta they may be used only through Flo's authorised Sony environment and must never be committed, exposed in Actions, or substituted with a PC/Pixel Streaming artifact.
 
 ## Reporting a problem
 
