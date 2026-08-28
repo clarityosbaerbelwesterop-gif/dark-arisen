@@ -6,6 +6,7 @@
 
 #include "ColonialWar/ArmyCampaignComponent.h"
 #include "ColonialWar/CastleSiegeComponent.h"
+#include "ColonialWar/ColonyHoldingComponent.h"
 #include "ColonialWar/ColonialWarStateSubsystem.h"
 #include "ColonialWar/LargeBattleComponent.h"
 #include "ColonialWar/RetaliationSubsystem.h"
@@ -90,12 +91,32 @@ bool FDarkArisenM5WarStateSpec::RunTest(const FString& Parameters)
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
-    FDarkArisenM5SiegeArmyBattleSpec,
-    "DarkArisen.M5.SiegeArmyBattle",
+    FDarkArisenM5HoldingSiegeArmyBattleSpec,
+    "DarkArisen.M5.HoldingSiegeArmyBattle",
     EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
-bool FDarkArisenM5SiegeArmyBattleSpec::RunTest(const FString& Parameters)
+bool FDarkArisenM5HoldingSiegeArmyBattleSpec::RunTest(const FString& Parameters)
 {
+    UColonyHoldingComponent* Holding = NewObject<UColonyHoldingComponent>();
+    TestFalse(TEXT("Razed castle can never be claimed"),
+        Holding->ClaimHolding(TEXT("holding.razed"), true, false, false, true));
+    TestTrue(TEXT("Intact taken castle can be claimed"),
+        Holding->ClaimHolding(TEXT("holding.test"), true, false, false, false));
+    TestTrue(TEXT("Claimed holding can become Functional"), Holding->AdvanceDevelopment(true));
+    TestFalse(TEXT("Holding cannot become Established without delivered people"), Holding->AdvanceDevelopment(true));
+    FDeliveredHoldingPerson Settler;
+    Settler.PersonId = TEXT("person.settler.001");
+    Settler.Kind = EHoldingPopulationKind::Settler;
+    Settler.VoyageId = TEXT("voyage.001");
+    TestTrue(TEXT("Population arrives from a concrete voyage manifest"), Holding->RecordDeliveredPerson(Settler));
+    TestTrue(TEXT("Delivered population permits Established"), Holding->AdvanceDevelopment(true));
+    TestTrue(TEXT("Established holding declares Settlement type"), Holding->DeclareHoldingType(EHoldingType::Settlement));
+    TestTrue(TEXT("Settlement can choose Free specialization"),
+        Holding->ChooseSettlementSpecialisation(ESettlementSpecialisation::FreeSettlement));
+    TestTrue(TEXT("Typed settlement can become Developed"), Holding->AdvanceDevelopment(true));
+    TestTrue(TEXT("Siege damage can persist into ownership"), Holding->RecordPersistentDamage(TEXT("breach.west")));
+    TestTrue(TEXT("Persistent damage remains world-readable"), Holding->HasUnrepairedDamage());
+
     UCastleSiegeComponent* Siege = NewObject<UCastleSiegeComponent>();
     TestTrue(TEXT("Castle config"), Siege->ConfigureCastle(TEXT("castle.test"), true));
     TestTrue(TEXT("Siege begins at Approach"), Siege->BeginSiege(false));
@@ -124,11 +145,30 @@ bool FDarkArisenM5SiegeArmyBattleSpec::RunTest(const FString& Parameters)
     TestFalse(TEXT("Hired force leaves after second unpaid chapter"), Army->IsForceActiveForTests(Hired.ForceId));
 
     ULargeBattleComponent* Battle = NewObject<ULargeBattleComponent>();
-    TestTrue(TEXT("Battle begins"), Battle->BeginBattle(TEXT("battle.test")));
+    TestTrue(TEXT("Battle begins"), Battle->BeginBattle(TEXT("battle.test"), ELargeBattleType::FieldAction));
+    FBattleSegmentDefinition Left;
+    Left.SegmentId = TEXT("segment.left");
+    FBattleSegmentDefinition Centre;
+    Centre.SegmentId = TEXT("segment.centre");
+    FBattleSegmentDefinition Right;
+    Right.SegmentId = TEXT("segment.right");
+    TestTrue(TEXT("Left segment registers"), Battle->RegisterSegment(Left));
+    TestTrue(TEXT("Centre segment registers"), Battle->RegisterSegment(Centre));
+    TestTrue(TEXT("Right segment registers"), Battle->RegisterSegment(Right));
+    TestTrue(TEXT("Jake occupies one segment"), Battle->SetJakeSegment(Centre.SegmentId));
+    TestTrue(TEXT("A different segment can break while Jake fights elsewhere"),
+        Battle->ApplySegmentCohesionDelta(Left.SegmentId, -100));
+    TestEqual(TEXT("Broken segment cohesion reaches hidden zero"),
+        Battle->GetHiddenCohesionForTests(Left.SegmentId), 0);
     TestTrue(TEXT("Jake may fall"), Battle->RecordJakeFallen());
     TestTrue(TEXT("Battle continues after Jake falls"), Battle->IsBattleActive());
     TestFalse(TEXT("Jake is no longer active after falling"), Battle->IsJakeActiveInBattle());
-    TestTrue(TEXT("World simulation resolves battle later"), Battle->ResolveBattle(ELargeBattleOutcome::Defeat));
+    TestFalse(TEXT("Battle cannot resolve before every segment resolves"),
+        Battle->ResolveBattle(ELargeBattleOutcome::Defeat));
+    TestTrue(TEXT("Centre resolves after Jake is pulled out"), Battle->RecordSegmentResolved(Centre.SegmentId, true));
+    TestTrue(TEXT("Right resolves independently"), Battle->RecordSegmentResolved(Right.SegmentId, true));
+    TestTrue(TEXT("World simulation resolves battle after line resolution"),
+        Battle->ResolveBattle(ELargeBattleOutcome::Defeat));
     return true;
 }
 
