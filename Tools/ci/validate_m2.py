@@ -31,6 +31,9 @@ REQUIRED_FILES = (
     "Source/DarkArisen/Rexa/RexaSettlementResident.cpp",
     "Source/DarkArisen/Rexa/RexaSettlementDirector.h",
     "Source/DarkArisen/Rexa/RexaSettlementDirector.cpp",
+    "Source/DarkArisen/World/CombatProximityResponder.h",
+    "Source/DarkArisen/World/CombatProximitySubsystem.h",
+    "Source/DarkArisen/World/CombatProximitySubsystem.cpp",
     "Docs/M2_VERTICAL_SLICE.md",
 )
 
@@ -155,6 +158,9 @@ def validate(root: Path) -> list[str]:
         "Residents have no combat component and cannot be locked on",
         "Every tropical midday purpose is explicitly sheltered",
         "Schedule anchors never add blocking collision",
+        "Child flight radius is exactly fifty metres",
+        "Settlement director receives sparse combat-proximity signals",
+        "Combat return silence exceeds the provisional removal delay",
     ), errors)
 
     mission_header = root / "Source/DarkArisen/Missions/RexaM2MissionCatalog.h"
@@ -214,6 +220,7 @@ def validate(root: Path) -> list[str]:
         "GetPurposeAnchorAtGameMinute",
         "KnowledgeIds",
         "bProtectedChild",
+        "ChildSafetyAnchorId",
         "GetAuthoredResidents",
         "IsRosterValid",
     ), errors)
@@ -223,6 +230,7 @@ def validate(root: Path) -> list[str]:
         "Imperial colonists — eight residents (20%)",
         "Sailors and traders — four residents (10%)",
         "ChildCount == 5",
+        "bIsChild && ResidentDefinition.ChildSafetyAnchorId.IsNone()",
         'TEXT("Raices.RiverChild")',
         'TEXT("Raices.DockWorker")',
         'TEXT("Raices.WreckDiver")',
@@ -255,6 +263,11 @@ def validate(root: Path) -> list[str]:
         "MoveToPurposeAnchor",
         "ClearPurposeRoute",
         "IsProtectedChildRuntime",
+        "ERexaResidentSafetyState",
+        "EnterProtectedChildFlee",
+        "ShelterProtectedChild",
+        "RestoreProtectedChildAfterCombat",
+        "ChildCombatFleeRadiusCentimetres = 5000.0f",
     ), errors)
     _require_fragments(resident_source, (
         'Tags.AddUnique(TEXT("Rexa.NonCombatant"))',
@@ -270,6 +283,13 @@ def validate(root: Path) -> list[str]:
         "ResidentController->MoveToActor",
         "EPathFollowingRequestResult::Failed",
         "ResidentController->StopMovement()",
+        "CurrentSafetyState != ERexaResidentSafetyState::Routine",
+        "FMath::Square(ChildCombatFleeRadiusCentimetres)",
+        "CurrentSafetyState = ERexaResidentSafetyState::FleeingCombat",
+        "CurrentSafetyState = ERexaResidentSafetyState::ShelteredOffscreen",
+        "SetActorHiddenInGame(true)",
+        "SetActorEnableCollision(false)",
+        "ETeleportType::TeleportPhysics",
     ), errors)
     _require_fragments(anchor_header, (
         "ARexaSettlementAnchor",
@@ -291,6 +311,13 @@ def validate(root: Path) -> list[str]:
         "GetSpawnedResidentCount",
         "ApplyGameMinute",
         "BuildAnchorRegistry",
+        "ICombatProximityResponder",
+        "NotifyCombatActivity",
+        "ShelterChildrenForPersistentCombat",
+        "EndCombatResponse",
+        "ChildSceneRemovalDelaySeconds",
+        "CombatSilenceBeforeReturnSeconds",
+        "DESIGN-GAP",
     ), errors)
     _require_fragments(director_source, (
         "URexaSettlementRoster::GetAuthoredResidents()",
@@ -304,6 +331,38 @@ def validate(root: Path) -> list[str]:
         "bMidday && !(*Anchor)->bShelteredFromMiddayHeat",
         "Command.Resident->MoveToPurposeAnchor",
         "Resident->ClearPurposeRoute()",
+        "Proximity->RegisterResponder(this)",
+        "Proximity->UnregisterResponder(this)",
+        "FMath::Square(ARexaSettlementResident::ChildCombatFleeRadiusCentimetres)",
+        "Resident->EnterProtectedChildFlee",
+        "Resident->ShelterProtectedChild",
+        "Command.Key->RestoreProtectedChildAfterCombat",
+    ), errors)
+    proximity_interface = root / "Source/DarkArisen/World/CombatProximityResponder.h"
+    proximity_header = root / "Source/DarkArisen/World/CombatProximitySubsystem.h"
+    proximity_source = root / "Source/DarkArisen/World/CombatProximitySubsystem.cpp"
+    _require_fragments(proximity_interface, (
+        "UCombatProximityResponder",
+        "ICombatProximityResponder",
+        "ReceiveCombatActivity",
+    ), errors)
+    _require_fragments(proximity_header, (
+        "UWorldSubsystem",
+        "RegisterResponder",
+        "UnregisterResponder",
+        "BroadcastCombatActivity",
+        "TArray<TWeakObjectPtr<AActor>> Responders",
+    ), errors)
+    _require_fragments(proximity_source, (
+        "Responders.AddUnique(TWeakObjectPtr<AActor>(Responder))",
+        "Responders.RemoveAll",
+        "ICombatProximityResponder::Execute_ReceiveCombatActivity",
+    ), errors)
+    combat_source = root / "Source/DarkArisen/Components/CombatComponent.cpp"
+    _require_fragments(combat_source, (
+        "SignalCombatActivity()",
+        "World->GetSubsystem<UCombatProximitySubsystem>()",
+        "Proximity->BroadcastCombatActivity(Owner->GetActorLocation())",
     ), errors)
     _require_fragments(root / "Source/DarkArisen/DarkArisen.Build.cs", (
         '"AIModule"',
@@ -319,6 +378,9 @@ def validate(root: Path) -> list[str]:
             resident_source,
             director_header,
             director_source,
+            proximity_interface,
+            proximity_header,
+            proximity_source,
         )
         if path.is_file()
     )
@@ -333,6 +395,8 @@ def validate(root: Path) -> list[str]:
     ):
         if forbidden in settlement_text:
             errors.append(f"authored Rexa settlement source forbids: {forbidden}")
+    if combat_source.is_file() and "TActorIterator" in combat_source.read_text(encoding="utf-8"):
+        errors.append("combat proximity must use the sparse subsystem, not scan every actor")
 
     quest_text = "\n".join(
         path.read_text(encoding="utf-8")

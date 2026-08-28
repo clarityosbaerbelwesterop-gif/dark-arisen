@@ -52,7 +52,8 @@ This file is the progress index. Detailed acceptance criteria remain authoritati
 - [ ] Rexa jungle region slice, settlement, Cenote dungeon and required traversal.
 - [x] Exact native forty-person Las Raíces roster, locked 16/12/8/4 census, authored purpose anchors, fail-closed spawn boundary and protected-child damage/physics exclusions.
 - [x] Native settlement-scoped anchor registry and AI path-request boundary with missing/duplicate/unsheltered-midday failures and no competing world clock.
-- [ ] Authored settlement level/anchor placement, observed schedule navigation, four ambient-dialogue layers, population reactions, 50 m child flee/removal and forty-resident runtime proof.
+- [x] Sparse combat-proximity delivery plus exact-50 m child flight, fail-safe offscreen sheltering, protected restoration and zero damage/launch/physics/lock-on source enforcement.
+- [ ] Authored settlement level/anchor placement, observed schedule/child-safety navigation, four ambient-dialogue layers, adult/population reactions and forty-resident runtime proof.
 - [x] Native 30/60/90-second breath tiers, equipment exception and HUD-free drowning damage path.
 - [x] Native Cenote state for lip entry, Rexan water routing, exact-hour image gating, Keeper outcome and mandatory Return dependency.
 - [ ] Authored Cenote level, water devices/currents/swimming, green-gold lighting, Keeper creature/AI/animation, offerings decision and no-marker/no-music runtime proof.

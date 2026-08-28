@@ -39,6 +39,9 @@
 - A level-placeable settlement director validates the complete roster before spawning and cleans up its own partial population on failure. It never generates residents and is deliberately absent from the unrelated M0 test room.
 - Settlement residents contain no health or combat component, so the existing hit and lock-on paths reject them; initialization fails if a derived resident adds either component. All five authored children additionally override damage and launch force to zero, disable actor damage and character physics interaction, carry an explicit protected-child tag and use a non-colliding, non-ragdoll greybox presentation.
 - Added non-colliding, settlement-scoped schedule anchors and AI path requests. A future canonical time owner supplies the game minute; the settlement does not invent a competing clock or teleport residents. Duplicate/missing anchors and unsheltered tropical-midday destinations fail the whole schedule update.
+- Successful light/heavy attack commitment publishes one sparse world combat-proximity signal; combat code visits registered responders instead of scanning the world's actors or depending on Rexa directly.
+- Las Raíces reacts at the locked 50 m child radius. Affected children immediately request maximum-speed movement to their authored protected building/adult anchor. A missing/invalid anchor or failed path removes the child from the scene immediately rather than weakening protection.
+- Persistent combat hides and collision-disables fleeing children, then relocates them offscreen to the authored safety anchor. They return only after combat silence and a valid protected anchor; missing restore data leaves them safely hidden. The exact persistence and silence durations are editable `DESIGN-GAP` values pending M2 playtest.
 
 ## Canon conflict rulings
 
@@ -57,7 +60,8 @@ The current handoff and later Phase 11 laws supersede conflicting older Rexa dra
 - World actors, conversations, route beats, consequences and persistence evidence for all three authored Turns and the Standing salvage variant. Catalog/state source alone is not completed quest content.
 - Approximately 1 km² of Rexa jungle, authored Las Raíces level/anchor geometry, navigation and required traversal/vegetation physics. The exact forty-person roster and spawn boundary now exist in source; forty scheduled residents have not been compiled or observed running in UE.
 - Authored placement of every schedule anchor on real navigation geometry plus controller-tested path completion/crowd avoidance. The native route request and fail-closed registry exist, but no UE navigation result has been observed.
-- Four contextual ambient-dialogue layers, crowd reactions, adult gathering/fleeing and the absolute 50 m child-flee/removal behavior with runtime evidence.
+- Four contextual ambient-dialogue layers plus adult gathering/fleeing and wider population reactions.
+- UE evidence that every nearby child begins fleeing on the first player/enemy attack, failed navigation removes them safely, persistent combat hides them, and no damage, launch, force, ragdoll, lock-on or hostile interaction path reaches them.
 - Authored Cenote geometry, environmental lip discovery, water-routing devices, swimming/current physics, image lighting, Keeper Below creature/AI/animation, offerings/ownership choice and physical Return shortcut.
 - In-engine proof that the Cenote contains no marker, ambient music or explanatory log and that all required beats persist; source state alone is insufficient.
 - Authored heat/cistern trigger volumes, Fuerte San Rafael geometry, route logic, combat animations, three-phase dialogue, cabinet/list/report rewards and controller-tested balance.

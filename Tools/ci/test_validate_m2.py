@@ -134,6 +134,29 @@ class M2SourceContractValidationTests(unittest.TestCase):
             self.assertTrue(any(
                 "CreateDefaultSubobject<UCombatComponent>" in finding for finding in findings))
 
+    def test_child_flee_radius_must_remain_fifty_metres(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            rexa = root / "Source/DarkArisen/Rexa"
+            rexa.mkdir(parents=True)
+            (rexa / "RexaSettlementResident.h").write_text(
+                "ChildCombatFleeRadiusCentimetres = 4900.0f;", encoding="utf-8")
+            (rexa / "RexaSettlementResident.cpp").write_text("", encoding="utf-8")
+            findings = validate(root)
+            self.assertTrue(any(
+                "ChildCombatFleeRadiusCentimetres = 5000.0f" in finding
+                for finding in findings))
+
+    def test_combat_proximity_cannot_scan_every_actor(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            components = root / "Source/DarkArisen/Components"
+            components.mkdir(parents=True)
+            (components / "CombatComponent.cpp").write_text(
+                "TActorIterator<AActor> ScanEveryActor;", encoding="utf-8")
+            findings = validate(root)
+            self.assertTrue(any("must use the sparse subsystem" in finding for finding in findings))
+
 
 if __name__ == "__main__":
     unittest.main()

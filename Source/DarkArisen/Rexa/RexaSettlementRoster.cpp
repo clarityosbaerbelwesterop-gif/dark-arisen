@@ -17,7 +17,8 @@ namespace
         const TCHAR* Midday,
         const TCHAR* Evening,
         const TCHAR* Night,
-        std::initializer_list<const TCHAR*> Knowledge = {})
+        std::initializer_list<const TCHAR*> Knowledge = {},
+        const TCHAR* ChildSafetyAnchor = nullptr)
     {
         FRexaResidentDefinition Result;
         Result.StableResidentId = FName(Id);
@@ -31,6 +32,7 @@ namespace
         Result.EveningAnchorId = FName(Evening);
         Result.NightAnchorId = FName(Night);
         Result.bProtectedChild = AgeBand == ERexaResidentAgeBand::Child;
+        if (ChildSafetyAnchor) Result.ChildSafetyAnchorId = FName(ChildSafetyAnchor);
         for (const TCHAR* KnowledgeId : Knowledge) Result.KnowledgeIds.Add(FName(KnowledgeId));
         return Result;
     }
@@ -65,9 +67,9 @@ TArray<FRexaResidentDefinition> URexaSettlementRoster::GetAuthoredResidents()
     Residents.Add(Resident(TEXT("Raices.Resident.09"), TEXT("Ivo Kema"), Heritage::IndigenousRexan, Age::Adult, TEXT("CassavaGrower"), FVector(700, -520, 0), TEXT("Raices.Anchor.CassavaPlots"), TEXT("Raices.Anchor.FieldShade"), TEXT("Raices.Anchor.Storehouse"), TEXT("Raices.Anchor.HomeSouth"), {TEXT("Raices.CassavaGrower")}));
     Residents.Add(Resident(TEXT("Raices.Resident.10"), TEXT("Mara Suni"), Heritage::IndigenousRexan, Age::Adult, TEXT("Teacher"), FVector(900, -500, 0), TEXT("Raices.Anchor.School"), TEXT("Raices.Anchor.SchoolShade"), TEXT("Raices.Anchor.CommonTable"), TEXT("Raices.Anchor.HomeSouth")));
     Residents.Add(Resident(TEXT("Raices.Resident.11"), TEXT("Lio Bara"), Heritage::IndigenousRexan, Age::Adult, TEXT("Potter"), FVector(-900, -200, 0), TEXT("Raices.Anchor.Kiln"), TEXT("Raices.Anchor.KilnShade"), TEXT("Raices.Anchor.Market"), TEXT("Raices.Anchor.HomeWest")));
-    Residents.Add(Resident(TEXT("Raices.Resident.12"), TEXT("Noa Iri"), Heritage::IndigenousRexan, Age::Child, TEXT("RiverChild"), FVector(-700, -200, 0), TEXT("Raices.Anchor.School"), TEXT("Raices.Anchor.SchoolShade"), TEXT("Raices.Anchor.FerryStep"), TEXT("Raices.Anchor.HomeWest"), {TEXT("Raices.RiverChild")}));
-    Residents.Add(Resident(TEXT("Raices.Resident.13"), TEXT("Ana Maku"), Heritage::IndigenousRexan, Age::Child, TEXT("Learner"), FVector(-500, -220, 0), TEXT("Raices.Anchor.School"), TEXT("Raices.Anchor.SchoolShade"), TEXT("Raices.Anchor.CommonYard"), TEXT("Raices.Anchor.HomeWest")));
-    Residents.Add(Resident(TEXT("Raices.Resident.14"), TEXT("Sami Neri"), Heritage::IndigenousRexan, Age::Child, TEXT("Learner"), FVector(-300, -240, 0), TEXT("Raices.Anchor.School"), TEXT("Raices.Anchor.SchoolShade"), TEXT("Raices.Anchor.Well"), TEXT("Raices.Anchor.HomeWest")));
+    Residents.Add(Resident(TEXT("Raices.Resident.12"), TEXT("Noa Iri"), Heritage::IndigenousRexan, Age::Child, TEXT("RiverChild"), FVector(-700, -200, 0), TEXT("Raices.Anchor.School"), TEXT("Raices.Anchor.SchoolShade"), TEXT("Raices.Anchor.FerryStep"), TEXT("Raices.Anchor.HomeWest"), {TEXT("Raices.RiverChild")}, TEXT("Raices.Anchor.HomeWest")));
+    Residents.Add(Resident(TEXT("Raices.Resident.13"), TEXT("Ana Maku"), Heritage::IndigenousRexan, Age::Child, TEXT("Learner"), FVector(-500, -220, 0), TEXT("Raices.Anchor.School"), TEXT("Raices.Anchor.SchoolShade"), TEXT("Raices.Anchor.CommonYard"), TEXT("Raices.Anchor.HomeWest"), {}, TEXT("Raices.Anchor.HomeWest")));
+    Residents.Add(Resident(TEXT("Raices.Resident.14"), TEXT("Sami Neri"), Heritage::IndigenousRexan, Age::Child, TEXT("Learner"), FVector(-300, -240, 0), TEXT("Raices.Anchor.School"), TEXT("Raices.Anchor.SchoolShade"), TEXT("Raices.Anchor.Well"), TEXT("Raices.Anchor.HomeWest"), {}, TEXT("Raices.Anchor.HomeWest")));
     Residents.Add(Resident(TEXT("Raices.Resident.15"), TEXT("Bela Tarek"), Heritage::IndigenousRexan, Age::Adolescent, TEXT("WeaverApprentice"), FVector(-100, -260, 0), TEXT("Raices.Anchor.DyeYard"), TEXT("Raices.Anchor.WeavingShade"), TEXT("Raices.Anchor.CommonYard"), TEXT("Raices.Anchor.HomeSouth")));
     Residents.Add(Resident(TEXT("Raices.Resident.16"), TEXT("Teo Vara"), Heritage::IndigenousRexan, Age::Elder, TEXT("StoryKeeper"), FVector(100, -260, 0), TEXT("Raices.Anchor.LowerDock"), TEXT("Raices.Anchor.ElderShade"), TEXT("Raices.Anchor.CommonTable"), TEXT("Raices.Anchor.HomeSouth")));
 
@@ -81,8 +83,8 @@ TArray<FRexaResidentDefinition> URexaSettlementRoster::GetAuthoredResidents()
     Residents.Add(Resident(TEXT("Raices.Resident.23"), TEXT("Sofía Ríos"), Heritage::MixedRexan, Age::Adult, TEXT("Cook"), FVector(-500, 80, 0), TEXT("Raices.Anchor.Kitchen"), TEXT("Raices.Anchor.KitchenShade"), TEXT("Raices.Anchor.CommonTable"), TEXT("Raices.Anchor.HomeWest")));
     Residents.Add(Resident(TEXT("Raices.Resident.24"), TEXT("Daniel Neri"), Heritage::MixedRexan, Age::Adult, TEXT("ReedCutter"), FVector(-300, 60, 0), TEXT("Raices.Anchor.ReedPath"), TEXT("Raices.Anchor.FieldShade"), TEXT("Raices.Anchor.Storehouse"), TEXT("Raices.Anchor.HomeWest")));
     Residents.Add(Resident(TEXT("Raices.Resident.25"), TEXT("Carmen Sola"), Heritage::MixedRexan, Age::Elder, TEXT("FishSeller"), FVector(-100, 40, 0), TEXT("Raices.Anchor.FishTable"), TEXT("Raices.Anchor.MarketShade"), TEXT("Raices.Anchor.CommonTable"), TEXT("Raices.Anchor.HomeSouth")));
-    Residents.Add(Resident(TEXT("Raices.Resident.26"), TEXT("Alma Vega"), Heritage::MixedRexan, Age::Child, TEXT("Learner"), FVector(100, 40, 0), TEXT("Raices.Anchor.School"), TEXT("Raices.Anchor.SchoolShade"), TEXT("Raices.Anchor.CommonYard"), TEXT("Raices.Anchor.HomeSouth")));
-    Residents.Add(Resident(TEXT("Raices.Resident.27"), TEXT("Luis Calder"), Heritage::MixedRexan, Age::Child, TEXT("Learner"), FVector(300, 60, 0), TEXT("Raices.Anchor.School"), TEXT("Raices.Anchor.SchoolShade"), TEXT("Raices.Anchor.LowerDock"), TEXT("Raices.Anchor.HomeSouth")));
+    Residents.Add(Resident(TEXT("Raices.Resident.26"), TEXT("Alma Vega"), Heritage::MixedRexan, Age::Child, TEXT("Learner"), FVector(100, 40, 0), TEXT("Raices.Anchor.School"), TEXT("Raices.Anchor.SchoolShade"), TEXT("Raices.Anchor.CommonYard"), TEXT("Raices.Anchor.HomeSouth"), {}, TEXT("Raices.Anchor.HomeSouth")));
+    Residents.Add(Resident(TEXT("Raices.Resident.27"), TEXT("Luis Calder"), Heritage::MixedRexan, Age::Child, TEXT("Learner"), FVector(300, 60, 0), TEXT("Raices.Anchor.School"), TEXT("Raices.Anchor.SchoolShade"), TEXT("Raices.Anchor.LowerDock"), TEXT("Raices.Anchor.HomeSouth"), {}, TEXT("Raices.Anchor.HomeSouth")));
     Residents.Add(Resident(TEXT("Raices.Resident.28"), TEXT("Eva Marín"), Heritage::MixedRexan, Age::Adolescent, TEXT("BakerApprentice"), FVector(500, 80, 0), TEXT("Raices.Anchor.Bakery"), TEXT("Raices.Anchor.BakeryShade"), TEXT("Raices.Anchor.Market"), TEXT("Raices.Anchor.HomeEast")));
 
     // Imperial colonists — eight residents (20%).
@@ -130,7 +132,9 @@ bool URexaSettlementRoster::IsRosterValid(const TArray<FRexaResidentDefinition>&
         ++HeritageCounts[HeritageIndex];
 
         const bool bIsChild = ResidentDefinition.AgeBand == ERexaResidentAgeBand::Child;
-        if (ResidentDefinition.bProtectedChild != bIsChild) return false;
+        if (ResidentDefinition.bProtectedChild != bIsChild ||
+            (bIsChild && ResidentDefinition.ChildSafetyAnchorId.IsNone()) ||
+            (!bIsChild && !ResidentDefinition.ChildSafetyAnchorId.IsNone())) return false;
         if (bIsChild) ++ChildCount;
         for (const FName KnowledgeId : ResidentDefinition.KnowledgeIds)
         {

@@ -9,6 +9,7 @@
 #include "GameFramework/Actor.h"
 #include "Engine/World.h"
 #include "Kismet/GameplayStatics.h"
+#include "World/CombatProximitySubsystem.h"
 
 namespace
 {
@@ -114,6 +115,7 @@ bool UCombatComponent::PerformLightAttack()
     if (!BeginCommittedAction(
         ECombatState::LightAttacking, LightAttackStaminaCost, GetMinimumCommitmentSeconds()))
         return false;
+    SignalCombatActivity();
     QueueMeleeHit(ECombatHitKind::Light);
     return true;
 }
@@ -123,6 +125,7 @@ bool UCombatComponent::PerformHeavyAttack()
     if (!BeginCommittedAction(
         ECombatState::HeavyAttacking, HeavyAttackStaminaCost, GetMinimumCommitmentSeconds()))
         return false;
+    SignalCombatActivity();
     QueueMeleeHit(ECombatHitKind::Heavy);
     return true;
 }
@@ -402,6 +405,16 @@ void UCombatComponent::CompleteStagger()
     PostureRegenDelayRemaining = DarkArisen::CoreLoopTuning::PostureRegenDelaySeconds;
     RefreshPostureVisualState();
     SetState(ECombatState::Idle);
+}
+
+void UCombatComponent::SignalCombatActivity()
+{
+    AActor* Owner = GetOwner();
+    UWorld* World = GetWorld();
+    if (!Owner || !World) return;
+    if (UCombatProximitySubsystem* Proximity =
+        World->GetSubsystem<UCombatProximitySubsystem>())
+        Proximity->BroadcastCombatActivity(Owner->GetActorLocation());
 }
 
 void UCombatComponent::RefreshPostureVisualState()
