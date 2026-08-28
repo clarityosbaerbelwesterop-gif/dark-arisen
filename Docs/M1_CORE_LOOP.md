@@ -1,0 +1,49 @@
+# M1 core-loop implementation record
+
+**Status:** active source implementation; not yet a vertical slice, Alpha, or Beta  
+**Engine:** Unreal Engine 5.5  
+**Authority:** `Docs/DesignAuthority.md`, current engineering handoff, `animation system.md`, `camera system.md`, `interaction system.md`, `docs/design/mechanics/combat_feel.md`, and `docs/design/physics/movement_physics.md`
+
+## Delivered in this tranche
+
+- Jake has callable keyboard/gamepad inputs for light attack, heavy attack, parry, directional dodge/backstep, jump, sprint, interaction, and unlock-gated Rache (R on keyboard; L3+R3 on gamepad).
+- Combat actions are mutually exclusive and retain a weight-class commitment timer. The six-frame deflection window remains locked at 60 fps.
+- Weapon timing exposes the authored Light, Medium, Heavy, Great, and Polearm startup/recovery values. The Cutlass begins as Medium; the Crystal Katana is Light.
+- Posture drives the five authored visual states: Set, Pressed, Failing, Broken-imminent, and Broken. A break owns a 1.4-second vulnerability and resets to half posture afterward.
+- Health and stamina drive Winded, Hurt, Bad, and Failing layers. Failing blocks sprint. The Crystal Katana suppresses only the wounded animation-set swap; it does not erase Jake's physical condition.
+- Camera control has Free, Anchored, and Authored modes. Anchored refuses look input while preserving movement; Authored refuses both. Jake's death path now enters the four-second Hold; the six-second emergence anchor remains an explicit entry point.
+- Interaction traces only to 1.4 metres, emits one corner-prompt event for four seconds, and runs Begin/Complete/Cancel over a real duration. The default Take duration is 0.6 seconds.
+- Movement or damage cancels an in-progress interaction. No target-rendering mutation, world-space prompt, fade, or generic loot-container path exists.
+- Jake owns the authored three-second Rally window. Damage-source recovery ranges from 70% for standard attacks to 0% for poison; landed light/heavy/parry-strike/critical hooks recover 15/25/40/100% of the currently available Rally pool.
+- The native combat HUD draws one posture indicator only. It has no health, stamina, Rally, ammo, boss bar, minimap, damage-number, or status-icon path.
+- Light and heavy attacks now queue one sphere trace at the authored startup frame. A valid combatant receives health and posture damage exactly once; a six-frame deflection redirects posture damage to the attacker instead. A posture break clears the interrupted combatant's queued contact so a strike cannot land during its broken vulnerability.
+- Successful light/heavy/parry-strike/critical contacts call Jake's Rally recovery path. Critical contacts bypass deflection and consume the full available Rally pool.
+- The C++ greybox now spawns one visible duelling enemy with awareness, pursuit, committed attacks, stamina, health, five-state posture, deflection response, death handling, and no extra HUD.
+- Lock-on chooses the best living combatant inside the authored 20 m acquisition range, facing cone and line of sight, then smoothly owns facing until toggled, invalidated, or outside the 25 m retention leash. It creates no marker, outline, widget or additional HUD element.
+- Every wound layer exposes an animation-ready physical profile: breathing, favoured side, limp, stagger-run and weapon drag. Jake applies the deterioration to locomotion even when the Katana keeps its clean animation set.
+- The camera boom receives only subtle low-frequency wound drift, scaled exclusively by the wound layer. There is no damage event, impact shake, critical zoom or kill framing path.
+- The greybox contains an interruptible physical door, a 0.6-second physical pickup and a held Examine document. The document uses player-paced Anchored camera while the world remains visible; destroying or invalidating the target now releases that presentation safely instead of stranding the camera.
+- The HUD renders the sole four-second interaction prompt in the screen corner and a translucent Examine reading surface; neither path mutates, highlights or outlines a world target.
+- Door open/broken and pickup taken states can be captured/restored by stable IDs into a SaveGame snapshot. The snapshot performs no disk write and therefore cannot bypass the locked chapter/rest autosave policy.
+- Authored attack montages can use a native contact notify that consumes the queued hit exactly once. The startup-frame timer remains only as a functional greybox fallback when no montage starts.
+- Jake now exposes explicit light, heavy, parry, dodge and backstep montage slots. A successfully started attack montage transfers its queued contact from the greybox frame timer to the native animation notify; a montage with no matching notify fails closed at action completion instead of producing a late or double hit.
+- A native `UDarkArisenAnimInstance` bridge exposes locomotion, airborne/acceleration, committed combat, weapon weight, posture, wound presentation, Katana exception and wounded-set state as read-only Blueprint inputs for the authored animation graph.
+
+## Conflict rulings applied
+
+The later locked rules supersede contradictory Phase 3/6 draft clauses:
+
+- attack-cancel tables are rejected; recovery is real;
+- impact camera shake, kill cameras, critical zoom, and cinematic slow motion are rejected;
+- interaction outlines, glow, focus-mode object highlighting, generic loot barrels/crates, and Take All are rejected;
+- only 60 fps combat calculations and the PC/PS5 platform baseline survive.
+
+## Still required before M1 acceptance
+
+- authored animation Blueprint, locomotion/pose assets and action montages assigned to the native bridge and contact notify;
+- authored hand/door/pickup animation assets and in-engine persistence/presentation tests;
+- Windows UE 5.5 Development/Shipping compile, Unreal automation execution, controller/touch smoke testing, and measured 60 fps evidence.
+
+No runtime gate may be inferred from static checks. This tranche is intentionally kept inside the existing private draft PR and must not be merged on its own.
+
+`DESIGN-GAP:` the source specifies wound-driven low-frequency camera instability and locomotion degradation but gives no numeric amplitude or speed multipliers. Conservative editable defaults are present for playtesting; Flo's feel review must lock them before M1 acceptance.

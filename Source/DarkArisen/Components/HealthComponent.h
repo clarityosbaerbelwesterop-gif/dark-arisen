@@ -6,118 +6,120 @@
 #include "Components/ActorComponent.h"
 #include "HealthComponent.generated.h"
 
-/** Multicast, damit mehrere Systeme (UI, Audio, AI-Aggro-Reset, GameMode) auf den Tod reagieren können. */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDiedSignature, AActor*, KilledBy);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDiedSignature, AActor*, DamageCauser);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(
+    FOnHealthChangedSignature, float, NewHealth, float, MaximumHealth, float, Delta);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
+    FOnRallyChangedSignature, float, RecoverableHealth, float, WindowSecondsRemaining);
 
-/** Für HUD-HP-Bar, Damage-Vignette, DualSense-Haptik. */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnHealthChangedSignature,
-	float, NewHealth, float, MaxHealth, float, Delta);
-
-/**
- * Klassifiziert einen Heilvorgang.
- *
- * GDD §11.1 trennt Instant-Heals (Cane Sugar, Bandage, Rum, Medical Tincture)
- * von einem einzigen Heal-Over-Time-Effekt: Cooked Meal regeneriert 50 % HP
- * über 30 Sekunden. Damit reicht dieses 2-Werte-Enum.
- */
 UENUM(BlueprintType)
 enum class EHealType : uint8
 {
-	Instant  UMETA(DisplayName = "Instant"),
-	OverTime UMETA(DisplayName = "Over Time")
+    Instant,
+    OverTime
 };
 
-/**
- * UHealthComponent — HP-Pool und Schadens-Pipeline für Jake Harlow.
- *
- * Umsetzt GDD §6.1 Health-Regel: "No regen. Healing via Sugar, Rum, Bandages,
- * Tinctures. Animation commitment." sowie §11.1 Heilitem-Werte.
- *
- * Designregeln:
- *  - Kein Passiv-Regen. CurrentHealth sinkt, bis der Spieler ein Heilitem
- *    bewusst konsumiert — das erzwingt den Souls-Like-Risk-Management-Loop.
- *  - Cooked Meal startet einen Over-Time-Ticker (PendingRegen / RegenRemaining).
- *  - Poise/Stagger-Modulation passiert im CombatComponent, nicht hier. Dieser
- *    Component kennt nur noch finale Schadenszahlen.
- *  - Beim Tod feuert OnDied genau einmal; weitere Damage-/Heal-Calls sind no-ops.
- */
+UENUM(BlueprintType)
+enum class ERallyDamageClass : uint8
+{
+    StandardEnemy,
+    EliteEnemy,
+    Boss,
+    Grab,
+    Environmental,
+    Fire,
+    Poison,
+    Fall,
+    Bleed
+};
+
+UENUM(BlueprintType)
+enum class ERallyRecoveryAction : uint8
+{
+    LightHit,
+    HeavyHit,
+    ParryStrike,
+    Critical
+};
+
+/** Health never passively regenerates. Rally is an explicit, time-limited recovery path. */
 UCLASS(ClassGroup = (DarkArisen), meta = (BlueprintSpawnableComponent))
 class DARKARISEN_API UHealthComponent : public UActorComponent
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
-	/** Konstruktor — aktiviert Tick (nur für Over-Time-Heals) und setzt Defaults. */
-	UHealthComponent();
+    UHealthComponent();
+    virtual void BeginPlay() override;
+    virtual void TickComponent(float DeltaTime, ELevelTick TickType,
+        FActorComponentTickFunction* ThisTickFunction) override;
 
-protected:
-	/** Klammert CurrentHealth auf MaxHealth beim ersten Spawn. */
-	virtual void BeginPlay() override;
+    UFUNCTION(BlueprintCallable, Category = "Health")
+    void ApplyDamage(float Amount, AActor* DamageCauser);
 
-public:
-	/** Tick — rechnet laufende Over-Time-Heals (Cooked Meal) herunter. */
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
-	                           FActorComponentTickFunction* ThisTickFunction) override;
+    UFUNCTION(BlueprintCallable, Category = "Health|Rally")
+    void ApplyDamageWithRally(
+        float Amount,
+        AActor* DamageCauser,
+        ERallyDamageClass DamageClass);
 
-	// =========================================================================
-	//  Stats
-	// =========================================================================
+    UFUNCTION(BlueprintCallable, Category = "Health")
+    void ApplyHeal(float Amount, EHealType HealType, float Duration = 0.0f);
 
-	/** Maximale HP. Start: 100. Wird durch Endgame-Upgrades erhöht. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Health|Stats")
-	float MaxHealth = 100.f;
+    UFUNCTION(BlueprintCallable, Category = "Health|Rally")
+    float RecoverRally(ERallyRecoveryAction RecoveryAction);
 
-	/** Laufende HP. Invariante: 0 <= CurrentHealth <= MaxHealth. */
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Health|Stats")
-	float CurrentHealth = 100.f;
+    UFUNCTION(BlueprintCallable, Category = "Health|Rally")
+    void ExpireRally();
 
-	/** true sobald CurrentHealth <= 0 — sperrt weitere Damage-/Heal-Calls. */
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Health|Stats")
-	bool bIsDead = false;
+    UFUNCTION(BlueprintPure, Category = "Health")
+    float GetHealthPercent() const;
 
-	// =========================================================================
-	//  Damage & Heal API
-	// =========================================================================
+    UFUNCTION(BlueprintPure, Category = "Health")
+    bool IsDead() const { return bIsDead; }
 
-	/**
-	 * Rohschaden-Eingang. Clamped gegen 0, feuert OnHealthChanged und bei
-	 * HP == 0 OnDied. Wird von AJakeCharacter::TakeDamage() weitergereicht,
-	 * nachdem CombatComponent die Poise-Modulation angewendet hat.
-	 */
-	UFUNCTION(BlueprintCallable, Category = "Health")
-	void ApplyDamage(float Amount, AActor* DamageCauser);
+    UFUNCTION(BlueprintPure, Category = "Health|Rally")
+    bool HasActiveRally() const { return RallyAvailableHealth > 0.0f; }
 
-	/**
-	 * Heilt Jake. Instant addiert sofort (Sugar/Bandage/Rum/Tincture),
-	 * OverTime startet einen Ticker über Duration Sekunden (Cooked Meal).
-	 */
-	UFUNCTION(BlueprintCallable, Category = "Health")
-	void ApplyHeal(float Amount, EHealType HealType, float Duration = 0.f);
+    static float GetRallyFractionForDamageClass(ERallyDamageClass DamageClass);
+    static float GetRecoveryFractionForAction(ERallyRecoveryAction RecoveryAction);
 
-	/** HP / MaxHP — für HUD-Binding und DualSense-Heartbeat-Intensität. */
-	UFUNCTION(BlueprintPure, Category = "Health")
-	float GetHealthPercent() const;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health|Stats", meta = (ClampMin = "1.0"))
+    float MaxHealth = 200.0f;
 
-	/** Convenience-Abfrage, damit Input-Handler und AI den Totenstatus sauber prüfen. */
-	UFUNCTION(BlueprintPure, Category = "Health")
-	bool IsDead() const { return bIsDead; }
+    UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Health|Stats")
+    float CurrentHealth = 200.0f;
 
-	// =========================================================================
-	//  Delegates
-	// =========================================================================
+    UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Health|Stats")
+    bool bIsDead = false;
 
-	/** Abonniert von AJakeCharacter::OnCharacterDied() und von AI-/UI-Systemen. */
-	UPROPERTY(BlueprintAssignable, Category = "Health")
-	FOnDiedSignature OnDied;
+    /** Enabled for Jake, disabled for ordinary combatants. */
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health|Rally")
+    bool bRallyEnabled = false;
 
-	/** UI-HP-Bar, Damage-Vignette, Audio-Heartbeat etc. hängen sich hier ein. */
-	UPROPERTY(BlueprintAssignable, Category = "Health")
-	FOnHealthChangedSignature OnHealthChanged;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health|Rally")
+    float RallyWindowSeconds = 3.0f;
+
+    UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Health|Rally")
+    float RallyAvailableHealth = 0.0f;
+
+    UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Health|Rally")
+    float RallyWindowRemaining = 0.0f;
+
+    UPROPERTY(BlueprintAssignable, Category = "Health|Events")
+    FOnDiedSignature OnDied;
+
+    UPROPERTY(BlueprintAssignable, Category = "Health|Events")
+    FOnHealthChangedSignature OnHealthChanged;
+
+    UPROPERTY(BlueprintAssignable, Category = "Health|Events")
+    FOnRallyChangedSignature OnRallyChanged;
 
 private:
-	/** Noch zu verteilende HP-Menge aus dem aktuell laufenden Over-Time-Heal. */
-	float PendingRegen = 0.f;
+    float PendingHeal = 0.0f;
+    float HealTimeRemaining = 0.0f;
 
-	/** Sekunden, die der Over-Time-Heal noch läuft. 0 = kein aktiver Regen. */
-	float RegenRemaining = 0.f;
+    void TickHealing(float DeltaTime);
+    void ClampRallyToMissingHealth();
+    void RefreshTickState();
 };

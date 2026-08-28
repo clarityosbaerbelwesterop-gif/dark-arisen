@@ -1,0 +1,23 @@
+{
+  "FileVersion": 3,
+  "EngineAssociation": "5.5",
+  "Category": "Games",
+  "Description": "Dark Arisen — single-player third-person action RPG.",
+  "Modules": [
+    {
+      "Name": "DarkArisen",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    }
+  ],
+  "Plugins": [
+    {
+      "Name": "PixelStreaming2",
+      "Enabled": true,
+      "TargetAllowList": [
+        "Win64"
+      ]
+    }
+  ]
+}
+
