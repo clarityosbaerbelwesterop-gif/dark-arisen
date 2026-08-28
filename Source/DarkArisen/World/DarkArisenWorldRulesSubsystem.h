@@ -6,16 +6,35 @@
 #include "Subsystems/WorldSubsystem.h"
 #include "DarkArisenWorldRulesSubsystem.generated.h"
 
+UENUM(BlueprintType)
+enum class EDarkArisenRestLocation : uint8
+{
+    GreatCabin,
+    SafeHouse
+};
+
+UENUM(BlueprintType)
+enum class EDarkArisenDaypart : uint8
+{
+    Dawn,
+    Midday,
+    Dusk,
+    Night
+};
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
+    FOnDarkArisenChapterBoundary,
+    int32,
+    NewChapter);
+
 /**
  * Canonical M4 world-time/save owner.
  *
- * The world clock advances at 1 in-game hour per 150 real seconds. This subsystem owns
- * the clock so settlements, tides, ship watches and future war simulation do not invent
- * competing time sources. It deliberately performs no disk IO.
+ * One in-game hour = 150 real seconds. This subsystem owns the clock so settlements, tides,
+ * ship watches and later war simulation never invent competing clocks. It performs no disk IO.
  *
  * Autosave has exactly two legal request sources: chapter boundaries and completed rest.
- * Manual save remains unrestricted. The lake-to-dock authored window suppresses all
- * autosave requests without disabling manual save.
+ * Manual save remains unrestricted. The lake-to-dock window suppresses autosaves only.
  */
 UCLASS()
 class DARKARISEN_API UDarkArisenWorldRulesSubsystem : public UTickableWorldSubsystem
@@ -26,6 +45,9 @@ public:
     virtual void Initialize(FSubsystemCollectionBase& Collection) override;
     virtual void Tick(float DeltaTime) override;
     virtual TStatId GetStatId() const override;
+
+    UPROPERTY(BlueprintAssignable, Category="World|Chapter")
+    FOnDarkArisenChapterBoundary OnChapterBoundary;
 
     UFUNCTION(BlueprintPure, Category="World|Time")
     int64 GetTotalWorldMinutes() const { return TotalWorldMinutes; }
@@ -46,9 +68,16 @@ public:
     UFUNCTION(BlueprintCallable, Category="World|Save")
     bool NotifyChapterBoundary(int32 NewChapter);
 
-    /** Rest completion is one of exactly two legal autosave request sources. */
+    /** Compatibility path for an already-completed authored rest. */
     UFUNCTION(BlueprintCallable, Category="World|Save")
     bool NotifyRestCompleted();
+
+    /**
+     * Canonical rest entry: only great cabin or safe house, and only one of four dayparts.
+     * No arbitrary wait-until-hour or bedroll path exists.
+     */
+    UFUNCTION(BlueprintCallable, Category="World|Rest")
+    bool CompleteRest(EDarkArisenRestLocation Location, EDarkArisenDaypart TargetDaypart);
 
     UFUNCTION(BlueprintCallable, Category="World|Save")
     void BeginLakeToDockAutosaveSuppression();
@@ -62,15 +91,13 @@ public:
     UFUNCTION(BlueprintPure, Category="World|Save")
     bool CanManualSave() const { return true; }
 
-    /**
-     * Save authority calls this and performs the actual write. A suppressed request is
-     * never queued, and consuming the request cannot itself write to disk.
-     */
+    /** Save authority consumes this request and performs the actual write. */
     UFUNCTION(BlueprintCallable, Category="World|Save")
     bool ConsumePendingAutosaveRequest();
 
 private:
     void QueueLegalAutosaveRequest();
+    static int32 GetDaypartMinute(EDarkArisenDaypart TargetDaypart);
 
     UPROPERTY(SaveGame)
     int64 TotalWorldMinutes = 0;
