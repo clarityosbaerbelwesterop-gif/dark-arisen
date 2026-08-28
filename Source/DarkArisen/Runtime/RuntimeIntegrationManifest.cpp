@@ -48,6 +48,30 @@ bool URuntimeIntegrationManifest::ValidateDefinition(TArray<FString>& OutErrors)
         }
     }
 
+    const TArray<ERuntimeIntegrationKind> RequiredRuntimeKinds = {
+        ERuntimeIntegrationKind::Level,
+        ERuntimeIntegrationKind::Navigation,
+        ERuntimeIntegrationKind::InteractionAnchor,
+        ERuntimeIntegrationKind::Animation,
+        ERuntimeIntegrationKind::Audio,
+        ERuntimeIntegrationKind::Population,
+        ERuntimeIntegrationKind::Fauna,
+        ERuntimeIntegrationKind::Dungeon,
+        ERuntimeIntegrationKind::Boss,
+        ERuntimeIntegrationKind::Ship,
+        ERuntimeIntegrationKind::ColonialWar,
+        ERuntimeIntegrationKind::Highmoore
+    };
+    for (const ERuntimeIntegrationKind Kind : RequiredRuntimeKinds)
+    {
+        if (CountKind(Kind) <= 0)
+        {
+            OutErrors.Add(FString::Printf(
+                TEXT("M9 authored runtime category has no integration binding: %d"),
+                static_cast<int32>(Kind)));
+        }
+    }
+
     if (CountKind(ERuntimeIntegrationKind::Cutscene) != RequiredCutsceneBindings)
     {
         OutErrors.Add(FString::Printf(TEXT("M9 requires exactly %d authored cutscene bindings."), RequiredCutsceneBindings));
