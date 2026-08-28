@@ -94,10 +94,12 @@ struct FCurrencyWallet
  *   23 teacher-gated nodes and 11 Standing-gated nodes;
  * - no respec path exists;
  * - the three currencies have no generic conversion API;
- * - social state is four greeting states with no affinity number or relationship screen.
+ * - social state is four greeting states with no affinity number or relationship screen;
+ * - sitting never fast-forwards time and drawing a weapon is the only hostile social input.
  *
- * The bible names only part of the 68 nodes individually. Missing nodes are intentionally not
- * invented: the catalog remains fail-closed until authored definitions satisfy every invariant.
+ * The bible names only part of the 68 nodes individually. Missing capabilities are intentionally
+ * not invented: authored data may fill the catalog, but every complete catalog must satisfy all
+ * structural invariants before it is accepted.
  */
 UCLASS(ClassGroup=(DarkArisen), meta=(BlueprintSpawnableComponent))
 class DARKARISEN_API UProgressionEconomyComponent : public UActorComponent
@@ -134,10 +136,7 @@ public:
     UFUNCTION(BlueprintCallable, Category="Progression|Teachers")
     void RecordTeacherMet(FName TeacherId);
 
-    /**
-     * Completes a named-person teaching scene for one node. The node must explicitly name
-     * this teacher and the person must have been met. No menu-only shortcut exists.
-     */
+    /** Completes one authored named-person teaching scene. */
     UFUNCTION(BlueprintCallable, Category="Progression|Teachers")
     bool CompleteTeachingScene(FName TeacherId, FName NodeId);
 
@@ -152,6 +151,9 @@ public:
 
     UFUNCTION(BlueprintPure, Category="Progression|Craft")
     bool HasLearnedNode(FName NodeId) const { return LearnedNodes.Contains(NodeId); }
+
+    UFUNCTION(BlueprintPure, Category="Progression|Craft")
+    bool HasRegisteredNode(FName NodeId) const { return SkillNodeDefinitions.Contains(NodeId); }
 
     UFUNCTION(BlueprintPure, Category="Progression|Craft")
     bool IsSkillCatalogComplete() const { return ValidateCompleteCatalog(); }
@@ -176,6 +178,23 @@ public:
 
     UFUNCTION(BlueprintPure, Category="Social")
     ESocialGreetingState GetGreetingState(FName SocialContextId) const;
+
+    /** Drawing is the only hostile social act. It makes the context Wary for authored chapters. */
+    UFUNCTION(BlueprintCallable, Category="Social")
+    bool RecordWeaponDrawnHere(FName SocialContextId, int32 RecoveryChapters);
+
+    /** Called only by chapter progression; restores pre-Wary greetings when memory expires. */
+    UFUNCTION(BlueprintCallable, Category="Social")
+    void AdvanceSocialChapter();
+
+    UFUNCTION(BlueprintCallable, Category="Social|Sitting")
+    bool BeginSitting(FName SeatId);
+
+    UFUNCTION(BlueprintCallable, Category="Social|Sitting")
+    void EndSitting();
+
+    UFUNCTION(BlueprintPure, Category="Social|Sitting")
+    bool IsSitting() const { return !ActiveSeatId.IsNone(); }
 
     UFUNCTION(BlueprintCallable, Category="Social|Listening")
     bool BeginListening(FName ConversationId);
@@ -268,8 +287,17 @@ private:
     TMap<FName, ESocialGreetingState> GreetingStates;
 
     UPROPERTY(SaveGame)
+    TMap<FName, ESocialGreetingState> GreetingBeforeWary;
+
+    UPROPERTY(SaveGame)
+    TMap<FName, int32> WaryChaptersRemaining;
+
+    UPROPERTY(SaveGame)
     TSet<FName> OverheardConversations;
 
     UPROPERTY(Transient)
     FName ActiveListeningConversation;
+
+    UPROPERTY(Transient)
+    FName ActiveSeatId;
 };
