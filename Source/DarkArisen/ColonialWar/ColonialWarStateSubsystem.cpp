@@ -136,14 +136,12 @@ FRegionalWarSnapshot UColonialWarStateSubsystem::GetRegionSnapshot(const FName R
 
     Snapshot.RegionId = RegionId;
     Snapshot.Outcome = Region->Outcome;
-    Snapshot.bCrisis = Region->ImperialControl < 30 || Region->AlbionControl < 30;
+    Snapshot.bCrisis = Region->Outcome == ERegionalWarOutcome::Crisis;
     Snapshot.bFallAssaultCompleted = Region->bFallAssaultCompleted;
 
-    const int32 MaxControl = FMath::Max4(
-        Region->ImperialControl,
-        Region->AlbionControl,
-        Region->LiberationStrength,
-        Region->CrimsonThreat);
+    const int32 ColonialMax = FMath::Max(Region->ImperialControl, Region->AlbionControl);
+    const int32 NonColonialMax = FMath::Max(Region->LiberationStrength, Region->CrimsonThreat);
+    const int32 MaxControl = FMath::Max(ColonialMax, NonColonialMax);
     if (MaxControl == Region->LiberationStrength)
     {
         Snapshot.DominantFaction = EColonialFaction::Liberation;
