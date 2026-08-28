@@ -83,7 +83,7 @@ struct FPhysicalChartRecord
  * - navigation is coast/chart/sky/guide based, never compass or player-dot based;
  * - charts are physical objects and may be annotated;
  * - the ship continues sailing when Jake leaves the helm;
- * - morale belongs exclusively to the household component and has no numeric UI getter;
+ * - `InternalMorale` belongs exclusively to UShipHouseholdComponent and has no numeric UI getter;
  * - no water fast-travel API exists here.
  *
  * Geometry, buoyancy, authored crew animation, audio and runtime acceptance remain separate M3 gates.
