@@ -23,6 +23,12 @@ REQUIRED_FILES = (
     "Source/DarkArisen/Missions/RexaM2MissionCatalog.cpp",
     "Source/DarkArisen/Interaction/PhysicalJournalActor.h",
     "Source/DarkArisen/Interaction/PhysicalJournalActor.cpp",
+    "Source/DarkArisen/Rexa/RexaSettlementRoster.h",
+    "Source/DarkArisen/Rexa/RexaSettlementRoster.cpp",
+    "Source/DarkArisen/Rexa/RexaSettlementResident.h",
+    "Source/DarkArisen/Rexa/RexaSettlementResident.cpp",
+    "Source/DarkArisen/Rexa/RexaSettlementDirector.h",
+    "Source/DarkArisen/Rexa/RexaSettlementDirector.cpp",
     "Docs/M2_VERTICAL_SLICE.md",
 )
 
@@ -141,6 +147,10 @@ def validate(root: Path) -> list[str]:
         "Exactly three authored Turn quests",
         "Exactly one authored Standing variant",
         "Standing variant is finite authored salvage",
+        "DarkArisen.M2.RexaSettlementRoster",
+        "Las Raices has exactly forty authored residents",
+        "Five authored children are protected",
+        "Residents have no combat component and cannot be locked on",
     ), errors)
 
     mission_header = root / "Source/DarkArisen/Missions/RexaM2MissionCatalog.h"
@@ -182,6 +192,109 @@ def validate(root: Path) -> list[str]:
     _require_fragments(root / "Source/DarkArisen/GreyboxGameMode.cpp", (
         "World->SpawnActor<APhysicalJournalActor>",
     ), errors)
+
+    roster_header = root / "Source/DarkArisen/Rexa/RexaSettlementRoster.h"
+    roster_source = root / "Source/DarkArisen/Rexa/RexaSettlementRoster.cpp"
+    resident_header = root / "Source/DarkArisen/Rexa/RexaSettlementResident.h"
+    resident_source = root / "Source/DarkArisen/Rexa/RexaSettlementResident.cpp"
+    director_header = root / "Source/DarkArisen/Rexa/RexaSettlementDirector.h"
+    director_source = root / "Source/DarkArisen/Rexa/RexaSettlementDirector.cpp"
+    _require_fragments(roster_header, (
+        "RequiredResidentCount = 40",
+        "RequiredIndigenousCount = 16",
+        "RequiredMixedCount = 12",
+        "RequiredImperialCount = 8",
+        "RequiredSailorTraderCount = 4",
+        "GetPurposeAnchorAtGameMinute",
+        "KnowledgeIds",
+        "bProtectedChild",
+        "GetAuthoredResidents",
+        "IsRosterValid",
+    ), errors)
+    _require_fragments(roster_source, (
+        "Indigenous Rexan — sixteen residents (40%)",
+        "Mixed Rexan — twelve residents (30%)",
+        "Imperial colonists — eight residents (20%)",
+        "Sailors and traders — four residents (10%)",
+        "ChildCount == 5",
+        'TEXT("Raices.RiverChild")',
+        'TEXT("Raices.DockWorker")',
+        'TEXT("Raices.WreckDiver")',
+    ), errors)
+    if roster_source.is_file():
+        roster_text = roster_source.read_text(encoding="utf-8")
+        resident_count = roster_text.count("Residents.Add(Resident(")
+        if resident_count != 40:
+            errors.append(
+                f"RexaSettlementRoster.cpp must author exactly 40 residents; found {resident_count}")
+        expected_census = {
+            "Heritage::IndigenousRexan": 16,
+            "Heritage::MixedRexan": 12,
+            "Heritage::ImperialColonist": 8,
+            "Heritage::SailorTrader": 4,
+            "Age::Child": 5,
+        }
+        for token, expected_count in expected_census.items():
+            actual_count = roster_text.count(token)
+            if actual_count != expected_count:
+                errors.append(
+                    f"RexaSettlementRoster.cpp census requires {expected_count} {token}; "
+                    f"found {actual_count}")
+    _require_fragments(resident_header, (
+        "ARexaSettlementResident",
+        "LaunchCharacter",
+        "TakeDamage",
+        "InitializeFromDefinition",
+        "RefreshPurposeAnchor",
+        "IsProtectedChildRuntime",
+    ), errors)
+    _require_fragments(resident_source, (
+        'Tags.AddUnique(TEXT("Rexa.NonCombatant"))',
+        'Tags.AddUnique(TEXT("Rexa.ProtectedChild"))',
+        "if (!bDefinitionInitialized || ResidentDefinition.bProtectedChild) return",
+        "if (!bDefinitionInitialized || ResidentDefinition.bProtectedChild) return 0.0f",
+        "SetCanBeDamaged(!ResidentDefinition.bProtectedChild)",
+        "FindComponentByClass<UHealthComponent>() == nullptr",
+        "FindComponentByClass<UCombatComponent>() == nullptr",
+        "Movement->bEnablePhysicsInteraction = false",
+        "GreyboxBody->SetCollisionEnabled(ECollisionEnabled::NoCollision)",
+    ), errors)
+    _require_fragments(director_header, (
+        "ARexaSettlementDirector",
+        "SpawnAuthoredSettlement",
+        "ClearSpawnedSettlement",
+        "GetSpawnedResidentCount",
+    ), errors)
+    _require_fragments(director_source, (
+        "URexaSettlementRoster::GetAuthoredResidents()",
+        "URexaSettlementRoster::IsRosterValid(Residents)",
+        "World->SpawnActor<ARexaSettlementResident>",
+        "Spawned->InitializeFromDefinition(Definition)",
+        "ClearSpawnedSettlement()",
+        "URexaSettlementRoster::RequiredResidentCount",
+    ), errors)
+    settlement_text = "\n".join(
+        path.read_text(encoding="utf-8")
+        for path in (
+            roster_header,
+            roster_source,
+            resident_header,
+            resident_source,
+            director_header,
+            director_source,
+        )
+        if path.is_file()
+    )
+    for forbidden in (
+        "FMath::Rand",
+        "FRandomStream",
+        "GenerateResident",
+        "CreateDefaultSubobject<UHealthComponent>",
+        "CreateDefaultSubobject<UCombatComponent>",
+        "SetSimulatePhysics(true)",
+    ):
+        if forbidden in settlement_text:
+            errors.append(f"authored Rexa settlement source forbids: {forbidden}")
 
     quest_text = "\n".join(
         path.read_text(encoding="utf-8")

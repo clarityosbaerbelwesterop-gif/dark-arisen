@@ -1,6 +1,6 @@
 # M2 vertical-slice implementation record
 
-**Status:** native quest/environment/boss state plus first authored Rexa mission and physical-notebook source; not a vertical slice, Alpha, or Beta  
+**Status:** native quest/environment/boss state plus authored Rexa mission, notebook and forty-person roster source; not a vertical slice, Alpha, or Beta  
 **Engine:** Unreal Engine 5.5  
 **Authority:** current engineering handoff, `quest activation.md`, `quest design philosophy.md`, `mission types.md`, `dungeon design philosophy.md`, `regional dungeon catalog.md`, `colonial war bosses.md`, and `Docs/DesignAuthority.md`
 
@@ -34,6 +34,10 @@
 - The absence Turn activates silently; the overheard Turn enters as a distorted rumour; asking a local appends what that person actually said to the chronological notebook without solving navigation.
 - Added a physical notebook actor that is held through the existing anchored Examine path and renders dated first-person journal entries in order. Plain-text search remains the only tracking concession.
 - Jake registers the four authored definitions fail-closed and the native test room exposes the physical notebook for later UE runtime proof.
+- Added exactly forty named Las Raíces residents with stable IDs, occupations and authored home offsets. The roster locks the Rexan design-source census to sixteen Indigenous Rexans, twelve mixed Rexans, eight Imperial colonists and four sailors/traders.
+- Every resident has dawn, shaded-midday, evening and night purpose anchors rather than a random wander point. Seven named knowledge roles connect specific locals to the four authored mission direction variants.
+- A level-placeable settlement director validates the complete roster before spawning and cleans up its own partial population on failure. It never generates residents and is deliberately absent from the unrelated M0 test room.
+- Settlement residents contain no health or combat component, so the existing hit and lock-on paths reject them; initialization fails if a derived resident adds either component. All five authored children additionally override damage and launch force to zero, disable actor damage and character physics interaction, carry an explicit protected-child tag and use a non-colliding, non-ragdoll greybox presentation.
 
 ## Canon conflict rulings
 
@@ -50,7 +54,8 @@ The current handoff and later Phase 11 laws supersede conflicting older Rexa dra
 - M1 runtime acceptance remains a dependency.
 - Final handwritten page art, page-turn/hand animation, subtitle/accessibility presentation and controller-tested physical-journal evidence. The native held presentation is source-complete but not visually accepted.
 - World actors, conversations, route beats, consequences and persistence evidence for all three authored Turns and the Standing salvage variant. Catalog/state source alone is not completed quest content.
-- Approximately 1 km² of Rexa jungle, a forty-person settlement and the required traversal/vegetation physics.
+- Approximately 1 km² of Rexa jungle, authored Las Raíces level/anchor geometry, navigation and required traversal/vegetation physics. The exact forty-person roster and spawn boundary now exist in source; forty scheduled residents have not been compiled or observed running in UE.
+- Purpose-driven pathing between the authored schedule anchors, four contextual ambient-dialogue layers, crowd reactions, adult gathering/fleeing and the absolute 50 m child-flee/removal behavior with runtime evidence.
 - Authored Cenote geometry, environmental lip discovery, water-routing devices, swimming/current physics, image lighting, Keeper Below creature/AI/animation, offerings/ownership choice and physical Return shortcut.
 - In-engine proof that the Cenote contains no marker, ambient music or explanatory log and that all required beats persist; source state alone is insufficient.
 - Authored heat/cistern trigger volumes, Fuerte San Rafael geometry, route logic, combat animations, three-phase dialogue, cabinet/list/report rewards and controller-tested balance.

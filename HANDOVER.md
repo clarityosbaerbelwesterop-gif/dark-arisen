@@ -26,6 +26,7 @@
 - Locked Alpha delivery to two content-identical UE 5.5 Shipping targets, Windows x64 and Linux x86_64, with native PS5 deferred to the authorised Sony Beta path.
 - Added dual private self-hosted Windows/Linux CI, fail-closed Linux runner/build checks, private candidate packaging, secret scanning, SHA-256 manifests and evidence-gated immutable Alpha promotion. No package has been produced or uploaded.
 - Added the first four finite authored Rexa mission definitions (three Turns and one spoken-agreement Standing salvage variant), multi-voice local directions and a physical chronological notebook actor. World encounters, final art/animation and runtime acceptance remain open.
+- Added the exact authored forty-person Las Raíces roster at the locked 16/12/8/4 cultural split, stable identities, professions, local mission knowledge and four purpose anchors per resident. A level-placeable director spawns only the validated roster; resident actors fail initialization with health/combat components, and all five children add zero-damage, zero-launch and no-physics protections. Final level placement, navigation, four ambient-dialogue layers, 50 m child flee/removal and UE runtime evidence remain open.
 
 ## Deliberately not done
 

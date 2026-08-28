@@ -21,6 +21,8 @@
 #include "Interaction/InteractionPersistence.h"
 #include "Interaction/PhysicalDoorActor.h"
 #include "Missions/RexaM2MissionCatalog.h"
+#include "Rexa/RexaSettlementResident.h"
+#include "Rexa/RexaSettlementRoster.h"
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
     FDarkArisenDesignLawsSpec,
@@ -476,6 +478,69 @@ bool FDarkArisenM2RexaAuthoredMissionsSpec::RunTest(const FString& Parameters)
             EQuestActivationTrigger::Conversation,
             130,
             true));
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(
+    FDarkArisenM2RexaSettlementRosterSpec,
+    "DarkArisen.M2.RexaSettlementRoster",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FDarkArisenM2RexaSettlementRosterSpec::RunTest(const FString& Parameters)
+{
+    const TArray<FRexaResidentDefinition> Residents =
+        URexaSettlementRoster::GetAuthoredResidents();
+    TestTrue(TEXT("The authored forty-person roster validates"),
+        URexaSettlementRoster::IsRosterValid(Residents));
+    TestEqual(TEXT("Las Raices has exactly forty authored residents"),
+        Residents.Num(), URexaSettlementRoster::RequiredResidentCount);
+
+    int32 HeritageCounts[4] = {0, 0, 0, 0};
+    int32 ProtectedChildCount = 0;
+    for (const FRexaResidentDefinition& Resident : Residents)
+    {
+        ++HeritageCounts[static_cast<int32>(Resident.Heritage)];
+        if (Resident.AgeBand == ERexaResidentAgeBand::Child)
+        {
+            ++ProtectedChildCount;
+            TestTrue(TEXT("Every child is explicitly protected"), Resident.bProtectedChild);
+        }
+        else
+        {
+            TestFalse(TEXT("Only children carry the child-protection flag"),
+                Resident.bProtectedChild);
+        }
+    }
+    TestEqual(TEXT("Sixteen residents are Indigenous Rexan"), HeritageCounts[0], 16);
+    TestEqual(TEXT("Twelve residents are mixed Rexan"), HeritageCounts[1], 12);
+    TestEqual(TEXT("Eight residents are Imperial colonists"), HeritageCounts[2], 8);
+    TestEqual(TEXT("Four residents are sailors or traders"), HeritageCounts[3], 4);
+    TestEqual(TEXT("Five authored children are protected"), ProtectedChildCount, 5);
+
+    if (!Residents.IsEmpty())
+    {
+        const FRexaResidentDefinition& First = Residents[0];
+        TestEqual(TEXT("Negative time has no schedule purpose"),
+            First.GetPurposeAnchorAtGameMinute(-1), NAME_None);
+        TestEqual(TEXT("Five in the morning uses the dawn purpose"),
+            First.GetPurposeAnchorAtGameMinute(300), First.DawnAnchorId);
+        TestEqual(TEXT("Eleven uses the shaded midday purpose"),
+            First.GetPurposeAnchorAtGameMinute(660), First.MiddayAnchorId);
+        TestEqual(TEXT("Seventeen uses the evening purpose"),
+            First.GetPurposeAnchorAtGameMinute(1020), First.EveningAnchorId);
+        TestEqual(TEXT("Twenty-two uses the night purpose"),
+            First.GetPurposeAnchorAtGameMinute(1320), First.NightAnchorId);
+    }
+
+    const ARexaSettlementResident* ResidentDefaults =
+        GetDefault<ARexaSettlementResident>();
+    TestTrue(TEXT("Settlement resident defaults exist"), ResidentDefaults != nullptr);
+    TestTrue(TEXT("Residents have no health component and cannot enter the damage pipeline"),
+        ResidentDefaults &&
+        ResidentDefaults->FindComponentByClass<UHealthComponent>() == nullptr);
+    TestTrue(TEXT("Residents have no combat component and cannot be locked on"),
+        ResidentDefaults &&
+        ResidentDefaults->FindComponentByClass<UCombatComponent>() == nullptr);
     return true;
 }
 
