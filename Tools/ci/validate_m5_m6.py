@@ -29,6 +29,8 @@ REQUIRED_FILES = (
     "Source/DarkArisen/Highmoore/HighmooreHorseComponent.cpp",
     "Source/DarkArisen/Highmoore/PrincessQuestStateComponent.h",
     "Source/DarkArisen/Highmoore/PrincessQuestStateComponent.cpp",
+    "Source/DarkArisen/ColonialWar/ColonyHoldingComponent.h",
+    "Source/DarkArisen/ColonialWar/ColonyHoldingComponent.cpp",
 )
 
 PROHIBITED = (
@@ -70,6 +72,7 @@ def validate(root: Path) -> list[str]:
     siege_cpp = texts[REQUIRED_FILES[5]]
     army_h = texts[REQUIRED_FILES[6]]
     army_cpp = texts[REQUIRED_FILES[7]]
+    battle_h = texts[REQUIRED_FILES[8]]
     battle_cpp = texts[REQUIRED_FILES[9]]
     caves_h = texts[REQUIRED_FILES[10]]
     caves_cpp = texts[REQUIRED_FILES[11]]
@@ -81,6 +84,8 @@ def validate(root: Path) -> list[str]:
     horse_cpp = texts[REQUIRED_FILES[17]]
     princess_h = texts[REQUIRED_FILES[18]]
     princess_cpp = texts[REQUIRED_FILES[19]]
+    holding_h = texts[REQUIRED_FILES[20]]
+    holding_cpp = texts[REQUIRED_FILES[21]]
 
     _require(war_h, "ColonialWarStateSubsystem.h", (
         "Imperial,", "Albion,", "Liberation,", "Crimson",
@@ -114,6 +119,17 @@ def validate(root: Path) -> list[str]:
         "InResolution == ESiegeResolution::HeldIntact",
     ), errors)
 
+    _require(holding_h, "ColonyHoldingComponent.h", (
+        "TradePost,", "Settlement,", "MilitaryStronghold,", "AllianceBastion",
+        "Claimed = 0", "Functional = 1", "Established = 2", "Developed = 3", "Thriving = 4",
+        "FDeliveredHoldingPerson", "VoyageId", "IsJakeOwned() const",
+    ), errors)
+    _require(holding_cpp, "ColonyHoldingComponent.cpp", (
+        "bWasRazed", "bOldFortressForAlliance", "DeliveredPeople.IsEmpty()",
+        "HoldingType == EHoldingType::AllianceBastion", "DeliveredPeople.Add(Person.PersonId, Person)",
+        "PersistentDamageIds.Add", "RecordDamageRepaired",
+    ), errors)
+
     _require(army_h, "ArmyCampaignComponent.h", (
         "Hired,", "SettlementMilitia,", "Alliance,", "FactionLevy,", "Crew",
         "Hold,", "Press,", "BreakOff", "JakeBaseCommandCapacity = 200",
@@ -124,8 +140,14 @@ def validate(root: Path) -> list[str]:
         "Force.bCompanyMarines && Unpaid >= 1", "Force.Type == ECampaignForceType::Hired && Unpaid >= 2",
         "Pair.Value.Type != ECampaignForceType::Crew",
     ), errors)
+
+    _require(battle_h, "LargeBattleComponent.h", (
+        "FieldAction,", "Assault,", "Defence,", "Rising",
+        "FBattleSegmentRuntimeState", "Cohesion = 100", "MinimumSegments = 3", "MaximumSegments = 6",
+    ), errors)
     _require(battle_cpp, "LargeBattleComponent.cpp", (
-        "RecordJakeFallen", "bJakeFallen = true", "ResolveBattle",
+        "RecordJakeFallen", "bJakeFallen = true", "BattleType == ELargeBattleType::Rising",
+        "Segment->Cohesion = FMath::Clamp", "Segment->Cohesion == 0", "AreAllSegmentsResolved()",
     ), errors)
     if "RecordJakeFallen" in battle_cpp and "bBattleActive = false" in battle_cpp.split("RecordJakeFallen", 1)[1].split("ResolveBattle", 1)[0]:
         errors.append("Jake falling must not end a large battle")
