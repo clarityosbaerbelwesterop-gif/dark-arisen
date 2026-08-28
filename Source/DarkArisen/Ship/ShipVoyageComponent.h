@@ -122,7 +122,7 @@ public:
     bool IsJakeAtHelm() const { return bJakeAtHelm; }
 
     UFUNCTION(BlueprintPure, Category="Ship|Crew")
-    const TArray<FNamedCrewMemberState>& GetNamedCrew() const { return NamedCrew; }
+    TArray<FNamedCrewMemberState> GetNamedCrew() const { return NamedCrew; }
 
     UFUNCTION(BlueprintCallable, Category="Ship|Crew")
     void SetCrewMemberAboard(FName StableId, bool bAboard);
