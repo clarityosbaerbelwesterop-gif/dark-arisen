@@ -6,7 +6,7 @@
 **Current runtime direction:** Flo directed on 2026-08-28 that unavailable UE 5.5 runtime/runner gates should not block further source work. They remain mandatory later acceptance gates and are not treated as passed.  
 **Artifact definition:** the first Alpha is the complete private UE 5.5 game plus two separately verified, content-identical Shipping artifacts: `DarkArisen-Alpha-Windows-Arcware.zip` and `DarkArisen-Alpha-Linux-x86_64.zip`. The exact source archive accompanies them. A scaffold, greybox, vertical slice, streaming configuration or untested candidate is not an Alpha. Native PS5 work is deferred to Beta and is not an Alpha deliverable.
 
-This file is the progress index. Detailed acceptance criteria remain authoritative in `M0_CHECKLIST.md` and `Docs/Handoff/ENGINEERING_HANDOFF.md`. **A checkbox is marked only when its required source and runtime evidence both exist.** Source-only work is recorded as prose under the relevant milestone and must not be read as milestone acceptance.
+This file is the progress index. Detailed acceptance criteria remain authoritative in `M0_CHECKLIST.md` and `Docs/Handoff/ENGINEERING_HANDOFF.md`. **A checkbox is marked only when its required source and runtime evidence both exist.** Source-only work is recorded as prose under the relevant milestone and must not be read as milestone acceptance. M3/M4 source closure is additionally recorded in `Docs/M3_M4_SOURCE_COMPLETION.md`.
 
 ## Non-negotiable delivery gates
 
@@ -67,7 +67,7 @@ This file is the progress index. Detailed acceptance criteria remain authoritati
 - [ ] Physical held journal presentation, local-direction dialogue, three authored Turns and one authored Standing mission.
 - [ ] Two-hour evidence run satisfying the M2 merge gate.
 
-**Current source-only continuation:** Las Raíces now consumes the canonical M4 world-time subsystem for schedule updates. This is integration source, not observed navigation/runtime evidence.
+**Current source-only continuation:** Las Raíces consumes the canonical M4 world-time subsystem for schedule updates. This is integration source, not observed navigation/runtime evidence.
 
 ## M3 — Ship
 
@@ -75,14 +75,18 @@ This file is the progress index. Detailed acceptance criteria remain authoritati
 - [ ] Five named scheduled crew members, morale readability, great cabin, rest and autosave.
 - [ ] Real sea-passage gate with no fast travel or loading transition.
 
-**Current source-only progress in PR #7:**
+**M3 source closure in PR #7:**
 
-- `UShipVoyageComponent` encodes heading, wind, Point-of-Sail, crew-dependent handling and continued voyage state when Jake leaves the helm.
-- Exactly five canonical named crew records plus 40–90 hands are authored in the source boundary.
-- Physical-chart acquire/annotation state exists; no Compass, minimap, player-dot, map-click movement or water-fast-travel API has been added.
-- `ALaLiberacionShip` is level-placeable and owns four stable deck attachment roots: Weather, Upper, Mid and Hold.
-- Great-Cabin rest routes into the one canonical legal rest/autosave request path.
-- Final ship geometry, continuous traversal, vessel physics/buoyancy, ocean motion, crew schedule presentation, morale world-read, physical held map and sea-passage evidence remain open; therefore all M3 acceptance boxes stay unchecked.
+- `ALaLiberacionShip` is the singular level-placeable ship boundary with Weather / Upper / Mid / Hold roots on one actor.
+- `UShipVoyageComponent` owns wind, Point-of-Sail, heading, speed and swept physical actor movement; leaving the helm does not freeze the vessel.
+- Handling depends on First Mate + active hands only. Other named crew do not leak into manoeuvre quality; Father Salvio has no mechanical handling effect.
+- Exactly five canonical named crew exist plus the 40–90 hands boundary. `UShipHouseholdComponent` adds canonical-clock schedules, meals, up to eight specialists, twelve semi-named hands and permanent named-loss propagation.
+- Morale has one private authority and is exposed only as qualitative world cues: singing, mending, galley fire, argument, empty forecastle at dusk or empty hammock after loss.
+- Physical chart acquisition/annotation exists and `APhysicalMapActor` is a held Examine object containing only sailed coastlines, visited settlements, routes actually given and persistent handwritten notes.
+- There is no Compass, minimap, player dot, map-click movement or water-fast-travel API.
+- `USeaPassageComponent` requires both canonical elapsed time and physically observed ship distance before completion; it contains no level-open, server-travel, teleport or actor-location write.
+- Great-Cabin rest routes through the M4 rest authority and supports Dawn/Midday/Dusk/Night only.
+- **Why the M3 checkboxes remain open:** final authored hull/interior, continuous player traversal keel→maintop, buoyancy/roll/pitch/heel, ocean/weather coupling, final animation/audio and measured UE sea-passage evidence are runtime/content acceptance, not source assertions.
 
 ## M4 — Systems
 
@@ -90,17 +94,20 @@ This file is the progress index. Detailed acceptance criteria remain authoritati
 - [ ] Three-currency economy, sinks, time/save rules and social greeting/listening systems.
 - [ ] Named-person technique-learning scene proving the M4 gate.
 
-**Current source-only progress in PR #7:**
+**M4 source closure in PR #7:**
 
-- Jake owns a native BODY/CRAFT/STANDING progression/economy component.
-- Complete-catalog acceptance is fail-closed around 68 nodes, branch split 16/12/14/13/13, 141 total Mark cost, 23 teacher-gated nodes, 11 Standing-gated nodes and all prerequisite references.
-- The canonical 23 teachers are encoded. Meeting a teacher does not unlock a node; a teacher-gated node requires an explicit completed teaching-scene record for that teacher and node.
-- Nodes support up to three authored prerequisites. There is no Respec API and no money-to-capability path.
-- Only canonically named nodes are currently pre-registered. Missing definitions are not invented merely to reach 68, so the complete-catalog gate intentionally remains false.
-- Doubloons, Pounds and Silver Marks exist as independent balances with no generic conversion API. The four bottomless sink implementation is still open.
-- Stranger/Known/Owed/Wary and Listening/Interrupt/Overhear state exist without affinity/relationship meters; authored presentation remains open.
-- `UDarkArisenWorldRulesSubsystem` owns the one world clock at 150 real seconds per in-game hour and only permits autosave requests after rest or chapter boundary. Lake→Dock suppresses autosaves while manual save remains allowed.
-- Native M3/M4 automation specs and deterministic source validators exist, but runner execution is still pending; therefore all M4 acceptance boxes stay unchecked.
+- Jake owns the native BODY / CRAFT / STANDING progression/economy component. BODY ceilings and unique authored object/act consumption are enforced.
+- CRAFT locks the exact structural contract: 68 nodes, 16/12/14/13/13 branches, 94 available Marks, 141 full-tree cost, 23 canonical teachers, 23 teacher-gated nodes and 11 Standing-gated nodes.
+- Nodes support up to three prerequisites. Meeting a teacher is insufficient; the exact named-person/node teaching scene must be completed before Marks can learn a teacher-gated technique.
+- The bible does not individually name all 68 abilities. `USkillTreeCatalogDataAsset` therefore validates the complete authored data set without inventing filler nodes; every count, cost, teacher, Standing gate and prerequisite must resolve before the catalog is accepted.
+- No Respec API exists and no money path buys BODY, CRAFT or STANDING.
+- Doubloons, Pounds and Silver Marks are separate balances with no generic conversion API.
+- `FChapterLedger` resolves holding income, army upkeep, garrison upkeep and construction draw once per chapter; same-chapter compounding is rejected. Legendary work, Silver reconstruction and crew share are explicit sinks.
+- `UDarkArisenWorldRulesSubsystem` owns the only world clock at 150 real seconds per in-game hour. Rest is limited to Great Cabin / Safe House and Dawn / Midday / Dusk / Night.
+- Autosave requests remain exactly Rest or Chapter Boundary; Lake→Dock suppresses autosaves and manual save remains allowed.
+- Stranger/Known/Owed/Wary, listening/interruption/overhear, sitting and multi-chapter Wary memory exist without affinity or relationship UI. Drawing a weapon interrupts passive social state; no antagonise or systemic romance layer is added.
+- Native automation specs cover teaching/prerequisite gates, chapter non-compounding, qualitative social memory, daypart rest suppression and a synthetic exact 68-node structural catalog.
+- **Why the M4 checkboxes remain open:** the production 68-node Data Asset must still be authored only from canon-approved definitions, teaching scenes and social/economy presentation must exist in UE, and runtime persistence/playtest evidence remains unexecuted.
 
 ## M5 — Colonial war
 
@@ -146,10 +153,10 @@ This file is the progress index. Detailed acceptance criteria remain authoritati
 
 ## Current blockers outside source authoring
 
-- No matching private Windows or Linux UE 5.5 GitHub runner is currently accepting the required self-hosted jobs. Under Flo's current direction this does not stop source authoring, but it still blocks compile/runtime acceptance.
-- The active workspace has no licensed UE 5.5 installation and no Windows environment. Pixel Streaming starts only after a packaged Unreal application exists and cannot manufacture either Alpha build.
-- Flo will handle the GPU and private browser link; no host/runtime evidence has been supplied yet.
+- At the current PR #7 head both configured Windows/Linux UE 5.5 self-hosted jobs are queued rather than executed. Per Flo's current direction this does not stop source integration, but it still blocks compile/runtime acceptance.
+- The active workspace has no licensed UE 5.5 installation or Windows environment. A direct local clone attempt also failed because outbound DNS/network access to GitHub is unavailable in the workspace.
+- Flo will handle any GPU/private browser link. No paid host/runtime evidence is implied by PR #7.
 - The AI Voice Generator is expected to be free, but no generation may begin before dialogue lock plus zero-cost and commercial-rights verification.
 - The repository contains no canonical credits list or approved end-credits music cue yet. The cue, rights and any cost remain an explicit approval gate.
 
-Source work continues on PR #7 / `feature/m2-runtime-completion` under Flo's current direction. Deferred runtime evidence must never be marked complete by inference.
+PR #7 is the M3/M4 **source-integration** boundary. Its merge does not turn any unchecked runtime/content checkbox above into a pass. After this source tranche, the next source milestone is M5 unless the operator redirects to deferred runtime authoring first.
