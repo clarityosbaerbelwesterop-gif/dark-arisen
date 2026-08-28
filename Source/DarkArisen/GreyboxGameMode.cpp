@@ -13,6 +13,7 @@
 #include "FrameTimeTelemetryActor.h"
 #include "JakeCharacter.h"
 #include "Interaction/ExamineDocumentActor.h"
+#include "Interaction/PhysicalJournalActor.h"
 #include "Interaction/PhysicalDoorActor.h"
 #include "Interaction/PhysicalPickupActor.h"
 #include "PostureOnlyHUD.h"
@@ -117,5 +118,8 @@ void AGreyboxGameMode::BuildGreybox()
         FRotator::ZeroRotator);
     World->SpawnActor<AExamineDocumentActor>(
         FVector(100.0f, 280.0f, 22.0f),
+        FRotator(0.0f, 0.0f, 8.0f));
+    World->SpawnActor<APhysicalJournalActor>(
+        FVector(-120.0f, 280.0f, 22.0f),
         FRotator(0.0f, 0.0f, 8.0f));
 }

@@ -252,6 +252,7 @@ private:
     void ClearQueuedMeleeHit();
     bool TraceAndResolvePendingHit();
     void CompleteStagger();
+    void SignalCombatActivity();
     void RefreshPostureVisualState();
     void SetState(ECombatState NewState);
 };

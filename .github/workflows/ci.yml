@@ -1,4 +1,4 @@
-name: M0-M2 CI
+name: M0-M8 Native C++ CI
 
 on:
   push:
@@ -15,8 +15,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  verify:
-    name: UE 5.5 compile, tests, and design laws
+  verify-windows:
+    name: Windows UE 5.5 native C++ compile, tests, laws
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: [self-hosted, Windows, X64, ue5.5, dark-arisen]
     timeout-minutes: 120
@@ -27,36 +27,58 @@ jobs:
           fetch-depth: 1
           lfs: true
 
+      - name: Build native C++ operations owner
+        shell: cmd
+        run: call "%UE55_ROOT%\Engine\Build\BatchFiles\Build.bat" DarkArisenOps Win64 Development "-Project=%GITHUB_WORKSPACE%\DarkArisen.uproject" -WaitMutex -WarningsAsErrors
+
       - name: Verify private Windows UE 5.5 runner
-        shell: pwsh
-        run: ./Tools/ci/verify-runner.ps1
+        shell: cmd
+        run: "%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" runner-check "--root=%GITHUB_WORKSPACE%" "--engine=%UE55_ROOT%"
 
-      - name: Validate M0 repository contract
-        shell: pwsh
-        run: python Tools/ci/validate_m0.py
-
-      - name: Validate M1 core-loop contract
-        shell: pwsh
-        run: python Tools/ci/validate_m1.py
-
-      - name: Validate M2 markerless quest foundation
-        shell: pwsh
-        run: python Tools/ci/validate_m2.py
-
-      - name: Audit design-law prohibitions
-        shell: pwsh
-        run: python Tools/ci/design_law_audit.py
-
-      - name: Regression-test repository validators
-        shell: pwsh
-        run: python -m unittest discover -s Tools/ci -p "test_*.py"
+      - name: Validate M0-M8 repository contract in native C++
+        shell: cmd
+        run: "%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" validate "--root=%GITHUB_WORKSPACE%"
 
       - name: Compile Development and Shipping
         if: github.event_name == 'push'
-        shell: pwsh
-        run: ./Tools/ci/build-unreal.ps1
+        shell: cmd
+        run: "%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" build "--root=%GITHUB_WORKSPACE%" "--engine=%UE55_ROOT%"
 
       - name: Compile and run Unreal automation tests
         if: github.event_name == 'pull_request'
-        shell: pwsh
-        run: ./Tools/ci/build-unreal.ps1 -RunAutomationTests
+        shell: cmd
+        run: "%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" build "--root=%GITHUB_WORKSPACE%" "--engine=%UE55_ROOT%" --automation
+
+  verify-linux:
+    name: Linux UE 5.5 native C++ compile, tests, laws
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: [self-hosted, Linux, X64, ue5.5, dark-arisen]
+    timeout-minutes: 120
+    steps:
+      - name: Check out source and LFS content
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          lfs: true
+
+      - name: Build native C++ operations owner
+        shell: bash
+        run: '"$UE55_ROOT/Engine/Build/BatchFiles/Linux/Build.sh" DarkArisenOps Linux Development "-Project=$GITHUB_WORKSPACE/DarkArisen.uproject" -WaitMutex -WarningsAsErrors'
+
+      - name: Verify private Linux UE 5.5 runner
+        shell: bash
+        run: '"$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" runner-check "--root=$GITHUB_WORKSPACE" "--engine=$UE55_ROOT"'
+
+      - name: Validate M0-M8 repository contract in native C++
+        shell: bash
+        run: '"$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" validate "--root=$GITHUB_WORKSPACE"'
+
+      - name: Compile Development and Shipping
+        if: github.event_name == 'push'
+        shell: bash
+        run: '"$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" build "--root=$GITHUB_WORKSPACE" "--engine=$UE55_ROOT"'
+
+      - name: Compile and run Unreal automation tests
+        if: github.event_name == 'pull_request'
+        shell: bash
+        run: '"$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" build "--root=$GITHUB_WORKSPACE" "--engine=$UE55_ROOT" --automation'

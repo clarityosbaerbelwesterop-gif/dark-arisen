@@ -11,8 +11,8 @@ public class DarkArisen : ModuleRules
             "Core",
             "CoreUObject",
             "Engine",
-            "InputCore"
+            "InputCore",
+            "AIModule"
         });
     }
 }
-
