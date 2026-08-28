@@ -1,4 +1,4 @@
-name: M0-M6 CI
+name: M0-M8 Native C++ CI
 
 on:
   push:
@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   verify-windows:
-    name: Windows UE 5.5 compile, tests, and design laws
+    name: Windows UE 5.5 native C++ compile, tests, laws
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: [self-hosted, Windows, X64, ue5.5, dark-arisen]
     timeout-minutes: 120
@@ -27,54 +27,37 @@ jobs:
           fetch-depth: 1
           lfs: true
 
-      - name: Verify private Windows UE 5.5 runner
+      - name: Build native C++ operations owner
         shell: pwsh
-        run: ./Tools/ci/verify-runner.ps1
+        run: |
+          & "$env:UE55_ROOT\Engine\Build\BatchFiles\Build.bat" DarkArisenOps Win64 Development "-Project=$PWD\DarkArisen.uproject" -WaitMutex -WarningsAsErrors
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-      - name: Validate M0 repository contract
+      - name: Validate runner and repository contract in C++
         shell: pwsh
-        run: python Tools/ci/validate_m0.py
-
-      - name: Validate M1 core-loop contract
-        shell: pwsh
-        run: python Tools/ci/validate_m1.py
-
-      - name: Validate M2 markerless quest foundation
-        shell: pwsh
-        run: python Tools/ci/validate_m2.py
-
-      - name: Validate M3 and M4 source contracts
-        shell: pwsh
-        run: python Tools/ci/validate_m3_m4.py
-
-      - name: Validate M5 and M6 source contracts
-        shell: pwsh
-        run: python Tools/ci/validate_m5_m6.py
-
-      - name: Validate Alpha platform contract
-        shell: pwsh
-        run: python Tools/ci/validate_alpha_platforms.py
-
-      - name: Audit design-law prohibitions
-        shell: pwsh
-        run: python Tools/ci/design_law_audit.py
-
-      - name: Regression-test repository validators
-        shell: pwsh
-        run: python -m unittest discover -s Tools/ci -p "test_*.py"
+        run: |
+          $Ops = "$PWD\Binaries\Win64\DarkArisenOps.exe"
+          & $Ops runner-check "--root=$PWD" "--engine=$env:UE55_ROOT"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          & $Ops validate "--root=$PWD"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Compile Development and Shipping
         if: github.event_name == 'push'
         shell: pwsh
-        run: ./Tools/ci/build-unreal.ps1
+        run: |
+          & "$PWD\Binaries\Win64\DarkArisenOps.exe" build "--root=$PWD" "--engine=$env:UE55_ROOT"
+          exit $LASTEXITCODE
 
       - name: Compile and run Unreal automation tests
         if: github.event_name == 'pull_request'
         shell: pwsh
-        run: ./Tools/ci/build-unreal.ps1 -RunAutomationTests
+        run: |
+          & "$PWD\Binaries\Win64\DarkArisenOps.exe" build "--root=$PWD" "--engine=$env:UE55_ROOT" --automation
+          exit $LASTEXITCODE
 
   verify-linux:
-    name: Linux UE 5.5 compile, tests, and design laws
+    name: Linux UE 5.5 native C++ compile, tests, laws
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: [self-hosted, Linux, X64, ue5.5, dark-arisen]
     timeout-minutes: 120
@@ -85,48 +68,26 @@ jobs:
           fetch-depth: 1
           lfs: true
 
-      - name: Verify private Linux UE 5.5 runner
+      - name: Build native C++ operations owner
         shell: bash
-        run: ./Tools/ci/verify-linux-runner.sh
+        run: |
+          "$UE55_ROOT/Engine/Build/BatchFiles/Linux/Build.sh" DarkArisenOps Linux Development "-Project=$PWD/DarkArisen.uproject" -WaitMutex -WarningsAsErrors
 
-      - name: Validate M0 repository contract
+      - name: Validate runner and repository contract in C++
         shell: bash
-        run: python3 Tools/ci/validate_m0.py
+        run: |
+          OPS="$PWD/Binaries/Linux/DarkArisenOps"
+          "$OPS" runner-check "--root=$PWD" "--engine=$UE55_ROOT"
+          "$OPS" validate "--root=$PWD"
 
-      - name: Validate M1 core-loop contract
-        shell: bash
-        run: python3 Tools/ci/validate_m1.py
-
-      - name: Validate M2 source contract
-        shell: bash
-        run: python3 Tools/ci/validate_m2.py
-
-      - name: Validate M3 and M4 source contracts
-        shell: bash
-        run: python3 Tools/ci/validate_m3_m4.py
-
-      - name: Validate M5 and M6 source contracts
-        shell: bash
-        run: python3 Tools/ci/validate_m5_m6.py
-
-      - name: Validate Alpha platform contract
-        shell: bash
-        run: python3 Tools/ci/validate_alpha_platforms.py
-
-      - name: Audit design-law prohibitions
-        shell: bash
-        run: python3 Tools/ci/design_law_audit.py
-
-      - name: Regression-test repository validators
-        shell: bash
-        run: python3 -m unittest discover -s Tools/ci -p "test_*.py"
-
-      - name: Compile Linux Development and Shipping
+      - name: Compile Development and Shipping
         if: github.event_name == 'push'
         shell: bash
-        run: ./Tools/ci/build-unreal-linux.sh
+        run: |
+          "$PWD/Binaries/Linux/DarkArisenOps" build "--root=$PWD" "--engine=$UE55_ROOT"
 
-      - name: Compile Linux and run Unreal automation tests
+      - name: Compile and run Unreal automation tests
         if: github.event_name == 'pull_request'
         shell: bash
-        run: ./Tools/ci/build-unreal-linux.sh --run-automation-tests
+        run: |
+          "$PWD/Binaries/Linux/DarkArisenOps" build "--root=$PWD" "--engine=$UE55_ROOT" --automation

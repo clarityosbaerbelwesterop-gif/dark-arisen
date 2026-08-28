@@ -1,29 +1,45 @@
-# M0 Pixel Streaming operations
+# Pixel Streaming operations — native C++ owner
 
-This directory prepares the no-surprise-cost deployment path for Unreal Engine 5.5 Pixel Streaming 2. It does not provision or start a paid GPU host.
+This directory now contains only configuration, provider templates and operational documentation. Executable behavior lives in the native `DarkArisenOps` C++ program under `Source/DarkArisenOps`.
 
 ## Locked architecture
 
 - Unreal Engine 5.5 application, 1920×1080 at 60 fps, rendered offscreen through NVENC.
-- Epic's `PixelStreamingInfrastructure` `UE5.5` branch, pinned to commit `c3e3abea6590a19e1c0ab4d2954efd6a1d949db3`.
-- Signalling uses host ports 8888/8080 for the streamer and player, allows one player, and exposes no REST API. Windows Firewall blocks direct remote TCP access to 8080/8888/8889; tailnet-only Serve proxies only loopback 8080 to HTTPS 443.
-- The selected AWS path uses Tailscale Serve for tailnet-only HTTPS. Funnel is disabled and a deny-by-default grant admits one exact Flo identity.
-- coturn uses milestone-scoped long-term credentials on the private tailnet; no default credential exists and no TURN port is public.
-- A provider adapter must deallocate the cloud VM after 30 minutes without a player. Merely stopping Windows is rejected because it may continue billing.
-- The encrypted retained EBS data volume is the only host location for the repository, UE installation, releases, saves, and telemetry.
+- Epic `PixelStreamingInfrastructure` `UE5.5` pinned to `c3e3abea6590a19e1c0ab4d2954efd6a1d949db3`.
+- Epic's stock UE 5.5 frontend is used; Dark Arisen has no TypeScript/JavaScript frontend overlay.
+- Signalling uses local 8888/8080/8889, one player and no REST API.
+- Windows Firewall blocks direct remote TCP access to 8080/8888/8889.
+- Strict-private AWS Alpha uses Tailscale Serve on HTTPS 443; Funnel is reset/disabled.
+- coturn uses milestone-scoped long-term credentials; private mode exposes TURN only to tailnet ranges.
+- `DarkArisenOps stream-idle-shutdown` invokes a provider stop/deallocation adapter after 30 minutes without a player; guest-OS shutdown alone is not accepted.
+- Persistent provider storage holds repository, UE install, releases, saves and telemetry.
 
-The older Caddy/password path remains available for another reviewed provider, but it is not selected for Flo's strict-private AWS Alpha. See `aws/README.md`.
+## Build the native owner
 
-## One-time host order
+Windows:
 
-1. Complete the quote/approval and private AWS order in `aws/README.md`; no resource may be launched before it.
-2. Apply the one-user tailnet policy, join the Windows Server 2022 NVIDIA host once, revoke the one-off key, and install the exact reviewed GRID driver.
-3. Install UE 5.5, Git, Python, NSSM, AWS CLI v2, the required AWS Tools for PowerShell modules, and the private runner on the retained `D:` volume.
-4. Set `PIXEL_STREAMING_INFRA_ROOT`, `UE55_ROOT`, unique TURN secrets, and the chosen provider identity.
-5. Run `bootstrap-infrastructure.ps1`.
-6. Run `install-services.ps1 -PrivateTailnet` with the AWS shutdown adapter.
-7. Register the host as a private GitHub self-hosted runner with labels `Windows`, `X64`, `ue5.5`, `dark-arisen`, and `dark-arisen-streaming`.
-8. Dispatch `Deploy M0 Pixel Streaming` with the desired branch.
+`%UE55_ROOT%\Engine\Build\BatchFiles\Build.bat DarkArisenOps Win64 Development -Project=<repo>\DarkArisen.uproject -WaitMutex -WarningsAsErrors`
+
+Linux:
+
+`$UE55_ROOT/Engine/Build/BatchFiles/Linux/Build.sh DarkArisenOps Linux Development -Project=<repo>/DarkArisen.uproject -WaitMutex -WarningsAsErrors`
+
+The resulting executable is `Binaries/Win64/DarkArisenOps.exe` or `Binaries/Linux/DarkArisenOps`.
+
+## One-time Windows streaming host order
+
+1. Complete the reviewed provider approval in `aws/README.md`; no paid resource is launched by this repository.
+2. Build `DarkArisenOps`.
+3. Apply the one-user tailnet policy.
+4. Join the host with `DarkArisenOps tailnet-join --auth-key-parameter-arn=<exact-SSM-ARN> --region=<region>` and revoke/delete the one-off key immediately afterward.
+5. Install the exact reviewed GRID package with `DarkArisenOps install-grid-driver --s3-key=<exact-key> --sha256=<64-hex> --accept-eula`.
+6. Install UE 5.5, Git, NSSM and AWS CLI v2 on retained storage. Python and PowerShell modules are no longer project runtime dependencies.
+7. Set `PIXEL_STREAMING_INFRA_ROOT`, `UE55_ROOT`, unique TURN secrets and provider identity.
+8. Run `DarkArisenOps bootstrap-streaming`.
+9. Run `DarkArisenOps stream-install-services --private-tailnet --provider=aws --nssm=<path> --infra=<path>`.
+10. Register the private self-hosted GitHub runner with `Windows`, `X64`, `ue5.5`, `dark-arisen`, `dark-arisen-streaming`.
+11. Dispatch `Deploy Native C++ Pixel Streaming`.
+12. Capture evidence with `DarkArisenOps collect-host-evidence`.
 
 ## Required secret environment values
 
@@ -33,7 +49,8 @@ The older Caddy/password path remains available for another reviewed provider, b
 - `DARKARISEN_TURN_CREDENTIAL`
 - `DARKARISEN_TURN_REALM`
 - `DARKARISEN_LOCAL_IP`
-- `DARKARISEN_PRIVATE_OVERLAY=1`
-- one provider resource identifier and credentials/managed identity
+- `DARKARISEN_PRIVATE_OVERLAY=1` for the selected strict-private Alpha
+- provider-specific resource identifier (`DARKARISEN_AWS_INSTANCE_ID` or `DARKARISEN_AZURE_VM_RESOURCE_ID`)
+- `DARKARISEN_SHUTDOWN_PROVIDER=aws|azure`
 
-The merge gate remains closed until an iPad test proves touch, DualSense, Flo-only tailnet HTTPS, outside-tailnet denial, mobile-network private TURN, latency below 120 ms, locked 60 fps, and provider deallocation after 30 idle minutes.
+The merge gate remains closed until an iPad test proves touch, DualSense, approved-user-only tailnet HTTPS, outside-tailnet denial, mobile-network private TURN, latency below 120 ms, locked 60 fps and provider deallocation after the idle window.

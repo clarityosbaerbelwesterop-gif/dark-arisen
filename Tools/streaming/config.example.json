@@ -1,0 +1,14 @@
+{
+  "engine_root": "C:/Program Files/Epic Games/UE_5.5",
+  "infrastructure_root": "C:/DarkArisen/PixelStreamingInfrastructure",
+  "deployment_root": "C:/DarkArisen/Deployments",
+  "runtime_root": "C:/ProgramData/DarkArisen",
+  "nssm_path": "C:/Tools/nssm/win64/nssm.exe",
+  "caddy_path": "C:/Tools/caddy/caddy.exe",
+  "shutdown_provider": "aws",
+  "notes": [
+    "RuntimeRoot/UserData must live on persistent provider storage.",
+    "Caddy is needed only for the legacy public-password provider path.",
+    "Provider shutdown must deallocate/stop billing, not merely shut down the guest OS."
+  ]
+}

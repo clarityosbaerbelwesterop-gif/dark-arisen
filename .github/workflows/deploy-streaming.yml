@@ -1,4 +1,4 @@
-name: Deploy M0 Pixel Streaming
+name: Deploy Native C++ Pixel Streaming
 
 on:
   workflow_dispatch:
@@ -18,7 +18,7 @@ concurrency:
 
 jobs:
   deploy:
-    name: Package and atomically deploy the selected build
+    name: Package and atomically deploy selected build
     runs-on: [self-hosted, Windows, X64, ue5.5, dark-arisen, dark-arisen-streaming]
     environment: m0-streaming
     timeout-minutes: 180
@@ -30,16 +30,25 @@ jobs:
           fetch-depth: 1
           lfs: true
 
+      - name: Build native C++ operations owner
+        shell: pwsh
+        run: |
+          & "$env:UE55_ROOT\Engine\Build\BatchFiles\Build.bat" DarkArisenOps Win64 Development "-Project=$PWD\DarkArisen.uproject" -WaitMutex -WarningsAsErrors
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
       - name: Validate before packaging
         shell: pwsh
         run: |
-          python Tools/ci/validate_m0.py
-          python Tools/ci/validate_m1.py
-          python Tools/ci/design_law_audit.py
+          $Ops = "$PWD\Binaries\Win64\DarkArisenOps.exe"
+          & $Ops runner-check "--root=$PWD" "--engine=$env:UE55_ROOT"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          & $Ops validate "--root=$PWD"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-      - name: Package and deploy
+      - name: Package and atomically deploy
         shell: pwsh
         run: |
           $Commit = (git rev-parse --short=12 HEAD).Trim()
           $Revision = "$Commit-$env:GITHUB_RUN_ID-$env:GITHUB_RUN_ATTEMPT"
-          ./Tools/streaming/deploy.ps1 -Revision $Revision
+          & "$PWD\Binaries\Win64\DarkArisenOps.exe" stream-deploy "--root=$PWD" "--engine=$env:UE55_ROOT" "--revision=$Revision"
+          exit $LASTEXITCODE
