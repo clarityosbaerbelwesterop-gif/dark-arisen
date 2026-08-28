@@ -67,12 +67,18 @@ bool FDarkArisenM4ProgressionContractSpec::RunTest(const FString& Parameters)
         UProgressionEconomyComponent::RequiredSkillNodeCount, 68);
     TestEqual(TEXT("Teacher catalog contract has twenty-three named people"),
         UProgressionEconomyComponent::RequiredTeacherCount, 23);
+    TestEqual(TEXT("Teacher-gated node count remains twenty-three"),
+        UProgressionEconomyComponent::RequiredTeacherGatedNodeCount, 23);
+    TestEqual(TEXT("Standing-gated node count remains eleven"),
+        UProgressionEconomyComponent::RequiredStandingGatedNodeCount, 11);
     TestEqual(TEXT("Canonical teacher catalog contains exactly twenty-three people"),
         UProgressionEconomyComponent::GetCanonicalTeacherIds().Num(), 23);
     TestEqual(TEXT("Maximum available Marks remain ninety-four"),
         UProgressionEconomyComponent::MaximumAvailableMarks, 94);
     TestEqual(TEXT("Full tree still costs one hundred forty-one Marks"),
         UProgressionEconomyComponent::FullTreeMarkCost, 141);
+    TestFalse(TEXT("Partial authored catalog cannot claim M4 completion"),
+        Progression->IsSkillCatalogComplete());
 
     TestTrue(TEXT("Physician's Draught is an authored Body source"),
         Progression->ApplyPhysiciansDraught(TEXT("body.draught.test")));
@@ -100,10 +106,38 @@ bool FDarkArisenM4ProgressionContractSpec::RunTest(const FString& Parameters)
     TestFalse(TEXT("Money cannot buy a technique without its named teacher"),
         Progression->TryLearnNode(TaughtNode.NodeId));
     Progression->RecordTeacherMet(TEXT("teacher.mira"));
-    TestTrue(TEXT("Named teacher plus Marks can unlock the authored technique"),
+    TestFalse(TEXT("Meeting a teacher is not the same as being taught"),
+        Progression->TryLearnNode(TaughtNode.NodeId));
+    TestTrue(TEXT("Named person can complete the authored teaching scene"),
+        Progression->CompleteTeachingScene(TEXT("teacher.mira"), TaughtNode.NodeId));
+    TestTrue(TEXT("Completed teaching scene plus Marks unlocks the technique"),
         Progression->TryLearnNode(TaughtNode.NodeId));
     TestTrue(TEXT("Learned technique remains learned"),
         Progression->HasLearnedNode(TaughtNode.NodeId));
+
+    UProgressionEconomyComponent* PrerequisiteProgression = NewObject<UProgressionEconomyComponent>();
+    TestNotNull(TEXT("Prerequisite test component is constructible"), PrerequisiteProgression);
+    if (!PrerequisiteProgression) return false;
+
+    FSkillNodeDefinition RootNode;
+    RootNode.NodeId = TEXT("node.test.root");
+    RootNode.BranchId = TEXT("Blade");
+    RootNode.MarkCost = 1;
+    FSkillNodeDefinition DependentNode;
+    DependentNode.NodeId = TEXT("node.test.dependent");
+    DependentNode.BranchId = TEXT("Blade");
+    DependentNode.MarkCost = 1;
+    DependentNode.PrerequisiteNodeIds.Add(RootNode.NodeId);
+    TestTrue(TEXT("Root node registers"), PrerequisiteProgression->RegisterAuthoredNode(RootNode));
+    TestTrue(TEXT("Dependent node registers"), PrerequisiteProgression->RegisterAuthoredNode(DependentNode));
+    TestTrue(TEXT("Prerequisite test Marks are awarded"),
+        PrerequisiteProgression->AwardMarks(TEXT("mark.test.prerequisites"), 2));
+    TestFalse(TEXT("Dependent node cannot bypass its prerequisite"),
+        PrerequisiteProgression->TryLearnNode(DependentNode.NodeId));
+    TestTrue(TEXT("Root prerequisite can be learned first"),
+        PrerequisiteProgression->TryLearnNode(RootNode.NodeId));
+    TestTrue(TEXT("Dependent node opens only after its prerequisite"),
+        PrerequisiteProgression->TryLearnNode(DependentNode.NodeId));
 
     TestTrue(TEXT("Pounds are a separate wallet"),
         Progression->CreditCurrency(EDarkArisenCurrency::Pounds, 12));
