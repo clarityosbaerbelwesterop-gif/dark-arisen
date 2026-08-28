@@ -32,6 +32,7 @@ bool UColonialWarStateSubsystem::RegisterRegion(const FName RegionId, const ECol
 
     ReevaluateRegion(State);
     Regions.Add(RegionId, State);
+    LastAutonomousTickChapter.Add(RegionId, CurrentChapter - 1);
     return true;
 }
 
@@ -73,6 +74,32 @@ bool UColonialWarStateSubsystem::RecordResolvedWarAction(
     return true;
 }
 
+bool UColonialWarStateSubsystem::RecordAutonomousChapterTick(
+    const FName RegionId,
+    const FRegionalAutonomousWarTick& Tick)
+{
+    FColonialRegionState* Region = Regions.Find(RegionId);
+    int32* LastTickChapter = LastAutonomousTickChapter.Find(RegionId);
+    if (!Region
+        || !LastTickChapter
+        || *LastTickChapter >= CurrentChapter
+        || !IsValidAutonomousDelta(Tick.ImperialDelta)
+        || !IsValidAutonomousDelta(Tick.AlbionDelta)
+        || !IsValidAutonomousDelta(Tick.LiberationDelta)
+        || !IsValidAutonomousDelta(Tick.CrimsonDelta))
+    {
+        return false;
+    }
+
+    Region->ImperialControl = ClampControl(Region->ImperialControl + Tick.ImperialDelta);
+    Region->AlbionControl = ClampControl(Region->AlbionControl + Tick.AlbionDelta);
+    Region->LiberationStrength = ClampControl(Region->LiberationStrength + Tick.LiberationDelta);
+    Region->CrimsonThreat = ClampControl(Region->CrimsonThreat + Tick.CrimsonDelta);
+    *LastTickChapter = CurrentChapter;
+    ReevaluateRegion(*Region);
+    return true;
+}
+
 bool UColonialWarStateSubsystem::RecordFallAssaultCompleted(const FName RegionId)
 {
     FColonialRegionState* Region = Regions.Find(RegionId);
@@ -86,15 +113,16 @@ bool UColonialWarStateSubsystem::RecordFallAssaultCompleted(const FName RegionId
     return true;
 }
 
-void UColonialWarStateSubsystem::AdvanceChapter(const int32 Chapter)
+bool UColonialWarStateSubsystem::AdvanceChapter(const int32 Chapter)
 {
-    if (Chapter < 4)
+    if (Chapter <= CurrentChapter)
     {
-        return;
+        return false;
     }
 
     CurrentChapter = Chapter;
     MomentumPhase = ResolveMomentumPhase(CurrentChapter);
+    return true;
 }
 
 FRegionalWarSnapshot UColonialWarStateSubsystem::GetRegionSnapshot(const FName RegionId) const
@@ -165,6 +193,11 @@ EWarMomentumPhase UColonialWarStateSubsystem::ResolveMomentumPhase(const int32 C
         return EWarMomentumPhase::Beta;
     }
     return EWarMomentumPhase::Gamma;
+}
+
+bool UColonialWarStateSubsystem::IsValidAutonomousDelta(const int32 Delta)
+{
+    return Delta >= -100 && Delta <= 100;
 }
 
 void UColonialWarStateSubsystem::ReevaluateRegion(FColonialRegionState& Region)
