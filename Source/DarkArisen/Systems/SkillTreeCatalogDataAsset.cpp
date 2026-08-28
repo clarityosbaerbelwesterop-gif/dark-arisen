@@ -9,6 +9,12 @@ bool USkillTreeCatalogDataAsset::IsCatalogStructurallyValid() const
         return false;
     }
 
+    static const FName BladeBranch(TEXT("Blade"));
+    static const FName ShadowBranch(TEXT("Shadow"));
+    static const FName SeaBranch(TEXT("Sea"));
+    static const FName LandBranch(TEXT("Land"));
+    static const FName WordBranch(TEXT("Word"));
+
     int32 Blade = 0;
     int32 Shadow = 0;
     int32 Sea = 0;
@@ -32,11 +38,11 @@ bool USkillTreeCatalogDataAsset::IsCatalogStructurallyValid() const
         Ids.Add(Node.NodeId);
         Cost += Node.MarkCost;
 
-        if (Node.BranchId == TEXT("Blade")) ++Blade;
-        else if (Node.BranchId == TEXT("Shadow")) ++Shadow;
-        else if (Node.BranchId == TEXT("Sea")) ++Sea;
-        else if (Node.BranchId == TEXT("Land")) ++Land;
-        else if (Node.BranchId == TEXT("Word")) ++Word;
+        if (Node.BranchId == BladeBranch) ++Blade;
+        else if (Node.BranchId == ShadowBranch) ++Shadow;
+        else if (Node.BranchId == SeaBranch) ++Sea;
+        else if (Node.BranchId == LandBranch) ++Land;
+        else if (Node.BranchId == WordBranch) ++Word;
         else return false;
 
         if (!Node.TeacherOptions.IsEmpty())
