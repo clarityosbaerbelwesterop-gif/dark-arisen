@@ -3,6 +3,7 @@
 #include "Ship/SeaPassageComponent.h"
 
 #include "Engine/World.h"
+#include "GameFramework/Actor.h"
 #include "World/DarkArisenWorldRulesSubsystem.h"
 
 USeaPassageComponent::USeaPassageComponent()
