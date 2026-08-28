@@ -79,11 +79,11 @@ struct FPhysicalChartRecord
  *
  * Canon boundaries:
  * - one singular, continuously walkable four-deck ship;
- * - point-of-sail and crew availability drive movement;
+ * - point-of-sail, first-mate availability and hands drive movement;
  * - navigation is coast/chart/sky/guide based, never compass or player-dot based;
  * - charts are physical objects and may be annotated;
  * - the ship continues sailing when Jake leaves the helm;
- * - morale is deliberately private state and has no UI getter;
+ * - morale belongs exclusively to the household component and has no numeric UI getter;
  * - no water fast-travel API exists here.
  *
  * Geometry, buoyancy, authored crew animation, audio and runtime acceptance remain separate M3 gates.
@@ -196,10 +196,6 @@ private:
 
     UPROPERTY(SaveGame)
     TArray<FPhysicalChartRecord> PhysicalCharts;
-
-    /** Internal-only world read. There is deliberately no public numeric morale API. */
-    UPROPERTY(SaveGame)
-    uint8 InternalMorale = 50;
 
     /** DESIGN-GAP: final hull-speed tuning requires authored vessel/runtime evidence. */
     UPROPERTY(EditDefaultsOnly, Category="Ship|Tuning", meta=(ClampMin="0.0"))
