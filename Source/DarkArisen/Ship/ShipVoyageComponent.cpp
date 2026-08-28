@@ -2,6 +2,7 @@
 
 #include "Ship/ShipVoyageComponent.h"
 
+#include "GameFramework/Actor.h"
 #include "Math/UnrealMathUtility.h"
 
 UShipVoyageComponent::UShipVoyageComponent()
@@ -40,7 +41,8 @@ void UShipVoyageComponent::TickComponent(float DeltaTime, ELevelTick TickType,
     const float HandlingFactor = GetCrewHandlingFactor();
     const float HeadingDelta = FMath::FindDeltaAngleDegrees(HeadingDegrees, CommandedHeadingDegrees);
     const float MaximumHeadingStep = ProvisionalHeadingResponseDegreesPerSecond * HandlingFactor * DeltaTime;
-    HeadingDegrees = NormalizeHeading(HeadingDegrees + FMath::Clamp(HeadingDelta, -MaximumHeadingStep, MaximumHeadingStep));
+    HeadingDegrees = NormalizeHeading(
+        HeadingDegrees + FMath::Clamp(HeadingDelta, -MaximumHeadingStep, MaximumHeadingStep));
 
     RecalculatePointOfSail();
 
@@ -51,6 +53,19 @@ void UShipVoyageComponent::TickComponent(float DeltaTime, ELevelTick TickType,
         DesiredSpeed,
         DeltaTime,
         0.75f);
+
+    // Sailing is physical world movement. This is intentionally not a route completion,
+    // teleport or level transition; collision may stop the vessel and the passage gate measures
+    // only distance the actor actually travelled.
+    if (AActor* Owner = GetOwner())
+    {
+        const FRotator HeadingRotation(0.0f, HeadingDegrees, 0.0f);
+        Owner->SetActorRotation(HeadingRotation);
+        const FVector Forward = FRotationMatrix(HeadingRotation).GetUnitAxis(EAxis::X);
+        const FVector DeltaCentimetres =
+            Forward * ForwardSpeedMetresPerSecond * 100.0f * DeltaTime;
+        Owner->AddActorWorldOffset(DeltaCentimetres, true);
+    }
 }
 
 void UShipVoyageComponent::SetJakeAtHelm(bool bAtHelm)
@@ -156,7 +171,8 @@ float UShipVoyageComponent::NormalizeHeading(float Degrees)
 
 void UShipVoyageComponent::RecalculatePointOfSail()
 {
-    const float RelativeWind = FMath::Abs(FMath::FindDeltaAngleDegrees(HeadingDegrees, WindDirectionDegrees));
+    const float RelativeWind = FMath::Abs(
+        FMath::FindDeltaAngleDegrees(HeadingDegrees, WindDirectionDegrees));
 
     if (RelativeWind < 35.0f)
     {
@@ -216,8 +232,10 @@ float UShipVoyageComponent::GetCrewHandlingFactor() const
         }
     }
 
-    const float NamedFactor = FMath::Clamp(static_cast<float>(AvailableNamedCrew) / 5.0f, 0.2f, 1.0f);
-    const float HandsFactor = FMath::Clamp(static_cast<float>(ActiveHands) / 40.0f, 0.15f, 1.0f);
+    const float NamedFactor = FMath::Clamp(
+        static_cast<float>(AvailableNamedCrew) / 5.0f, 0.2f, 1.0f);
+    const float HandsFactor = FMath::Clamp(
+        static_cast<float>(ActiveHands) / 40.0f, 0.15f, 1.0f);
     return FMath::Clamp((NamedFactor * 0.35f) + (HandsFactor * 0.65f), 0.15f, 1.0f);
 }
 
@@ -225,7 +243,11 @@ void UShipVoyageComponent::BuildCanonicalCrew()
 {
     NamedCrew.Reset(5);
 
-    auto AddCrew = [this](const TCHAR* StableId, const TCHAR* DisplayName, const TCHAR* Role, ECrewWatch Watch)
+    auto AddCrew = [this](
+        const TCHAR* StableId,
+        const TCHAR* DisplayName,
+        const TCHAR* Role,
+        ECrewWatch Watch)
     {
         FNamedCrewMemberState Entry;
         Entry.StableId = FName(StableId);
