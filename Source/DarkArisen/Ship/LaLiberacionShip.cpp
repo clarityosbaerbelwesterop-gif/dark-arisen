@@ -75,6 +75,21 @@ bool ALaLiberacionShip::CompleteGreatCabinRest()
     return Rules && Rules->NotifyRestCompleted();
 }
 
+bool ALaLiberacionShip::RestGreatCabinToDaypart(const EDarkArisenDaypart TargetDaypart)
+{
+    if (!CanRestInGreatCabin())
+    {
+        return false;
+    }
+
+    UWorld* World = GetWorld();
+    UDarkArisenWorldRulesSubsystem* Rules =
+        World ? World->GetSubsystem<UDarkArisenWorldRulesSubsystem>() : nullptr;
+    return Rules && Rules->CompleteRest(
+        EDarkArisenRestLocation::GreatCabin,
+        TargetDaypart);
+}
+
 bool ALaLiberacionShip::CanRestInGreatCabin() const
 {
     return VoyageComponent != nullptr && VoyageComponent->IsJakeInGreatCabin();
