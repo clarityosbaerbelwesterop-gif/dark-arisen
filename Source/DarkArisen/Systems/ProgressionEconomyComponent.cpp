@@ -95,6 +95,23 @@ void UProgressionEconomyComponent::RecordTeacherMet(FName TeacherId)
     }
 }
 
+bool UProgressionEconomyComponent::CompleteTeachingScene(FName TeacherId, FName NodeId)
+{
+    if (!TeachersMet.Contains(TeacherId))
+    {
+        return false;
+    }
+
+    const FSkillNodeDefinition* Definition = SkillNodeDefinitions.Find(NodeId);
+    if (Definition == nullptr || !Definition->TeacherOptions.Contains(TeacherId))
+    {
+        return false;
+    }
+
+    CompletedTeachingScenes.Add(MakeTeachingSceneKey(TeacherId, NodeId));
+    return true;
+}
+
 void UProgressionEconomyComponent::SetWorldFlag(FName FlagId, bool bEnabled)
 {
     if (FlagId.IsNone())
@@ -118,12 +135,38 @@ bool UProgressionEconomyComponent::RegisterAuthoredNode(const FSkillNodeDefiniti
         TEXT("Blade"), TEXT("Shadow"), TEXT("Sea"), TEXT("Land"), TEXT("Word")
     };
 
-    if (Definition.NodeId.IsNone() || Definition.MarkCost <= 0 || !CanonicalBranches.Contains(Definition.BranchId))
+    if (Definition.NodeId.IsNone()
+        || Definition.MarkCost < 1
+        || Definition.MarkCost > 4
+        || !CanonicalBranches.Contains(Definition.BranchId))
     {
         return false;
     }
 
     if (SkillNodeDefinitions.Contains(Definition.NodeId) || SkillNodeDefinitions.Num() >= RequiredSkillNodeCount)
+    {
+        return false;
+    }
+
+    if (Definition.PrerequisiteNodeIds.Num() > 3)
+    {
+        return false;
+    }
+
+    TSet<FName> UniquePrerequisites;
+    for (const FName PrerequisiteId : Definition.PrerequisiteNodeIds)
+    {
+        if (PrerequisiteId.IsNone()
+            || PrerequisiteId == Definition.NodeId
+            || UniquePrerequisites.Contains(PrerequisiteId))
+        {
+            return false;
+        }
+        UniquePrerequisites.Add(PrerequisiteId);
+    }
+
+    const bool bRequiresGate = Definition.GateKind != ESkillGateKind::None;
+    if (bRequiresGate == Definition.RequiredGateId.IsNone())
     {
         return false;
     }
@@ -275,14 +318,21 @@ void UProgressionEconomyComponent::RegisterKnownCanonicalNodes()
         return;
     }
 
-    auto Register = [this](const TCHAR* NodeId, const TCHAR* BranchId, int32 Cost,
-        std::initializer_list<const TCHAR*> Teachers, const TCHAR* WorldFlag = TEXT(""), int32 MinimumPostureValue = 0)
+    auto Register = [this](
+        const TCHAR* NodeId,
+        const TCHAR* BranchId,
+        int32 Cost,
+        std::initializer_list<const TCHAR*> Teachers,
+        ESkillGateKind GateKind,
+        const TCHAR* GateId,
+        int32 MinimumPostureValue)
     {
         FSkillNodeDefinition Definition;
         Definition.NodeId = FName(NodeId);
         Definition.BranchId = FName(BranchId);
         Definition.MarkCost = Cost;
-        Definition.RequiredWorldFlag = FName(WorldFlag);
+        Definition.GateKind = GateKind;
+        Definition.RequiredGateId = FName(GateId);
         Definition.MinimumPosture = MinimumPostureValue;
         for (const TCHAR* Teacher : Teachers)
         {
@@ -292,33 +342,50 @@ void UProgressionEconomyComponent::RegisterKnownCanonicalNodes()
     };
 
     // The bible explicitly names these nodes. The remaining authored nodes are not invented here.
-    Register(TEXT("node.blade.seamans_guard"), TEXT("Blade"), 1, {});
-    Register(TEXT("node.blade.mercy"), TEXT("Blade"), 2, {TEXT("teacher.father_salvio")});
-    Register(TEXT("node.blade.officers_line"), TEXT("Blade"), 3, {TEXT("teacher.don_alejandro")});
-    Register(TEXT("node.blade.big_toms_answer"), TEXT("Blade"), 1, {TEXT("teacher.big_tom")});
-    Register(TEXT("node.blade.long_night"), TEXT("Blade"), 4, {}, TEXT(""), 150);
+    Register(TEXT("node.blade.seamans_guard"), TEXT("Blade"), 1, {},
+        ESkillGateKind::None, TEXT(""), 0);
+    Register(TEXT("node.blade.mercy"), TEXT("Blade"), 2, {TEXT("teacher.father_salvio")},
+        ESkillGateKind::None, TEXT(""), 0);
+    Register(TEXT("node.blade.officers_line"), TEXT("Blade"), 3, {TEXT("teacher.don_alejandro")},
+        ESkillGateKind::None, TEXT(""), 0);
+    Register(TEXT("node.blade.big_toms_answer"), TEXT("Blade"), 1, {TEXT("teacher.big_tom")},
+        ESkillGateKind::None, TEXT(""), 0);
+    Register(TEXT("node.blade.long_night"), TEXT("Blade"), 4, {},
+        ESkillGateKind::None, TEXT(""), 150);
 
-    Register(TEXT("node.shadow.sound_discipline"), TEXT("Shadow"), 1, {});
-    Register(TEXT("node.shadow.counting_halls"), TEXT("Shadow"), 2, {TEXT("teacher.mateusz_voltari")});
-    Register(TEXT("node.shadow.fourth_rule"), TEXT("Shadow"), 2, {}, TEXT("standing.highmoore.fourth_rule"));
+    Register(TEXT("node.shadow.sound_discipline"), TEXT("Shadow"), 1, {},
+        ESkillGateKind::None, TEXT(""), 0);
+    Register(TEXT("node.shadow.counting_halls"), TEXT("Shadow"), 2, {TEXT("teacher.mateusz_voltari")},
+        ESkillGateKind::None, TEXT(""), 0);
+    Register(TEXT("node.shadow.fourth_rule"), TEXT("Shadow"), 2, {},
+        ESkillGateKind::Standing, TEXT("standing.highmoore.fourth_rule"), 0);
 
-    Register(TEXT("node.sea.estebans_sky"), TEXT("Sea"), 2, {TEXT("teacher.esteban")});
+    Register(TEXT("node.sea.estebans_sky"), TEXT("Sea"), 2, {TEXT("teacher.esteban")},
+        ESkillGateKind::None, TEXT(""), 0);
     Register(TEXT("node.sea.weather_gauge"), TEXT("Sea"), 3,
-        {TEXT("teacher.mira"), TEXT("teacher.admiral_sterling")});
-    Register(TEXT("node.sea.hot_shot"), TEXT("Sea"), 2, {TEXT("teacher.maeve_donovan")});
+        {TEXT("teacher.mira"), TEXT("teacher.admiral_sterling")},
+        ESkillGateKind::None, TEXT(""), 0);
+    Register(TEXT("node.sea.hot_shot"), TEXT("Sea"), 2, {TEXT("teacher.maeve_donovan")},
+        ESkillGateKind::None, TEXT(""), 0);
 
     Register(TEXT("node.land.hot_stone_walk"), TEXT("Land"), 2,
-        {TEXT("teacher.mbah_seruni")}, TEXT("standing.hot_stone_walk"));
-    Register(TEXT("node.land.cold_is_a_teacher"), TEXT("Land"), 2, {TEXT("teacher.mormor_astrid")});
-    Register(TEXT("node.land.the_line"), TEXT("Land"), 3, {}, TEXT("world.horse_bond_3"));
-    Register(TEXT("node.land.the_canopy"), TEXT("Land"), 2, {}, TEXT("standing.cultural_web_tier_3"));
+        {TEXT("teacher.mbah_seruni")}, ESkillGateKind::Standing, TEXT("standing.hot_stone_walk"), 0);
+    Register(TEXT("node.land.cold_is_a_teacher"), TEXT("Land"), 2, {TEXT("teacher.mormor_astrid")},
+        ESkillGateKind::None, TEXT(""), 0);
+    Register(TEXT("node.land.the_line"), TEXT("Land"), 3, {},
+        ESkillGateKind::WorldState, TEXT("world.horse_bond_3"), 0);
+    Register(TEXT("node.land.the_canopy"), TEXT("Land"), 2, {},
+        ESkillGateKind::Standing, TEXT("standing.cultural_web_tier_3"), 0);
 
     Register(TEXT("node.word.the_register"), TEXT("Word"), 2,
-        {TEXT("teacher.margarethe_fitzmueller"), TEXT("teacher.don_alejandro")});
+        {TEXT("teacher.margarethe_fitzmueller"), TEXT("teacher.don_alejandro")},
+        ESkillGateKind::None, TEXT(""), 0);
     Register(TEXT("node.word.the_invoice"), TEXT("Word"), 2,
-        {TEXT("teacher.bram_kettle")}, TEXT("world.regulators_turned"));
-    Register(TEXT("node.word.whose_man"), TEXT("Word"), 1, {}, TEXT("standing.highmoore.whose_man"));
-    Register(TEXT("node.word.the_ledger"), TEXT("Word"), 3, {TEXT("teacher.ines")});
+        {TEXT("teacher.bram_kettle")}, ESkillGateKind::WorldState, TEXT("world.regulators_turned"), 0);
+    Register(TEXT("node.word.whose_man"), TEXT("Word"), 1, {},
+        ESkillGateKind::Standing, TEXT("standing.highmoore.whose_man"), 0);
+    Register(TEXT("node.word.the_ledger"), TEXT("Word"), 3, {TEXT("teacher.ines")},
+        ESkillGateKind::None, TEXT(""), 0);
 }
 
 bool UProgressionEconomyComponent::DefinitionCanBeLearned(const FSkillNodeDefinition& Definition) const
@@ -338,7 +405,16 @@ bool UProgressionEconomyComponent::DefinitionCanBeLearned(const FSkillNodeDefini
         return false;
     }
 
-    if (!Definition.RequiredWorldFlag.IsNone() && !WorldFlags.Contains(Definition.RequiredWorldFlag))
+    for (const FName PrerequisiteId : Definition.PrerequisiteNodeIds)
+    {
+        if (!LearnedNodes.Contains(PrerequisiteId))
+        {
+            return false;
+        }
+    }
+
+    if (Definition.GateKind != ESkillGateKind::None
+        && !WorldFlags.Contains(Definition.RequiredGateId))
     {
         return false;
     }
@@ -350,23 +426,109 @@ bool UProgressionEconomyComponent::DefinitionCanBeLearned(const FSkillNodeDefini
 
     if (Definition.TeacherOptions.Num() > 0)
     {
-        bool bTeacherSatisfied = false;
+        bool bTeachingSceneSatisfied = false;
         for (const FName TeacherId : Definition.TeacherOptions)
         {
-            if (TeachersMet.Contains(TeacherId))
+            if (HasCompletedTeachingScene(TeacherId, Definition.NodeId))
             {
-                bTeacherSatisfied = true;
+                bTeachingSceneSatisfied = true;
                 break;
             }
         }
 
-        if (!bTeacherSatisfied)
+        if (!bTeachingSceneSatisfied)
         {
             return false;
         }
     }
 
     return true;
+}
+
+bool UProgressionEconomyComponent::ValidateCompleteCatalog() const
+{
+    if (SkillNodeDefinitions.Num() != RequiredSkillNodeCount)
+    {
+        return false;
+    }
+
+    int32 BladeCount = 0;
+    int32 ShadowCount = 0;
+    int32 SeaCount = 0;
+    int32 LandCount = 0;
+    int32 WordCount = 0;
+    int32 TotalMarkCost = 0;
+    int32 TeacherGatedNodes = 0;
+    int32 StandingGatedNodes = 0;
+    TSet<FName> RepresentedTeachers;
+
+    for (const TPair<FName, FSkillNodeDefinition>& Pair : SkillNodeDefinitions)
+    {
+        const FSkillNodeDefinition& Definition = Pair.Value;
+        TotalMarkCost += Definition.MarkCost;
+
+        if (Definition.BranchId == TEXT("Blade")) ++BladeCount;
+        else if (Definition.BranchId == TEXT("Shadow")) ++ShadowCount;
+        else if (Definition.BranchId == TEXT("Sea")) ++SeaCount;
+        else if (Definition.BranchId == TEXT("Land")) ++LandCount;
+        else if (Definition.BranchId == TEXT("Word")) ++WordCount;
+        else return false;
+
+        if (Definition.TeacherOptions.Num() > 0)
+        {
+            ++TeacherGatedNodes;
+            for (const FName TeacherId : Definition.TeacherOptions)
+            {
+                RepresentedTeachers.Add(TeacherId);
+            }
+        }
+
+        if (Definition.GateKind == ESkillGateKind::Standing)
+        {
+            ++StandingGatedNodes;
+        }
+
+        for (const FName PrerequisiteId : Definition.PrerequisiteNodeIds)
+        {
+            if (!SkillNodeDefinitions.Contains(PrerequisiteId))
+            {
+                return false;
+            }
+        }
+    }
+
+    if (BladeCount != 16
+        || ShadowCount != 12
+        || SeaCount != 14
+        || LandCount != 13
+        || WordCount != 13
+        || TotalMarkCost != FullTreeMarkCost
+        || TeacherGatedNodes != RequiredTeacherGatedNodeCount
+        || StandingGatedNodes != RequiredStandingGatedNodeCount
+        || RepresentedTeachers.Num() != RequiredTeacherCount)
+    {
+        return false;
+    }
+
+    for (const FName TeacherId : GetCanonicalTeacherIds())
+    {
+        if (!RepresentedTeachers.Contains(TeacherId))
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool UProgressionEconomyComponent::HasCompletedTeachingScene(FName TeacherId, FName NodeId) const
+{
+    return CompletedTeachingScenes.Contains(MakeTeachingSceneKey(TeacherId, NodeId));
+}
+
+FName UProgressionEconomyComponent::MakeTeachingSceneKey(FName TeacherId, FName NodeId)
+{
+    return FName(*FString::Printf(TEXT("%s::%s"), *TeacherId.ToString(), *NodeId.ToString()));
 }
 
 int64& UProgressionEconomyComponent::ResolveCurrencyMutable(EDarkArisenCurrency Currency)
