@@ -4,6 +4,8 @@
 
 #include "Math/NumericLimits.h"
 
+#include <initializer_list>
+
 UProgressionEconomyComponent::UProgressionEconomyComponent()
 {
     PrimaryComponentTick.bCanEverTick = false;
