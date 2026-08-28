@@ -2,7 +2,7 @@
 
 **Branch:** `feature/m7-m8-source-completion`  
 **Base:** PR #8 merge `e54d39af4534f026cc36525e19df9c9d20980abf`  
-**Scope:** M7 Content Scale-Out + M8 Alpha platform/release source contracts only. UE 5.5 authored-runtime, packaging and operator acceptance remain evidence gates, not source claims.
+**Scope:** M7 Content Scale-Out + M8 Alpha platform/release source contracts. UE 5.5 authored-runtime, packaging and operator acceptance remain evidence gates, not source claims.
 
 ## Governance / authority
 
@@ -14,13 +14,19 @@ Implementation order:
 4. Phase master documents.
 5. Older non-conflicting drafts.
 
-`CLAUDE.md` is absent from `develop` and repository search does not locate an equivalent governance file. This plan therefore treats the current handover and DesignAuthority as the active implementation authority and records the missing file as an unresolved repository-governance defect rather than silently inventing it.
+`CLAUDE.md` is absent from `develop` and repository search does not locate an equivalent governance file. The current handover and DesignAuthority therefore remain the implementation authority; the missing file is recorded rather than silently reconstructed.
 
-M8 follows the current DesignAuthority: Alpha targets **Windows x64 + Linux x86_64**. Native PS5 work is Beta-only and is not represented as an M8 Alpha completion.
+M8 follows the current DesignAuthority: Alpha targets **Windows x64 + Linux x86_64**. Native PS5 work is Beta-only and is not represented as M8 Alpha completion.
 
 ## Native C++ implementation rule
 
-All gameplay, state, validation, save/migration, platform, accessibility, packaging and release logic in PR #9 is implemented in native Unreal C++ under `Source/DarkArisen` with native Automation Specs. No Blueprint-only gameplay logic is permitted. `UDataAsset`/`UObject` types, where used, are themselves defined and validated in C++ and may only carry authored data; Blueprints/assets cannot override the governing rules or become a second gameplay authority.
+All executable Dark Arisen project logic is native C++.
+
+- Gameplay, state, content validation, save/migration, accessibility and platform/release contracts live under `Source/DarkArisen` with native Unreal Automation Specs.
+- Repository validation, runner preflight, build/package/promotion and Pixel Streaming operations live in the native `DarkArisenOps` C++ program under `Source/DarkArisenOps`.
+- `.Target.cs` / `.Build.cs` remain Unreal Build Tool metadata only. Workflow YAML, `.uproject`, `.ini`, JSON/YAML/HUJSON/Caddy configuration and Markdown remain data/orchestration formats, not alternate implementation layers.
+- `Source/` and `Tools/` may not contain Python, PowerShell, Bash, JavaScript or TypeScript implementation files.
+- `UDataAsset` / `UObject` assets may carry authored data but cannot override governing C++ rules or become a second gameplay authority.
 
 ## Implementation checklist
 
@@ -30,63 +36,62 @@ All gameplay, state, validation, save/migration, platform, accessibility, packag
   - 61 dungeon sites = 41 named + 20 minor.
   - 17 Threads.
   - 132 Turns.
-  - 147 authored Standing mission variants across the locked 9 mission types and exact per-type counts.
-  - 9 Tier-1 bosses through a reconciled authoritative boss register.
-  - 19 cutscenes and 22 explicitly playable non-cutscene moments.
-- Fail closed on duplicate stable IDs, missing governing-source references, incorrect counts and prohibited generated/radiant content.
-- Do **not** fabricate narrative definitions where the bible does not individually name every entry. The source contract validates completeness against authored definitions rather than generating filler.
+  - 147 authored Standing variants across the locked nine mission types: Escort 21, Convoy Raid 18, Recovery 24, Champion 12, Transport 16, Privateer Commission 14, Road Work 15, Hunt 13, Salvage 14.
+  - nine Tier-1 bosses through `Docs/M7_TIER1_BOSS_REGISTER.md`.
+  - 19 cutscenes and all 22 protected player-controlled moments from `cutscene catalog.md` Section 6.
+- Fail closed on duplicate stable IDs, missing governing-source references, incorrect counts and any generated/radiant content.
+- Do not fabricate narrative definitions where the bible does not individually name every entry. The contract validates authored definitions rather than creating filler.
 
 ### B. M7 system scale-out boundaries
 
-- Add finite Standing-mission pool state with exhaustion and same-region/type pay degradation to 60% by the sixth run; Standing gain does not degrade.
-- Add global dungeon-definition validation: no markers, no ambient dungeon music, no child-remains flag, Tier-B+ return shortcut required, Crystal Caves as the sole >90-minute carve-out.
-- Add authoritative cutscene registry validation and a hard playable-moment prohibition set so Section-6 moments cannot be accidentally sequencer-owned.
-- Integrate Assassin Network, Highmoore reconstruction, population/fauna and content-state dependencies through existing M2-M6 authorities; no parallel war/time/save/progression systems.
-- Add dialogue-production readiness records: dialogue lock, casting role, pronunciation reference and subtitle readiness. These are readiness metadata only; no invented performance, voice, licence or vendor claim.
-- Add end-credit readiness manifest requiring names/order/attribution/music-source/licence/cost approval before credits can be marked production-ready.
+- Add finite Standing-mission pool state. A region/type pool stops offering work when its authored variants are exhausted; there is no replacement generator.
+- Same-region/type pay degrades to exactly 60% by the sixth run while Standing gain does not degrade. Canon does not define the intermediate percentages, so C++ validates a six-point authored monotonic curve instead of inventing them.
+- Enforce dungeon laws: no markers, no ambient dungeon music, no child-remains flag, Tier-B+ return shortcut required, Crystal Caves the sole >90-minute carve-out and bounded to its authored 90–120 minute range.
+- Protect the 22 Section-6 presentation moments from becoming Sequencer-owned cutscenes.
+- Route M7 integration records through existing M2-M6 authorities for world time, war, progression/economy, Princess state and Rexa settlement state; no parallel authority is introduced.
+- Add dialogue-production readiness records for dialogue lock, casting role, pronunciation reference and subtitle readiness. These are readiness metadata only; no voice/licence/vendor claim is invented.
+- Add end-credit readiness requiring names/order, attribution, music source, licence, cost approval and non-reactive music before credits are production-ready.
 
 ### C. M8 Windows/Linux Alpha platform contracts
 
-- Add a two-platform parity manifest for Windows x64 and Linux x86_64 only.
-- Add controller/input parity and accessibility contract:
-  - remapping,
-  - subtitle sizing,
-  - colourblind presentation options,
-  - permitted difficulty modifiers may affect damage/health only and never the six-frame deflection timing.
-- Add save-schema version and deterministic migration registry. Unknown/future versions fail closed; migration paths are explicit and testable.
-- Add packaging/release manifest requiring both Shipping candidates to originate from the same source commit and content-manifest revision.
-- Add privacy/secrets scan contract for package manifests: no deployment credentials, TURN secrets, private hostnames, public-link configuration or Sony/native-PS5 material in Alpha candidates.
-- Add SHA-256 sidecar contract for source, Windows and Linux candidate archives without uploading them publicly.
-- Add start-to-credits acceptance ledger keyed by exact candidate hashes. Source code cannot self-certify playthrough, frame-time, browser access or operator approval.
+- Lock Alpha platform parity to exactly Windows x64 + Linux x86_64.
+- Accessibility/difficulty contract includes remapping, subtitle sizing and colourblind presentation; difficulty may change damage/health only and can never alter the six-frame deflection timing.
+- Save schema starts at explicit version 1. There is no fabricated historical migration. Unknown/pre-v1 and future schemas fail closed; future accepted migrations must be explicit contiguous one-version C++ steps.
+- Release manifest requires both Shipping candidates to originate from the same 40-character source commit and content-manifest revision.
+- Candidate metadata fails on deployment credentials, TURN secrets, private hostnames, public-link configuration or Sony/native-PS5 material.
+- Source, Windows and Linux archives require SHA-256 identity without public artifact upload.
+- Acceptance ledger keys evidence to the exact candidate hashes. Source code validates supplied evidence state but cannot self-certify playthrough, frame time, browser access or operator approval.
 
 ### D. Release / credits / completion gates
 
 - Main-story completion may enter full credits only when the credits manifest is production-ready.
-- Credits music must be explicitly approved, licensed and non-reactive. Missing approval/licence/cost information blocks readiness.
+- Credits music must be explicitly approved, licensed and non-reactive. Missing approval/licence/cost data blocks readiness.
 - No paid GPU, voice, asset, domain, runner or hosting action is authorized by this tranche.
-- AI voice generation remains blocked until zero-cost and commercial-rights terms are verified and the dialogue lock exists.
+- AI voice generation remains blocked until zero-cost and commercial-rights terms are verified and dialogue lock exists.
 
 ### E. Verification
 
-- Add `Tools/ci/validate_m7_m8.py` as a fail-closed deterministic source validator.
-- Add negative regression tests for:
-  - radiant/infinite quest generation,
+- `DarkArisenOps validate` is the fail-closed deterministic repository/source validator. There is no Python validator layer.
+- Native Unreal Automation Specs cover negative and positive cases for:
+  - generated/radiant mission rejection and finite pool exhaustion,
+  - exact Standing type counts and sixth-run 60% pay anchor,
   - dungeon markers/music/child-remains,
   - converting a protected playable moment to a cutscene,
   - PS5 Alpha leakage,
   - difficulty changing deflection timing,
+  - unknown/future save schemas,
   - packaging candidates from different commits,
+  - secrets/private host configuration in candidate manifests,
   - missing credits music licence/approval,
-  - secret/host configuration in a candidate manifest.
-- Add native Unreal Automation Specs for finite mission exhaustion/pay degradation, content-count structures, save migration, accessibility timing invariants and release-manifest parity.
-- Extend CI additively from M0-M6 to M0-M8; no existing gate is removed or weakened.
+  - exact-hash Alpha acceptance gating.
+- CI builds `DarkArisenOps` first, runs its validator/preflight, then compiles and executes native Unreal Automation on self-hosted UE 5.5 runners. Existing design/security gates are not disabled to force a merge.
 
 ### F. Documentation / handoff
 
-- Update `Docs/ALPHA_DELIVERY_CHECKLIST.md` with source-closure prose while leaving runtime/content checkboxes open unless their required evidence exists.
-- Add `Docs/M7_M8_SOURCE_COMPLETION.md` with exact implemented/deferred boundaries.
-- Update `HANDOVER.md` to the PR #9 state, runtime blockers and exact next engineering line.
+- Keep `Docs/ALPHA_DELIVERY_CHECKLIST.md` runtime/content checkboxes open until their required evidence exists.
+- Record source-closure boundaries in `Docs/M7_M8_SOURCE_COMPLETION.md`.
+- Keep `HANDOVER.md` synchronized with PR #9, runtime blockers and the next engineering line.
 
 ## Merge policy for PR #9
 
-PR #9 may be merged only after source diff audit and available non-deferred validation gates pass. UE 5.5 runtime/packaging/performance/playthrough gates that cannot execute remain explicitly open and must not be re-labelled as passed. No branch protection, check, design-law or security gate may be disabled or weakened to force the merge.
+PR #9 may be merged only after source diff audit and all available non-deferred validation gates pass. UE 5.5 runtime/packaging/performance/playthrough gates that cannot execute remain explicitly open and may not be re-labelled as passed. No branch protection, check, design-law or security gate may be weakened to force the merge.
