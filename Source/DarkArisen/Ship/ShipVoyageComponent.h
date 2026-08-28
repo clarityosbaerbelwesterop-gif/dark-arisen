@@ -130,6 +130,12 @@ public:
     UFUNCTION(BlueprintCallable, Category="Ship|Crew")
     void SetCrewMemberAlive(FName StableId, bool bAlive);
 
+    UFUNCTION(BlueprintCallable, Category="Ship|Crew")
+    void SetActiveHands(int32 NewHands);
+
+    UFUNCTION(BlueprintPure, Category="Ship|Crew")
+    int32 GetActiveHands() const { return ActiveHands; }
+
     UFUNCTION(BlueprintCallable, Category="Ship|Chart")
     bool AcquirePhysicalChart(FName ChartId);
 
@@ -184,6 +190,9 @@ private:
 
     UPROPERTY(SaveGame)
     TArray<FNamedCrewMemberState> NamedCrew;
+
+    UPROPERTY(SaveGame)
+    int32 ActiveHands = 40;
 
     UPROPERTY(SaveGame)
     TArray<FPhysicalChartRecord> PhysicalCharts;
