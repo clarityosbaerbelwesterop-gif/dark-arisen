@@ -69,11 +69,37 @@ bool UDarkArisenWorldRulesSubsystem::NotifyChapterBoundary(int32 NewChapter)
 
     Chapter = NewChapter;
     QueueLegalAutosaveRequest();
+    OnChapterBoundary.Broadcast(Chapter);
     return true;
 }
 
 bool UDarkArisenWorldRulesSubsystem::NotifyRestCompleted()
 {
+    QueueLegalAutosaveRequest();
+    return true;
+}
+
+bool UDarkArisenWorldRulesSubsystem::CompleteRest(
+    const EDarkArisenRestLocation Location,
+    const EDarkArisenDaypart TargetDaypart)
+{
+    if (Location != EDarkArisenRestLocation::GreatCabin
+        && Location != EDarkArisenRestLocation::SafeHouse)
+    {
+        return false;
+    }
+
+    constexpr int32 MinutesPerDay = 24 * 60;
+    const int32 CurrentMinute = GetMinuteOfDay();
+    const int32 TargetMinute = GetDaypartMinute(TargetDaypart);
+    int32 DeltaMinutes = TargetMinute - CurrentMinute;
+    if (DeltaMinutes <= 0)
+    {
+        DeltaMinutes += MinutesPerDay;
+    }
+
+    TotalWorldMinutes += DeltaMinutes;
+    FractionalWorldMinutes = 0.0f;
     QueueLegalAutosaveRequest();
     return true;
 }
@@ -105,5 +131,22 @@ void UDarkArisenWorldRulesSubsystem::QueueLegalAutosaveRequest()
     if (!bAutosaveSuppressed)
     {
         bPendingAutosaveRequest = true;
+    }
+}
+
+int32 UDarkArisenWorldRulesSubsystem::GetDaypartMinute(const EDarkArisenDaypart TargetDaypart)
+{
+    switch (TargetDaypart)
+    {
+    case EDarkArisenDaypart::Dawn:
+        return 6 * 60;
+    case EDarkArisenDaypart::Midday:
+        return 12 * 60;
+    case EDarkArisenDaypart::Dusk:
+        return 18 * 60;
+    case EDarkArisenDaypart::Night:
+        return 22 * 60;
+    default:
+        return 6 * 60;
     }
 }
