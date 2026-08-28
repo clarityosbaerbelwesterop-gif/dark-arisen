@@ -3,185 +3,129 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/WoundStateComponent.h"
 #include "GameFramework/Character.h"
+#include "InputCoreTypes.h"
 #include "JakeCharacter.generated.h"
 
-// Forward Declarations — Component-Klassen werden in eigenen Headern definiert,
-// sobald das UE5-Projekt im nächsten Jahr aufgesetzt wird.
-class UHealthComponent;
-class UStaminaComponent;
-class UCombatComponent;
-class USpringArmComponent;
 class UCameraComponent;
-class UInputComponent;
-struct FInputActionValue;
+class UCameraStateComponent;
+class UCombatComponent;
+class UHealthComponent;
+class UHeatExposureComponent;
+class UInteractionComponent;
+class ULockOnComponent;
+class UAnimMontage;
+class UQuestJournalComponent;
+class USpringArmComponent;
+class UStaminaComponent;
+class UWaterBreathComponent;
 
-/**
- * AJakeCharacter — Spielercharakter Jake Harlow ("Dark Arisen")
- *
- * 17-jähriger Schiffbrüchiger, der nach dem Piratenüberfall auf das
- * Familienschiff an der Küste von Moran angespült wird. Laut Charakter-Bibel
- * kämpft Jake bewusst anders als sein Bruder Ethan: still, geduldig,
- * beobachtend. Er lässt Gegner zu sich kommen, pariert, schlägt präzise
- * zurück — im Gegensatz zu Ethans aggressivem, raumgreifendem Zweihänder-Stil.
- *
- * Diese Klasse ist das Gerüst für den Player Pawn. Das GDD §6 (Combat System)
- * verlangt drei zentrale Ressourcen, die jeweils in eigene Komponenten
- * ausgelagert sind, um das Moveset-Tuning später vom Character-Code zu trennen:
- *
- *   - HealthComponent   -> HP-Pool, keine Regeneration, Heilung nur via Items
- *   - StaminaComponent  -> Kostet bei jeder Aktion, regeneriert im Idle
- *   - CombatComponent   -> Posture (Sekiro-Style), Moveset, Waffen-Switching
- *
- * Hinweis: Das eigentliche UE5-Projekt wird erst 2027 aufgesetzt. Dieser Header
- * dient als Referenz-Vorlage und wird noch nicht kompiliert.
- */
+/** M1 player pawn: weighted locomotion, committed combat, wounds, camera policy, and touch. */
 UCLASS()
 class DARKARISEN_API AJakeCharacter : public ACharacter
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
-	/** Konstruktor — erstellt alle Subobjects (Components, Kamera) und setzt Defaults. */
-	AJakeCharacter();
+    AJakeCharacter();
+    virtual void BeginPlay() override;
+    virtual void Tick(float DeltaSeconds) override;
+    virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
+    virtual float TakeDamage(float DamageAmount, const FDamageEvent& DamageEvent,
+        AController* EventInstigator, AActor* DamageCauser) override;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Jake|Components")
+    TObjectPtr<UHealthComponent> HealthComponent;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Jake|Components")
+    TObjectPtr<UStaminaComponent> StaminaComponent;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Jake|Components")
+    TObjectPtr<UCombatComponent> CombatComponent;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Jake|Components")
+    TObjectPtr<UWoundStateComponent> WoundStateComponent;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Jake|Components")
+    TObjectPtr<UCameraStateComponent> CameraStateComponent;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Jake|Components")
+    TObjectPtr<UInteractionComponent> InteractionComponent;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Jake|Components")
+    TObjectPtr<ULockOnComponent> LockOnComponent;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Jake|Components")
+    TObjectPtr<UQuestJournalComponent> QuestJournalComponent;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Jake|Components")
+    TObjectPtr<UHeatExposureComponent> HeatExposureComponent;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Jake|Components")
+    TObjectPtr<UWaterBreathComponent> WaterBreathComponent;
 
 protected:
-	/** Wird beim Spawn gerufen; bindet Delegates (z. B. HealthComponent::OnDied) und setzt Start-Stats. */
-	virtual void BeginPlay() override;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Jake|Camera")
+    TObjectPtr<USpringArmComponent> CameraBoom;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Jake|Camera")
+    TObjectPtr<UCameraComponent> FollowCamera;
 
-public:
-	/** Per-Frame Update. Wird für Stamina-Regen-Ticks und Rache-Meter-Drain benötigt. */
-	virtual void Tick(float DeltaSeconds) override;
+    /** Authored assets are assigned in Jake's Blueprint; native state remains authoritative. */
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Jake|Animation")
+    TObjectPtr<UAnimMontage> LightAttackMontage;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Jake|Animation")
+    TObjectPtr<UAnimMontage> HeavyAttackMontage;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Jake|Animation")
+    TObjectPtr<UAnimMontage> ParryMontage;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Jake|Animation")
+    TObjectPtr<UAnimMontage> DodgeMontage;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Jake|Animation")
+    TObjectPtr<UAnimMontage> BackstepMontage;
 
-	/** Verknüpft die Enhanced-Input-Actions (Move, Look, Attack, Parry, Dodge, …) mit den Handlern unten. */
-	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
+private:
+    struct FTouchState
+    {
+        FVector2D Start = FVector2D::ZeroVector;
+        FVector2D Last = FVector2D::ZeroVector;
+        bool bMovementZone = false;
+    };
 
-	// =========================================================================
-	//  Components
-	// =========================================================================
+    TMap<ETouchIndex::Type, FTouchState> ActiveTouches;
+    FVector2D TouchMovement = FVector2D::ZeroVector;
+    TOptional<ETouchIndex::Type> MovementTouch;
 
-	/** HP-Pool, Schadensaufnahme, Tod-Event. Besitzt keinen Auto-Regen — siehe GDD §6.1. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Jake|Components")
-	TObjectPtr<UHealthComponent> HealthComponent;
+    float BaseTurnRate = 45.0f;
+    float BaseLookUpRate = 45.0f;
+    float TouchLookSensitivity = 0.12f;
+    float RunSpeedCentimetresPerSecond = 330.0f;
+    float SprintSpeedCentimetresPerSecond = 600.0f;
+    FVector BaseCameraSocketOffset = FVector(0.0f, 45.0f, 70.0f);
+    float WoundCameraPhase = 0.0f;
 
-	/** Stamina-Verwaltung: Verbrauch bei Attack/Dodge/Sprint/Parry, Regeneration im Idle. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Jake|Components")
-	TObjectPtr<UStaminaComponent> StaminaComponent;
+    /** DESIGN-GAP: amplitude is a tuning lever in camera_system.md with no locked value. */
+    UPROPERTY(EditDefaultsOnly, Category = "Jake|Camera", meta = (ClampMin = "0.0"))
+    float MaximumWoundCameraDriftCentimetres = 3.0f;
 
-	/**
-	 * Combat-Kern: Moveset-State-Machine, Posture-Bar, aktuell gewählte Waffe
-	 * (Cutlass / Flintlock / Bogen / Musket), Hitbox-Aktivierung, Combo-Counter.
-	 */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Jake|Components")
-	TObjectPtr<UCombatComponent> CombatComponent;
+    void MoveForward(float Value);
+    void MoveRight(float Value);
+    void Turn(float Value);
+    void LookUp(float Value);
+    void TurnAtRate(float Rate);
+    void LookUpAtRate(float Rate);
+    void StartSprint();
+    void StopSprint();
+    void StartJump();
+    void StopJump();
+    void PerformLightAttack();
+    void PerformHeavyAttack();
+    void PerformParry();
+    void PerformDodge();
+    void TryInteract();
+    void ToggleLockOn();
+    void TryActivateRache();
+    bool TryPlayActionMontage(UAnimMontage* Montage);
+    void UpdateWoundPresentation(float DeltaSeconds);
+    void ApplyWoundLocomotion();
+    void TouchStarted(ETouchIndex::Type FingerIndex, FVector Location);
+    void TouchMoved(ETouchIndex::Type FingerIndex, FVector Location);
+    void TouchStopped(ETouchIndex::Type FingerIndex, FVector Location);
 
-protected:
-	// =========================================================================
-	//  Camera Rig
-	// =========================================================================
-
-	/** Federarm für die Third-Person-Kamera; kollidiert gegen die Welt, damit die Kamera bei Wänden einzoomt. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Jake|Camera")
-	TObjectPtr<USpringArmComponent> CameraBoom;
-
-	/** Follow-Kamera am Ende des CameraBoom. Einziger aktiver View des Players. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Jake|Camera")
-	TObjectPtr<UCameraComponent> FollowCamera;
-
-	// =========================================================================
-	//  Movement Input
-	// =========================================================================
-
-	/** WASD / Linker Stick — bewegt Jake relativ zur Kamera-Blickrichtung. */
-	void HandleMoveInput(const FInputActionValue& Value);
-
-	/** Maus / Rechter Stick — dreht Yaw/Pitch der Kamera. Respektiert Invert-Y-Settings. */
-	void HandleLookInput(const FInputActionValue& Value);
-
-	/** Sprint Start — erhöht MaxWalkSpeed; Stamina-Verbrauch läuft solange bSprinting == true. */
-	void HandleSprintStart();
-
-	/** Sprint Stop — zurück auf Normal-Speed, stoppt den Stamina-Drain. */
-	void HandleSprintStop();
-
-	/** Jump / Climb — kontextabhängig: ACharacter::Jump() in Luft, ClimbStart an markierten Surfaces. */
-	void HandleJumpInput();
-
-	// =========================================================================
-	//  Combat Input (GDD §5.1 — PlayStation-Layout als Referenz)
-	// =========================================================================
-
-	/** R1 — Light Attack: schneller Cutlass-Combo-Opener, niedriger Stamina-Cost, kettbar. */
-	void HandleLightAttack();
-
-	/** R2 — Heavy Attack: langsam, hoher Schaden, ladbar (DualSense Adaptive Trigger). */
-	void HandleHeavyAttack();
-
-	/** Square — Parry: timed Block, füllt Gegner-Posture drastisch, perfekt-parry gibt Stamina zurück. */
-	void HandleParry();
-
-	/** Circle — Dodge Roll: direktional, i-Frames, Stamina-Cost. Kein Panic-Button. */
-	void HandleDodge();
-
-	/** R1 + Square — feuert die aktuell equippte Firearm (Flintlock / Musket / Bogen). */
-	void HandleFireWeapon();
-
-	/** L2 Pressed — Hold-to-Aim für Fernwaffen, Tap-to-Lock-On für Melee-Targets. */
-	void HandleAimPressed();
-
-	/** L2 Released — bricht Aim ab bzw. gibt Lock-On frei. */
-	void HandleAimReleased();
-
-	/** L1 Pressed — öffnet das Weapon Wheel (RDR2-Style) und triggert leichte Zeitlupe. */
-	void HandleWeaponWheelOpen();
-
-	/** L1 Released — schließt das Wheel und wendet die Auswahl auf CombatComponent an. */
-	void HandleWeaponWheelClose();
-
-	// =========================================================================
-	//  Rache — Signature-Fähigkeit (GDD §7)
-	// =========================================================================
-
-	/**
-	 * L3 + R3 — aktiviert/deaktiviert Rache (Slow-Motion-Combat).
-	 *
-	 * Narrative Einschränkung: Diese Fähigkeit ist erst ab Chapter 9 verfügbar,
-	 * wenn Jake Ethans Verrat auf dem brennenden Deck entdeckt. Der Handler
-	 * prüft deshalb zwingend bRacheUnlocked UND einen positiven Meter-Stand.
-	 */
-	void HandleRacheToggle();
-
-	/** Wird durch den Chapter-9-Story-Trigger auf true gesetzt und persistiert im SaveGame. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jake|Rache", SaveGame)
-	bool bRacheUnlocked = false;
-
-	// =========================================================================
-	//  World Interaction
-	// =========================================================================
-
-	/** Triangle — kontextsensitiver Interact-Button: Loot, Dialog, Türen, Rest-Point-Totems, Lagerfeuer. */
-	void HandleInteract();
-
-	/** D-Pad Up — konsumiert das aktuell equippte Healing-Item (z. B. Raw Cane Sugar). */
-	void HandleQuickHeal();
-
-	/** D-Pad Down — pfeift das Pferd herbei. Funktioniert nur in camp-fähigen Zonen. */
-	void HandleWhistleHorse();
-
-public:
-	// =========================================================================
-	//  Damage & Death Glue
-	// =========================================================================
-
-	/** UE4/5-Standard-Damage-Eingang. Leitet den Schaden an den HealthComponent weiter und triggert Hit-Reactions. */
-	virtual float TakeDamage(float DamageAmount, const FDamageEvent& DamageEvent,
-	                         AController* EventInstigator, AActor* DamageCauser) override;
-
-	/**
-	 * Callback, der vom HealthComponent::OnDied-Delegate ausgelöst wird.
-	 * Verantwortlich für: Doubloons droppen (GDD §6.3), Death-Animation spielen,
-	 * GameMode über den Respawn am letzten aktivierten Rest-Point informieren.
-	 */
-	UFUNCTION()
-	void OnCharacterDied();
+    UFUNCTION()
+    void OnCharacterDied(AActor* DamageCauser);
+    UFUNCTION()
+    void OnStaminaDepleted();
+    UFUNCTION()
+    void OnWoundLayerChanged(EWoundLayer PreviousLayer, EWoundLayer NewLayer);
 };

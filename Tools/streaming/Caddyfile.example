@@ -1,0 +1,25 @@
+{
+    email {$DARKARISEN_ACME_EMAIL}
+    admin 127.0.0.1:2019
+}
+
+{$DARKARISEN_STREAM_HOST} {
+    encode zstd gzip
+
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+        X-Content-Type-Options "nosniff"
+        Referrer-Policy "no-referrer"
+        Permissions-Policy "camera=(), microphone=(), geolocation=()"
+        -Server
+    }
+
+    @private_api path /api/*
+    respond @private_api 404
+
+    basic_auth {
+        {$DARKARISEN_STREAM_USER} {$DARKARISEN_STREAM_PASSWORD_HASH}
+    }
+
+    reverse_proxy 127.0.0.1:8080
+}

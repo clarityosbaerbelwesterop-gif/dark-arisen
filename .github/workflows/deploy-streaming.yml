@@ -1,0 +1,45 @@
+name: Deploy M0 Pixel Streaming
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Branch, tag, or commit to deploy
+        required: true
+        default: main
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dark-arisen-pixel-streaming
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Package and atomically deploy the selected build
+    runs-on: [self-hosted, Windows, X64, ue5.5, dark-arisen, dark-arisen-streaming]
+    environment: m0-streaming
+    timeout-minutes: 180
+    steps:
+      - name: Check out selected revision and LFS content
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+          fetch-depth: 1
+          lfs: true
+
+      - name: Validate before packaging
+        shell: pwsh
+        run: |
+          python Tools/ci/validate_m0.py
+          python Tools/ci/validate_m1.py
+          python Tools/ci/design_law_audit.py
+
+      - name: Package and deploy
+        shell: pwsh
+        run: |
+          $Commit = (git rev-parse --short=12 HEAD).Trim()
+          $Revision = "$Commit-$env:GITHUB_RUN_ID-$env:GITHUB_RUN_ATTEMPT"
+          ./Tools/streaming/deploy.ps1 -Revision $Revision
