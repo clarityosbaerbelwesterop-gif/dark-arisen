@@ -107,12 +107,6 @@ public:
     bool IsForceActiveForTests(FName ForceId) const;
 
 private:
-    USTRUCT()
-    struct FRuntimeForceState
-    {
-        GENERATED_BODY()
-    };
-
     UPROPERTY(SaveGame)
     TMap<FName, FCampaignForceDefinition> Forces;
 
