@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Ship/ShipVoyageComponent.h"
+#include "World/DarkArisenWorldRulesSubsystem.h"
 #include "LaLiberacionShip.generated.h"
 
 class APhysicalMapActor;
@@ -61,12 +62,13 @@ public:
     UFUNCTION(BlueprintPure, Category="Ship|Map")
     APhysicalMapActor* GetPhysicalMap() const { return PhysicalMap; }
 
-    /**
-     * Great-cabin rest enters the canonical M4 rest/autosave path. It performs no disk write.
-     * This fails closed unless Jake is already authored as physically inside the great cabin.
-     */
+    /** Compatibility path for a rest scene whose daypart advance was already authored. */
     UFUNCTION(BlueprintCallable, Category="Ship|GreatCabin")
     bool CompleteGreatCabinRest();
+
+    /** Canonical Great Cabin rest: four dayparts only, no arbitrary wait-until-hour. */
+    UFUNCTION(BlueprintCallable, Category="Ship|GreatCabin")
+    bool RestGreatCabinToDaypart(EDarkArisenDaypart TargetDaypart);
 
     UFUNCTION(BlueprintPure, Category="Ship|GreatCabin")
     bool CanRestInGreatCabin() const;
