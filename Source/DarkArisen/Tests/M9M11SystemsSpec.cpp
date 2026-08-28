@@ -16,6 +16,31 @@ URuntimeIntegrationManifest* BuildValidM9Manifest()
     URuntimeIntegrationManifest* Manifest = NewObject<URuntimeIntegrationManifest>();
     Manifest->ManifestRevision = TEXT("m9.synthetic.runtime");
 
+    const TArray<ERuntimeIntegrationKind> RuntimeKinds = {
+        ERuntimeIntegrationKind::Level,
+        ERuntimeIntegrationKind::Navigation,
+        ERuntimeIntegrationKind::InteractionAnchor,
+        ERuntimeIntegrationKind::Animation,
+        ERuntimeIntegrationKind::Audio,
+        ERuntimeIntegrationKind::Population,
+        ERuntimeIntegrationKind::Fauna,
+        ERuntimeIntegrationKind::Dungeon,
+        ERuntimeIntegrationKind::Boss,
+        ERuntimeIntegrationKind::Ship,
+        ERuntimeIntegrationKind::ColonialWar,
+        ERuntimeIntegrationKind::Highmoore
+    };
+    for (int32 Index = 0; Index < RuntimeKinds.Num(); ++Index)
+    {
+        FRuntimeIntegrationEntry Entry;
+        Entry.StableId = FName(*FString::Printf(TEXT("runtime.%02d"), Index + 1));
+        Entry.GoverningSource = TEXT("automation synthetic authored-runtime fixture");
+        Entry.Kind = RuntimeKinds[Index];
+        Entry.AssetPath = FSoftObjectPath(FString::Printf(
+            TEXT("/Game/Test/Runtime_%02d.Runtime_%02d"), Index + 1, Index + 1));
+        Manifest->Entries.Add(Entry);
+    }
+
     for (int32 Index = 0; Index < 19; ++Index)
     {
         FRuntimeIntegrationEntry Entry;
@@ -140,16 +165,22 @@ bool FDarkArisenM9RuntimeIntegrationSpec::RunTest(const FString& Parameters)
     if (!Manifest) return false;
 
     TArray<FString> Errors;
-    TestTrue(TEXT("Exact 19 cutscenes and 22 protected moments validate"), Manifest->ValidateDefinition(Errors));
+    TestTrue(TEXT("Every runtime category plus exact 19/22 presentation bindings validate"), Manifest->ValidateDefinition(Errors));
 
-    Manifest->Entries[19].bSequencerOwned = true;
+    const int32 FirstProtectedIndex = 12 + 19;
+    Manifest->Entries[FirstProtectedIndex].bSequencerOwned = true;
     Errors.Reset();
     TestFalse(TEXT("Protected playable moment cannot become Sequencer-owned"), Manifest->ValidateDefinition(Errors));
-    Manifest->Entries[19].bSequencerOwned = false;
+    Manifest->Entries[FirstProtectedIndex].bSequencerOwned = false;
 
     Manifest->Entries[0].bBlueprintOwnsGameplayLogic = true;
     Errors.Reset();
     TestFalse(TEXT("Blueprint gameplay authority fails M9 closed"), Manifest->ValidateDefinition(Errors));
+    Manifest->Entries[0].bBlueprintOwnsGameplayLogic = false;
+
+    Manifest->Entries.RemoveAt(0);
+    Errors.Reset();
+    TestFalse(TEXT("A missing authored runtime category fails M9 closed"), Manifest->ValidateDefinition(Errors));
     return true;
 }
 
@@ -186,6 +217,11 @@ bool FDarkArisenM10VerificationLedgerSpec::RunTest(const FString& Parameters)
     WrongHash.Gate = EFullGameVerificationGate::LinuxUe55Compile;
     WrongHash.WindowsCandidateSha256 = FString::ChrN(64, TEXT('f'));
     TestFalse(TEXT("Evidence cannot migrate between candidate hashes"), Ledger->AppendEvidence(WrongHash, Error));
+
+    FFullGameEvidenceRecord SelfCertified = Record;
+    SelfCertified.Gate = EFullGameVerificationGate::LinuxUe55Compile;
+    SelfCertified.bExternalOrRunnerEvidence = false;
+    TestFalse(TEXT("Source code cannot self-certify runtime evidence"), Ledger->AppendEvidence(SelfCertified, Error));
     return true;
 }
 
@@ -213,6 +249,12 @@ bool FDarkArisenM11PrivateAlphaSignOffSpec::RunTest(const FString& Parameters)
     TArray<FString> Errors;
     TestFalse(TEXT("M11 cannot self-approve without explicit operator approval"),
         SignOff->CanSignOff(Manifest, M8, M10, Credits, false, Errors));
+
+    FPrivateAlphaCreditsApproval ReactiveCredits = Credits;
+    ReactiveCredits.bMusicIsNonReactive = false;
+    Errors.Reset();
+    TestFalse(TEXT("Reactive credits music can never satisfy M11"),
+        SignOff->CanSignOff(Manifest, M8, M10, ReactiveCredits, true, Errors));
 
     Errors.Reset();
     TestTrue(TEXT("M11 accepts exact immutable evidence plus explicit operator approval"),
