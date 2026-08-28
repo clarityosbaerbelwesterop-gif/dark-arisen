@@ -3,6 +3,7 @@
 #include "Ship/ShipHouseholdComponent.h"
 
 #include "Engine/World.h"
+#include "GameFramework/Actor.h"
 #include "World/DarkArisenWorldRulesSubsystem.h"
 
 UShipHouseholdComponent::UShipHouseholdComponent()
