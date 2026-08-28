@@ -10,6 +10,14 @@
 class UStaticMeshComponent;
 class ARexaSettlementAnchor;
 
+UENUM(BlueprintType)
+enum class ERexaResidentSafetyState : uint8
+{
+    Routine,
+    FleeingCombat,
+    ShelteredOffscreen
+};
+
 /**
  * Lightweight non-combatant used by the authored Las Raíces roster.
  * Final character art, navigation and ambient performances remain level/content work.
@@ -41,6 +49,12 @@ public:
     bool MoveToPurposeAnchor(int64 GameMinute, ARexaSettlementAnchor* Anchor);
     void ClearPurposeRoute();
 
+    bool EnterProtectedChildFlee(
+        const FVector& CombatLocation,
+        ARexaSettlementAnchor* SafetyAnchor);
+    bool ShelterProtectedChild(ARexaSettlementAnchor* SafetyAnchor);
+    bool RestoreProtectedChildAfterCombat(ARexaSettlementAnchor* SafetyAnchor);
+
     UFUNCTION(BlueprintPure, Category = "Rexa|Safety")
     bool IsProtectedChildRuntime() const;
 
@@ -61,8 +75,21 @@ public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rexa|Schedule")
     float PurposeAnchorAcceptanceRadiusCentimetres = 90.0f;
 
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rexa|Schedule")
+    float RoutineWalkSpeedCentimetresPerSecond = 180.0f;
+
+    /** DESIGN-GAP: authored as maximum-speed flight; exact speed awaits controller playtest. */
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rexa|Safety")
+    float ChildFleeSpeedCentimetresPerSecond = 520.0f;
+
+    UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Rexa|Safety")
+    ERexaResidentSafetyState CurrentSafetyState = ERexaResidentSafetyState::Routine;
+
+    static constexpr float ChildCombatFleeRadiusCentimetres = 5000.0f;
+
 private:
     bool bDefinitionInitialized = false;
 
     void ApplyNonCombatantPolicy();
+    bool RequestMoveToAnchor(ARexaSettlementAnchor* Anchor, float AcceptanceRadius);
 };

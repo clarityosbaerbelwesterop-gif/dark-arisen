@@ -22,6 +22,7 @@
 #include "Interaction/PhysicalDoorActor.h"
 #include "Missions/RexaM2MissionCatalog.h"
 #include "Rexa/RexaSettlementAnchor.h"
+#include "Rexa/RexaSettlementDirector.h"
 #include "Rexa/RexaSettlementResident.h"
 #include "Rexa/RexaSettlementRoster.h"
 
@@ -505,11 +506,15 @@ bool FDarkArisenM2RexaSettlementRosterSpec::RunTest(const FString& Parameters)
         {
             ++ProtectedChildCount;
             TestTrue(TEXT("Every child is explicitly protected"), Resident.bProtectedChild);
+            TestFalse(TEXT("Every child has an authored safety destination"),
+                Resident.ChildSafetyAnchorId.IsNone());
         }
         else
         {
             TestFalse(TEXT("Only children carry the child-protection flag"),
                 Resident.bProtectedChild);
+            TestTrue(TEXT("Adults cannot be routed through child-only safety state"),
+                Resident.ChildSafetyAnchorId.IsNone());
         }
     }
     TestEqual(TEXT("Sixteen residents are Indigenous Rexan"), HeritageCounts[0], 16);
@@ -553,6 +558,23 @@ bool FDarkArisenM2RexaSettlementRosterSpec::RunTest(const FString& Parameters)
         FName(TEXT("Rexa.LasRaices")));
     TestFalse(TEXT("Schedule anchors never add blocking collision"),
         AnchorDefaults && AnchorDefaults->GetActorEnableCollision());
+
+    const ARexaSettlementDirector* DirectorDefaults =
+        GetDefault<ARexaSettlementDirector>();
+    TestTrue(TEXT("Settlement director defaults exist"), DirectorDefaults != nullptr);
+    TestTrue(TEXT("Settlement director receives sparse combat-proximity signals"),
+        DirectorDefaults && DirectorDefaults->GetClass()->ImplementsInterface(
+            UCombatProximityResponder::StaticClass()));
+    TestTrue(TEXT("Child flight radius is exactly fifty metres"), FMath::IsNearlyEqual(
+        ARexaSettlementResident::ChildCombatFleeRadiusCentimetres, 5000.0f));
+    TestTrue(TEXT("Protected children flee faster than their routine walk"),
+        ResidentDefaults &&
+        ResidentDefaults->ChildFleeSpeedCentimetresPerSecond >
+            ResidentDefaults->RoutineWalkSpeedCentimetresPerSecond);
+    TestTrue(TEXT("Combat return silence exceeds the provisional removal delay"),
+        DirectorDefaults && DirectorDefaults->ChildSceneRemovalDelaySeconds >= 0.0f &&
+        DirectorDefaults->CombatSilenceBeforeReturnSeconds >
+            DirectorDefaults->ChildSceneRemovalDelaySeconds);
 
     for (const FRexaResidentDefinition& Resident : Residents)
     {

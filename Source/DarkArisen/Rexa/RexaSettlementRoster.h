@@ -69,6 +69,10 @@ struct FRexaResidentDefinition
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Rexa|Safety")
     bool bProtectedChild = false;
 
+    /** Authored building/adult destination used only by protected-child combat flight. */
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Rexa|Safety")
+    FName ChildSafetyAnchorId;
+
     FName GetPurposeAnchorAtGameMinute(int64 GameMinute) const;
 };
 

@@ -23,6 +23,7 @@
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Missions/RexaM2MissionCatalog.h"
+#include "Systems/ProgressionEconomyComponent.h"
 #include "UnrealClient.h"
 
 AJakeCharacter::AJakeCharacter()
@@ -55,6 +56,8 @@ AJakeCharacter::AJakeCharacter()
         CreateDefaultSubobject<UHeatExposureComponent>(TEXT("HeatExposureComponent"));
     WaterBreathComponent =
         CreateDefaultSubobject<UWaterBreathComponent>(TEXT("WaterBreathComponent"));
+    ProgressionEconomyComponent =
+        CreateDefaultSubobject<UProgressionEconomyComponent>(TEXT("ProgressionEconomyComponent"));
 
     CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
     CameraBoom->SetupAttachment(RootComponent);

@@ -21,7 +21,7 @@ ARexaSettlementResident::ARexaSettlementResident()
     UCharacterMovementComponent* Movement = GetCharacterMovement();
     Movement->bOrientRotationToMovement = true;
     Movement->RotationRate = FRotator(0.0f, 300.0f, 0.0f);
-    Movement->MaxWalkSpeed = 180.0f;
+    Movement->MaxWalkSpeed = RoutineWalkSpeedCentimetresPerSecond;
     Movement->bEnablePhysicsInteraction = false;
     Movement->InitialPushForceFactor = 0.0f;
     Movement->PushForceFactor = 0.0f;
@@ -69,18 +69,23 @@ bool ARexaSettlementResident::InitializeFromDefinition(
         Definition.DawnAnchorId.IsNone() || Definition.MiddayAnchorId.IsNone() ||
         Definition.EveningAnchorId.IsNone() || Definition.NightAnchorId.IsNone() ||
         Definition.bProtectedChild != bIsChild ||
+        (bIsChild && Definition.ChildSafetyAnchorId.IsNone()) ||
+        (!bIsChild && !Definition.ChildSafetyAnchorId.IsNone()) ||
         FindComponentByClass<UHealthComponent>() != nullptr ||
         FindComponentByClass<UCombatComponent>() != nullptr) return false;
 
     ResidentDefinition = Definition;
     bDefinitionInitialized = true;
     CurrentPurposeAnchorId = Definition.NightAnchorId;
+    CurrentSafetyState = ERexaResidentSafetyState::Routine;
     ApplyNonCombatantPolicy();
     return true;
 }
 
 FName ARexaSettlementResident::RefreshPurposeAnchor(const int64 GameMinute)
 {
+    if (CurrentSafetyState != ERexaResidentSafetyState::Routine)
+        return CurrentPurposeAnchorId;
     CurrentPurposeAnchorId = bDefinitionInitialized
         ? ResidentDefinition.GetPurposeAnchorAtGameMinute(GameMinute)
         : NAME_None;
@@ -91,23 +96,14 @@ bool ARexaSettlementResident::MoveToPurposeAnchor(
     const int64 GameMinute,
     ARexaSettlementAnchor* Anchor)
 {
-    if (!bDefinitionInitialized || GameMinute < 0 || !IsValid(Anchor) ||
+    if (!bDefinitionInitialized ||
+        CurrentSafetyState != ERexaResidentSafetyState::Routine ||
+        GameMinute < 0 || !IsValid(Anchor) ||
         !Anchor->IsAuthoredAnchorValid()) return false;
     const FName RequiredAnchorId = ResidentDefinition.GetPurposeAnchorAtGameMinute(GameMinute);
     if (RequiredAnchorId.IsNone() || Anchor->AnchorId != RequiredAnchorId) return false;
 
-    if (!GetController()) SpawnDefaultController();
-    AAIController* ResidentController = Cast<AAIController>(GetController());
-    if (!ResidentController) return false;
-    const EPathFollowingRequestResult::Type Result = ResidentController->MoveToActor(
-        Anchor,
-        PurposeAnchorAcceptanceRadiusCentimetres,
-        true,
-        true,
-        true,
-        nullptr,
-        true);
-    if (Result == EPathFollowingRequestResult::Failed) return false;
+    if (!RequestMoveToAnchor(Anchor, PurposeAnchorAcceptanceRadiusCentimetres)) return false;
     CurrentPurposeAnchorId = RequiredAnchorId;
     return true;
 }
@@ -117,6 +113,73 @@ void ARexaSettlementResident::ClearPurposeRoute()
     if (AAIController* ResidentController = Cast<AAIController>(GetController()))
         ResidentController->StopMovement();
     CurrentPurposeAnchorId = NAME_None;
+}
+
+bool ARexaSettlementResident::EnterProtectedChildFlee(
+    const FVector& CombatLocation,
+    ARexaSettlementAnchor* SafetyAnchor)
+{
+    if (!IsProtectedChildRuntime() ||
+        CurrentSafetyState != ERexaResidentSafetyState::Routine ||
+        CombatLocation.ContainsNaN() || !IsValid(SafetyAnchor) ||
+        !SafetyAnchor->IsAuthoredAnchorValid() ||
+        !SafetyAnchor->bChildSafetyDestination ||
+        SafetyAnchor->AnchorId != ResidentDefinition.ChildSafetyAnchorId ||
+        FVector::DistSquared(GetActorLocation(), CombatLocation) >
+            FMath::Square(ChildCombatFleeRadiusCentimetres)) return false;
+
+    GetCharacterMovement()->MaxWalkSpeed = ChildFleeSpeedCentimetresPerSecond;
+    if (!RequestMoveToAnchor(SafetyAnchor, PurposeAnchorAcceptanceRadiusCentimetres))
+    {
+        GetCharacterMovement()->MaxWalkSpeed = RoutineWalkSpeedCentimetresPerSecond;
+        return false;
+    }
+    CurrentPurposeAnchorId = SafetyAnchor->AnchorId;
+    CurrentSafetyState = ERexaResidentSafetyState::FleeingCombat;
+    return true;
+}
+
+bool ARexaSettlementResident::ShelterProtectedChild(
+    ARexaSettlementAnchor* SafetyAnchor)
+{
+    if (!IsProtectedChildRuntime()) return false;
+    ClearPurposeRoute();
+    CurrentSafetyState = ERexaResidentSafetyState::ShelteredOffscreen;
+    SetActorHiddenInGame(true);
+    SetActorEnableCollision(false);
+    if (IsValid(SafetyAnchor) && SafetyAnchor->IsAuthoredAnchorValid() &&
+        SafetyAnchor->bChildSafetyDestination &&
+        SafetyAnchor->AnchorId == ResidentDefinition.ChildSafetyAnchorId)
+    {
+        SetActorLocation(
+            SafetyAnchor->GetActorLocation(),
+            false,
+            nullptr,
+            ETeleportType::TeleportPhysics);
+    }
+    return true;
+}
+
+bool ARexaSettlementResident::RestoreProtectedChildAfterCombat(
+    ARexaSettlementAnchor* SafetyAnchor)
+{
+    if (!IsProtectedChildRuntime() ||
+        CurrentSafetyState == ERexaResidentSafetyState::Routine ||
+        !IsValid(SafetyAnchor) || !SafetyAnchor->IsAuthoredAnchorValid() ||
+        !SafetyAnchor->bChildSafetyDestination ||
+        SafetyAnchor->AnchorId != ResidentDefinition.ChildSafetyAnchorId) return false;
+    SetActorLocation(
+        SafetyAnchor->GetActorLocation(),
+        false,
+        nullptr,
+        ETeleportType::TeleportPhysics);
+    SetActorHiddenInGame(false);
+    SetActorEnableCollision(true);
+    GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+    GetCharacterMovement()->MaxWalkSpeed = RoutineWalkSpeedCentimetresPerSecond;
+    CurrentPurposeAnchorId = SafetyAnchor->AnchorId;
+    CurrentSafetyState = ERexaResidentSafetyState::Routine;
+    return true;
 }
 
 bool ARexaSettlementResident::IsProtectedChildRuntime() const
@@ -143,4 +206,23 @@ void ARexaSettlementResident::ApplyNonCombatantPolicy()
     Movement->TouchForceFactor = 0.0f;
     Movement->RepulsionForce = 0.0f;
     GreyboxBody->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+}
+
+bool ARexaSettlementResident::RequestMoveToAnchor(
+    ARexaSettlementAnchor* Anchor,
+    const float AcceptanceRadius)
+{
+    if (!IsValid(Anchor) || AcceptanceRadius < 0.0f) return false;
+    if (!GetController()) SpawnDefaultController();
+    AAIController* ResidentController = Cast<AAIController>(GetController());
+    if (!ResidentController) return false;
+    const EPathFollowingRequestResult::Type Result = ResidentController->MoveToActor(
+        Anchor,
+        AcceptanceRadius,
+        true,
+        true,
+        true,
+        nullptr,
+        true);
+    return Result != EPathFollowingRequestResult::Failed;
 }
