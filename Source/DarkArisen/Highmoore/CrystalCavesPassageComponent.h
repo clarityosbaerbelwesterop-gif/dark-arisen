@@ -17,8 +17,8 @@ enum class ECrystalCavesPassageState : uint8
 
 /**
  * M6 physical Crystal-Caves route. The first passage and every repeat passage require elapsed
- * real traversal time plus observed physical movement. This component owns no OpenLevel,
- * ServerTravel, teleport or map-click transition path.
+ * real traversal time plus observed physical movement. This component owns no instant level,
+ * network-travel, waypoint-relocation or map-click transition path.
  */
 UCLASS(ClassGroup=(DarkArisen), meta=(BlueprintSpawnableComponent))
 class DARKARISEN_API UCrystalCavesPassageComponent : public UActorComponent
