@@ -64,6 +64,33 @@ struct FRegionalWarSnapshot
     bool bFallAssaultCompleted = false;
 };
 
+USTRUCT()
+struct FColonialRegionState
+{
+    GENERATED_BODY()
+
+    UPROPERTY(SaveGame)
+    FName RegionId;
+
+    UPROPERTY(SaveGame)
+    int32 ImperialControl = 0;
+
+    UPROPERTY(SaveGame)
+    int32 AlbionControl = 0;
+
+    UPROPERTY(SaveGame)
+    int32 LiberationStrength = 0;
+
+    UPROPERTY(SaveGame)
+    int32 CrimsonThreat = 0;
+
+    UPROPERTY(SaveGame)
+    ERegionalWarOutcome Outcome = ERegionalWarOutcome::Contested;
+
+    UPROPERTY(SaveGame)
+    bool bFallAssaultCompleted = false;
+};
+
 /**
  * Hidden M5 strategic authority. Numeric control values exist only as simulation state; callers
  * receive qualitative world outcomes rather than a player-facing meter. Physical missions report
@@ -104,35 +131,14 @@ public:
     int32 GetHiddenControlForTests(FName RegionId, EColonialFaction Faction) const;
 
 private:
-    USTRUCT()
-    struct FRegionState
-    {
-        GENERATED_BODY()
-
-        UPROPERTY(SaveGame)
-        FName RegionId;
-        UPROPERTY(SaveGame)
-        int32 ImperialControl = 0;
-        UPROPERTY(SaveGame)
-        int32 AlbionControl = 0;
-        UPROPERTY(SaveGame)
-        int32 LiberationStrength = 0;
-        UPROPERTY(SaveGame)
-        int32 CrimsonThreat = 0;
-        UPROPERTY(SaveGame)
-        ERegionalWarOutcome Outcome = ERegionalWarOutcome::Contested;
-        UPROPERTY(SaveGame)
-        bool bFallAssaultCompleted = false;
-    };
-
     static int32 ClampControl(int32 Value);
     static EWarMomentumPhase ResolveMomentumPhase(int32 Chapter);
-    void ReevaluateRegion(FRegionState& Region);
-    int32& ResolveFactionControl(FRegionState& Region, EColonialFaction Faction);
-    const int32& ResolveFactionControl(const FRegionState& Region, EColonialFaction Faction) const;
+    void ReevaluateRegion(FColonialRegionState& Region);
+    int32& ResolveFactionControl(FColonialRegionState& Region, EColonialFaction Faction);
+    const int32& ResolveFactionControl(const FColonialRegionState& Region, EColonialFaction Faction) const;
 
     UPROPERTY(SaveGame)
-    TMap<FName, FRegionState> Regions;
+    TMap<FName, FColonialRegionState> Regions;
 
     UPROPERTY(SaveGame)
     int32 CurrentChapter = 4;
