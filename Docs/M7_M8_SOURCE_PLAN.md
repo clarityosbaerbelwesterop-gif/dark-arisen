@@ -18,6 +18,10 @@ Implementation order:
 
 M8 follows the current DesignAuthority: Alpha targets **Windows x64 + Linux x86_64**. Native PS5 work is Beta-only and is not represented as an M8 Alpha completion.
 
+## Native C++ implementation rule
+
+All gameplay, state, validation, save/migration, platform, accessibility, packaging and release logic in PR #9 is implemented in native Unreal C++ under `Source/DarkArisen` with native Automation Specs. No Blueprint-only gameplay logic is permitted. `UDataAsset`/`UObject` types, where used, are themselves defined and validated in C++ and may only carry authored data; Blueprints/assets cannot override the governing rules or become a second gameplay authority.
+
 ## Implementation checklist
 
 ### A. M7 authoritative content manifest
