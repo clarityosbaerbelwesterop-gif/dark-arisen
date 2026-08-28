@@ -134,6 +134,15 @@ void UShipHouseholdComponent::RecordCrewLoss(const FName StableCrewId)
     RecentLosses.Add(StableCrewId);
     InternalMorale -= 18;
     ClampMorale();
+
+    // Named losses are permanent across both household and sailing state. Unnamed/semi-named
+    // hands simply have no matching voyage record and therefore stop here.
+    if (UShipVoyageComponent* Voyage = GetOwner()
+        ? GetOwner()->FindComponentByClass<UShipVoyageComponent>()
+        : nullptr)
+    {
+        Voyage->SetCrewMemberAlive(StableCrewId, false);
+    }
 }
 
 void UShipHouseholdComponent::RecordSharedRepairMoment()
