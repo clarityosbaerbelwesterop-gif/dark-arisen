@@ -16,11 +16,14 @@ Implemented source contracts:
 - Separate Imperial and Albion retaliation Heat with exact five-stage thresholds, chapter caps and passive chapter decay.
 - Hostage selection is deterministic from hidden attachment/ripple data and reachability. Children and explicitly protected people are excluded absolutely.
 - Canon conflict ruling: the newer Phase-12 crew law supersedes the older Phase-7 core-crew exclusion. Adult named crew are eligible hostage candidates unless individually narrative-protected.
+- `UColonyHoldingComponent` implements the four holding identities and five development stages. Razed castles cannot be claimed; Alliance Bastions are not Jake-owned; non-Alliance holdings require concrete delivered-person + voyage records before Establishment and retain unrepaired damage.
+- Settlement specialization is explicit and cannot exist before the holding reaches the authored stage/type boundary.
 - Four-phase castle siege state: Approach → Investment → Breach → Assault, with Wall / Back / Inside doors, legal blind assault, defensive variants and persistent breach damage.
 - Army state uses named/cultural forces rather than generic unit cards: hired, militia, Alliance, faction levy and crew. Crew are not counted as an army.
 - Upkeep anchors: hired 14 doubloons/man/chapter, militia 4, cavalry ×3, specialists ×2. Company marines stop after one unpaid chapter; hired troops leave after two; Alliance is not commandable by Jake.
 - Jake command capacity starts at 200 and named officers add 150 each. The only command verbs are HOLD / PRESS / BREAK OFF.
-- Large battles remain active when Jake falls; authored force/world simulation resolves the outcome later.
+- Large battles are 3–6 hidden-Cohesion front segments. Jake occupies only one segment, other segments can break independently, Rising battles reject direct Jake orders, and a final outcome cannot resolve before every segment resolves.
+- Jake falling removes him from the line but does not end the battle; authored force/world simulation resolves the outcome later.
 
 ## M6 — Highmoore
 
@@ -36,19 +39,19 @@ Implemented source contracts:
 - Arrow law is explicit: no slow motion, no music cue change, no camera move, no telegraph, no revive prompt; player control remains.
 - Arion children and noncombatants are non-damageable through the quest-state safety boundary.
 - Arion allows the unmarked west turn. Belos has distinct Katana-assault-interrupted and ordinary-weapon-overwhelmed source outcomes.
-- No systemic romance layer and no rendered Belos undercroft system were added.
+- No systemic romance layer, systemic magic layer or rendered Belos undercroft system was added.
 
 ## Verification added
 
 - `Tools/ci/validate_m5_m6.py` fail-closed source-law validator.
 - Negative regressions inject prohibited fast travel, systemic magic, illegal crew-hostage exclusion and Arrow slow motion.
-- `Source/DarkArisen/Tests/M5M6SystemsSpec.cpp` covers regional war transitions, autonomous chapter ticks, retaliation caps, hostage laws, siege persistence, army upkeep/desertion/command, large-battle continuation, Crystal Caves timing, Guardian bypass, Katana properties, authored horse rides and Princess arrow/safety laws.
+- `Source/DarkArisen/Tests/M5M6SystemsSpec.cpp` covers regional war transitions, autonomous chapter ticks, retaliation caps, hostage laws, holding/population growth, siege persistence, army upkeep/desertion/command, independent battle segments, Crystal Caves timing, Guardian bypass, Katana properties, authored horse rides and Princess arrow/safety laws.
 - Windows and Linux CI now run M5/M6 validation before existing Alpha/design-law/UE build steps. Existing M0–M4 gates were not removed or weakened.
 
 ## Explicitly not claimed complete by source alone
 
 - UE 5.5 Windows/Linux compile and Unreal Automation execution on matching self-hosted runners.
-- M5 authored colony/holding/castle levels, physical siege doors, naval bombardment, crowds, army AI, battle scenes, retaliation missions and full campaign runtime simulation.
+- M5 authored colony/holding/castle levels, physical siege doors, naval bombardment, crowds, army AI, camps, battle scenes, retaliation missions and full campaign runtime simulation.
 - M6 authored Crystal Caves geometry/minecart/puzzles, Guardian model/AI/animation/audio, Katana weapon assets, horse locomotion/physics, Highmoore world/settlements, Princess staging/dialogue/cinematics/audio and measured ride/return playtests.
 - Save/load persistence evidence, performance, packaging, Pixel Streaming and Alpha acceptance.
 
