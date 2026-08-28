@@ -1,4 +1,4 @@
-name: M0-M4 CI
+name: M0-M6 CI
 
 on:
   push:
@@ -46,6 +46,10 @@ jobs:
       - name: Validate M3 and M4 source contracts
         shell: pwsh
         run: python Tools/ci/validate_m3_m4.py
+
+      - name: Validate M5 and M6 source contracts
+        shell: pwsh
+        run: python Tools/ci/validate_m5_m6.py
 
       - name: Validate Alpha platform contract
         shell: pwsh
@@ -100,6 +104,10 @@ jobs:
       - name: Validate M3 and M4 source contracts
         shell: bash
         run: python3 Tools/ci/validate_m3_m4.py
+
+      - name: Validate M5 and M6 source contracts
+        shell: bash
+        run: python3 Tools/ci/validate_m5_m6.py
 
       - name: Validate Alpha platform contract
         shell: bash
