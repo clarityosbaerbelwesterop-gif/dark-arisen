@@ -7,15 +7,17 @@
 #include "Ship/ShipVoyageComponent.h"
 #include "LaLiberacionShip.generated.h"
 
+class APhysicalMapActor;
 class USceneComponent;
+class USeaPassageComponent;
+class UShipHouseholdComponent;
 
 /**
  * Level-placeable source boundary for La Liberacion.
  *
- * The four scene roots are not final ship geometry. They are stable authored attachment
- * boundaries for a continuous four-deck vessel: Weather, Upper, Mid and Hold. Final hull,
- * stairs/ladders, collision, buoyancy, roll/pitch/heel and streaming evidence remain M3 gates.
- * No deck transition uses a loading screen or teleport API.
+ * The four scene roots are stable authored attachment boundaries for one continuous vessel:
+ * Weather, Upper, Mid and Hold. No deck transition uses a loading screen or teleport API.
+ * Voyage, household, physical-map and real-passage state all live on the same actor.
  */
 UCLASS()
 class DARKARISEN_API ALaLiberacionShip : public AActor
@@ -44,8 +46,20 @@ public:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Ship|Systems")
     TObjectPtr<UShipVoyageComponent> VoyageComponent;
 
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Ship|Systems")
+    TObjectPtr<UShipHouseholdComponent> HouseholdComponent;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Ship|Systems")
+    TObjectPtr<USeaPassageComponent> SeaPassageComponent;
+
+    UPROPERTY(EditDefaultsOnly, Category="Ship|Map")
+    TSubclassOf<APhysicalMapActor> PhysicalMapClass;
+
     UFUNCTION(BlueprintPure, Category="Ship|Structure")
     USceneComponent* GetDeckRoot(EShipDeck Deck) const;
+
+    UFUNCTION(BlueprintPure, Category="Ship|Map")
+    APhysicalMapActor* GetPhysicalMap() const { return PhysicalMap; }
 
     /**
      * Great-cabin rest enters the canonical M4 rest/autosave path. It performs no disk write.
@@ -59,4 +73,8 @@ public:
 
 private:
     bool HasCompleteFourDeckStructure() const;
+    bool SpawnPhysicalMap();
+
+    UPROPERTY(Transient)
+    TObjectPtr<APhysicalMapActor> PhysicalMap;
 };
