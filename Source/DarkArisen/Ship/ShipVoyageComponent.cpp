@@ -229,7 +229,7 @@ void UShipVoyageComponent::BuildCanonicalCrew()
     {
         FNamedCrewMemberState Entry;
         Entry.StableId = FName(StableId);
-        Entry.DisplayName = FText::FromString(DisplayName);
+        Entry.DisplayName = FText::FromString(FString(DisplayName));
         Entry.Role = FName(Role);
         Entry.PrimaryWatch = Watch;
         Entry.bAlive = true;
