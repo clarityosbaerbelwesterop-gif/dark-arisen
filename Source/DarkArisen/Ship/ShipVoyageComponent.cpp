@@ -36,8 +36,8 @@ void UShipVoyageComponent::TickComponent(float DeltaTime, ELevelTick TickType,
         return;
     }
 
-    // Jake leaving the wheel does not stop the vessel. Available crew hold the last
-    // commanded course; fewer hands reduce response instead of creating a menu or teleport.
+    // Jake leaving the wheel does not stop the vessel. The first mate or a hand stepping up
+    // holds the last commanded course; fewer hands reduce response instead of creating a menu.
     const float HandlingFactor = GetCrewHandlingFactor();
     const float HeadingDelta = FMath::FindDeltaAngleDegrees(HeadingDegrees, CommandedHeadingDegrees);
     const float MaximumHeadingStep = ProvisionalHeadingResponseDegreesPerSecond * HandlingFactor * DeltaTime;
@@ -223,20 +223,19 @@ float UShipVoyageComponent::GetSailEfficiency() const
 
 float UShipVoyageComponent::GetCrewHandlingFactor() const
 {
-    int32 AvailableNamedCrew = 0;
-    for (const FNamedCrewMemberState& CrewMember : NamedCrew)
-    {
-        if (CrewMember.bAlive && CrewMember.bAboard)
+    const FNamedCrewMemberState* Mira = NamedCrew.FindByPredicate(
+        [](const FNamedCrewMemberState& CrewMember)
         {
-            ++AvailableNamedCrew;
-        }
-    }
+            return CrewMember.StableId == FName(TEXT("crew.mira"));
+        });
 
-    const float NamedFactor = FMath::Clamp(
-        static_cast<float>(AvailableNamedCrew) / 5.0f, 0.2f, 1.0f);
+    // crew_system.md: first mate affects manoeuvre response. If Mira is lost, a hand steps up
+    // badly so the mechanical role returns while the person does not. Other named crew — most
+    // importantly Father Salvio — do not leak into handling quality.
+    const float FirstMateFactor = Mira && Mira->bAlive && Mira->bAboard ? 1.0f : 0.6f;
     const float HandsFactor = FMath::Clamp(
         static_cast<float>(ActiveHands) / 40.0f, 0.15f, 1.0f);
-    return FMath::Clamp((NamedFactor * 0.35f) + (HandsFactor * 0.65f), 0.15f, 1.0f);
+    return FMath::Clamp((FirstMateFactor * 0.35f) + (HandsFactor * 0.65f), 0.15f, 1.0f);
 }
 
 void UShipVoyageComponent::BuildCanonicalCrew()
