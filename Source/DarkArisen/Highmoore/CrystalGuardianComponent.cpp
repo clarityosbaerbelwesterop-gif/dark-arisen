@@ -44,7 +44,7 @@ bool UCrystalGuardianComponent::RecordLightStimulus(const FVector WorldLocation,
         || Phase == ECrystalGuardianPhase::Defeated
         || Phase == ECrystalGuardianPhase::Bypassed
         || Phase == ECrystalGuardianPhase::Settling
-        || !WorldLocation.IsFinite()
+        || WorldLocation.ContainsNaN()
         || !FMath::IsFinite(Intensity)
         || Intensity <= 0.0f)
     {
