@@ -64,6 +64,25 @@ struct FRegionalWarSnapshot
     bool bFallAssaultCompleted = false;
 };
 
+/** Authored non-player pressure for one chapter. Rates are data, not invented engine constants. */
+USTRUCT(BlueprintType)
+struct FRegionalAutonomousWarTick
+{
+    GENERATED_BODY()
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly)
+    int32 ImperialDelta = 0;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly)
+    int32 AlbionDelta = 0;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly)
+    int32 LiberationDelta = 0;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly)
+    int32 CrimsonDelta = 0;
+};
+
 USTRUCT()
 struct FColonialRegionState
 {
@@ -111,12 +130,16 @@ public:
     bool RecordResolvedWarAction(FName RegionId, EWarActionVerb Verb, EColonialFaction TargetFaction,
         int32 ControlDelta, int32 LiberationDelta, int32 CrimsonDelta);
 
+    /** The war also moves without Jake; one authored autonomous tick per region/chapter. */
+    UFUNCTION(BlueprintCallable, Category="ColonialWar|Simulation")
+    bool RecordAutonomousChapterTick(FName RegionId, const FRegionalAutonomousWarTick& Tick);
+
     /** A Fall cannot resolve without this authored assault completion. */
     UFUNCTION(BlueprintCallable, Category="ColonialWar|Siege")
     bool RecordFallAssaultCompleted(FName RegionId);
 
     UFUNCTION(BlueprintCallable, Category="ColonialWar|Chapter")
-    void AdvanceChapter(int32 Chapter);
+    bool AdvanceChapter(int32 Chapter);
 
     UFUNCTION(BlueprintPure, Category="ColonialWar|Chapter")
     EWarMomentumPhase GetMomentumPhase() const { return MomentumPhase; }
@@ -133,12 +156,16 @@ public:
 private:
     static int32 ClampControl(int32 Value);
     static EWarMomentumPhase ResolveMomentumPhase(int32 Chapter);
+    static bool IsValidAutonomousDelta(int32 Delta);
     void ReevaluateRegion(FColonialRegionState& Region);
     int32& ResolveFactionControl(FColonialRegionState& Region, EColonialFaction Faction);
     const int32& ResolveFactionControl(const FColonialRegionState& Region, EColonialFaction Faction) const;
 
     UPROPERTY(SaveGame)
     TMap<FName, FColonialRegionState> Regions;
+
+    UPROPERTY(SaveGame)
+    TMap<FName, int32> LastAutonomousTickChapter;
 
     UPROPERTY(SaveGame)
     int32 CurrentChapter = 4;
