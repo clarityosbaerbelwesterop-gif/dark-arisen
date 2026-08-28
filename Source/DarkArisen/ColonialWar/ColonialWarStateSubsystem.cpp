@@ -9,7 +9,7 @@ bool UColonialWarStateSubsystem::RegisterRegion(const FName RegionId, const ECol
         return false;
     }
 
-    FRegionState State;
+    FColonialRegionState State;
     State.RegionId = RegionId;
     if (InitialController == EColonialFaction::Imperial)
     {
@@ -43,7 +43,7 @@ bool UColonialWarStateSubsystem::RecordResolvedWarAction(
     const int32 LiberationDelta,
     const int32 CrimsonDelta)
 {
-    FRegionState* Region = Regions.Find(RegionId);
+    FColonialRegionState* Region = Regions.Find(RegionId);
     if (!Region || ControlDelta < 0 || LiberationDelta < 0 || CrimsonDelta < 0)
     {
         return false;
@@ -75,7 +75,7 @@ bool UColonialWarStateSubsystem::RecordResolvedWarAction(
 
 bool UColonialWarStateSubsystem::RecordFallAssaultCompleted(const FName RegionId)
 {
-    FRegionState* Region = Regions.Find(RegionId);
+    FColonialRegionState* Region = Regions.Find(RegionId);
     if (!Region)
     {
         return false;
@@ -100,7 +100,7 @@ void UColonialWarStateSubsystem::AdvanceChapter(const int32 Chapter)
 FRegionalWarSnapshot UColonialWarStateSubsystem::GetRegionSnapshot(const FName RegionId) const
 {
     FRegionalWarSnapshot Snapshot;
-    const FRegionState* Region = Regions.Find(RegionId);
+    const FColonialRegionState* Region = Regions.Find(RegionId);
     if (!Region)
     {
         return Snapshot;
@@ -137,7 +137,7 @@ FRegionalWarSnapshot UColonialWarStateSubsystem::GetRegionSnapshot(const FName R
 
 bool UColonialWarStateSubsystem::IsRegionLiberated(const FName RegionId) const
 {
-    const FRegionState* Region = Regions.Find(RegionId);
+    const FColonialRegionState* Region = Regions.Find(RegionId);
     return Region && Region->Outcome == ERegionalWarOutcome::Liberated;
 }
 
@@ -145,7 +145,7 @@ int32 UColonialWarStateSubsystem::GetHiddenControlForTests(
     const FName RegionId,
     const EColonialFaction Faction) const
 {
-    const FRegionState* Region = Regions.Find(RegionId);
+    const FColonialRegionState* Region = Regions.Find(RegionId);
     return Region ? ResolveFactionControl(*Region, Faction) : 0;
 }
 
@@ -167,7 +167,7 @@ EWarMomentumPhase UColonialWarStateSubsystem::ResolveMomentumPhase(const int32 C
     return EWarMomentumPhase::Gamma;
 }
 
-void UColonialWarStateSubsystem::ReevaluateRegion(FRegionState& Region)
+void UColonialWarStateSubsystem::ReevaluateRegion(FColonialRegionState& Region)
 {
     const int32 ColonialControl = FMath::Max(Region.ImperialControl, Region.AlbionControl);
     if (ColonialControl < 30)
@@ -196,7 +196,9 @@ void UColonialWarStateSubsystem::ReevaluateRegion(FRegionState& Region)
         : ERegionalWarOutcome::AlbionControlled;
 }
 
-int32& UColonialWarStateSubsystem::ResolveFactionControl(FRegionState& Region, const EColonialFaction Faction)
+int32& UColonialWarStateSubsystem::ResolveFactionControl(
+    FColonialRegionState& Region,
+    const EColonialFaction Faction)
 {
     switch (Faction)
     {
@@ -213,7 +215,7 @@ int32& UColonialWarStateSubsystem::ResolveFactionControl(FRegionState& Region, c
 }
 
 const int32& UColonialWarStateSubsystem::ResolveFactionControl(
-    const FRegionState& Region,
+    const FColonialRegionState& Region,
     const EColonialFaction Faction) const
 {
     switch (Faction)
