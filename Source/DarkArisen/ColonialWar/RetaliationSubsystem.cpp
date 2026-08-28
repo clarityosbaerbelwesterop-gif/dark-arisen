@@ -123,7 +123,7 @@ TArray<FName> URetaliationSubsystem::SelectHostages(
         {
             return A.Score > B.Score;
         }
-        return A.Id.LexicalLess(B.Id);
+        return A.Id.ToString() < B.Id.ToString();
     });
 
     const int32 Count = FMath::Min(MaxCount, Weighted.Num());
