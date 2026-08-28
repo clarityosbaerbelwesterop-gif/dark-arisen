@@ -1,116 +1,135 @@
 # Engineering handover
 
 **Updated:** 2026-08-28  
-**Source state:** M2 backlog plus M3/M4 source-completion tranche is integrated in PR #7  
-**PR:** #7 — `feature/m2-runtime-completion` → `develop`  
-**Runtime state:** UE 5.5 compile/runtime/playtest gates are deferred under the current operator direction, not waived and not marked passed.  
-**Detailed M3/M4 record:** `Docs/M3_M4_SOURCE_COMPLETION.md`
+**Integrated baseline:** PR #7 merged to `develop` at `adfb49d8c6ef43d45701af496664d7155985d727`  
+**Active source work:** M5 Colonial War + M6 Highmoore source completion  
+**Active PR:** #8 — `feature/m5-m6-source-completion` → `develop`  
+**Runtime state:** UE 5.5 compile/runtime/playtest gates remain deferred under the current operator direction, not waived and not marked passed.  
+**Boundary records:** `Docs/M3_M4_SOURCE_COMPLETION.md`, `Docs/M5_M6_SOURCE_COMPLETION.md`
 
 ## Current operator direction
 
-Flo explicitly directed on 2026-08-28 that the currently unavailable UE 5.5 Runtime/self-hosted-runner path must not block further source work and that M3/M4 should be completed and PR #7 merged. Source integration may therefore proceed while Unreal/runtime evidence remains open. No document, checkbox, PR or report may turn that deferral into a claim that the runtime gate passed.
+Flo directed on 2026-08-28 that unavailable UE 5.5 runtime/self-hosted-runner gates must not block source production. Source work may therefore advance while runtime evidence remains open. A source merge is integration only: no document, checkbox, PR or report may translate that deferral into a claim that UE compile, runtime, performance, packaging or Alpha acceptance passed.
 
-## Baseline carried into PR #7
+## Integrated baseline before PR #8
 
-- UE 5.5 C++ project boundary, native third-person pawn, input, camera, combat, wounds, stamina/posture, Rache, interaction and greybox telemetry exist.
-- Twelve load-bearing design laws are encoded through constants, automation tests and deterministic source audits.
-- M0 private Pixel Streaming/deployment source path exists but no host/runtime acceptance is claimed.
-- M1 native loop and animation-state/notify boundaries exist; final authored assets and feel evidence remain open.
-- M2 markerless quests/journal, Isabel Cruz state, heat, Cenote state, exact forty-person Las Raíces roster, child protections and sparse combat-proximity behavior exist in source.
-- Las Raíces consumes the single canonical M4 world clock rather than maintaining a competing schedule clock.
-- Alpha remains two content-identical UE 5.5 Shipping targets, Windows x64 and Linux x86_64; native PS5 stays Beta-only with authorised Sony tooling.
+- M0/M1 project, interaction/combat, design-law audit, Pixel Streaming source path and platform contracts exist.
+- M2 Rexa source foundations exist, including markerless quest/journal state, Isabel Cruz, heat/Cenote state, exact forty-person Las Raíces roster, protected children and canonical world-clock integration. Authored M2 levels/navigation/animation/two-hour runtime evidence remain open.
+- M3 ship source closure and M4 systems source closure are integrated through PR #7. Their exact boundary and deferred runtime work are in `Docs/M3_M4_SOURCE_COMPLETION.md`.
+- Alpha remains Windows x64 + Linux x86_64 UE 5.5 Shipping from one accepted source commit; native PS5 remains Beta-only with authorised Sony tooling.
 
-## M3 source completion
+## M5 source completion in PR #8
 
-### La Liberación and sailing
+### Hidden regional war
 
-- `ALaLiberacionShip` is the singular level-placeable ship source boundary.
-- Weather / Upper / Mid / Hold are four stable deck roots on one continuous actor; no deck loading/teleport API is introduced.
-- `UShipVoyageComponent` owns heading, commanded heading, wind, Point-of-Sail, speed and swept physical actor movement.
-- Jake leaving the helm does not freeze the voyage.
-- Handling depends on active hands and the first-mate role. If Mira is lost, a hand can step up badly so the mechanical function remains degraded; other named crew do not affect manoeuvre response. Father Salvio has no mechanical handling effect.
-- Hands are bounded to the authored 40–90 mature-household range while catastrophic lower states remain representable.
+- `UColonialWarStateSubsystem` owns hidden Imperial Control, Albion Control, Liberation Strength and Crimson Threat per region. No numeric player-facing war meter is exposed.
+- Chapter momentum is Alpha for Chapters 4–6, Beta for 7–8 and Gamma for 9+.
+- Support / Break / Liberate are report-only consequences from already completed physical content; there is no strategy-menu action that performs them.
+- Crisis requires colonial control below 30. Fall is separate and requires an authored assault completion. After Fall, Liberation Strength ≥ 50 yields Liberation; otherwise Crimson pressure ≥ 50 can occupy the vacuum, else the result is Vacuum.
+- `FRegionalAutonomousWarTick` permits one authored non-player tick per region/chapter so the war moves without Jake. Duplicate ticks fail closed and actual rates remain data rather than invented engine constants.
 
-### Crew household
+### Retaliation and hostages
 
-- Exactly five canonical named crew are encoded: Mira, Big Tom, Esteban, Ines and Father Salvio.
-- `UShipHouseholdComponent` consumes canonical world time and produces named deck/activity schedules, watches and meal periods.
-- Up to eight specialist berths and twelve semi-named hands are represented.
-- Morale has one private numeric authority and no numeric/UI getter. The public read is qualitative only: singing, shared mending, galley fire, unresolved argument, an empty forecastle at dusk, or an empty hammock after loss.
-- Named loss is permanent and propagates into voyage state.
+- `URetaliationSubsystem` keeps Imperial and Albion Heat separate and hidden.
+- Exact stages: 0–19 Unnoticed, 20–39 Letter, 40–59 Bounty, 60–74 CounterAttack, 75–89 Hostages, 90–100 ScorchedEarth.
+- Chapter caps are Bounty in 4–6, Hostages in 7–8 and ScorchedEarth in 9+; passive chapter decay applies only when the faction was not attacked.
+- Hostage selection uses hidden Attachment Score + ripple weight + region reachability and deterministic tie-breaking.
+- Children and explicitly narrative-protected people are absolute exclusions.
+- Canon conflict ruling: the later Phase-12 `crew system.md` supersedes the older Phase-7 blanket core-crew exclusion. Adult named crew are eligible unless individually protected. A lost crew teacher is not replaced.
 
-### Navigation, physical map and passage
+### Holdings and colonies
 
-- Physical chart acquisition/annotation state exists.
-- `APhysicalMapActor` uses the held Anchored Examine path and records only sailed coastlines, visited settlements, routes actually given and persistent handwritten notes.
-- No player dot, compass, minimap, map-click travel or water-fast-travel API exists in the M3 source boundary.
-- `USeaPassageComponent` requires both authored canonical-world-time and physically observed distance before a passage can complete. It contains no level-open, server-travel, waypoint teleport or actor-location write.
-- Great-Cabin rest routes into the canonical M4 rest/save owner and supports only the four authored dayparts.
+- `UColonyHoldingComponent` implements Trade Post / Settlement / Military Stronghold / Alliance Bastion plus Claimed → Functional → Established → Developed → Thriving.
+- Claim requires an intact taken castle, Alliance old fortress or authored abandoned site. A razed castle cannot be owned.
+- Population is person-by-person: each delivered resident has a stable person ID, population kind and concrete voyage ID. A normal holding cannot reach Established with an empty delivered manifest.
+- Settlements declare their type at Established and may choose Plantation / Craft / Free Settlement / Port specialization.
+- Alliance Bastions are not Jake-owned and reject Jake-population delivery through this ownership path.
+- Persistent siege/retaliation damage is tracked until explicitly repaired.
 
-## M4 source completion
+### Sieges
 
-### BODY / CRAFT / STANDING
+- `UCastleSiegeComponent` implements Approach → Investment → Breach → Assault → Resolved.
+- Wall / Back / Inside are distinct doors; skipping prep into a blind assault is legal.
+- Structural breach damage persists. A castle with breach damage cannot resolve as HeldIntact.
+- Defensive sieges use the same state authority and resolve only Defended/Lost.
 
-- Jake owns `UProgressionEconomyComponent` as a native component.
-- BODY laws are encoded: HP 200→380 through twelve +15 draughts, Stamina 120→200 through sixteen +5 pearls, Posture 100→175 through fifteen +5 named deflection sets, Carry 80→130 kg through authored acts.
-- CRAFT structural invariants are locked: 68 nodes, branches 16/12/14/13/13, 94 available Marks, 141 full-tree cost, 23 canonical teachers, 23 teacher-gated nodes and 11 Standing-gated nodes.
-- Skill nodes permit at most three authored prerequisites.
-- Meeting a teacher does not satisfy a teacher gate. `CompleteTeachingScene(TeacherId, NodeId)` must be recorded for that exact person/technique before Marks may unlock it.
-- No respec API and no money-to-BODY/CRAFT/STANDING path exists.
-- The bible does not individually name all 68 techniques. The implementation does not fabricate filler abilities: `USkillTreeCatalogDataAsset` accepts the complete authored set only when every count, cost, teacher, Standing gate and prerequisite invariant is valid.
+### Armies and battles
 
-### Economy
+- `UArmyCampaignComponent` has only named/cultural forces: Hired, SettlementMilitia, Alliance, FactionLevy and Crew. Crew are never counted as an army.
+- Upkeep anchors: hired 14 doubloons/man/chapter, militia 4, cavalry ×3, specialist ×2. Alliance/levy/crew have no generic cash upkeep here.
+- Company marines depart after one unpaid chapter; normal hired forces after two. Militia do not use the hired-desertion path.
+- Jake command capacity is 200 + 150 per named officer. Alliance forces reject Jake's orders.
+- The entire order vocabulary is HOLD / PRESS / BREAK OFF; no unit-card, formation, facing or selection-box system exists.
+- `ULargeBattleComponent` models 3–6 front segments with hidden Cohesion. Jake occupies at most one. Other segments can break independently and Rising battles reject direct Jake orders.
+- Final battle outcome cannot resolve until every segment resolves. Jake falling removes him from his segment but deliberately leaves the battle active.
 
-- Doubloons, Pounds and Silver Marks are independent balances with no generic conversion API.
-- `FChapterLedger` resolves holding income, army upkeep, garrison upkeep and construction draw exactly once per chapter.
-- No interest, passive investment or compounding path exists.
-- Legendary work, Highmoore reconstruction in Silver and crew-share payment are explicit sink paths.
-- Money cannot unlock capability.
+## M6 source completion in PR #8
 
-### Time, rest and saves
+### Crystal Caves
 
-- `UDarkArisenWorldRulesSubsystem` is the single world clock: one in-game hour = 150 real seconds.
-- Rest is limited to Great Cabin or Safe House and can target only Dawn, Midday, Dusk or Night.
-- There is no arbitrary wait-until-hour, hunger/thirst/fatigue or bedroll-anywhere mechanic.
-- Manual save remains unrestricted.
-- Autosave requests have exactly two legal sources: completed rest and chapter boundary.
-- Lake→Dock suppresses autosave requests for the whole authored window while manual save stays available.
-- World rules queue save requests but perform no disk IO themselves.
+- `UCrystalCavesPassageComponent` is the only Highmoore route boundary.
+- First passage requires at least 90 real minutes plus observed physical movement.
+- Once opened, the route remains permanent. Repeat traversal requires an authored 4–6 real minutes plus physical movement.
+- No instant level/network/waypoint transition path exists in the component.
 
-### Social
+### Crystal Guardian
 
-- Stranger / Known / Owed / Wary greeting states exist without affinity numbers or relationship UI.
-- Listening supports begin/interruption/completion and only uninterrupted completion records an overheard conversation.
-- Sitting is explicit social state and does not accelerate time or grant a buff.
-- Drawing a weapon is the represented hostile social act: it interrupts passive listening/sitting, moves the context to Wary and persists for an authored number of chapter boundaries before restoring the previous greeting.
-- No antagonise input, gift-menu system or systemic romance layer is introduced.
+- `UCrystalGuardianComponent` starts Dormant and must be explicitly engaged; it does not attack first.
+- It consumes explicit light stimuli rather than body/player target state.
+- Locked phase bands are 100–75 / 75–45 / 45–20 / 20–0.
+- It may be bypassed entirely; bypass yields no Crystal Katana.
+- Defeat enters Settling and holds four seconds before Defeated. No slow-motion/music-sting authority exists in this component.
 
-## Verification encoded in PR #7
+### Crystal Katana
 
-- `.github/workflows/ci.yml` runs M0, M1, M2, M3/M4, Alpha-platform and design-law validators before Unreal compile/tests on both configured self-hosted platforms.
-- `Tools/ci/validate_m3_m4.py` fails closed on prohibited compass/minimap/fast-travel, respec, generic currency conversion, relationship-meter and illegal-autosave APIs and checks the new M3/M4 source files.
-- Python regression tests deliberately inject representative prohibited APIs and an invalid sixth named crew entry.
-- Native Unreal specs cover M3 voyage/household contracts, immediate sea-passage rejection, M4 teaching/prerequisite rules, chapter non-compounding, qualitative social memory, daypart rest/save suppression and the exact synthetic 68-node structural contract.
-- Final static review also corrected the Phase-12 Salvio rule: named-crew count no longer feeds handling; only First Mate + Hands do.
+- `UCrystalKatanaComponent` can be acquired only from a defeated Guardian.
+- Locked physical anchors: 74 cm blade and 1.1 kg.
+- Attack stamina cost is condition-independent: the authored base cost is returned unchanged regardless of Jake's condition.
+- Conventional armour-ignore and resting/moving light read are encoded.
+- No durability, repair, sharpening or upgrade system exists.
 
-## Verification that is still deferred
+### Highmoore horse and authored rides
 
-- At the current PR head, GitHub reports both configured UE 5.5 self-hosted check jobs as queued rather than executed.
-- The active workspace cannot clone GitHub directly because outbound DNS/network access is unavailable, so a second independent local validator run could not be performed here.
-- No UE 5.5 Windows/Linux compile, Unreal automation run, package, browser stream, iPad test, sea-passage playtest or persistence/performance run is therefore claimed green by this tranche.
+- `UHighmooreHorseComponent` has bond 0–3, Walk/Trot/Canter/Gallop and qualitative mood with no player-facing stamina number.
+- Permanent horse death persists.
+- Lake ride: exactly 9 real minutes, gait cannot exceed Trot.
+- Arion ride: 4 real minutes, unbroken Gallop, horse stamina suspended.
+- Belos continuation: 6 real minutes, Gallop and the same suspension.
+- After Belos the horse has lasting exhaustion; Return is ~40 real minutes capped to Walk.
 
-## Deferred authored/runtime acceptance
+### Princess quest / Arrow / Belos / Return
 
-- M2 final Rexa jungle/Las Raíces/Cenote/Fuerte levels, navigation, animation and two-hour evidence.
-- M3 final authored La Liberación hull/interior, continuous player traversal keel→maintop, buoyancy/roll/pitch/heel, ocean/weather coupling, final crew animation/audio and measured real passage evidence.
-- M4 production Data Asset containing all 68 canon-approved node definitions, all authored teaching scenes, final vendor/holding/army/safe-house/social presentation and save/load persistence evidence.
-- Performance/frame-time, packaged candidates, private Pixel Streaming/iPad evidence and Alpha approval.
+- `UPrincessQuestStateComponent` begins canonical M4 Lake→Dock autosave suppression when the false letter is handed over and only ends it at the dock.
+- The Arrow law is explicit: no slow motion, no cue change, no camera move, no audio telegraph, no revive prompt; player control remains.
+- Arion children and all noncombatants are non-damageable through the quest-state safety boundary.
+- The real letter remains optional to read; walking past it is representable.
+- Turning west at Arion is a valid unmarked terminal branch before Belos.
+- Belos has distinct Katana-assault-interrupted and ordinary-weapon-overwhelmed outcomes.
+- No systemic romance or systemic magic layer is introduced. No Belos undercroft rendering/level actor is implemented; the locked undercroft rule remains intact.
+
+## Verification encoded in PR #8
+
+- `.github/workflows/ci.yml` is additive and now runs M0, M1, M2, M3/M4, M5/M6, Alpha-platform and design-law validators on both configured platforms before UE build/test steps.
+- `Tools/ci/validate_m5_m6.py` checks the M5/M6 source set and fails closed on fast-travel/teleport symbols, compass/minimap/player-dot, systemic romance/relationship UI, systemic magic, illegal autosave helpers, Belos undercroft rendering, Katana maintenance, Princess revive/slow-motion helpers and RTS-style army UI/control.
+- Negative Python tests deliberately inject prohibited fast travel, systemic magic, crew-hostage exclusion and Arrow slow motion.
+- Native `M5M6SystemsSpec.cpp` covers regional Crisis/Fall/Liberation, Chapter 4–10 autonomous movement, duplicate-tick rejection, retaliation caps, child exclusion/adult-crew eligibility, holding person-manifest growth, persistent siege damage, army upkeep/capacity/desertion, independent battle segments/Jake fall, Crystal-Caves timing, Guardian bypass, Katana anchors, authored horse rides and Princess Arrow/Arion safety laws.
+- Existing M0–M4 validators and gates were not removed or weakened.
+
+## Deferred UE/runtime acceptance
+
+- Windows/Linux UE 5.5 compilation and Unreal Automation execution on matching self-hosted runners.
+- M2 authored Rexa levels/navigation/animation and two-hour evidence.
+- M3 authored full ship geometry, ocean/physics/animation/audio and measured sea-passage playtest.
+- M4 production 68-node canon Data Asset, all teaching scenes and final persistence/social/economy presentation.
+- M5 authored colony/holding/castle environments, real siege traversal/bombardment, army camps/AI, retaliation missions, battle-scale simulation/performance and full campaign evidence.
+- M6 authored Crystal Caves/minecart/puzzles, Guardian AI/model/animation/audio, Katana assets, horse locomotion/physics, Highmoore locations/populations, Princess staging/dialogue/audio and measured ride/return evidence.
+- Save/load persistence, frame-time, packaging, private Pixel Streaming/iPad and Alpha acceptance.
 
 ## Cost / service state
 
-- No GPU host, VM, paid runner, domain, certificate, TURN endpoint, paid voice job, paid asset service or deployment was provisioned or started by this tranche.
+- No GPU host, VM, paid runner, domain, certificate, TURN endpoint, voice generation, paid asset service or deployment was started in PR #8.
 - Any future billable infrastructure remains an explicit operator approval gate.
 
-## Next engineering line after PR #7
+## Next engineering line
 
-With M3/M4 source integration merged, the next source milestone is M5 Colonial War unless the operator explicitly redirects to deferred UE/runtime authoring first. Do not reopen M3/M4 by inventing missing abilities or replacing runtime evidence with source assertions; use `Docs/M3_M4_SOURCE_COMPLETION.md` as the boundary record.
+PR #8 remains Draft until its source audit is complete and the operator decides whether to merge. After M5/M6 source integration, the next source milestone is M7 content scale-out unless the operator redirects to deferred runtime authoring. Do not fill missing content with invented canon and do not convert source closure into runtime acceptance.
