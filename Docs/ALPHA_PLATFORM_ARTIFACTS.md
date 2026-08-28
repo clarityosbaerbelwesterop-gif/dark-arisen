@@ -31,7 +31,7 @@ Sony makes its development tools and publishing resources available after PlaySt
 - A matching private Windows UE 5.5 build runner for reproducible packaging.
 - Flo's private Arcware account/project for the Windows upload and access-control evidence.
 
-These blockers do not prevent authorised source work in draft PR #4, but none may be marked complete by inference.
+These blockers do not prevent authorised source work on successor branches, but none may be marked complete by inference. PR #4/#5 source integration did not convert any blocked platform gate into evidence.
 
 ## Public references
 

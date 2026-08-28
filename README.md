@@ -49,7 +49,7 @@ Unreal compilation and automation run only on a private self-hosted Windows runn
 3. In the private repository, open **Settings → Actions → Runners → New self-hosted runner** and follow GitHub's one-time Windows registration commands. Never commit or paste the registration token into a file or PR.
 4. Add the custom labels `ue5.5` and `dark-arisen`; GitHub supplies `self-hosted`, `Windows`, and `X64`.
 5. Run `./Tools/ci/verify-runner.ps1` locally. It fails closed on the wrong engine version, missing tools, non-Windows/non-x64 hosts, or insufficient disk.
-6. Start the runner service. The queued PR #4 workflow will be claimed automatically.
+6. Start the runner service. Main workflow run #22 and successor-PR workflows will be claimed automatically when their exact required labels match.
 
 This path uses existing hardware and no cloud GPU. It does not create a Pixel Streaming host; streaming remains a separate private and cost-gated deployment step.
 
@@ -67,4 +67,4 @@ The proposed GPU/persistence architecture is recorded in `Docs/GpuBackendDecisio
 
 ## Branching and merge policy
 
-Work moves from `feature/*` into `develop`; `main` receives milestone-complete changes only. Do not merge with a red, missing, queued, or unverified gate. Do not commit credentials, provider tokens, generated build outputs, or local streaming configuration.
+Work moves from `feature/*` into `develop`; `main` should receive milestone-complete changes only. PR #4/#5 source was merged before runtime gates executed, so that history is not milestone acceptance. Do not repeat the exception: never describe a red, missing, queued, or unverified revision as accepted. Do not commit credentials, provider tokens, generated build outputs, or local streaming configuration.

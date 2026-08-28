@@ -29,14 +29,14 @@ Milestone 0 is complete only when every required item below has reproducible evi
 
 | Gate | Required evidence | Status |
 |---|---|---|
-| 1. Development + Shipping compile | UE 5.5 CI logs, zero errors and zero warnings | Not run — UE runner unavailable |
-| 2. Automated tests | Python checks and Unreal `DarkArisen.*` automation report | Python: passed locally 2026-08-27 (19 tests + M0/M1 validators + audit); Unreal: not run |
+| 1. Development + Shipping compile | UE 5.5 CI logs, zero errors and zero warnings | Not run — main run #22 is queued without a matching runner |
+| 2. Automated tests | Python checks and Unreal `DarkArisen.*` automation report | Python: passed locally 2026-08-27 (25 tests + M0/M1/M2 validators + audit); Unreal: not run |
 | 3. In-engine smoke test | Greybox movement, camera, jump, sprint, death, Rache gate and frame telemetry recording | Not run |
 | 4. iPad input | Safari video showing left-stick movement, right-drag look, and paired DualSense input | Not run |
 | 5. Stream quality | HTTPS/password, mobile-network TURN, NVENC, 1080p60, visible latency under 120 ms | Not run |
 | 6. Cost shutdown | Provider event/audit log proving deallocation after 30 minutes with zero players | Not run |
 
-The feature PR must remain draft and unmerged while any cell above is not green. At milestone completion, merge into `develop`, re-run the full gate set, then merge/tag `main`.
+PR #4 and PR #5 were merged by the owner on 2026-08-28 while these cells were not green. That action integrated source but did not satisfy or waive any gate. Successor PRs remain draft until the exact candidate revision has all required evidence; only then may the milestone be tagged or described as accepted.
 
 ## Design sections used by M0
 

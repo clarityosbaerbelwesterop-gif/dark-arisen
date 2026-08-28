@@ -1,8 +1,8 @@
 # Engineering handover
 
-**Updated:** 2026-08-27  
-**Milestone:** M0 — Foundation and remote play path  
-**Merge state:** Do not merge; runtime gates have not executed.
+**Updated:** 2026-08-28  
+**Milestone:** M2 — vertical-slice source production; runtime gates still blocked  
+**Merge state:** PR #4 was merged to `develop` and PR #5 to `main` by the owner on 2026-08-28 while required runtime gates were still unexecuted. The merge records source integration only; it is not M0, M2, Alpha, or platform acceptance. Successor work continues on `feature/m2-rexa-vertical-slice`.
 
 ## Completed in the feature branch
 
@@ -19,6 +19,10 @@
 - Audited the supplied AWS UE4 sample and SkyPilot. Neither supplies free GPU capacity; SkyPilot is BYOC orchestration and is not the selected Windows UE runtime.
 - Added fail-closed validation for the private AWS/Tailscale contract, including public-port, wildcard-identity, Funnel, charge-acknowledgement, retained-storage, and private-service checks.
 - Hardened the M1 greybox path: broken posture cancels a queued strike, invalid Examine targets cannot strand the camera, death enters the authored four-second Hold, lock-on uses a 20 m acquisition/25 m retention leash, and Rache has its locked keyboard/stick-combination input gate.
+- Added the native M1 animation-state bridge and montage-notify contact path, while keeping authored animation assets as a separate acceptance gate.
+- Added the markerless six-trigger quest/journal foundation, including silent activation, fallible chronological notes, internal expiry outcomes and mutual exclusion.
+- Added native M2 state for Isabel Cruz's locked Duty/List/1846 thresholds, killed/spared/avoided outcomes, non-hostile mercy state and four-second death hold.
+- Added HUD-free heat pressure plus native Cenote breath/drowning and independent water-routing, green-gold image, Keeper-outcome and mandatory-Return state.
 
 ## Deliberately not done
 
@@ -30,15 +34,16 @@
 
 ## Next operator actions
 
-1. Attach a private Windows UE 5.5 self-hosted runner and let the feature PR execute compile/tests.
+1. Attach a private Windows UE 5.5 self-hosted runner and let queued main workflow run #22 execute compile/tests. Its job currently has no assigned runner.
 2. Resolve any real UE compiler or automation failures; do not suppress checks.
 3. Flo selects and operates the GPU host and creates the private browser link. Repository work supplies the reviewed project, packaging/deployment scripts, and eventual private ZIP; it does not provision or publish the endpoint.
 4. On Flo's selected host, apply the exact one-user access policy and configure machine-scoped secrets/provider identity according to the relevant private deployment guide.
 5. Deploy the exact PR revision, run `collect-host-evidence.ps1`, and capture all six gates in `M0_CHECKLIST.md` without placing the private URL or password in GitHub.
-6. Merge only after all evidence is green, first to `develop` and then to `main` at milestone completion.
+6. Keep successor PRs draft and do not treat the already merged source as milestone-complete until every missing gate has been rerun green on the exact candidate revision.
 
 ## Known external blockers
 
-- The repository currently exposes no active Unreal/GPU host or self-hosted runner. Flo has taken ownership of the GPU and private-link step; the evidence is still pending.
+- The repository currently exposes no active Unreal/GPU host or matching self-hosted runner. Main workflow run #22 / job `98789832571` is queued with an empty runner name for `self-hosted, Windows, X64, ue5.5, dark-arisen`.
+- This Codex workspace is Linux and contains no licensed Unreal Engine 5.5 Windows toolchain. Pixel Streaming transports an already packaged Windows Unreal application; it cannot compile that application or create a PS5 package.
 - GitHub-hosted Actions availability is account-scoped; this repo had no workflows or historical runs before M0. The new workflow intentionally requires a self-hosted machine.
 - Pixel Streaming Infrastructure is free software hosted on GitHub. Epic's documentation does not include a free external GPU computer with it; if Flo has a separate Epic-host entitlement, its concrete instance/dashboard URL is required.

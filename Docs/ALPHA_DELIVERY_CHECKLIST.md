@@ -1,7 +1,7 @@
 # Dark Arisen Alpha delivery checklist
 
-**Delivery branch:** `feature/pr4-full-game-delivery`  
-**Pull request:** #4  
+**Delivery branch:** `feature/m2-rexa-vertical-slice`  
+**Merged source history:** PR #4 → `develop`; PR #5 → `main` on 2026-08-28. Neither merge proves the still-missing runtime or Alpha gates.  
 **Engine:** Unreal Engine 5.5  
 **Artifact definition:** the first Alpha is the complete, private UE 5.5 game project plus separately verified Windows and PS5 target artifacts containing every approved M0–M8 system and all authorised game content. A source-only scaffold, greybox, vertical slice, streaming configuration, or Windows build renamed as a PS5 build is not an Alpha. Arcware is a Windows Pixel Streaming test path, not a PS5 emulator.
 
@@ -110,11 +110,12 @@ This file is the progress index. Detailed acceptance criteria remain authoritati
 
 ## Current blockers outside source authoring
 
-- No matching private Windows UE 5.5 GitHub runner is accepting the queued workflow.
+- No matching private Windows UE 5.5 GitHub runner is accepting main workflow run #22 / job `98789832571`; GitHub reports an empty runner name for the required labels.
+- The active Codex workspace is Linux and has no licensed UE 5.5 Windows installation. Pixel Streaming starts only after a Windows Unreal package exists and cannot manufacture a Windows or PS5 build.
 - Flo will handle the GPU and private browser link; no host/runtime evidence has been supplied yet.
 - The AI Voice Generator is expected to be free, but no generation may begin before dialogue lock plus zero-cost and commercial-rights verification.
 - PS5 packaging/certification requires Sony programme access and hardware not present in this workspace.
 - Arcware documents Unreal Engine application upload and browser Pixel Streaming; it cannot supply PS5 SDK validation or emulate a PS5 package.
 - The repository contains no canonical credits list or approved end-credits music cue yet. Flo's current direction requires both, but the cue, rights and any cost remain an explicit approval gate.
 
-Source work may continue in PR #4 under Flo's current direction, but blocked runtime evidence must never be marked complete by inference.
+Source work continues on `feature/m2-rexa-vertical-slice` under Flo's current direction, but blocked runtime evidence must never be marked complete by inference.
