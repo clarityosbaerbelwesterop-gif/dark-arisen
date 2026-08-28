@@ -16,12 +16,13 @@ class UHeatExposureComponent;
 class UInteractionComponent;
 class ULockOnComponent;
 class UAnimMontage;
+class UProgressionEconomyComponent;
 class UQuestJournalComponent;
 class USpringArmComponent;
 class UStaminaComponent;
 class UWaterBreathComponent;
 
-/** M1 player pawn: weighted locomotion, committed combat, wounds, camera policy, and touch. */
+/** M1 player pawn: weighted locomotion, committed combat, wounds, camera policy, touch, and persistent authored state. */
 UCLASS()
 class DARKARISEN_API AJakeCharacter : public ACharacter
 {
@@ -55,6 +56,8 @@ public:
     TObjectPtr<UHeatExposureComponent> HeatExposureComponent;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Jake|Components")
     TObjectPtr<UWaterBreathComponent> WaterBreathComponent;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Jake|Components")
+    TObjectPtr<UProgressionEconomyComponent> ProgressionEconomyComponent;
 
 protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Jake|Camera")
