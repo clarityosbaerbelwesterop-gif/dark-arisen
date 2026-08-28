@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Deterministic source contract for the M3 ship and M4 systems foundations."""
+"""Deterministic source contract for completed M3/M4 source foundations."""
 
 from __future__ import annotations
 
@@ -11,13 +11,28 @@ from pathlib import Path
 REQUIRED_FILES = (
     "Source/DarkArisen/Ship/ShipVoyageComponent.h",
     "Source/DarkArisen/Ship/ShipVoyageComponent.cpp",
+    "Source/DarkArisen/Ship/LaLiberacionShip.h",
+    "Source/DarkArisen/Ship/LaLiberacionShip.cpp",
+    "Source/DarkArisen/Ship/ShipHouseholdComponent.h",
+    "Source/DarkArisen/Ship/ShipHouseholdComponent.cpp",
+    "Source/DarkArisen/Ship/SeaPassageComponent.h",
+    "Source/DarkArisen/Ship/SeaPassageComponent.cpp",
+    "Source/DarkArisen/Interaction/PhysicalMapActor.h",
+    "Source/DarkArisen/Interaction/PhysicalMapActor.cpp",
     "Source/DarkArisen/Systems/ProgressionEconomyComponent.h",
     "Source/DarkArisen/Systems/ProgressionEconomyComponent.cpp",
+    "Source/DarkArisen/Systems/ProgressionEconomySocial.cpp",
+    "Source/DarkArisen/Systems/ChapterEconomyComponent.h",
+    "Source/DarkArisen/Systems/ChapterEconomyComponent.cpp",
+    "Source/DarkArisen/Systems/SkillTreeCatalogDataAsset.h",
+    "Source/DarkArisen/Systems/SkillTreeCatalogDataAsset.cpp",
     "Source/DarkArisen/World/DarkArisenWorldRulesSubsystem.h",
     "Source/DarkArisen/World/DarkArisenWorldRulesSubsystem.cpp",
     "Source/DarkArisen/JakeCharacter.h",
     "Source/DarkArisen/JakeCharacter.cpp",
     "Source/DarkArisen/Rexa/RexaSettlementDirector.cpp",
+    "Source/DarkArisen/Tests/M3M4SystemsSpec.cpp",
+    "Source/DarkArisen/Tests/M3M4CompletionSpec.cpp",
 )
 
 CANONICAL_TEACHERS = (
@@ -84,13 +99,27 @@ def validate(root: Path) -> list[str]:
 
     ship_h = texts["Source/DarkArisen/Ship/ShipVoyageComponent.h"]
     ship_cpp = texts["Source/DarkArisen/Ship/ShipVoyageComponent.cpp"]
+    ship_actor_h = texts["Source/DarkArisen/Ship/LaLiberacionShip.h"]
+    ship_actor_cpp = texts["Source/DarkArisen/Ship/LaLiberacionShip.cpp"]
+    household_h = texts["Source/DarkArisen/Ship/ShipHouseholdComponent.h"]
+    household_cpp = texts["Source/DarkArisen/Ship/ShipHouseholdComponent.cpp"]
+    passage_h = texts["Source/DarkArisen/Ship/SeaPassageComponent.h"]
+    passage_cpp = texts["Source/DarkArisen/Ship/SeaPassageComponent.cpp"]
+    map_h = texts["Source/DarkArisen/Interaction/PhysicalMapActor.h"]
+    map_cpp = texts["Source/DarkArisen/Interaction/PhysicalMapActor.cpp"]
     progression_h = texts["Source/DarkArisen/Systems/ProgressionEconomyComponent.h"]
     progression_cpp = texts["Source/DarkArisen/Systems/ProgressionEconomyComponent.cpp"]
+    social_cpp = texts["Source/DarkArisen/Systems/ProgressionEconomySocial.cpp"]
+    chapter_h = texts["Source/DarkArisen/Systems/ChapterEconomyComponent.h"]
+    chapter_cpp = texts["Source/DarkArisen/Systems/ChapterEconomyComponent.cpp"]
+    catalog_h = texts["Source/DarkArisen/Systems/SkillTreeCatalogDataAsset.h"]
+    catalog_cpp = texts["Source/DarkArisen/Systems/SkillTreeCatalogDataAsset.cpp"]
     world_h = texts["Source/DarkArisen/World/DarkArisenWorldRulesSubsystem.h"]
     world_cpp = texts["Source/DarkArisen/World/DarkArisenWorldRulesSubsystem.cpp"]
     jake_h = texts["Source/DarkArisen/JakeCharacter.h"]
     jake_cpp = texts["Source/DarkArisen/JakeCharacter.cpp"]
     rexa_cpp = texts["Source/DarkArisen/Rexa/RexaSettlementDirector.cpp"]
+    completion_spec = texts["Source/DarkArisen/Tests/M3M4CompletionSpec.cpp"]
 
     _require(ship_h, "ShipVoyageComponent.h", (
         "enum class EShipDeck",
@@ -119,12 +148,86 @@ def validate(root: Path) -> list[str]:
         "AnnotatePhysicalChart",
         "FMath::FindDeltaAngleDegrees",
         "ActiveHands = FMath::Clamp(ActiveHands, 0, 90)",
+        "Owner->AddActorWorldOffset(DeltaCentimetres, true)",
+        "ForwardSpeedMetresPerSecond * 100.0f * DeltaTime",
     ), errors)
     for crew_id in CANONICAL_CREW:
         if crew_id not in ship_cpp:
             errors.append(f"ShipVoyageComponent.cpp missing canonical crew id: {crew_id}")
     if ship_cpp.count("AddCrew(TEXT(") != 5:
         errors.append("ShipVoyageComponent.cpp must author exactly five named crew entries")
+
+    _require(ship_actor_h, "LaLiberacionShip.h", (
+        "WeatherDeckRoot",
+        "UpperDeckRoot",
+        "MidDeckRoot",
+        "HoldDeckRoot",
+        "UShipHouseholdComponent",
+        "USeaPassageComponent",
+        "APhysicalMapActor",
+        "RestGreatCabinToDaypart",
+    ), errors)
+    _require(ship_actor_cpp, "LaLiberacionShip.cpp", (
+        'CreateDefaultSubobject<UShipHouseholdComponent>(TEXT("HouseholdComponent"))',
+        'CreateDefaultSubobject<USeaPassageComponent>(TEXT("SeaPassageComponent"))',
+        "SpawnPhysicalMap()",
+        "EDarkArisenRestLocation::GreatCabin",
+    ), errors)
+
+    _require(household_h, "ShipHouseholdComponent.h", (
+        "ECrewHouseholdActivity",
+        "ECrewMoraleRead",
+        "ECrewMoraleCue",
+        "SpecialistBerthsOccupied",
+        "SemiNamedHands = 12",
+        "InternalMorale",
+        "ApplyGameMinute",
+    ), errors)
+    _require(household_cpp, "ShipHouseholdComponent.cpp", (
+        "NamedReads.Num() == 5",
+        "Count > 8",
+        "Count > 12",
+        "ECrewMoraleCue::EmptyHammock",
+        "ECrewMoraleCue::EmptyForecastleAtDusk",
+        "World->GetSubsystem<UDarkArisenWorldRulesSubsystem>()",
+    ), errors)
+    for crew_id in CANONICAL_CREW:
+        if crew_id not in household_cpp:
+            errors.append(f"ShipHouseholdComponent.cpp missing scheduled crew id: {crew_id}")
+
+    _require(passage_h, "SeaPassageComponent.h", (
+        "BeginSeaPassage",
+        "CanCompleteSeaPassage",
+        "CompleteSeaPassage",
+        "RequiredGameMinutes",
+        "RequiredDistanceMetres",
+        "SailedDistanceMetres",
+        "never moves the vessel",
+    ), errors)
+    _require(passage_cpp, "SeaPassageComponent.cpp", (
+        "FVector::Distance(Current, LastObservedLocation)",
+        "ElapsedMinutes >= RequiredGameMinutes",
+        "SailedDistanceMetres >= RequiredDistanceMetres",
+    ), errors)
+    for forbidden in ("OpenLevel(", "ServerTravel(", "SetActorLocation(", "TeleportToWaypoint("):
+        if forbidden in passage_cpp:
+            errors.append(f"SeaPassageComponent.cpp contains forbidden instant-travel path: {forbidden}")
+
+    _require(map_h, "PhysicalMapActor.h", (
+        "AExamineDocumentActor",
+        "RecordSailedCoastline",
+        "RecordVisitedSettlement",
+        "RecordGivenRoute",
+        "AddHandwrittenAnnotation",
+        "no player position",
+    ), errors)
+    _require(map_cpp, "PhysicalMapActor.cpp", (
+        'TEXT("Unfold map")',
+        'TEXT("Coastlines sailed")',
+        'TEXT("Settlements visited")',
+        'TEXT("Routes given")',
+        'TEXT("In Jake\'s hand")',
+    ), errors)
 
     _require(progression_h, "ProgressionEconomyComponent.h", (
         "Doubloons,",
@@ -136,12 +239,17 @@ def validate(root: Path) -> list[str]:
         "Wary",
         "RequiredSkillNodeCount = 68",
         "RequiredTeacherCount = 23",
+        "RequiredTeacherGatedNodeCount = 23",
+        "RequiredStandingGatedNodeCount = 11",
         "MaximumAvailableMarks = 94",
         "FullTreeMarkCost = 141",
         "MaximumHealth = 200",
         "MaximumStamina = 120",
         "MaximumPosture = 100",
         "CarryKilograms = 80.0f",
+        "RecordWeaponDrawnHere",
+        "AdvanceSocialChapter",
+        "BeginSitting",
         "no respec path exists",
         "no generic conversion API",
     ), errors)
@@ -153,8 +261,8 @@ def validate(root: Path) -> list[str]:
         "MarksEarned > MaximumAvailableMarks - Amount",
         "SkillNodeDefinitions.Num() >= RequiredSkillNodeCount",
         "DefinitionCanBeLearned",
-        "TeachersMet.Contains",
-        "WorldFlags.Contains",
+        "CompleteTeachingScene",
+        "HasCompletedTeachingScene",
         "CreditCurrency",
         "SpendCurrency",
         "BeginListening",
@@ -162,15 +270,67 @@ def validate(root: Path) -> list[str]:
         "CompleteListening",
         "The remaining authored nodes are not invented here",
     ), errors)
+    _require(social_cpp, "ProgressionEconomySocial.cpp", (
+        "GreetingBeforeWary",
+        "WaryChaptersRemaining",
+        "ESocialGreetingState::Wary",
+        "InterruptListening();",
+        "ActiveSeatId = SeatId",
+    ), errors)
     for teacher_id in CANONICAL_TEACHERS:
         if teacher_id not in progression_cpp:
             errors.append(f"ProgressionEconomyComponent.cpp missing canonical teacher id: {teacher_id}")
     if progression_cpp.count('TEXT("teacher.') < 23:
         errors.append("ProgressionEconomyComponent.cpp must contain the complete 23-teacher catalog")
 
+    _require(chapter_h, "ChapterEconomyComponent.h", (
+        "FChapterLedger",
+        "HoldingIncome",
+        "ArmyUpkeep",
+        "GarrisonUpkeep",
+        "ConstructionDraw",
+        "PayLegendaryTierCost",
+        "PayReconstructionSilver",
+        "PayCrewShare",
+        "No interest, investment or compounding API exists",
+    ), errors)
+    _require(chapter_cpp, "ChapterEconomyComponent.cpp", (
+        "Chapter <= LastResolvedChapter",
+        "PendingLedger.NetDoubloons()",
+        "EDarkArisenCurrency::SilverMarks",
+        "PaidLegendaryWork",
+        "PaidReconstructionProjects",
+        "PaidCrewShareChapters",
+    ), errors)
+
+    _require(catalog_h, "SkillTreeCatalogDataAsset.h", (
+        "USkillTreeCatalogDataAsset",
+        "TArray<FSkillNodeDefinition> Nodes",
+        "IsCatalogStructurallyValid",
+        "RegisterInto",
+        "68 / 16-12-14-13-13 / 141 / 23 teacher / 11 Standing",
+    ), errors)
+    _require(catalog_cpp, "SkillTreeCatalogDataAsset.cpp", (
+        "Nodes.Num() != UProgressionEconomyComponent::RequiredSkillNodeCount",
+        "Blade != 16 || Shadow != 12 || Sea != 14 || Land != 13 || Word != 13",
+        "RequiredTeacherGatedNodeCount",
+        "RequiredStandingGatedNodeCount",
+        "!Ids.Contains(Prerequisite)",
+        "Progression->IsSkillCatalogComplete()",
+    ), errors)
+
     _require(world_h, "DarkArisenWorldRulesSubsystem.h", (
         "UTickableWorldSubsystem",
         "RealSecondsPerGameHour = 150.0f",
+        "EDarkArisenRestLocation",
+        "GreatCabin,",
+        "SafeHouse",
+        "EDarkArisenDaypart",
+        "Dawn,",
+        "Midday,",
+        "Dusk,",
+        "Night",
+        "CompleteRest",
         "NotifyChapterBoundary",
         "NotifyRestCompleted",
         "BeginLakeToDockAutosaveSuppression",
@@ -181,6 +341,8 @@ def validate(root: Path) -> list[str]:
     ), errors)
     _require(world_cpp, "DarkArisenWorldRulesSubsystem.cpp", (
         "GameMinutesPerRealSecond",
+        "GetDaypartMinute",
+        "DeltaMinutes += MinutesPerDay",
         "QueueLegalAutosaveRequest();",
         "bAutosaveSuppressed = true",
         "bPendingAutosaveRequest = false",
@@ -200,6 +362,17 @@ def validate(root: Path) -> list[str]:
         "GetSubsystem<UDarkArisenWorldRulesSubsystem>()",
         "WorldRules->GetTotalWorldMinutes()",
         "CanonicalGameMinute != LastAppliedGameMinute",
+    ), errors)
+
+    _require(completion_spec, "M3M4CompletionSpec.cpp", (
+        "DarkArisen.M3.HouseholdCompletion",
+        "Passage cannot complete instantly",
+        "Recent loss produces the empty-hammock world cue",
+        "DarkArisen.M4.CompletionContracts",
+        "Same chapter cannot compound",
+        "Suppressed rest cannot queue autosave",
+        "Exact 68-node structural contract validates",
+        "Wrong total Mark cost fails closed",
     ), errors)
 
     combined = "\n".join(texts.values())
