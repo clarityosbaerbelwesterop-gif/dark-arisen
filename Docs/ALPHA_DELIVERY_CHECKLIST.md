@@ -1,11 +1,12 @@
 # Dark Arisen Alpha delivery checklist
 
-**Delivery branch:** `feature/m2-rexa-vertical-slice`  
+**Active source branch:** `feature/m2-runtime-completion` / PR #7  
 **Merged source history:** PR #4 → `develop`; PR #5 → `main` on 2026-08-28. Neither merge proves the still-missing runtime or Alpha gates.  
 **Engine:** Unreal Engine 5.5  
+**Current runtime direction:** Flo directed on 2026-08-28 that unavailable UE 5.5 runtime/runner gates should not block further source work. They remain mandatory later acceptance gates and are not treated as passed.  
 **Artifact definition:** the first Alpha is the complete private UE 5.5 game plus two separately verified, content-identical Shipping artifacts: `DarkArisen-Alpha-Windows-Arcware.zip` and `DarkArisen-Alpha-Linux-x86_64.zip`. The exact source archive accompanies them. A scaffold, greybox, vertical slice, streaming configuration or untested candidate is not an Alpha. Native PS5 work is deferred to Beta and is not an Alpha deliverable.
 
-This file is the progress index. Detailed acceptance criteria remain authoritative in `M0_CHECKLIST.md` and `Docs/Handoff/ENGINEERING_HANDOFF.md`. A checkbox is marked only when its required source and runtime evidence both exist.
+This file is the progress index. Detailed acceptance criteria remain authoritative in `M0_CHECKLIST.md` and `Docs/Handoff/ENGINEERING_HANDOFF.md`. **A checkbox is marked only when its required source and runtime evidence both exist.** Source-only work is recorded as prose under the relevant milestone and must not be read as milestone acceptance.
 
 ## Non-negotiable delivery gates
 
@@ -66,17 +67,40 @@ This file is the progress index. Detailed acceptance criteria remain authoritati
 - [ ] Physical held journal presentation, local-direction dialogue, three authored Turns and one authored Standing mission.
 - [ ] Two-hour evidence run satisfying the M2 merge gate.
 
+**Current source-only continuation:** Las Raíces now consumes the canonical M4 world-time subsystem for schedule updates. This is integration source, not observed navigation/runtime evidence.
+
 ## M3 — Ship
 
 - [ ] Walkable four-deck *La Liberación*, sailing, wind, physical map and navigation.
 - [ ] Five named scheduled crew members, morale readability, great cabin, rest and autosave.
 - [ ] Real sea-passage gate with no fast travel or loading transition.
 
+**Current source-only progress in PR #7:**
+
+- `UShipVoyageComponent` encodes heading, wind, Point-of-Sail, crew-dependent handling and continued voyage state when Jake leaves the helm.
+- Exactly five canonical named crew records plus 40–90 hands are authored in the source boundary.
+- Physical-chart acquire/annotation state exists; no Compass, minimap, player-dot, map-click movement or water-fast-travel API has been added.
+- `ALaLiberacionShip` is level-placeable and owns four stable deck attachment roots: Weather, Upper, Mid and Hold.
+- Great-Cabin rest routes into the one canonical legal rest/autosave request path.
+- Final ship geometry, continuous traversal, vessel physics/buoyancy, ocean motion, crew schedule presentation, morale world-read, physical held map and sea-passage evidence remain open; therefore all M3 acceptance boxes stay unchecked.
+
 ## M4 — Systems
 
 - [ ] Three-axis 68-node progression, 23 teachers and no respec/conversion.
 - [ ] Three-currency economy, sinks, time/save rules and social greeting/listening systems.
 - [ ] Named-person technique-learning scene proving the M4 gate.
+
+**Current source-only progress in PR #7:**
+
+- Jake owns a native BODY/CRAFT/STANDING progression/economy component.
+- Complete-catalog acceptance is fail-closed around 68 nodes, branch split 16/12/14/13/13, 141 total Mark cost, 23 teacher-gated nodes, 11 Standing-gated nodes and all prerequisite references.
+- The canonical 23 teachers are encoded. Meeting a teacher does not unlock a node; a teacher-gated node requires an explicit completed teaching-scene record for that teacher and node.
+- Nodes support up to three authored prerequisites. There is no Respec API and no money-to-capability path.
+- Only canonically named nodes are currently pre-registered. Missing definitions are not invented merely to reach 68, so the complete-catalog gate intentionally remains false.
+- Doubloons, Pounds and Silver Marks exist as independent balances with no generic conversion API. The four bottomless sink implementation is still open.
+- Stranger/Known/Owed/Wary and Listening/Interrupt/Overhear state exist without affinity/relationship meters; authored presentation remains open.
+- `UDarkArisenWorldRulesSubsystem` owns the one world clock at 150 real seconds per in-game hour and only permits autosave requests after rest or chapter boundary. Lake→Dock suppresses autosaves while manual save remains allowed.
+- Native M3/M4 automation specs and deterministic source validators exist, but runner execution is still pending; therefore all M4 acceptance boxes stay unchecked.
 
 ## M5 — Colonial war
 
@@ -122,10 +146,10 @@ This file is the progress index. Detailed acceptance criteria remain authoritati
 
 ## Current blockers outside source authoring
 
-- No matching private Windows UE 5.5 GitHub runner is accepting main workflow run #22 / job `98789832571`; GitHub reports an empty runner name for the required labels. No verified Linux UE 5.5 runner has been supplied either.
-- The active Codex workspace is Linux but has no licensed UE 5.5 installation, and it has no Windows environment. Pixel Streaming starts only after a packaged Unreal application exists and cannot manufacture either Alpha build.
+- No matching private Windows or Linux UE 5.5 GitHub runner is currently accepting the required self-hosted jobs. Under Flo's current direction this does not stop source authoring, but it still blocks compile/runtime acceptance.
+- The active workspace has no licensed UE 5.5 installation and no Windows environment. Pixel Streaming starts only after a packaged Unreal application exists and cannot manufacture either Alpha build.
 - Flo will handle the GPU and private browser link; no host/runtime evidence has been supplied yet.
 - The AI Voice Generator is expected to be free, but no generation may begin before dialogue lock plus zero-cost and commercial-rights verification.
-- The repository contains no canonical credits list or approved end-credits music cue yet. Flo's current direction requires both, but the cue, rights and any cost remain an explicit approval gate.
+- The repository contains no canonical credits list or approved end-credits music cue yet. The cue, rights and any cost remain an explicit approval gate.
 
-Source work continues on `feature/m2-rexa-vertical-slice` under Flo's current direction, but blocked runtime evidence must never be marked complete by inference.
+Source work continues on PR #7 / `feature/m2-runtime-completion` under Flo's current direction. Deferred runtime evidence must never be marked complete by inference.
