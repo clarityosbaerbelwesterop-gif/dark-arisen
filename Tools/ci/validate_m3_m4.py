@@ -15,6 +15,9 @@ REQUIRED_FILES = (
     "Source/DarkArisen/Systems/ProgressionEconomyComponent.cpp",
     "Source/DarkArisen/World/DarkArisenWorldRulesSubsystem.h",
     "Source/DarkArisen/World/DarkArisenWorldRulesSubsystem.cpp",
+    "Source/DarkArisen/JakeCharacter.h",
+    "Source/DarkArisen/JakeCharacter.cpp",
+    "Source/DarkArisen/Rexa/RexaSettlementDirector.cpp",
 )
 
 CANONICAL_TEACHERS = (
@@ -85,6 +88,9 @@ def validate(root: Path) -> list[str]:
     progression_cpp = texts["Source/DarkArisen/Systems/ProgressionEconomyComponent.cpp"]
     world_h = texts["Source/DarkArisen/World/DarkArisenWorldRulesSubsystem.h"]
     world_cpp = texts["Source/DarkArisen/World/DarkArisenWorldRulesSubsystem.cpp"]
+    jake_h = texts["Source/DarkArisen/JakeCharacter.h"]
+    jake_cpp = texts["Source/DarkArisen/JakeCharacter.cpp"]
+    rexa_cpp = texts["Source/DarkArisen/Rexa/RexaSettlementDirector.cpp"]
 
     _require(ship_h, "ShipVoyageComponent.h", (
         "enum class EShipDeck",
@@ -179,6 +185,21 @@ def validate(root: Path) -> list[str]:
         "bAutosaveSuppressed = true",
         "bPendingAutosaveRequest = false",
         "if (!bAutosaveSuppressed)",
+    ), errors)
+
+    _require(jake_h, "JakeCharacter.h", (
+        "class UProgressionEconomyComponent;",
+        "TObjectPtr<UProgressionEconomyComponent> ProgressionEconomyComponent;",
+    ), errors)
+    _require(jake_cpp, "JakeCharacter.cpp", (
+        '#include "Systems/ProgressionEconomyComponent.h"',
+        'CreateDefaultSubobject<UProgressionEconomyComponent>(TEXT("ProgressionEconomyComponent"))',
+    ), errors)
+    _require(rexa_cpp, "RexaSettlementDirector.cpp", (
+        '#include "World/DarkArisenWorldRulesSubsystem.h"',
+        "GetSubsystem<UDarkArisenWorldRulesSubsystem>()",
+        "WorldRules->GetTotalWorldMinutes()",
+        "CanonicalGameMinute != LastAppliedGameMinute",
     ), errors)
 
     combined = "\n".join(texts.values())
