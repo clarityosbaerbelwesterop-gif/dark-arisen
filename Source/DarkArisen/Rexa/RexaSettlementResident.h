@@ -8,6 +8,7 @@
 #include "RexaSettlementResident.generated.h"
 
 class UStaticMeshComponent;
+class ARexaSettlementAnchor;
 
 /**
  * Lightweight non-combatant used by the authored Las Raíces roster.
@@ -37,6 +38,9 @@ public:
     UFUNCTION(BlueprintCallable, Category = "Rexa|Schedule")
     FName RefreshPurposeAnchor(int64 GameMinute);
 
+    bool MoveToPurposeAnchor(int64 GameMinute, ARexaSettlementAnchor* Anchor);
+    void ClearPurposeRoute();
+
     UFUNCTION(BlueprintPure, Category = "Rexa|Safety")
     bool IsProtectedChildRuntime() const;
 
@@ -53,6 +57,9 @@ public:
 
     UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Rexa|Schedule")
     FName CurrentPurposeAnchorId;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rexa|Schedule")
+    float PurposeAnchorAcceptanceRadiusCentimetres = 90.0f;
 
 private:
     bool bDefinitionInitialized = false;

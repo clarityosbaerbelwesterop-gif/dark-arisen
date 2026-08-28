@@ -21,6 +21,7 @@
 #include "Interaction/InteractionPersistence.h"
 #include "Interaction/PhysicalDoorActor.h"
 #include "Missions/RexaM2MissionCatalog.h"
+#include "Rexa/RexaSettlementAnchor.h"
 #include "Rexa/RexaSettlementResident.h"
 #include "Rexa/RexaSettlementRoster.h"
 
@@ -526,8 +527,8 @@ bool FDarkArisenM2RexaSettlementRosterSpec::RunTest(const FString& Parameters)
             First.GetPurposeAnchorAtGameMinute(300), First.DawnAnchorId);
         TestEqual(TEXT("Eleven uses the shaded midday purpose"),
             First.GetPurposeAnchorAtGameMinute(660), First.MiddayAnchorId);
-        TestEqual(TEXT("Seventeen uses the evening purpose"),
-            First.GetPurposeAnchorAtGameMinute(1020), First.EveningAnchorId);
+        TestEqual(TEXT("Fifteen uses the evening purpose"),
+            First.GetPurposeAnchorAtGameMinute(900), First.EveningAnchorId);
         TestEqual(TEXT("Twenty-two uses the night purpose"),
             First.GetPurposeAnchorAtGameMinute(1320), First.NightAnchorId);
     }
@@ -541,6 +542,26 @@ bool FDarkArisenM2RexaSettlementRosterSpec::RunTest(const FString& Parameters)
     TestTrue(TEXT("Residents have no combat component and cannot be locked on"),
         ResidentDefaults &&
         ResidentDefaults->FindComponentByClass<UCombatComponent>() == nullptr);
+    TestEqual(TEXT("Spawned residents automatically receive an AI controller"),
+        ResidentDefaults ? ResidentDefaults->AutoPossessAI : EAutoPossessAI::Disabled,
+        EAutoPossessAI::PlacedInWorldOrSpawned);
+
+    const ARexaSettlementAnchor* AnchorDefaults = GetDefault<ARexaSettlementAnchor>();
+    TestTrue(TEXT("Settlement anchor defaults exist"), AnchorDefaults != nullptr);
+    TestEqual(TEXT("Anchors default to the authored Las Raices settlement"),
+        AnchorDefaults ? AnchorDefaults->SettlementId : NAME_None,
+        FName(TEXT("Rexa.LasRaices")));
+    TestFalse(TEXT("Schedule anchors never add blocking collision"),
+        AnchorDefaults && AnchorDefaults->GetActorEnableCollision());
+
+    for (const FRexaResidentDefinition& Resident : Residents)
+    {
+        const FName MiddayAnchor = Resident.GetPurposeAnchorAtGameMinute(720);
+        const FString MiddayName = MiddayAnchor.ToString();
+        TestTrue(TEXT("Every tropical midday purpose is explicitly sheltered"),
+            MiddayName.Contains(TEXT("Shade")) ||
+            MiddayName.Contains(TEXT("CountingRoom")));
+    }
     return true;
 }
 

@@ -4,6 +4,8 @@
 
 #include "Components/SceneComponent.h"
 #include "Engine/World.h"
+#include "EngineUtils.h"
+#include "Rexa/RexaSettlementAnchor.h"
 #include "Rexa/RexaSettlementResident.h"
 #include "Rexa/RexaSettlementRoster.h"
 
@@ -70,4 +72,63 @@ void ARexaSettlementDirector::ClearSpawnedSettlement()
 int32 ARexaSettlementDirector::GetSpawnedResidentCount() const
 {
     return SpawnedResidents.Num();
+}
+
+bool ARexaSettlementDirector::ApplyGameMinute(const int64 GameMinute)
+{
+    if (GameMinute < 0) return false;
+    if (SpawnedResidents.IsEmpty() && !SpawnAuthoredSettlement()) return false;
+
+    TMap<FName, ARexaSettlementAnchor*> Anchors;
+    if (!BuildAnchorRegistry(Anchors)) return false;
+
+    struct FRouteCommand
+    {
+        ARexaSettlementResident* Resident = nullptr;
+        ARexaSettlementAnchor* Anchor = nullptr;
+    };
+    TArray<FRouteCommand> Commands;
+    Commands.Reserve(SpawnedResidents.Num());
+    const int64 MinuteOfDay = GameMinute % 1440;
+    const bool bMidday = MinuteOfDay >= 660 && MinuteOfDay < 900;
+    for (ARexaSettlementResident* Resident : SpawnedResidents)
+    {
+        if (!IsValid(Resident)) return false;
+        const FName RequiredAnchorId =
+            Resident->GetResidentDefinition().GetPurposeAnchorAtGameMinute(GameMinute);
+        ARexaSettlementAnchor* const* Anchor = Anchors.Find(RequiredAnchorId);
+        if (!Anchor || !IsValid(*Anchor) || (bMidday && !(*Anchor)->bShelteredFromMiddayHeat))
+            return false;
+        Commands.Add({Resident, *Anchor});
+    }
+
+    for (const FRouteCommand& Command : Commands)
+    {
+        if (!Command.Resident->MoveToPurposeAnchor(GameMinute, Command.Anchor))
+        {
+            for (ARexaSettlementResident* Resident : SpawnedResidents)
+            {
+                if (IsValid(Resident)) Resident->ClearPurposeRoute();
+            }
+            return false;
+        }
+    }
+    return Commands.Num() == URexaSettlementRoster::RequiredResidentCount;
+}
+
+bool ARexaSettlementDirector::BuildAnchorRegistry(
+    TMap<FName, ARexaSettlementAnchor*>& OutAnchors) const
+{
+    OutAnchors.Reset();
+    UWorld* World = GetWorld();
+    if (!World || SettlementId.IsNone()) return false;
+    for (TActorIterator<ARexaSettlementAnchor> It(World); It; ++It)
+    {
+        ARexaSettlementAnchor* Anchor = *It;
+        if (!IsValid(Anchor) || Anchor->SettlementId != SettlementId) continue;
+        if (!Anchor->IsAuthoredAnchorValid() || OutAnchors.Contains(Anchor->AnchorId))
+            return false;
+        OutAnchors.Add(Anchor->AnchorId, Anchor);
+    }
+    return !OutAnchors.IsEmpty();
 }

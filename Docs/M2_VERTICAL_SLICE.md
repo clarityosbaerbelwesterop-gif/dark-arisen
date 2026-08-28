@@ -38,6 +38,7 @@
 - Every resident has dawn, shaded-midday, evening and night purpose anchors rather than a random wander point. Seven named knowledge roles connect specific locals to the four authored mission direction variants.
 - A level-placeable settlement director validates the complete roster before spawning and cleans up its own partial population on failure. It never generates residents and is deliberately absent from the unrelated M0 test room.
 - Settlement residents contain no health or combat component, so the existing hit and lock-on paths reject them; initialization fails if a derived resident adds either component. All five authored children additionally override damage and launch force to zero, disable actor damage and character physics interaction, carry an explicit protected-child tag and use a non-colliding, non-ragdoll greybox presentation.
+- Added non-colliding, settlement-scoped schedule anchors and AI path requests. A future canonical time owner supplies the game minute; the settlement does not invent a competing clock or teleport residents. Duplicate/missing anchors and unsheltered tropical-midday destinations fail the whole schedule update.
 
 ## Canon conflict rulings
 
@@ -55,7 +56,8 @@ The current handoff and later Phase 11 laws supersede conflicting older Rexa dra
 - Final handwritten page art, page-turn/hand animation, subtitle/accessibility presentation and controller-tested physical-journal evidence. The native held presentation is source-complete but not visually accepted.
 - World actors, conversations, route beats, consequences and persistence evidence for all three authored Turns and the Standing salvage variant. Catalog/state source alone is not completed quest content.
 - Approximately 1 km² of Rexa jungle, authored Las Raíces level/anchor geometry, navigation and required traversal/vegetation physics. The exact forty-person roster and spawn boundary now exist in source; forty scheduled residents have not been compiled or observed running in UE.
-- Purpose-driven pathing between the authored schedule anchors, four contextual ambient-dialogue layers, crowd reactions, adult gathering/fleeing and the absolute 50 m child-flee/removal behavior with runtime evidence.
+- Authored placement of every schedule anchor on real navigation geometry plus controller-tested path completion/crowd avoidance. The native route request and fail-closed registry exist, but no UE navigation result has been observed.
+- Four contextual ambient-dialogue layers, crowd reactions, adult gathering/fleeing and the absolute 50 m child-flee/removal behavior with runtime evidence.
 - Authored Cenote geometry, environmental lip discovery, water-routing devices, swimming/current physics, image lighting, Keeper Below creature/AI/animation, offerings/ownership choice and physical Return shortcut.
 - In-engine proof that the Cenote contains no marker, ambient music or explanatory log and that all required beats persist; source state alone is insufficient.
 - Authored heat/cistern trigger volumes, Fuerte San Rafael geometry, route logic, combat animations, three-phase dialogue, cabinet/list/report rewards and controller-tested balance.

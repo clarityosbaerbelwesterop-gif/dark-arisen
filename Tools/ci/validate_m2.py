@@ -25,6 +25,8 @@ REQUIRED_FILES = (
     "Source/DarkArisen/Interaction/PhysicalJournalActor.cpp",
     "Source/DarkArisen/Rexa/RexaSettlementRoster.h",
     "Source/DarkArisen/Rexa/RexaSettlementRoster.cpp",
+    "Source/DarkArisen/Rexa/RexaSettlementAnchor.h",
+    "Source/DarkArisen/Rexa/RexaSettlementAnchor.cpp",
     "Source/DarkArisen/Rexa/RexaSettlementResident.h",
     "Source/DarkArisen/Rexa/RexaSettlementResident.cpp",
     "Source/DarkArisen/Rexa/RexaSettlementDirector.h",
@@ -151,6 +153,8 @@ def validate(root: Path) -> list[str]:
         "Las Raices has exactly forty authored residents",
         "Five authored children are protected",
         "Residents have no combat component and cannot be locked on",
+        "Every tropical midday purpose is explicitly sheltered",
+        "Schedule anchors never add blocking collision",
     ), errors)
 
     mission_header = root / "Source/DarkArisen/Missions/RexaM2MissionCatalog.h"
@@ -195,6 +199,8 @@ def validate(root: Path) -> list[str]:
 
     roster_header = root / "Source/DarkArisen/Rexa/RexaSettlementRoster.h"
     roster_source = root / "Source/DarkArisen/Rexa/RexaSettlementRoster.cpp"
+    anchor_header = root / "Source/DarkArisen/Rexa/RexaSettlementAnchor.h"
+    anchor_source = root / "Source/DarkArisen/Rexa/RexaSettlementAnchor.cpp"
     resident_header = root / "Source/DarkArisen/Rexa/RexaSettlementResident.h"
     resident_source = root / "Source/DarkArisen/Rexa/RexaSettlementResident.cpp"
     director_header = root / "Source/DarkArisen/Rexa/RexaSettlementDirector.h"
@@ -246,6 +252,8 @@ def validate(root: Path) -> list[str]:
         "TakeDamage",
         "InitializeFromDefinition",
         "RefreshPurposeAnchor",
+        "MoveToPurposeAnchor",
+        "ClearPurposeRoute",
         "IsProtectedChildRuntime",
     ), errors)
     _require_fragments(resident_source, (
@@ -258,12 +266,31 @@ def validate(root: Path) -> list[str]:
         "FindComponentByClass<UCombatComponent>() == nullptr",
         "Movement->bEnablePhysicsInteraction = false",
         "GreyboxBody->SetCollisionEnabled(ECollisionEnabled::NoCollision)",
+        "AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned",
+        "ResidentController->MoveToActor",
+        "EPathFollowingRequestResult::Failed",
+        "ResidentController->StopMovement()",
+    ), errors)
+    _require_fragments(anchor_header, (
+        "ARexaSettlementAnchor",
+        "SettlementId",
+        "AnchorId",
+        "bShelteredFromMiddayHeat",
+        "bChildSafetyDestination",
+        "IsAuthoredAnchorValid",
+    ), errors)
+    _require_fragments(anchor_source, (
+        "SetActorEnableCollision(false)",
+        "InSettlementId.IsNone() || InAnchorId.IsNone()",
+        "!GetActorLocation().ContainsNaN()",
     ), errors)
     _require_fragments(director_header, (
         "ARexaSettlementDirector",
         "SpawnAuthoredSettlement",
         "ClearSpawnedSettlement",
         "GetSpawnedResidentCount",
+        "ApplyGameMinute",
+        "BuildAnchorRegistry",
     ), errors)
     _require_fragments(director_source, (
         "URexaSettlementRoster::GetAuthoredResidents()",
@@ -272,12 +299,22 @@ def validate(root: Path) -> list[str]:
         "Spawned->InitializeFromDefinition(Definition)",
         "ClearSpawnedSettlement()",
         "URexaSettlementRoster::RequiredResidentCount",
+        "TActorIterator<ARexaSettlementAnchor>",
+        "OutAnchors.Contains(Anchor->AnchorId)",
+        "bMidday && !(*Anchor)->bShelteredFromMiddayHeat",
+        "Command.Resident->MoveToPurposeAnchor",
+        "Resident->ClearPurposeRoute()",
+    ), errors)
+    _require_fragments(root / "Source/DarkArisen/DarkArisen.Build.cs", (
+        '"AIModule"',
     ), errors)
     settlement_text = "\n".join(
         path.read_text(encoding="utf-8")
         for path in (
             roster_header,
             roster_source,
+            anchor_header,
+            anchor_source,
             resident_header,
             resident_source,
             director_header,
@@ -292,6 +329,7 @@ def validate(root: Path) -> list[str]:
         "CreateDefaultSubobject<UHealthComponent>",
         "CreateDefaultSubobject<UCombatComponent>",
         "SetSimulatePhysics(true)",
+        "TeleportTo(",
     ):
         if forbidden in settlement_text:
             errors.append(f"authored Rexa settlement source forbids: {forbidden}")

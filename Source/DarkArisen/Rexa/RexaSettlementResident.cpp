@@ -2,16 +2,20 @@
 
 #include "Rexa/RexaSettlementResident.h"
 
+#include "AIController.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/CombatComponent.h"
 #include "Components/HealthComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Navigation/PathFollowingComponent.h"
+#include "Rexa/RexaSettlementAnchor.h"
 #include "UObject/ConstructorHelpers.h"
 
 ARexaSettlementResident::ARexaSettlementResident()
 {
     PrimaryActorTick.bCanEverTick = false;
+    AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
     GetCapsuleComponent()->InitCapsuleSize(36.0f, 88.0f);
 
     UCharacterMovementComponent* Movement = GetCharacterMovement();
@@ -81,6 +85,38 @@ FName ARexaSettlementResident::RefreshPurposeAnchor(const int64 GameMinute)
         ? ResidentDefinition.GetPurposeAnchorAtGameMinute(GameMinute)
         : NAME_None;
     return CurrentPurposeAnchorId;
+}
+
+bool ARexaSettlementResident::MoveToPurposeAnchor(
+    const int64 GameMinute,
+    ARexaSettlementAnchor* Anchor)
+{
+    if (!bDefinitionInitialized || GameMinute < 0 || !IsValid(Anchor) ||
+        !Anchor->IsAuthoredAnchorValid()) return false;
+    const FName RequiredAnchorId = ResidentDefinition.GetPurposeAnchorAtGameMinute(GameMinute);
+    if (RequiredAnchorId.IsNone() || Anchor->AnchorId != RequiredAnchorId) return false;
+
+    if (!GetController()) SpawnDefaultController();
+    AAIController* ResidentController = Cast<AAIController>(GetController());
+    if (!ResidentController) return false;
+    const EPathFollowingRequestResult::Type Result = ResidentController->MoveToActor(
+        Anchor,
+        PurposeAnchorAcceptanceRadiusCentimetres,
+        true,
+        true,
+        true,
+        nullptr,
+        true);
+    if (Result == EPathFollowingRequestResult::Failed) return false;
+    CurrentPurposeAnchorId = RequiredAnchorId;
+    return true;
+}
+
+void ARexaSettlementResident::ClearPurposeRoute()
+{
+    if (AAIController* ResidentController = Cast<AAIController>(GetController()))
+        ResidentController->StopMovement();
+    CurrentPurposeAnchorId = NAME_None;
 }
 
 bool ARexaSettlementResident::IsProtectedChildRuntime() const

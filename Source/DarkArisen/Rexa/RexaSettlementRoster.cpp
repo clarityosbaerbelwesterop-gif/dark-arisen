@@ -41,8 +41,8 @@ FName FRexaResidentDefinition::GetPurposeAnchorAtGameMinute(const int64 GameMinu
     if (GameMinute < 0) return NAME_None;
     const int64 MinuteOfDay = GameMinute % 1440;
     if (MinuteOfDay >= 300 && MinuteOfDay < 660) return DawnAnchorId;
-    if (MinuteOfDay >= 660 && MinuteOfDay < 1020) return MiddayAnchorId;
-    if (MinuteOfDay >= 1020 && MinuteOfDay < 1320) return EveningAnchorId;
+    if (MinuteOfDay >= 660 && MinuteOfDay < 900) return MiddayAnchorId;
+    if (MinuteOfDay >= 900 && MinuteOfDay < 1320) return EveningAnchorId;
     return NightAnchorId;
 }
 
