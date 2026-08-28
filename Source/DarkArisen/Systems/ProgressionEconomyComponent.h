@@ -23,6 +23,14 @@ enum class ESocialGreetingState : uint8
     Wary
 };
 
+UENUM(BlueprintType)
+enum class ESkillGateKind : uint8
+{
+    None,
+    Standing,
+    WorldState
+};
+
 USTRUCT(BlueprintType)
 struct FSkillNodeDefinition
 {
@@ -34,16 +42,23 @@ struct FSkillNodeDefinition
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
     FName BranchId;
 
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(ClampMin="1"))
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(ClampMin="1", ClampMax="4"))
     int32 MarkCost = 1;
 
-    /** Any one of these teachers may satisfy the authored teaching gate. Empty means none. */
+    /** Any one of these teachers may satisfy the authored teaching-scene gate. Empty means none. */
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
     TArray<FName> TeacherOptions;
 
-    /** Optional hidden world/Standing gate. It is never surfaced as a numeric meter. */
+    /** Skill-tree implementation note allows at most three authored prerequisites. */
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
-    FName RequiredWorldFlag;
+    TArray<FName> PrerequisiteNodeIds;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly)
+    ESkillGateKind GateKind = ESkillGateKind::None;
+
+    /** Hidden Standing/world-state gate. It is never surfaced as a numeric meter. */
+    UPROPERTY(EditAnywhere, BlueprintReadOnly)
+    FName RequiredGateId;
 
     /** Optional mutually exclusive authored choice group. */
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
@@ -73,15 +88,16 @@ struct FCurrencyWallet
  *
  * Locked laws enforced here:
  * - BODY grows only from authored objects/acts;
- * - CRAFT uses Marks and authored teachers; money cannot unlock nodes;
+ * - CRAFT uses Marks and completed authored teaching scenes; money cannot unlock nodes;
  * - STANDING is hidden world state, never a numeric player-facing meter;
- * - 68-node / 23-teacher catalog sizes are acceptance invariants;
+ * - complete catalog = 68 nodes, branch split 16/12/14/13/13, total cost 141,
+ *   23 teacher-gated nodes and 11 Standing-gated nodes;
  * - no respec path exists;
  * - the three currencies have no generic conversion API;
  * - social state is four greeting states with no affinity number or relationship screen.
  *
  * The bible names only part of the 68 nodes individually. Missing nodes are intentionally not
- * invented: the catalog remains fail-closed until authored definitions bring it to exactly 68.
+ * invented: the catalog remains fail-closed until authored definitions satisfy every invariant.
  */
 UCLASS(ClassGroup=(DarkArisen), meta=(BlueprintSpawnableComponent))
 class DARKARISEN_API UProgressionEconomyComponent : public UActorComponent
@@ -94,6 +110,8 @@ public:
 
     static constexpr int32 RequiredSkillNodeCount = 68;
     static constexpr int32 RequiredTeacherCount = 23;
+    static constexpr int32 RequiredTeacherGatedNodeCount = 23;
+    static constexpr int32 RequiredStandingGatedNodeCount = 11;
     static constexpr int32 MaximumAvailableMarks = 94;
     static constexpr int32 FullTreeMarkCost = 141;
 
@@ -112,8 +130,16 @@ public:
     UFUNCTION(BlueprintCallable, Category="Progression|Craft")
     bool AwardMarks(FName AuthoredSourceId, int32 Amount);
 
-    UFUNCTION(BlueprintCallable, Category="Progression|Craft")
+    /** Meeting a teacher is not teaching. It only makes an authored teaching scene possible. */
+    UFUNCTION(BlueprintCallable, Category="Progression|Teachers")
     void RecordTeacherMet(FName TeacherId);
+
+    /**
+     * Completes a named-person teaching scene for one node. The node must explicitly name
+     * this teacher and the person must have been met. No menu-only shortcut exists.
+     */
+    UFUNCTION(BlueprintCallable, Category="Progression|Teachers")
+    bool CompleteTeachingScene(FName TeacherId, FName NodeId);
 
     UFUNCTION(BlueprintCallable, Category="Progression|Standing")
     void SetWorldFlag(FName FlagId, bool bEnabled);
@@ -128,7 +154,7 @@ public:
     bool HasLearnedNode(FName NodeId) const { return LearnedNodes.Contains(NodeId); }
 
     UFUNCTION(BlueprintPure, Category="Progression|Craft")
-    bool IsSkillCatalogComplete() const { return SkillNodeDefinitions.Num() == RequiredSkillNodeCount; }
+    bool IsSkillCatalogComplete() const { return ValidateCompleteCatalog(); }
 
     UFUNCTION(BlueprintPure, Category="Progression|Craft")
     int32 GetRegisteredSkillNodeCount() const { return SkillNodeDefinitions.Num(); }
@@ -178,6 +204,9 @@ public:
 private:
     void RegisterKnownCanonicalNodes();
     bool DefinitionCanBeLearned(const FSkillNodeDefinition& Definition) const;
+    bool ValidateCompleteCatalog() const;
+    bool HasCompletedTeachingScene(FName TeacherId, FName NodeId) const;
+    static FName MakeTeachingSceneKey(FName TeacherId, FName NodeId);
     int64& ResolveCurrencyMutable(EDarkArisenCurrency Currency);
 
     UPROPERTY(SaveGame)
@@ -216,6 +245,9 @@ private:
 
     UPROPERTY(SaveGame)
     TSet<FName> TeachersMet;
+
+    UPROPERTY(SaveGame)
+    TSet<FName> CompletedTeachingScenes;
 
     UPROPERTY(SaveGame)
     TSet<FName> WorldFlags;
