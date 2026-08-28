@@ -21,7 +21,7 @@ Packaging first creates immutable candidate files tied to a complete 40-characte
 - `DarkArisen-Candidate-Windows-Arcware-<12-char-commit>.zip`
 - `DarkArisen-Candidate-Linux-x86_64-<12-char-commit>.zip`
 
-Each candidate contains a build manifest and receives a SHA-256 sidecar. `Tools/ci/promote-alpha-candidates.py` copies those exact tested bytes to the final Alpha names only when an evidence JSON has `status: accepted-alpha`, the same commit and candidate hashes, and every following Boolean gate set to `true`:
+Each candidate contains a build manifest and receives a SHA-256 sidecar. The native C++ command `DarkArisenOps promote-alpha` copies those exact tested bytes to the final Alpha names only when an evidence JSON has `status: accepted-alpha`, the same commit and candidate hashes, and every following Boolean gate set to `true`:
 
 - `full_content_m0_m8`
 - `windows_ue55_build_and_automation`
