@@ -86,7 +86,7 @@ public:
     ULargeBattleComponent();
 
     UFUNCTION(BlueprintCallable, Category="Battle")
-    bool BeginBattle(FName InBattleId, ELargeBattleType InBattleType = ELargeBattleType::FieldAction);
+    bool BeginBattle(FName InBattleId, ELargeBattleType InBattleType);
 
     UFUNCTION(BlueprintCallable, Category="Battle|Line")
     bool RegisterSegment(const FBattleSegmentDefinition& Definition);
