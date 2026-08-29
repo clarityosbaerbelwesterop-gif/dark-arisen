@@ -75,6 +75,13 @@ public:
     UFUNCTION(BlueprintPure, Category="ColonialWar|Retaliation")
     ERetaliationStage GetCurrentStage(EColonialFaction Faction) const;
 
+    /**
+     * Historical stage proof for authored quest conditions. A later Heat decay never erases the
+     * fact that a stage genuinely became active under its chapter cap.
+     */
+    UFUNCTION(BlueprintPure, Category="ColonialWar|Retaliation")
+    bool HasReachedStageAtLeastOnce(EColonialFaction Faction, ERetaliationStage MinimumStage) const;
+
     UFUNCTION(BlueprintCallable, Category="ColonialWar|Hostages")
     bool RegisterHostageCandidate(const FHostageCandidate& Candidate);
 
@@ -95,6 +102,9 @@ private:
     int32& ResolveHeatMutable(EColonialFaction Faction);
     const int32& ResolveHeat(EColonialFaction Faction) const;
     bool WasAttackedThisChapter(EColonialFaction Faction) const;
+    void RecordCurrentStageHistory(EColonialFaction Faction);
+    ERetaliationStage& ResolveMaximumStageMutable(EColonialFaction Faction);
+    const ERetaliationStage& ResolveMaximumStage(EColonialFaction Faction) const;
 
     UPROPERTY(SaveGame)
     int32 ImperialHeat = 0;
@@ -110,6 +120,13 @@ private:
 
     UPROPERTY(SaveGame)
     bool bAlbionAttackedThisChapter = false;
+
+    /** Highest actually-active stage after chapter cap, retained for authored quest prerequisites. */
+    UPROPERTY(SaveGame)
+    ERetaliationStage ImperialMaximumStageReached = ERetaliationStage::Unnoticed;
+
+    UPROPERTY(SaveGame)
+    ERetaliationStage AlbionMaximumStageReached = ERetaliationStage::Unnoticed;
 
     UPROPERTY(SaveGame)
     TMap<FName, FHostageCandidate> HostageCandidates;

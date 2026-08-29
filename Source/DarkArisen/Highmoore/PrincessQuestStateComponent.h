@@ -69,6 +69,13 @@ public:
     UFUNCTION(BlueprintCallable, Category="Highmoore|Princess")
     bool ResolveBelosAssault(bool bHasCrystalKatana);
 
+    /**
+     * Records the protected playable choice to clear/go to the blocked undercroft stair.
+     * The state records only that Jake chose it; the game still never shows what is below.
+     */
+    UFUNCTION(BlueprintCallable, Category="Highmoore|Princess")
+    bool RecordWentToUndercroftStair();
+
     UFUNCTION(BlueprintCallable, Category="Highmoore|Princess")
     bool BeginReturnJourney();
 
@@ -106,6 +113,9 @@ public:
     UFUNCTION(BlueprintPure, Category="Highmoore|Princess")
     bool DidReadRealLetter() const { return bReadRealLetter; }
 
+    UFUNCTION(BlueprintPure, Category="Highmoore|Princess")
+    bool DidGoToUndercroftStair() const { return bWentToUndercroftStair; }
+
 private:
     UPROPERTY(SaveGame)
     EPrincessQuestMovement Movement = EPrincessQuestMovement::NotStarted;
@@ -115,6 +125,9 @@ private:
 
     UPROPERTY(SaveGame)
     bool bReadRealLetter = false;
+
+    UPROPERTY(SaveGame)
+    bool bWentToUndercroftStair = false;
 
     UPROPERTY(SaveGame)
     bool bAutosaveWindowStarted = false;

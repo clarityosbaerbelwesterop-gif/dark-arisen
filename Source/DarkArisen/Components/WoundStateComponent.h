@@ -79,6 +79,38 @@ public:
     UPROPERTY(BlueprintAssignable, Category = "Wounds|Events")
     FOnWoundLayerChanged OnWoundLayerChanged;
 
+    /** DESIGN-GAP: animation_system.md requires a visible Winded layer but does not lock a movement-speed multiplier. */
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Wounds|Tuning", meta = (ClampMin = "0.0", ClampMax = "1.0"))
+    float WindedMovementSpeedScale = 0.97f;
+
+    /** DESIGN-GAP: animation_system.md requires a visible Hurt layer but does not lock a movement-speed multiplier. */
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Wounds|Tuning", meta = (ClampMin = "0.0", ClampMax = "1.0"))
+    float HurtMovementSpeedScale = 0.92f;
+
+    /** DESIGN-GAP: animation_system.md requires a limp/stagger-run at Bad but does not lock a movement-speed multiplier. */
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Wounds|Tuning", meta = (ClampMin = "0.0", ClampMax = "1.0"))
+    float BadMovementSpeedScale = 0.80f;
+
+    /** DESIGN-GAP: animation_system.md forbids sprint and requires weapon drag at Failing but does not lock a walk-speed multiplier. */
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Wounds|Tuning", meta = (ClampMin = "0.0", ClampMax = "1.0"))
+    float FailingMovementSpeedScale = 0.65f;
+
+    /** DESIGN-GAP: camera_system.md requires instability to key only from deterioration but does not lock per-layer amplitude. */
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Wounds|Tuning", meta = (ClampMin = "0.0", ClampMax = "1.0"))
+    float WindedCameraInstabilityAlpha = 0.25f;
+
+    /** DESIGN-GAP: camera_system.md requires monotonic deterioration-driven instability but does not lock the Hurt amplitude. */
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Wounds|Tuning", meta = (ClampMin = "0.0", ClampMax = "1.0"))
+    float HurtCameraInstabilityAlpha = 0.50f;
+
+    /** DESIGN-GAP: camera_system.md requires monotonic deterioration-driven instability but does not lock the Bad amplitude. */
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Wounds|Tuning", meta = (ClampMin = "0.0", ClampMax = "1.0"))
+    float BadCameraInstabilityAlpha = 0.75f;
+
+    /** DESIGN-GAP: 1.0 is a normalized drive convention, not a locked physical camera amplitude; JakeCharacter owns the separately tunable drift magnitude. */
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Wounds|Tuning", meta = (ClampMin = "0.0", ClampMax = "1.0"))
+    float FailingCameraInstabilityAlpha = 1.0f;
+
 private:
     UPROPERTY()
     TObjectPtr<UHealthComponent> CachedHealth;
@@ -92,5 +124,6 @@ private:
     UFUNCTION()
     void HandleStaminaChanged(float NewStamina, float MaximumStamina);
 
+    FWoundPresentationProfile BuildPresentationProfileForLayer(EWoundLayer Layer) const;
     void RefreshLayer();
 };

@@ -46,9 +46,18 @@ FString PlatformName();
 FString OpsBinaryPath(const FString& Root);
 
 int32 ValidateCommand(const FParsedArgs& Args);
+int32 ValidateDungeonContentCommand(const FParsedArgs& Args);
+int32 ValidateMissionContentCommand(const FParsedArgs& Args);
+int32 ValidateBossContentCommand(const FParsedArgs& Args);
+int32 ValidateWorldContentCommand(const FParsedArgs& Args);
+int32 ValidateRewardContentCommand(const FParsedArgs& Args);
+int32 ValidatePresentationContentCommand(const FParsedArgs& Args);
+int32 ValidateAudioVoiceContentCommand(const FParsedArgs& Args);
+int32 ValidateAlphaContentCommand(const FParsedArgs& Args);
 int32 RunnerCheckCommand(const FParsedArgs& Args);
 int32 BuildCommand(const FParsedArgs& Args);
 int32 PackageAlphaCommand(const FParsedArgs& Args);
 int32 PromoteAlphaCommand(const FParsedArgs& Args);
+int32 StudioKimiCommand(const FParsedArgs& Args);
 int32 StreamingCommand(const FString& Command, const FParsedArgs& Args);
 }

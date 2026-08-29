@@ -32,12 +32,20 @@ enum class EM7StandingMissionType : uint8
 UENUM(BlueprintType)
 enum class EContentDungeonTier : uint8
 {
+    /** Canonical Tier A minor site. */
     Minor,
+
+    /**
+     * Legacy source value retained for serialization compatibility only. The design corpus defines
+     * Tier A as the minor-site tier; new authored records must use Minor and validation rejects TierA.
+     */
     TierA,
     TierB,
     TierC,
     TierD,
     TierE,
+
+    /** Category-of-one passage, tracked separately from the 41 named + 20 minor global count. */
     CrystalCaves
 };
 
@@ -78,7 +86,7 @@ struct FDungeonManifestEntry
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
     FString GoverningSource;
 
-    /** Tier B+ must open a route back from the inside. */
+    /** Tier B+ and the Crystal Caves carve-out must open a route back from the inside. */
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
     bool bReturnShortcutFromInside = false;
 
@@ -92,8 +100,13 @@ struct FDungeonManifestEntry
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
     bool bContainsChildRemains = false;
 
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(ClampMin="1.0"))
-    float AuthoredMaximumMinutes = 45.0f;
+    /**
+     * DESIGN-GAP: most individual dungeons have only tier-level duration ranges, not exact per-site
+     * maxima. Zero means no exact per-site maximum is authored; validation applies only global/tier
+     * ceilings. Crystal Caves is the sole category with an explicit 90-120 minute range.
+     */
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(ClampMin="0.0"))
+    float AuthoredMaximumMinutes = 0.0f;
 };
 
 USTRUCT(BlueprintType)
@@ -218,6 +231,7 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="M7|Content")
     TArray<FScaledContentEntry> QuestAndMissionEntries;
 
+    /** 41 named + 20 minor global sites, plus one separately counted Crystal Caves carve-out. */
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="M7|Content")
     TArray<FDungeonManifestEntry> Dungeons;
 
@@ -242,6 +256,8 @@ public:
     static constexpr int32 RequiredNamedDungeons = 41;
     static constexpr int32 RequiredMinorDungeons = 20;
     static constexpr int32 RequiredDungeonTotal = 61;
+    static constexpr int32 RequiredCrystalCavesCarveouts = 1;
+    static constexpr int32 RequiredDungeonManifestRecords = RequiredDungeonTotal + RequiredCrystalCavesCarveouts;
     static constexpr int32 RequiredThreads = 17;
     static constexpr int32 RequiredTurns = 132;
     static constexpr int32 RequiredStandingVariants = 147;

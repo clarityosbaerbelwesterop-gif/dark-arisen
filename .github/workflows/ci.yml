@@ -21,29 +21,45 @@ jobs:
     runs-on: [self-hosted, Windows, X64, ue5.5, dark-arisen]
     timeout-minutes: 120
     steps:
-      - name: Check out source and LFS content
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-          lfs: true
-
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 1, lfs: true}
       - name: Build native C++ operations owner
         shell: cmd
         run: 'call "%UE55_ROOT%\Engine\Build\BatchFiles\Build.bat" DarkArisenOps Win64 Development "-Project=%GITHUB_WORKSPACE%\DarkArisen.uproject" -WaitMutex -WarningsAsErrors'
-
       - name: Verify private Windows UE 5.5 runner
         shell: cmd
         run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" runner-check "--root=%GITHUB_WORKSPACE%" "--engine=%UE55_ROOT%"'
-
-      - name: Validate M0-M8 repository contract in native C++
+      - name: Validate repository contracts
         shell: cmd
         run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" validate "--root=%GITHUB_WORKSPACE%"'
-
+      - name: Validate authored dungeons
+        shell: cmd
+        run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" validate-dungeons "--root=%GITHUB_WORKSPACE%"'
+      - name: Validate authored rewards and treasures
+        shell: cmd
+        run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" validate-rewards "--root=%GITHUB_WORKSPACE%"'
+      - name: Validate authored missions
+        shell: cmd
+        run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" validate-missions "--root=%GITHUB_WORKSPACE%"'
+      - name: Validate Tier-1 bosses
+        shell: cmd
+        run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" validate-bosses "--root=%GITHUB_WORKSPACE%"'
+      - name: Validate authored world production
+        shell: cmd
+        run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" validate-world "--root=%GITHUB_WORKSPACE%"'
+      - name: Validate presentation and animation production
+        shell: cmd
+        run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" validate-presentation "--root=%GITHUB_WORKSPACE%"'
+      - name: Validate audio and voice production
+        shell: cmd
+        run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" validate-audio-voice "--root=%GITHUB_WORKSPACE%"'
+      - name: Reconcile Alpha content readiness
+        shell: cmd
+        run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" validate-alpha-content "--root=%GITHUB_WORKSPACE%"'
       - name: Compile Development and Shipping
         if: github.event_name == 'push'
         shell: cmd
         run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" build "--root=%GITHUB_WORKSPACE%" "--engine=%UE55_ROOT%"'
-
       - name: Compile and run Unreal automation tests
         if: github.event_name == 'pull_request'
         shell: cmd
@@ -55,29 +71,45 @@ jobs:
     runs-on: [self-hosted, Linux, X64, ue5.5, dark-arisen]
     timeout-minutes: 120
     steps:
-      - name: Check out source and LFS content
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-          lfs: true
-
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 1, lfs: true}
       - name: Build native C++ operations owner
         shell: bash
         run: '"$UE55_ROOT/Engine/Build/BatchFiles/Linux/Build.sh" DarkArisenOps Linux Development "-Project=$GITHUB_WORKSPACE/DarkArisen.uproject" -WaitMutex -WarningsAsErrors'
-
       - name: Verify private Linux UE 5.5 runner
         shell: bash
         run: '"$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" runner-check "--root=$GITHUB_WORKSPACE" "--engine=$UE55_ROOT"'
-
-      - name: Validate M0-M8 repository contract in native C++
+      - name: Validate repository contracts
         shell: bash
         run: '"$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" validate "--root=$GITHUB_WORKSPACE"'
-
+      - name: Validate authored dungeons
+        shell: bash
+        run: '"$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" validate-dungeons "--root=$GITHUB_WORKSPACE"'
+      - name: Validate authored rewards and treasures
+        shell: bash
+        run: '"$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" validate-rewards "--root=$GITHUB_WORKSPACE"'
+      - name: Validate authored missions
+        shell: bash
+        run: '"$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" validate-missions "--root=$GITHUB_WORKSPACE"'
+      - name: Validate Tier-1 bosses
+        shell: bash
+        run: '"$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" validate-bosses "--root=$GITHUB_WORKSPACE"'
+      - name: Validate authored world production
+        shell: bash
+        run: '"$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" validate-world "--root=$GITHUB_WORKSPACE"'
+      - name: Validate presentation and animation production
+        shell: bash
+        run: '"$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" validate-presentation "--root=$GITHUB_WORKSPACE"'
+      - name: Validate audio and voice production
+        shell: bash
+        run: '"$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" validate-audio-voice "--root=$GITHUB_WORKSPACE"'
+      - name: Reconcile Alpha content readiness
+        shell: bash
+        run: '"$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" validate-alpha-content "--root=$GITHUB_WORKSPACE"'
       - name: Compile Development and Shipping
         if: github.event_name == 'push'
         shell: bash
         run: '"$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" build "--root=$GITHUB_WORKSPACE" "--engine=$UE55_ROOT"'
-
       - name: Compile and run Unreal automation tests
         if: github.event_name == 'pull_request'
         shell: bash

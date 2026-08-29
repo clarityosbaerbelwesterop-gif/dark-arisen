@@ -114,6 +114,19 @@ bool UPrincessQuestStateComponent::ResolveBelosAssault(const bool bHasCrystalKat
     return true;
 }
 
+bool UPrincessQuestStateComponent::RecordWentToUndercroftStair()
+{
+    if (Movement != EPrincessQuestMovement::Belos
+        || BelosResolution == EBelosPathResolution::None
+        || bWentToUndercroftStair)
+    {
+        return false;
+    }
+
+    bWentToUndercroftStair = true;
+    return true;
+}
+
 bool UPrincessQuestStateComponent::BeginReturnJourney()
 {
     if ((Movement != EPrincessQuestMovement::Belos

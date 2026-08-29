@@ -265,14 +265,21 @@ bool UContentScaleManifestDataAsset::ValidateManifest(TArray<FString>& OutErrors
         {
             ++MinorCount;
         }
+        else if (Entry.Tier == EContentDungeonTier::CrystalCaves)
+        {
+            ++CrystalCavesCount;
+        }
+        else if (Entry.Tier == EContentDungeonTier::TierA)
+        {
+            OutErrors.Add(FString::Printf(
+                TEXT("Tier A is the minor-site tier; legacy TierA value is not valid for new authored records: %s"),
+                *Entry.StableId.ToString()));
+        }
         else
         {
             ++NamedCount;
         }
-        if (Entry.Tier == EContentDungeonTier::CrystalCaves)
-        {
-            ++CrystalCavesCount;
-        }
+
         if (Entry.bHasMapMarker)
         {
             OutErrors.Add(FString::Printf(TEXT("dungeon marker is forbidden: %s"), *Entry.StableId.ToString()));
@@ -292,9 +299,9 @@ bool UContentScaleManifestDataAsset::ValidateManifest(TArray<FString>& OutErrors
 
         if (Entry.Tier == EContentDungeonTier::CrystalCaves)
         {
-            if (Entry.AuthoredMaximumMinutes <= 90.0f + DungeonMinuteTolerance || Entry.AuthoredMaximumMinutes > 120.0f + DungeonMinuteTolerance)
+            if (Entry.AuthoredMaximumMinutes < 90.0f - DungeonMinuteTolerance || Entry.AuthoredMaximumMinutes > 120.0f + DungeonMinuteTolerance)
             {
-                OutErrors.Add(TEXT("Crystal Caves is the sole >90-minute carve-out and must remain within its authored 90-120 minute range"));
+                OutErrors.Add(TEXT("Crystal Caves is the sole 90-120 minute category-of-one carve-out"));
             }
         }
         else if (Entry.AuthoredMaximumMinutes > 90.0f + DungeonMinuteTolerance)
@@ -303,13 +310,14 @@ bool UContentScaleManifestDataAsset::ValidateManifest(TArray<FString>& OutErrors
         }
     }
 
-    if (Dungeons.Num() != RequiredDungeonTotal || NamedCount != RequiredNamedDungeons || MinorCount != RequiredMinorDungeons)
+    if (Dungeons.Num() != RequiredDungeonManifestRecords
+        || NamedCount != RequiredNamedDungeons
+        || MinorCount != RequiredMinorDungeons
+        || CrystalCavesCount != RequiredCrystalCavesCarveouts)
     {
-        OutErrors.Add(FString::Printf(TEXT("dungeon manifest must be 61 total = 41 named + 20 minor; found %d total = %d named + %d minor"), Dungeons.Num(), NamedCount, MinorCount));
-    }
-    if (CrystalCavesCount != 1)
-    {
-        OutErrors.Add(FString::Printf(TEXT("dungeon manifest requires exactly one Crystal Caves carve-out; found %d"), CrystalCavesCount));
+        OutErrors.Add(FString::Printf(
+            TEXT("dungeon manifest requires 62 records = 61 global sites (41 named + 20 minor) + 1 Crystal Caves carve-out; found %d records = %d named + %d minor + %d Crystal"),
+            Dungeons.Num(), NamedCount, MinorCount, CrystalCavesCount));
     }
 
     const TSet<FName> CanonicalBosses = GetCanonicalTier1BossIds();

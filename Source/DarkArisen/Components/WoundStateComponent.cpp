@@ -55,35 +55,42 @@ float UWoundStateComponent::GetCameraInstabilityAlpha() const
 
 FWoundPresentationProfile UWoundStateComponent::GetPresentationProfile() const
 {
-    return GetPresentationProfileForLayer(CurrentLayer);
+    return BuildPresentationProfileForLayer(CurrentLayer);
 }
 
 FWoundPresentationProfile UWoundStateComponent::GetPresentationProfileForLayer(
     const EWoundLayer Layer)
 {
+    const UWoundStateComponent* Defaults = GetDefault<UWoundStateComponent>();
+    return Defaults ? Defaults->BuildPresentationProfileForLayer(Layer) : FWoundPresentationProfile();
+}
+
+FWoundPresentationProfile UWoundStateComponent::BuildPresentationProfileForLayer(
+    const EWoundLayer Layer) const
+{
     FWoundPresentationProfile Profile;
     switch (Layer)
     {
     case EWoundLayer::Winded:
-        Profile.MovementSpeedScale = 0.97f;
-        Profile.CameraInstabilityAlpha = 0.25f;
+        Profile.MovementSpeedScale = WindedMovementSpeedScale;
+        Profile.CameraInstabilityAlpha = WindedCameraInstabilityAlpha;
         Profile.bAudibleBreathing = true;
         break;
     case EWoundLayer::Hurt:
-        Profile.MovementSpeedScale = 0.92f;
-        Profile.CameraInstabilityAlpha = 0.50f;
+        Profile.MovementSpeedScale = HurtMovementSpeedScale;
+        Profile.CameraInstabilityAlpha = HurtCameraInstabilityAlpha;
         Profile.bFavoursSide = true;
         break;
     case EWoundLayer::Bad:
-        Profile.MovementSpeedScale = 0.80f;
-        Profile.CameraInstabilityAlpha = 0.75f;
+        Profile.MovementSpeedScale = BadMovementSpeedScale;
+        Profile.CameraInstabilityAlpha = BadCameraInstabilityAlpha;
         Profile.bFavoursSide = true;
         Profile.bLimp = true;
         Profile.bStaggerRun = true;
         break;
     case EWoundLayer::Failing:
-        Profile.MovementSpeedScale = 0.65f;
-        Profile.CameraInstabilityAlpha = 1.0f;
+        Profile.MovementSpeedScale = FailingMovementSpeedScale;
+        Profile.CameraInstabilityAlpha = FailingCameraInstabilityAlpha;
         Profile.bFavoursSide = true;
         Profile.bLimp = true;
         Profile.bWeaponDrag = true;

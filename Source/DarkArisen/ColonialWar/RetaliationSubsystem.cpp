@@ -19,6 +19,7 @@ bool URetaliationSubsystem::RecordFactionDamage(const EColonialFaction Faction, 
     {
         bAlbionAttackedThisChapter = true;
     }
+    RecordCurrentStageHistory(Faction);
     return true;
 }
 
@@ -53,6 +54,10 @@ void URetaliationSubsystem::AdvanceChapter(const int32 NewChapter)
     bImperialAttackedThisChapter = false;
     bAlbionAttackedThisChapter = false;
     CurrentChapter = NewChapter;
+
+    // A phase-cap change can make a stage genuinely active even without a fresh attack this frame.
+    RecordCurrentStageHistory(EColonialFaction::Imperial);
+    RecordCurrentStageHistory(EColonialFaction::Albion);
 }
 
 ERetaliationStage URetaliationSubsystem::GetCurrentStage(const EColonialFaction Faction) const
@@ -62,6 +67,17 @@ ERetaliationStage URetaliationSubsystem::GetCurrentStage(const EColonialFaction 
         return ERetaliationStage::Unnoticed;
     }
     return CapStageForChapter(StageFromHeat(ResolveHeat(Faction)), CurrentChapter);
+}
+
+bool URetaliationSubsystem::HasReachedStageAtLeastOnce(
+    const EColonialFaction Faction,
+    const ERetaliationStage MinimumStage) const
+{
+    if (!IsRetaliatingEmpire(Faction))
+    {
+        return false;
+    }
+    return static_cast<uint8>(ResolveMaximumStage(Faction)) >= static_cast<uint8>(MinimumStage);
 }
 
 bool URetaliationSubsystem::RegisterHostageCandidate(const FHostageCandidate& Candidate)
@@ -198,4 +214,29 @@ const int32& URetaliationSubsystem::ResolveHeat(const EColonialFaction Faction) 
 bool URetaliationSubsystem::WasAttackedThisChapter(const EColonialFaction Faction) const
 {
     return Faction == EColonialFaction::Albion ? bAlbionAttackedThisChapter : bImperialAttackedThisChapter;
+}
+
+void URetaliationSubsystem::RecordCurrentStageHistory(const EColonialFaction Faction)
+{
+    if (!IsRetaliatingEmpire(Faction))
+    {
+        return;
+    }
+
+    ERetaliationStage& Maximum = ResolveMaximumStageMutable(Faction);
+    const ERetaliationStage Current = GetCurrentStage(Faction);
+    if (static_cast<uint8>(Current) > static_cast<uint8>(Maximum))
+    {
+        Maximum = Current;
+    }
+}
+
+ERetaliationStage& URetaliationSubsystem::ResolveMaximumStageMutable(const EColonialFaction Faction)
+{
+    return Faction == EColonialFaction::Albion ? AlbionMaximumStageReached : ImperialMaximumStageReached;
+}
+
+const ERetaliationStage& URetaliationSubsystem::ResolveMaximumStage(const EColonialFaction Faction) const
+{
+    return Faction == EColonialFaction::Albion ? AlbionMaximumStageReached : ImperialMaximumStageReached;
 }

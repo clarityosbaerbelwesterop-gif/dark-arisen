@@ -9,7 +9,8 @@ public class DarkArisenOps : ModuleRules
         PrivateDependencyModuleNames.AddRange(new[]
         {
             "Core",
-            "Json"
+            "Json",
+            "HTTP"
         });
 
         if (Target.Platform == UnrealTargetPlatform.Win64)
