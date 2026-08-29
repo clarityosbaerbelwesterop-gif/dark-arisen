@@ -2,6 +2,8 @@
 
 #include "ColonialWar/CastleSiegeComponent.h"
 
+#include "ContentScale/AuthoredRewardCatalog.h"
+
 UCastleSiegeComponent::UCastleSiegeComponent()
 {
     PrimaryComponentTick.bCanEverTick = false;
@@ -96,6 +98,19 @@ bool UCastleSiegeComponent::RecordStateTreasureRecovered(const FName TreasureId)
     {
         return false;
     }
+
+    // A siege may record only one of the nine authored state-treasure documents, and only at the
+    // castle the treasure belongs to. This prevents arbitrary reward IDs from becoming state canon.
+    const FAuthoredRewardBinding* Binding = FAuthoredRewardCatalog::BuildStateTreasureSlots().FindByPredicate(
+        [TreasureId](const FAuthoredRewardBinding& Entry)
+        {
+            return Entry.SourceContentId == TreasureId || Entry.StableId == TreasureId;
+        });
+    if (!Binding || Binding->OriginStableId != CastleId)
+    {
+        return false;
+    }
+
     RecoveredStateTreasures.Add(TreasureId);
     return true;
 }
