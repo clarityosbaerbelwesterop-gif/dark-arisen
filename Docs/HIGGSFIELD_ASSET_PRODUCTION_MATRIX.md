@@ -13,6 +13,7 @@
 | World regions | 8 | Briefed | None | Runtime maps unauthored | no invented coordinates/locations |
 | Highmoore named anchors | 12 | Briefed | None | Runtime placements unauthored | no generic replacement landmarks |
 | Major character source sheets | 9 | 6 ready / 3 blocked | None | None | Elowen physical sheet; Phase-11 Ethan/Draven conflict |
+| Current Tier-1 bosses — Nine Who Hold | 9 | 0 full-look ready / 9 tracked gaps | None | None | current sources lock age/role/weapon/performance/arena, not final face/body/wardrobe |
 | Deep-dive boss/creature visual sheets | 21 | 19 ready / 2 blocked | None | None | legacy Ethan/Draven blocked; does not replace Nine Who Hold |
 | La Liberación visual spaces | 6 | 5 ready / 1 blocked | None | None | final exterior silhouette unresolved |
 | Individually grounded fauna visuals | 24 | 19 ready / 5 blocked | None | None | Final Wolf save-dependent; four Highmoore species variants underspecified |
@@ -37,15 +38,25 @@
 - 9 State Treasures;
 - 1 grounded unique reward.
 
+The nine current Tier-1 commanders add **zero** provider briefs today because their complete physical looks are not authored. Tracking a gap does not inflate the provider count.
+
 This is source coverage, not asset completion.
 
 ## Character authority
 
 Ready: Jake plus Mira, Big Tom, Ines, Father Salvio and Esteban. Elowen is blocked because her concrete physical/costume sheet is incomplete. Ethan and Draven are blocked because `Docs/DesignAuthority.md` says their older character/boss branch conflicts with current Phase 11 and must be rewritten or explicitly restored.
 
-## Boss / creature authority
+## Current Tier-1 boss authority
 
-The 21 older deep-dive boss visual sheets remain a separate visual-reference corpus. Nineteen are non-conflicted and may drive bounded non-canon reference work. Ethan and Draven are excluded. Tier-1 counting still belongs exclusively to `Docs/M7_TIER1_BOSS_REGISTER.md` and the Nine Who Hold.
+`Docs/M7_TIER1_BOSS_REGISTER.md` and `colonial war bosses.md` define exactly the Nine Who Hold: Herrera, Reyes, Cruz, de Silva, Vega, Blackwood, Sterling, Ashcroft and Thorne.
+
+All nine now have visual-readiness records in `FTier1BossVisualReadinessCatalog`. Their current sources are strong on age/role, weapon or non-combat silhouette, combat/performance language and arena. They do **not** lock complete faces, bodies, hair, eyes, skin, scars, wardrobe packages and personal visual identifiers. Therefore **0/9 full looks are provider-ready**. Higgsfield must not choose those facts on behalf of design authority.
+
+This does not block combat/arena production briefs that can use neutral placeholders later; it blocks canonical character-look generation.
+
+## Legacy boss / creature visual authority
+
+The 21 older deep-dive boss visual sheets remain a separate visual-reference corpus. Nineteen are non-conflicted and may drive bounded non-canon reference work. Ethan and Draven are excluded. This legacy visual corpus never changes the current Tier-1 count or substitutes a legacy face for one of the Nine Who Hold.
 
 ## La Liberación authority
 
@@ -74,6 +85,7 @@ Do not generate simply to close counts:
 - 5 unresolved final-act cutscene identities;
 - Elowen's missing visual facts;
 - current Phase-11 Ethan/Draven visuals until rewritten/restored;
+- all nine current Tier-1 full character looks until their physical authority is written;
 - La Liberación exterior silhouette;
 - save-dependent/underspecified fauna;
 - any unresolved main-story trigger/actor/outcome.
