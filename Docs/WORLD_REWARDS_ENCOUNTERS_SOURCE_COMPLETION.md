@@ -2,7 +2,7 @@
 
 **Date:** 2026-08-29  
 **Base:** `develop` at `d9f268ddf4dee30160d4f50e520fbba241d50adf`  
-**Branch / PR:** `feature/world-rewards-encounters-production` / PR #16 → `develop`  
+**Branch / PR:** `feature/world-rewards-encounters-production` / replacement PR #17 (former Draft PR #16) → `develop`  
 **Evidence class:** native source contracts, static repository gates and Unreal Automation source specs only. UE 5.5 compile/runtime/asset acceptance remains unexecuted while required self-hosted runners/editor evidence is unavailable.
 
 ## Purpose
