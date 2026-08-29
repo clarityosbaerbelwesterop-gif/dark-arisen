@@ -1,5 +1,6 @@
 #include "DarkArisenOps.h"
 
+#include "HAL/FileManager.h"
 #include "Misc/Paths.h"
 
 namespace DarkArisenOps
@@ -34,6 +35,39 @@ void RequireFragments(
         }
     }
 }
+
+void ScanWorldSourceForForbiddenGeneration(const FString& Root, TArray<FString>& Errors)
+{
+    const FString ScanRoot = FPaths::Combine(Root, TEXT("Source/DarkArisen/World"));
+    const TArray<FString> Forbidden = {
+        TEXT("FMath::Rand"),
+        TEXT("FRandomStream"),
+        TEXT("GenerateRandomPopulation"),
+        TEXT("GenerateRandomWildlife"),
+        TEXT("SpawnGenericWildlife"),
+        TEXT("ProceduralQuestNPC")
+    };
+
+    TArray<FString> Files;
+    IFileManager::Get().FindFilesRecursive(Files, *ScanRoot, TEXT("*.h"), true, false, false);
+    IFileManager::Get().FindFilesRecursive(Files, *ScanRoot, TEXT("*.cpp"), true, false, false);
+    for (const FString& File : Files)
+    {
+        FString Text;
+        if (!ReadText(File, Text))
+        {
+            Errors.Add(FString::Printf(TEXT("cannot read world source during generation scan: %s"), *File));
+            continue;
+        }
+        for (const FString& Token : Forbidden)
+        {
+            if (Text.Contains(Token, ESearchCase::CaseSensitive))
+            {
+                Errors.Add(FString::Printf(TEXT("forbidden world-generation token %s in %s"), *Token, *File));
+            }
+        }
+    }
+}
 }
 
 int32 ValidateWorldContentCommand(const FParsedArgs& Args)
@@ -46,7 +80,12 @@ int32 ValidateWorldContentCommand(const FParsedArgs& Args)
         TEXT("Source/DarkArisen/World/AuthoredWorldRegionRegistry.cpp"),
         TEXT("Source/DarkArisen/World/AuthoredWorldContentSubsystem.h"),
         TEXT("Source/DarkArisen/World/AuthoredWorldContentSubsystem.cpp"),
-        TEXT("Source/DarkArisen/Tests/AuthoredWorldRegionRegistrySpec.cpp")})
+        TEXT("Source/DarkArisen/World/PopulationProductionCatalog.h"),
+        TEXT("Source/DarkArisen/World/PopulationProductionCatalog.cpp"),
+        TEXT("Source/DarkArisen/World/FaunaProductionCatalog.h"),
+        TEXT("Source/DarkArisen/World/FaunaProductionCatalog.cpp"),
+        TEXT("Source/DarkArisen/Tests/AuthoredWorldRegionRegistrySpec.cpp"),
+        TEXT("Source/DarkArisen/Tests/PopulationFaunaProductionSpec.cpp")})
     {
         RequireFile(Root, Relative, Errors);
     }
@@ -73,9 +112,59 @@ int32 ValidateWorldContentCommand(const FParsedArgs& Args)
         TEXT("RuntimeMapPackage.TrimStartAndEnd().IsEmpty()"),
         TEXT("LoadedRegion.bSourceRegistryKnown")}, Errors);
 
+    RequireFragments(Root, TEXT("Source/DarkArisen/World/PopulationProductionCatalog.h"), {
+        TEXT("RequiredRegionalProfiles = 7"),
+        TEXT("MinimumAmbientLinesPerMajorRegion = 200"),
+        TEXT("CrowdReturnMinimumMinutes = 2"),
+        TEXT("CrowdReturnMaximumMinutes = 5"),
+        TEXT("AllowsRandomAuthoredPopulationGeneration() { return false; }")}, Errors);
+
+    RequireFragments(Root, TEXT("Source/DarkArisen/World/PopulationProductionCatalog.cpp"), {
+        TEXT("Major Imperial City"), TEXT("80, 150, 20, 50"),
+        TEXT("population.rexa-moran"),
+        TEXT("population.fjordlund"),
+        TEXT("population.ashenmoor"),
+        TEXT("population.quiet-coast"),
+        TEXT("population.pirate-havens"),
+        TEXT("population.region-06"),
+        TEXT("design-gap.population.highmoore"),
+        TEXT("design-gap.population.runtime-assets")}, Errors);
+
+    RequireFragments(Root, TEXT("Source/DarkArisen/World/FaunaProductionCatalog.h"), {
+        TEXT("LandAnimalSpeciesCount = 42"),
+        TEXT("BirdSpeciesCount = 52"),
+        TEXT("SeaSpeciesCount = 65"),
+        TEXT("SmallCreatureTypeCount = 45"),
+        TEXT("PlantSpeciesMinimum = 60"),
+        TEXT("AllowsRandomEncounterGeneration() { return false; }")}, Errors);
+
+    RequireFragments(Root, TEXT("Source/DarkArisen/World/FaunaProductionCatalog.cpp"), {
+        TEXT("fauna.region.rexa-moran"),
+        TEXT("fauna.region.fjordlund"),
+        TEXT("fauna.region.ashenmoor"),
+        TEXT("fauna.region.pale-isle"),
+        TEXT("fauna.region.quiet-coast"),
+        TEXT("fauna.region.at-sea"),
+        TEXT("fauna.region.06"),
+        TEXT("fauna.patriarch"),
+        TEXT("fauna.keeper-below"),
+        TEXT("fauna.canopy-jaguar"),
+        TEXT("design-gap.fauna.identity-import"),
+        TEXT("design-gap.fauna.runtime-assets")}, Errors);
+
     RequireFragments(Root, TEXT("Source/DarkArisen/Tests/AuthoredWorldRegionRegistrySpec.cpp"), {
         TEXT("Exactly eight production/world regions are registered"),
         TEXT("Source does not falsely claim reviewed region .umap exists")}, Errors);
+
+    RequireFragments(Root, TEXT("Source/DarkArisen/Tests/PopulationFaunaProductionSpec.cpp"), {
+        TEXT("Seven source-backed population profiles are registered"),
+        TEXT("Population production requires engine-level child protection"),
+        TEXT("Land animal corpus remains 42 species"),
+        TEXT("Sea corpus remains 65 species"),
+        TEXT("Fauna never gains random encounter generation"),
+        TEXT("The Patriarch remains a named ecological anchor")}, Errors);
+
+    ScanWorldSourceForForbiddenGeneration(Root, Errors);
 
     if (!Errors.IsEmpty())
     {
