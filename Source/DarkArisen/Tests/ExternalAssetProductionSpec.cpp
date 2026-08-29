@@ -30,6 +30,7 @@ bool FDarkArisenExternalAssetProductionSpec::RunTest(const FString& Parameters)
     int32 HighmooreAnchors = 0;
     int32 CharacterLooks = 0;
     int32 BossLooks = 0;
+    int32 ShipLooks = 0;
     int32 Props = 0;
 
     for (const FExternalAssetProductionBrief& Brief : Briefs)
@@ -52,12 +53,14 @@ bool FDarkArisenExternalAssetProductionSpec::RunTest(const FString& Parameters)
         TestFalse(TEXT("Legacy Draven character visual stays provider-blocked"), SourceId == TEXT("character.draven-voss"));
         TestFalse(TEXT("Legacy Ethan boss visual stays provider-blocked"), SourceId == TEXT("boss-visual.ethan-harlow"));
         TestFalse(TEXT("Legacy Draven boss visual stays provider-blocked"), SourceId == TEXT("boss-visual.draven-voss"));
+        TestFalse(TEXT("Unresolved La Liberacion exterior silhouette stays provider-blocked"), SourceId == TEXT("ship-visual.la-liberacion.exterior"));
 
         if (Id.StartsWith(TEXT("external.higgsfield.dungeon."))) ++DungeonLooks;
         else if (Id.StartsWith(TEXT("external.higgsfield.region."))) ++RegionLooks;
         else if (Id.StartsWith(TEXT("external.higgsfield.world."))) ++HighmooreAnchors;
         else if (Id.StartsWith(TEXT("external.higgsfield.character."))) ++CharacterLooks;
         else if (Id.StartsWith(TEXT("external.higgsfield.boss-visual."))) ++BossLooks;
+        else if (Id.StartsWith(TEXT("external.higgsfield.ship."))) ++ShipLooks;
         else if (Id.StartsWith(TEXT("external.higgsfield.prop."))) ++Props;
 
         switch (Brief.MediaKind)
@@ -94,17 +97,20 @@ bool FDarkArisenExternalAssetProductionSpec::RunTest(const FString& Parameters)
         CharacterLooks, FExternalAssetProductionCatalog::ProviderReadyCharacterBriefCount);
     TestEqual(TEXT("Nineteen non-conflicted deep-dive boss visuals have bounded visual-reference briefs"),
         BossLooks, FExternalAssetProductionCatalog::ProviderReadyBossVisualBriefCount);
+    TestEqual(TEXT("Five source-ready La Liberacion deck/interior visuals have bounded reference briefs"),
+        ShipLooks, FExternalAssetProductionCatalog::ProviderReadyShipVisualBriefCount);
     TestEqual(TEXT("Nine State Treasures plus the grounded unique reward remain individually briefed"),
         Props,
         FExternalAssetProductionCatalog::StateTreasureBriefCount
             + FExternalAssetProductionCatalog::UniqueRewardBriefCount);
-    TestEqual(TEXT("Concept-reference coverage includes dungeons, regions, Highmoore anchors, characters, boss visuals and grounded props"),
+    TestEqual(TEXT("Concept-reference coverage includes dungeons, regions, Highmoore anchors, characters, boss visuals, ship spaces and grounded props"),
         Concepts,
         FExternalAssetProductionCatalog::GroundedDungeonBriefCount
             + FExternalAssetProductionCatalog::WorldRegionBriefCount
             + FExternalAssetProductionCatalog::HighmooreWorldBriefCount
             + FExternalAssetProductionCatalog::ProviderReadyCharacterBriefCount
             + FExternalAssetProductionCatalog::ProviderReadyBossVisualBriefCount
+            + FExternalAssetProductionCatalog::ProviderReadyShipVisualBriefCount
             + FExternalAssetProductionCatalog::StateTreasureBriefCount
             + FExternalAssetProductionCatalog::UniqueRewardBriefCount);
 
