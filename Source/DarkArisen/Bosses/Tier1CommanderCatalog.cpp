@@ -2,6 +2,8 @@
 
 #include "Bosses/Tier1CommanderCatalog.h"
 
+#include <initializer_list>
+
 namespace
 {
 FTier1CommanderDefinition Commander(
@@ -14,7 +16,8 @@ FTier1CommanderDefinition Commander(
     std::initializer_list<const TCHAR*> PhaseIds,
     const TCHAR* ArenaMechanic,
     const TCHAR* AvoidedPath,
-    const TCHAR* PrimaryReward)
+    const TCHAR* PrimaryReward,
+    std::initializer_list<const TCHAR*> AllowedAvoidedRoutes)
 {
     FTier1CommanderDefinition Entry;
     Entry.StableId = StableId;
@@ -30,6 +33,10 @@ FTier1CommanderDefinition Commander(
     for (const TCHAR* PhaseId : PhaseIds)
     {
         Entry.PhaseIds.Add(FName(PhaseId));
+    }
+    for (const TCHAR* RouteId : AllowedAvoidedRoutes)
+    {
+        Entry.AllowedAvoidedRouteIds.Add(FName(RouteId));
     }
     Entry.ArenaMechanic = ArenaMechanic;
     Entry.AvoidedPath = AvoidedPath;
@@ -52,7 +59,8 @@ TArray<FTier1CommanderDefinition> FTier1CommanderCatalog::BuildAll()
             {TEXT("measure"), TEXT("pressure"), TEXT("arithmetic")},
             TEXT("Interlocking bastion fields of fire with adjacent garrison marksmen; Alliance Trust Tier 3 undercity entry starts in archive vaults."),
             TEXT("Barrio rising can take Corona while Herrera is elsewhere."),
-            TEXT("Herrera rapier; Empire retaliation coordination degrades archipelago-wide; major Control swing."));
+            TEXT("Herrera rapier; Empire retaliation coordination degrades archipelago-wide; major Control swing."),
+            {TEXT("avoid.herrera.barrio-rising")});
         Entry.bHasUndercityVariant = true;
         Result.Add(Entry);
     }
@@ -65,7 +73,8 @@ TArray<FTier1CommanderDefinition> FTier1CommanderCatalog::BuildAll()
         {TEXT("professional"), TEXT("arithmetic-arrives"), TEXT("overseer")},
         TEXT("Inward-facing gun positions progress toward firing on the villages while Jake duels Reyes."),
         TEXT("The uprising can take the fort before Jake reaches Reyes."),
-        TEXT("Labor ledgers; Reyes sabre; Nueva Esperanza Control collapse.")));
+        TEXT("Labor ledgers; Reyes sabre; Nueva Esperanza Control collapse."),
+        {TEXT("avoid.reyes.uprising-takes-fort")}));
 
     Result.Add(Commander(
         TEXT("boss.cruz"), TEXT("Comandante Isabel Cruz"),
@@ -75,7 +84,8 @@ TArray<FTier1CommanderDefinition> FTier1CommanderCatalog::BuildAll()
         {TEXT("duty"), TEXT("list"), TEXT("1846")},
         TEXT("Shade galleries apply heat pressure; the cistern chamber is the authored cool recovery space."),
         TEXT("Cisterns and Mountain Paths can force formal surrender without the fight."),
-        TEXT("1846 patrol reports and Cruz shrine-clearance list.")));
+        TEXT("1846 patrol reports and Cruz shrine-clearance list."),
+        {TEXT("avoid.cruz.cisterns-mountain-paths-surrender")}));
 
     {
         FTier1CommanderDefinition Entry = Commander(
@@ -86,7 +96,8 @@ TArray<FTier1CommanderDefinition> FTier1CommanderCatalog::BuildAll()
             {TEXT("opening-bid"), TEXT("sweetener"), TEXT("ledgers"), TEXT("truth")},
             TEXT("Captain Miguel Aldana is the actual combatant while de Silva retreats room-to-room and escalates offers."),
             TEXT("Bahía Dorada can be purchased; de Silva assists his own colony's fall for sufficient consideration."),
-            TEXT("De Silva bribe ledgers and vault; Aldana may be recruitable if spared."));
+            TEXT("De Silva bribe ledgers and vault; Aldana may be recruitable if spared."),
+            {TEXT("avoid.de-silva.purchase-colony")}));
         Entry.bDirectCombatant = false;
         Result.Add(Entry);
     }
@@ -100,7 +111,8 @@ TArray<FTier1CommanderDefinition> FTier1CommanderCatalog::BuildAll()
             {TEXT("line"), TEXT("scaffolding"), TEXT("name")},
             TEXT("Icy wall walk and unfinished bastion scaffolding affect Jake; Vega's eleven winters make him authoredly sure-footed."),
             TEXT("Cut the Northern Run before the freeze; Jake may also leave after Vega refuses mercy."),
-            TEXT("Vega correspondence paired with Thorne dispatches; cold-forged broadsword."));
+            TEXT("Vega correspondence paired with Thorne dispatches; cold-forged broadsword."),
+            {TEXT("avoid.vega.cut-northern-run"), TEXT("avoid.vega.walk-away-after-spare-refusal")}));
         Entry.ResolutionRule = ETier1CommanderResolutionRule::SpareRefusedLeaveOnly;
         Result.Add(Entry);
     }
@@ -114,7 +126,8 @@ TArray<FTier1CommanderDefinition> FTier1CommanderCatalog::BuildAll()
             {TEXT("warehouse"), TEXT("counting-halls"), TEXT("offices"), TEXT("archives"), TEXT("roof-or-dock")},
             TEXT("Vertical pursuit through Coventry House; Regulators buy floors, clerks remain present, archive fire can destroy the Master Ledger."),
             TEXT("Drive New Coventry below profitability and shareholders recall Blackwood."),
-            TEXT("Master Ledger; Regulator coordination office; Company treasury."));
+            TEXT("Master Ledger; Regulator coordination office; Company treasury."),
+            {TEXT("avoid.blackwood.shareholder-recall")}));
         Entry.bDirectCombatant = false;
         Entry.bObjectiveCanBeDestroyedByFire = true;
         Result.Add(Entry);
@@ -129,7 +142,8 @@ TArray<FTier1CommanderDefinition> FTier1CommanderCatalog::BuildAll()
             {TEXT("engagement"), TEXT("squadron"), TEXT("intractable")},
             TEXT("HMS Intractable, two escort frigates and harbour batteries fight as a coordinated naval problem; optional boarding creates the only melee variant."),
             TEXT("Alliance/common-cause route can preserve Sterling and her squadron; neutral standoff also avoids combat."),
-            TEXT("Sterling protest correspondence; Bastion naval infrastructure; alliance route adds her squadron to endgame."));
+            TEXT("Sterling protest correspondence; Bastion naval infrastructure; alliance route adds her squadron to endgame."),
+            {TEXT("avoid.sterling.alliance-common-cause"), TEXT("avoid.sterling.neutral-standoff")}));
         Entry.bHasBoardingVariant = true;
         Entry.bHasAllianceAvoidancePath = true;
         Result.Add(Entry);
@@ -143,7 +157,8 @@ TArray<FTier1CommanderDefinition> FTier1CommanderCatalog::BuildAll()
         {TEXT("instrument"), TEXT("bailiffs-thin"), TEXT("astonishment")},
         TEXT("Bailiffs individually put down weapons and leave as villages rise, emptying the domestic arena around Ashcroft."),
         TEXT("Heist the four thousand original contracts; the colony ends without the encounter."),
-        TEXT("Four thousand original contracts; season revenue; largest single castle LS gain.")));
+        TEXT("Four thousand original contracts; season revenue; largest single castle LS gain."),
+        {TEXT("avoid.ashcroft.contracts-heist")}));
 
     {
         FTier1CommanderDefinition Entry = Commander(
@@ -154,7 +169,8 @@ TArray<FTier1CommanderDefinition> FTier1CommanderCatalog::BuildAll()
             {TEXT("command"), TEXT("garrison-falters"), TEXT("bewilderment")},
             TEXT("Cold and short troop rotations make Thorne's garrison deteriorate as the encounter continues while Thorne remains technically strong."),
             TEXT("Expose six years of dispatches for shareholder withdrawal, or complete the education path and have Thorne write the honest recommendation himself."),
-            TEXT("Thorne dispatch copies paired with Vega correspondence; Northern Front Control swing."));
+            TEXT("Thorne dispatch copies paired with Vega correspondence; Northern Front Control swing."),
+            {TEXT("avoid.thorne.dispatch-exposure"), TEXT("avoid.thorne.education-recommendation")}));
         Entry.bGarrisonWeakensOverTime = true;
         Result.Add(Entry);
     }
@@ -194,6 +210,7 @@ bool FTier1CommanderCatalog::Validate(TArray<FString>& OutErrors)
     };
 
     TSet<FName> Seen;
+    TSet<FName> SeenAvoidanceRoutes;
     for (const FTier1CommanderDefinition& Definition : Definitions)
     {
         if (Definition.StableId.IsNone()
@@ -203,9 +220,10 @@ bool FTier1CommanderCatalog::Validate(TArray<FString>& OutErrors)
             || Definition.GoverningSource.IsEmpty()
             || Definition.ArenaMechanic.IsEmpty()
             || Definition.AvoidedPath.IsEmpty()
-            || Definition.PrimaryReward.IsEmpty())
+            || Definition.PrimaryReward.IsEmpty()
+            || Definition.AllowedAvoidedRouteIds.IsEmpty())
         {
-            OutErrors.Add(TEXT("Every Tier-1 commander requires identity, location, source, arena, avoided path and reward."));
+            OutErrors.Add(TEXT("Every Tier-1 commander requires identity, location, source, arena, avoided path, finite avoided route and reward."));
         }
         if (!CanonicalIds.Contains(Definition.StableId))
         {
@@ -216,6 +234,20 @@ bool FTier1CommanderCatalog::Validate(TArray<FString>& OutErrors)
             OutErrors.Add(FString::Printf(TEXT("Duplicate Tier-1 commander id: %s"), *Definition.StableId.ToString()));
         }
         Seen.Add(Definition.StableId);
+
+        for (const FName RouteId : Definition.AllowedAvoidedRouteIds)
+        {
+            if (RouteId.IsNone())
+            {
+                OutErrors.Add(FString::Printf(TEXT("Commander %s contains an empty avoidance route id."), *Definition.StableId.ToString()));
+                continue;
+            }
+            if (SeenAvoidanceRoutes.Contains(RouteId))
+            {
+                OutErrors.Add(FString::Printf(TEXT("Duplicate Tier-1 avoidance route id: %s"), *RouteId.ToString()));
+            }
+            SeenAvoidanceRoutes.Add(RouteId);
+        }
 
         if (!Definition.PhaseHealthFractions.IsEmpty())
         {
@@ -252,6 +284,10 @@ bool FTier1CommanderCatalog::Validate(TArray<FString>& OutErrors)
     if (!TryGet(TEXT("boss.vega"), Vega) || Vega.ResolutionRule != ETier1CommanderResolutionRule::SpareRefusedLeaveOnly)
     {
         OutErrors.Add(TEXT("Vega must retain his refusal-to-be-spared resolution rule."));
+    }
+    if (!Vega.AllowedAvoidedRouteIds.Contains(TEXT("avoid.vega.walk-away-after-spare-refusal")))
+    {
+        OutErrors.Add(TEXT("Vega must preserve walking away after his spare refusal as an authored non-combat resolution."));
     }
 
     return OutErrors.IsEmpty();
