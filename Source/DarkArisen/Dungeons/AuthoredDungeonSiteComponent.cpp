@@ -10,6 +10,11 @@ UAuthoredDungeonSiteComponent::UAuthoredDungeonSiteComponent()
 void UAuthoredDungeonSiteComponent::BeginPlay()
 {
     Super::BeginPlay();
+    InitializeDefinition();
+}
+
+bool UAuthoredDungeonSiteComponent::InitializeDefinition()
+{
     bDefinitionValid = FAuthoredDungeonCatalog::TryGetKnownSite(DungeonStableId, CachedDefinition);
     if (!bDefinitionValid)
     {
@@ -20,6 +25,7 @@ void UAuthoredDungeonSiteComponent::BeginPlay()
             *GetNameSafe(GetOwner()),
             *DungeonStableId.ToString());
     }
+    return bDefinitionValid;
 }
 
 FString UAuthoredDungeonSiteComponent::GetAuthoredDisplayName() const
