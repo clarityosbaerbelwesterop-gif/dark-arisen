@@ -65,7 +65,8 @@ public:
     static constexpr int32 GroundedDungeonBriefCount = 40;
     static constexpr int32 WorldRegionBriefCount = 8;
     static constexpr int32 HighmooreWorldBriefCount = 12;
-    static constexpr int32 ProviderReadyCharacterBriefCount = 8;
+    static constexpr int32 ProviderReadyCharacterBriefCount = 6;
+    static constexpr int32 ProviderReadyBossVisualBriefCount = 19;
     static constexpr int32 StateTreasureBriefCount = 9;
     static constexpr int32 UniqueRewardBriefCount = 1;
     static constexpr int32 UnresolvedPresentationIdentityCount = 5;
@@ -80,6 +81,7 @@ public:
         + WorldRegionBriefCount
         + HighmooreWorldBriefCount
         + ProviderReadyCharacterBriefCount
+        + ProviderReadyBossVisualBriefCount
         + StateTreasureBriefCount
         + UniqueRewardBriefCount;
 
