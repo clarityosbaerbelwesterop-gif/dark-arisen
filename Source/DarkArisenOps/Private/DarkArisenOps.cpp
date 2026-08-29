@@ -11,6 +11,7 @@ void PrintUsage()
     UE_LOG(LogTemp, Display, TEXT("DarkArisenOps — native C++ project operations"));
     UE_LOG(LogTemp, Display, TEXT("Commands:"));
     UE_LOG(LogTemp, Display, TEXT("  validate --root=<repo>"));
+    UE_LOG(LogTemp, Display, TEXT("  validate-dungeons --root=<repo>"));
     UE_LOG(LogTemp, Display, TEXT("  runner-check --root=<repo> --engine=<UE5.5> [--min-disk-gb=120]"));
     UE_LOG(LogTemp, Display, TEXT("  build --root=<repo> --engine=<UE5.5> [--automation]"));
     UE_LOG(LogTemp, Display, TEXT("  package-alpha --revision=<40sha> [--output=<dir>]"));
@@ -39,6 +40,10 @@ INT32_MAIN_INT32_ARGC_TCHAR_ARGV()
         if (Command == TEXT("validate"))
         {
             Result = DarkArisenOps::ValidateCommand(Args);
+        }
+        else if (Command == TEXT("validate-dungeons"))
+        {
+            Result = DarkArisenOps::ValidateDungeonContentCommand(Args);
         }
         else if (Command == TEXT("runner-check"))
         {
