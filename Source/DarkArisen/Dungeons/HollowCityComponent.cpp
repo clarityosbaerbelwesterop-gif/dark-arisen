@@ -3,6 +3,7 @@
 #include "Dungeons/HollowCityComponent.h"
 
 #include "Dungeons/AuthoredDungeonSiteComponent.h"
+#include "GameFramework/Actor.h"
 
 UHollowCityComponent::UHollowCityComponent()
 {
