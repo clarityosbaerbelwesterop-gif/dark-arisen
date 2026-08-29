@@ -29,25 +29,25 @@ jobs:
 
       - name: Build native C++ operations owner
         shell: cmd
-        run: call "%UE55_ROOT%\Engine\Build\BatchFiles\Build.bat" DarkArisenOps Win64 Development "-Project=%GITHUB_WORKSPACE%\DarkArisen.uproject" -WaitMutex -WarningsAsErrors
+        run: 'call "%UE55_ROOT%\Engine\Build\BatchFiles\Build.bat" DarkArisenOps Win64 Development "-Project=%GITHUB_WORKSPACE%\DarkArisen.uproject" -WaitMutex -WarningsAsErrors'
 
       - name: Verify private Windows UE 5.5 runner
         shell: cmd
-        run: "%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" runner-check "--root=%GITHUB_WORKSPACE%" "--engine=%UE55_ROOT%"
+        run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" runner-check "--root=%GITHUB_WORKSPACE%" "--engine=%UE55_ROOT%"'
 
       - name: Validate M0-M8 repository contract in native C++
         shell: cmd
-        run: "%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" validate "--root=%GITHUB_WORKSPACE%"
+        run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" validate "--root=%GITHUB_WORKSPACE%"'
 
       - name: Compile Development and Shipping
         if: github.event_name == 'push'
         shell: cmd
-        run: "%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" build "--root=%GITHUB_WORKSPACE%" "--engine=%UE55_ROOT%"
+        run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" build "--root=%GITHUB_WORKSPACE%" "--engine=%UE55_ROOT%"'
 
       - name: Compile and run Unreal automation tests
         if: github.event_name == 'pull_request'
         shell: cmd
-        run: "%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" build "--root=%GITHUB_WORKSPACE%" "--engine=%UE55_ROOT%" --automation
+        run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" build "--root=%GITHUB_WORKSPACE%" "--engine=%UE55_ROOT%" --automation'
 
   verify-linux:
     name: Linux UE 5.5 native C++ compile, tests, laws
