@@ -47,6 +47,10 @@ jobs:
         shell: cmd
         run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" validate-missions "--root=%GITHUB_WORKSPACE%"'
 
+      - name: Validate Tier-1 boss content in native C++
+        shell: cmd
+        run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" validate-bosses "--root=%GITHUB_WORKSPACE%"'
+
       - name: Compile Development and Shipping
         if: github.event_name == 'push'
         shell: cmd
@@ -88,6 +92,10 @@ jobs:
       - name: Validate authored mission content in native C++
         shell: bash
         run: '"$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" validate-missions "--root=$GITHUB_WORKSPACE"'
+
+      - name: Validate Tier-1 boss content in native C++
+        shell: bash
+        run: '"$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" validate-bosses "--root=$GITHUB_WORKSPACE"'
 
       - name: Compile Development and Shipping
         if: github.event_name == 'push'
