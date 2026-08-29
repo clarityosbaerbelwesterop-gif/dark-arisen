@@ -4,6 +4,7 @@
 
 #include "Misc/AutomationTest.h"
 #include "ContentScale/AuthoredDungeonProductionProfile.h"
+#include "Dungeons/AuthoredDungeonSiteComponent.h"
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
     FDarkArisenDungeonProductionProfilesSpec,
@@ -25,7 +26,7 @@ bool FDarkArisenDungeonProductionProfilesSpec::RunTest(const FString& Parameters
     TestTrue(TEXT("First House profile is available"),
         FAuthoredDungeonProductionProfiles::TryGetProfile(TEXT("dungeon.region06.first-house"), FirstHouse));
     TestTrue(TEXT("First House explicitly gives no reward"), FirstHouse.bRewardExplicitlyNone);
-    TestFalse(TEXT("First House does not fabricate a reward"), !FirstHouse.RewardDetail.IsEmpty());
+    TestTrue(TEXT("First House does not fabricate a reward"), FirstHouse.RewardDetail.IsEmpty());
 
     FAuthoredDungeonProductionProfile ThirdBell;
     TestTrue(TEXT("Third Bell profile is available"),
@@ -51,6 +52,30 @@ bool FDarkArisenDungeonProductionProfilesSpec::RunTest(const FString& Parameters
     TestTrue(TEXT("Vent-Shrine profile is available"),
         FAuthoredDungeonProductionProfiles::TryGetProfile(TEXT("dungeon.ashenmoor.vent-shrine"), VentShrine));
     TestTrue(TEXT("Vent-Shrine remains war-reactive"), VentShrine.bWarReactive);
+
+    UAuthoredDungeonSiteComponent* Cenote = NewObject<UAuthoredDungeonSiteComponent>();
+    Cenote->DungeonStableId = TEXT("dungeon.rexa.cenote-first-mother");
+    TestTrue(TEXT("Grounded site binds both catalog and production profile"), Cenote->InitializeDefinition());
+    TestTrue(TEXT("Bound site exposes authored hazard detail"), !Cenote->GetAuthoredHazardDetail().IsEmpty());
+    TestTrue(TEXT("Bound site exposes authored image brief"), !Cenote->GetAuthoredImageBrief().IsEmpty());
+
+    UAuthoredDungeonSiteComponent* Withheld = NewObject<UAuthoredDungeonSiteComponent>();
+    Withheld->DungeonStableId = TEXT("dungeon.region06.third-bell");
+    TestTrue(TEXT("Withheld site identity still binds"), Withheld->InitializeDefinition());
+    TestTrue(TEXT("Withheld image state is explicit"), Withheld->IsImageWithheld());
+    TestTrue(TEXT("Withheld site can be entered physically"), Withheld->MarkEntered());
+    TestFalse(TEXT("Withheld image cannot be self-certified by generic progression"),
+        Withheld->MarkUnforgettableImageWitnessed());
+    TestFalse(TEXT("Withheld bottom cannot accept an invented generic resolution"),
+        Withheld->MarkBottomResolved(TEXT("invented")));
+
+    UAuthoredDungeonSiteComponent* NoReward = NewObject<UAuthoredDungeonSiteComponent>();
+    NoReward->DungeonStableId = TEXT("dungeon.region06.first-house");
+    TestTrue(TEXT("First House runtime definition binds"), NoReward->InitializeDefinition());
+    TestTrue(TEXT("First House exposes explicit no-reward rule"), NoReward->IsRewardExplicitlyNone());
+    TestTrue(TEXT("First House entry can progress"), NoReward->MarkEntered());
+    TestFalse(TEXT("First House rejects artifact disposition because there is no reward"),
+        NoReward->RecordArtifactDisposition(EDungeonArtifactDisposition::Kept));
 
     return true;
 }
