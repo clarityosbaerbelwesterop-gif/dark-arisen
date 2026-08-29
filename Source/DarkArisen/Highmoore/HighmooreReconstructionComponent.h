@@ -48,6 +48,11 @@ public:
 
     static const FName ThreadId;
 
+    /** Pure canon routing used by initialization and native automation. */
+    static EHighmooreReconstructionPath ResolvePathFromPrincessFacts(
+        EBelosPathResolution BelosResolution,
+        bool bWentToUndercroftStair);
+
     /** May initialize only after the Princess return has reached the dock. */
     UFUNCTION(BlueprintCallable, Category="Highmoore|Reconstruction")
     bool InitializeFromPrincessState(const UPrincessQuestStateComponent* PrincessState);
