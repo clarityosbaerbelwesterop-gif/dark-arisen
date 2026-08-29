@@ -49,8 +49,16 @@ int32 ValidateExternalAssetProductionCommand(const FParsedArgs& Args)
         TEXT("Source/DarkArisen/Production/ExternalAssetProductionCatalog.cpp"),
         TEXT("Source/DarkArisen/Production/CharacterVisualProductionCatalog.h"),
         TEXT("Source/DarkArisen/Production/CharacterVisualProductionCatalog.cpp"),
+        TEXT("Source/DarkArisen/Production/BossVisualAuthorityPolicy.h"),
+        TEXT("Source/DarkArisen/Production/BossVisualAuthorityPolicy.cpp"),
+        TEXT("Source/DarkArisen/Production/BossVisualProductionCatalog.h"),
+        TEXT("Source/DarkArisen/Production/BossVisualProductionCatalog.cpp"),
+        TEXT("Source/DarkArisen/Production/ShipVisualProductionCatalog.h"),
+        TEXT("Source/DarkArisen/Production/ShipVisualProductionCatalog.cpp"),
         TEXT("Source/DarkArisen/Tests/ExternalAssetProductionSpec.cpp"),
         TEXT("Source/DarkArisen/Tests/CharacterVisualProductionSpec.cpp"),
+        TEXT("Source/DarkArisen/Tests/BossVisualAuthoritySpec.cpp"),
+        TEXT("Source/DarkArisen/Tests/ShipVisualProductionSpec.cpp"),
         TEXT("Docs/PRE_RUNNER_ASSET_PRODUCTION_PLAN.md"),
         TEXT("Docs/HIGGSFIELD_GAME_ASSET_PIPELINE.md"),
         TEXT("Docs/HIGGSFIELD_ASSET_PRODUCTION_MATRIX.md")})
@@ -66,7 +74,9 @@ int32 ValidateExternalAssetProductionCommand(const FParsedArgs& Args)
         TEXT("RuntimeAccepted"),
         TEXT("GroundedDungeonBriefCount = 40"),
         TEXT("WorldRegionBriefCount = 8"),
-        TEXT("ProviderReadyCharacterBriefCount = 8"),
+        TEXT("ProviderReadyCharacterBriefCount = 6"),
+        TEXT("ProviderReadyBossVisualBriefCount = 19"),
+        TEXT("ProviderReadyShipVisualBriefCount = 5"),
         TEXT("UnresolvedPresentationIdentityCount = 5"),
         TEXT("UnauthoredMinorDungeonIdentityCount = 20"),
         TEXT("DeliberateTurnStandingIdentityGapCount = 275"),
@@ -85,13 +95,23 @@ int32 ValidateExternalAssetProductionCommand(const FParsedArgs& Args)
         TEXT("FAuthoredWorldRegionRegistry::BuildAll"),
         TEXT("FHighmooreWorldProductionCatalog::BuildNamedAnchors"),
         TEXT("FCharacterVisualProductionCatalog::BuildMajorCharacterBriefs"),
+        TEXT("FBossVisualProductionCatalog::BuildDeepDiveBossBriefs"),
+        TEXT("FShipVisualProductionCatalog::BuildLaLiberacionBriefs"),
         TEXT("external.higgsfield.character"),
+        TEXT("external.higgsfield.boss-visual"),
+        TEXT("external.higgsfield.ship"),
+        TEXT("character.ethan-harlow"),
+        TEXT("character.draven-voss"),
+        TEXT("boss-visual.ethan-harlow"),
+        TEXT("boss-visual.draven-voss"),
+        TEXT("ship-visual.la-liberacion.exterior"),
         TEXT("FAuthoredRewardCatalog::BuildStateTreasureSlots"),
         TEXT("FAuthoredRewardCatalog::BuildNamedUniqueRewards"),
         TEXT("EvidenceState = EExternalAssetEvidenceState::RequirementOnly"),
         TEXT("turn-gap."),
         TEXT("standing-gap."),
         TEXT("minor-slot"),
+        TEXT("design-gap.external-assets.boss-final-act-authority"),
         TEXT("design-gap.external-assets.provider-3d-path"),
         TEXT("design-gap.external-assets.unreal-import"),
         TEXT("design-gap.external-assets.runtime-acceptance"),
@@ -99,41 +119,70 @@ int32 ValidateExternalAssetProductionCommand(const FParsedArgs& Args)
 
     RequireFragments(Root, TEXT("Source/DarkArisen/Production/CharacterVisualProductionCatalog.h"), {
         TEXT("MajorCharacterBriefCount = 9"),
-        TEXT("ProviderReadyCharacterCount = 8"),
-        TEXT("ExplicitlyBlockedCharacterCount = 1"),
+        TEXT("ProviderReadyCharacterCount = 6"),
+        TEXT("ExplicitlyBlockedCharacterCount = 3"),
         TEXT("bProviderReferenceReady"),
         TEXT("bApprovedReferenceExists")}, Errors);
 
     RequireFragments(Root, TEXT("Source/DarkArisen/Production/CharacterVisualProductionCatalog.cpp"), {
         TEXT("character.jake-harlow"),
-        TEXT("character.mira"),
-        TEXT("character.big-tom"),
-        TEXT("character.ines"),
-        TEXT("character.father-salvio"),
-        TEXT("character.esteban"),
         TEXT("character.elowen-arion"),
         TEXT("character.ethan-harlow"),
         TEXT("character.draven-voss"),
-        TEXT("design-gap.character-visual.elowen-physical-sheet")}, Errors);
+        TEXT("design-gap.character-visual.elowen-physical-sheet"),
+        TEXT("design-gap.character-visual.phase11-ethan-draven-rewrite")}, Errors);
+
+    RequireFragments(Root, TEXT("Source/DarkArisen/Production/BossVisualAuthorityPolicy.cpp"), {
+        TEXT("boss-visual.ethan-harlow"),
+        TEXT("boss-visual.draven-voss"),
+        TEXT("CurrentStoryConflict"),
+        TEXT("ProviderEligibleVisualIdentityCount != 19")}, Errors);
+
+    RequireFragments(Root, TEXT("Source/DarkArisen/Production/BossVisualProductionCatalog.h"), {
+        TEXT("DeepDiveBossBriefCount = 21"),
+        TEXT("ProviderReadyBossBriefCount = 19"),
+        TEXT("AuthorityBlockedBossBriefCount = 2")}, Errors);
+
+    RequireFragments(Root, TEXT("Source/DarkArisen/Production/BossVisualProductionCatalog.cpp"), {
+        TEXT("boss-visual.ashen-wyrm"),
+        TEXT("boss-visual.havfrue-modor"),
+        TEXT("boss-visual.jungle-warden"),
+        TEXT("boss-visual.ethan-harlow"),
+        TEXT("boss-visual.draven-voss"),
+        TEXT("design-gap.boss-visual.phase11-ethan-draven"),
+        TEXT("design-gap.boss-visual.category-reconciliation")}, Errors);
+
+    RequireFragments(Root, TEXT("Source/DarkArisen/Production/ShipVisualProductionCatalog.h"), {
+        TEXT("RequiredBriefCount = 6"),
+        TEXT("ProviderReadyBriefCount = 5"),
+        TEXT("ProviderBlockedBriefCount = 1")}, Errors);
+
+    RequireFragments(Root, TEXT("Source/DarkArisen/Production/ShipVisualProductionCatalog.cpp"), {
+        TEXT("ship-visual.la-liberacion.exterior"),
+        TEXT("ship-visual.la-liberacion.weather-deck"),
+        TEXT("ship-visual.la-liberacion.main-interior"),
+        TEXT("ship-visual.la-liberacion.lower-deck"),
+        TEXT("ship-visual.la-liberacion.cargo-workshop"),
+        TEXT("ship-visual.la-liberacion.captains-cabin"),
+        TEXT("DESIGN-GAP"),
+        TEXT("forbids quest markers")}, Errors);
 
     RequireFragments(Root, TEXT("Source/DarkArisen/Tests/CharacterVisualProductionSpec.cpp"), {
-        TEXT("Nine major-character source briefs exist"),
-        TEXT("Eight characters are source-complete enough for bounded reference generation"),
-        TEXT("Elowen remains blocked rather than receiving an invented canonical appearance")}, Errors);
+        TEXT("Six characters are current-authority ready for bounded reference generation"),
+        TEXT("Exactly three major characters remain explicitly blocked"),
+        TEXT("Ethan remains blocked behind the Phase 11 rewrite decision"),
+        TEXT("Draven remains blocked behind the Phase 11 rewrite decision")}, Errors);
 
     RequireFragments(Root, TEXT("Source/DarkArisen/Tests/ExternalAssetProductionSpec.cpp"), {
         TEXT("Forty grounded named dungeons have source-backed visual briefs"),
-        TEXT("Eight world regions have source-backed visual briefs"),
-        TEXT("Eight source-ready major characters have bounded visual-reference briefs"),
-        TEXT("Elowen remains provider-blocked until physical visual authority exists"),
-        TEXT("No unauthored Turn slot is sent to the provider"),
-        TEXT("No unauthored Standing slot is sent to the provider"),
-        TEXT("No unauthored minor-dungeon slot is sent to the provider"),
+        TEXT("Six current-authority major characters have bounded visual-reference briefs"),
+        TEXT("Nineteen non-conflicted deep-dive boss visuals have bounded visual-reference briefs"),
+        TEXT("Five source-ready La Liberacion deck/interior visuals have bounded reference briefs"),
+        TEXT("Legacy Ethan boss visual stays provider-blocked"),
+        TEXT("Legacy Draven boss visual stays provider-blocked"),
+        TEXT("Unresolved La Liberacion exterior silhouette stays provider-blocked"),
         TEXT("No provider job id is fabricated"),
         TEXT("No Unreal asset path is fabricated"),
-        TEXT("Provider cost approval is not self-granted"),
-        TEXT("Shipping rights are not self-granted"),
-        TEXT("Generated media never self-counts as imported UE content"),
         TEXT("External asset pipeline cannot buy or upgrade providers automatically")}, Errors);
 
     RequireFragments(Root, TEXT("Docs/PRE_RUNNER_ASSET_PRODUCTION_PLAN.md"), {
@@ -159,11 +208,11 @@ int32 ValidateExternalAssetProductionCommand(const FParsedArgs& Args)
         TEXT("3D-model search did not return a usable connected 3D generation model/action")}, Errors);
 
     RequireFragments(Root, TEXT("Docs/HIGGSFIELD_ASSET_PRODUCTION_MATRIX.md"), {
-        TEXT("115"),
+        TEXT("137"),
         TEXT("40 grounded named dungeons"),
-        TEXT("8 world regions"),
-        TEXT("12 Highmoore named anchors"),
-        TEXT("8 source-ready major-character reference briefs"),
+        TEXT("6 current-authority major-character reference briefs"),
+        TEXT("19 non-conflicted deep-dive boss/creature visual briefs"),
+        TEXT("5 source-ready La Liberación deck/interior briefs"),
         TEXT("129 unauthored Turn identities"),
         TEXT("146 unauthored Standing variants"),
         TEXT("Total deliberate Turn/Standing identity gap remains **275**")}, Errors);
