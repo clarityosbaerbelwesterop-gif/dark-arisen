@@ -1,7 +1,7 @@
 # Dark Arisen authored-content production plan
 
 **Branch:** `feature/content-alpha-production`  
-**Stacked base:** PR #12 head `b27377ff6a3ec56e2a6c1cb44a3b260c97a0ef8c` until PR #12 can be marked Ready and merged  
+**Integrated base:** `develop` at `6e1620b70d70d2535b94e0edf59d64debfc57d6b` (replacement PR #14 for former Draft PR #12)  
 **Purpose:** move from source contracts to authored game content without inventing missing canon, weakening design laws, or pretending unavailable UE runtime evidence exists.
 
 ## Authority
@@ -19,11 +19,12 @@ Executable Dark Arisen code remains native C++. Data/config/document formats rem
 
 ### P1 — Dungeon corpus
 
-- Reconcile the authored dungeon build list against `dungeon system global.md`, `docs/design/colonial_war/regional_dungeon_catalog.md`, `docs/design/colonial_war/dungeon_design_philosophy.md`, `docs/design/colonial_war/secret_bosses.md`, Highmoore sources and Crystal Caves sources.
+- Reconcile the authored dungeon build list against `dungeon system global.md`, `regional dungeon catalog.md`, `dungeon design philosophy.md`, `secret bosses.md`, Highmoore sources and Crystal Caves sources.
 - Create a native C++ authored dungeon catalog with stable IDs and exact source citations for every individually specified site.
 - Represent discovery mode, cultural puzzle language, primary hazard, unforgettable image, boss/no-boss carve-out, reward/return question, inside-opened return requirement, music/marker/child-remains prohibitions and authored duration bounds.
-- Do not invent names or narrative content for the 20 minor sites. Their required count remains locked; individual minor definitions are authored only where a governing source exists. Missing definitions remain explicit DESIGN-GAP entries rather than fabricated filler.
-- Resolve the current count tension before claiming catalog closure: the global table says 41 named + 20 minor = 61 while the Crystal Caves is separately described as a category of one. Current source contracts count Crystal Caves inside the 41 named. Until the canon corpus provides an unambiguous reconciliation, source will preserve the locked 61-site acceptance total and record the ambiguity instead of silently choosing a new total.
+- Do not invent names or narrative content for the 20 minor sites. Their regional slot counts are locked; individual minor definitions remain explicit authoring gaps until a governing source exists.
+- Preserve the unresolved count tension: the global table says 41 named + 20 minor = 61 while Crystal Caves is separately described as a category of one. Source records the ambiguity instead of fabricating a reconciliation.
+- Current source state: forty unambiguously named regional/cross-network sites are catalogued; Crystal Caves is separate; twenty minor slots are regionally reserved; the unresolved Region 06 named/Tier-E slot remains fail-closed.
 
 ### P2 — Quest / mission corpus
 
@@ -67,7 +68,8 @@ Because the allowed self-hosted runners are currently offline, the bridge/workfl
 
 - Build a dialogue-lock manifest, role/casting matrix, pronunciation guide and subtitle-ready list first.
 - AI Voice Generator may be used only for material that has a locked dialogue ID and a known role.
-- Production integration additionally requires commercial-rights and cost approval evidence. Until that is established, generated clips are auditions/prototypes only and are not shipped assets.
+- The operator has requested AI Voice Generator for voice production. Generated lines still require the dialogue-lock/casting/pronunciation/subtitle contract before being treated as production candidates.
+- Shipping integration additionally requires commercial-rights and cost approval evidence. Until that is established, generated clips remain auditions/prototypes rather than accepted Alpha assets.
 - No voice clone or imitation of a real performer is required by the design.
 
 ### P8 — Audio, music and credits
@@ -86,12 +88,14 @@ Because the allowed self-hosted runners are currently offline, the bridge/workfl
 
 ## Commit discipline
 
-Each content family is a separate coherent commit: plan -> catalog/schema -> authored definitions -> integration -> native tests -> handover/checklist update. Re-fetch/compare before starting each new subsystem. Do not merge or close a PR without a fresh explicit operator instruction for that action.
+Each content family is a separate coherent commit: plan -> catalog/schema -> authored definitions -> integration -> native tests -> handover/checklist update. Re-fetch/compare before starting each new subsystem. The operator has authorised merging completed source work while unavailable UE runner evidence remains explicitly deferred; no merge may be reported as runtime/Alpha acceptance.
 
-## Immediate next actions
+## Current execution line
 
-1. Build the authored dungeon C++ catalog from the existing Bible.
-2. Add native negative/structural tests for marker/music/child-remains/return-shortcut/carve-out laws.
-3. Add the Kimi K3 `DarkArisenOps` bridge and a self-hosted workflow that uses `NVIDIA_API_KEY` without exposing it.
-4. Produce a dungeon-design task bundle for Kimi so it can work on unresolved spatial/animation/level-production questions once the runner is available.
-5. Continue into missions, bosses, world integration, animations/cutscenes, dialogue/voice, audio and Alpha evidence in that order.
+1. Finish dungeon runtime-authority wiring and hazard/system reuse on the grounded corpus.
+2. Complete the authored quest/mission register and standing-slot reconciliation.
+3. Complete the nine Tier-1 boss register/mechanics integration.
+4. Build region/world reachability descriptors and instantiate existing source systems through real game ownership paths.
+5. Build animation/cinematic production manifests and protected-playable ownership.
+6. Build dialogue locks, voice audition packets, audio/credits readiness and Alpha release evidence contracts.
+7. Merge only after source audit; UE compile/runtime/package evidence remains open until approved runners/editor hardware exist.
