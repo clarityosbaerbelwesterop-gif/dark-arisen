@@ -92,8 +92,16 @@ int32 ValidateMissionContentCommand(const FParsedArgs& Args)
         TEXT("Source/DarkArisen/Missions/MissionScaleRequirements.cpp"),
         TEXT("Source/DarkArisen/Missions/QuestCoverageRegister.h"),
         TEXT("Source/DarkArisen/Missions/QuestCoverageRegister.cpp"),
+        TEXT("Source/DarkArisen/Missions/CrewPersonalThreadsComponent.h"),
+        TEXT("Source/DarkArisen/Missions/CrewPersonalThreadsComponent.cpp"),
         TEXT("Source/DarkArisen/Missions/AssassinNetworkThreadComponent.h"),
         TEXT("Source/DarkArisen/Missions/AssassinNetworkThreadComponent.cpp"),
+        TEXT("Source/DarkArisen/Missions/ArchipelagoThreadsComponent.h"),
+        TEXT("Source/DarkArisen/Missions/ArchipelagoThreadsComponent.cpp"),
+        TEXT("Source/DarkArisen/Missions/MemoryThreadsSubsystem.h"),
+        TEXT("Source/DarkArisen/Missions/MemoryThreadsSubsystem.cpp"),
+        TEXT("Source/DarkArisen/Missions/ThreadRuntimeCoverage.h"),
+        TEXT("Source/DarkArisen/Missions/ThreadRuntimeCoverage.cpp"),
         TEXT("Source/DarkArisen/ColonialWar/LiberationAllianceSubsystem.h"),
         TEXT("Source/DarkArisen/ColonialWar/LiberationAllianceSubsystem.cpp"),
         TEXT("Source/DarkArisen/Highmoore/LightElvesThreadComponent.h"),
@@ -105,10 +113,15 @@ int32 ValidateMissionContentCommand(const FParsedArgs& Args)
         TEXT("Source/DarkArisen/Tests/AuthoredQuestCatalogSpec.cpp"),
         TEXT("Source/DarkArisen/Tests/MissionScaleRequirementsSpec.cpp"),
         TEXT("Source/DarkArisen/Tests/QuestCoverageRegisterSpec.cpp"),
+        TEXT("Source/DarkArisen/Tests/CrewPersonalThreadsSpec.cpp"),
         TEXT("Source/DarkArisen/Tests/AssassinNetworkThreadSpec.cpp"),
         TEXT("Source/DarkArisen/Tests/LiberationAllianceSpec.cpp"),
+        TEXT("Source/DarkArisen/Tests/ArchipelagoThreadsSpec.cpp"),
         TEXT("Source/DarkArisen/Tests/HighmooreThreadContractsSpec.cpp"),
-        TEXT("Docs/QUEST_CONTENT_GAPS.md")
+        TEXT("Source/DarkArisen/Tests/MemoryThreadsSpec.cpp"),
+        TEXT("Source/DarkArisen/Tests/ThreadRuntimeCoverageSpec.cpp"),
+        TEXT("Docs/QUEST_CONTENT_GAPS.md"),
+        TEXT("Docs/THREAD_RUNTIME_COVERAGE.md")
     };
     for (const FString& Relative : RequiredFiles)
     {
@@ -124,14 +137,22 @@ int32 ValidateMissionContentCommand(const FParsedArgs& Args)
 
     RequireFragments(Root, TEXT("Source/DarkArisen/Missions/AuthoredQuestCatalog.cpp"), {
         TEXT("thread.crew.ines-esperanza"),
+        TEXT("thread.crew.miras-coast"),
+        TEXT("thread.crew.big-toms-service"),
+        TEXT("thread.crew.father-salvios-parish"),
+        TEXT("thread.crew.estebans-last-chart"),
         TEXT("thread.archipelago.assassin-network"),
+        TEXT("thread.archipelago.liberation-connections"),
+        TEXT("thread.archipelago.kesslers-investigation"),
+        TEXT("thread.archipelago.ledger-trilogy"),
+        TEXT("thread.archipelago.schreiber-documentation"),
+        TEXT("thread.archipelago.captain-vasquez"),
+        TEXT("thread.archipelago.old-fortresses"),
         TEXT("thread.highmoore.princess"),
         TEXT("thread.highmoore.light-elves"),
         TEXT("thread.highmoore.reconstruction"),
         TEXT("thread.cross.named-dead"),
         TEXT("thread.cross.ethan"),
-        TEXT("region.rexa-moran"), TEXT("22"),
-        TEXT("region.highmoore"), TEXT("24"),
         TEXT("Rexa.Standing.Salvage.SanTelmoBell"),
         TEXT("design-gap.turn-identities"),
         TEXT("design-gap.standing-identities")}, Errors);
@@ -172,6 +193,19 @@ int32 ValidateMissionContentCommand(const FParsedArgs& Args)
         TEXT("Rexa.Standing.Salvage.SanTelmoBell"),
         TEXT("Reserved quest slot %s must not carry an invented authored identity")}, Errors);
 
+    RequireFragments(Root, TEXT("Source/DarkArisen/Missions/CrewPersonalThreadsComponent.cpp"), {
+        TEXT("CurrentChapter < 5"),
+        TEXT("MeetingCount < 3"),
+        TEXT("bFjordlundControlAlreadyResolved"),
+        TEXT("bRecogniserSawTomAndLeft"),
+        TEXT("AwaitingAuthoredDetail"),
+        TEXT("CompletionMarksPerCrewThread"),
+        TEXT("AwardMarks")}, Errors);
+
+    RequireFragments(Root, TEXT("Source/DarkArisen/Missions/CrewPersonalThreadsComponent.h"), {
+        TEXT("AllowsGeneratedCrewQuestStages() const { return false; }"),
+        TEXT("AllowsSystemicRomance() const { return false; }")}, Errors);
+
     RequireFragments(Root, TEXT("Source/DarkArisen/Missions/AssassinNetworkThreadComponent.cpp"), {
         TEXT("thread.archipelago.assassin-network"),
         TEXT("HasReachedStageAtLeastOnce"),
@@ -190,20 +224,38 @@ int32 ValidateMissionContentCommand(const FParsedArgs& Args)
         TEXT("FullVisionGap"),
         TEXT("case 5: return 1.60f")}, Errors);
 
-    RequireFragments(Root, TEXT("Source/DarkArisen/Highmoore/LightElvesThreadComponent.h"), {
-        TEXT("thread.highmoore.light-elves"),
-        TEXT("ElevenDaysInWorldMinutes"),
-        TEXT("AllowsFirstStoppedShaftCutscene() const { return false; }"),
-        TEXT("AllowsBossEndingCutscene() const { return false; }"),
-        TEXT("AllowsWestwardQuestReminder() const { return false; }"),
-        TEXT("AllowsFastTravelForCampaign() const { return false; }")}, Errors);
+    RequireFragments(Root, TEXT("Source/DarkArisen/Missions/ArchipelagoThreadsComponent.cpp"), {
+        TEXT("thread.archipelago.kesslers-investigation"),
+        TEXT("thread.archipelago.ledger-trilogy"),
+        TEXT("thread.archipelago.schreiber-documentation"),
+        TEXT("thread.archipelago.captain-vasquez"),
+        TEXT("thread.archipelago.old-fortresses"),
+        TEXT("bCastilloDoradoFell"),
+        TEXT("bDeSilvaDied"),
+        TEXT("RecoveredLedgers.Num() == 4"),
+        TEXT("BoatsDocumentedAndLeft"),
+        TEXT("AwaitingAuthoredDetail"),
+        TEXT("ReclaimedOldFortresses.Num() == 4")}, Errors);
+
+    RequireFragments(Root, TEXT("Source/DarkArisen/Missions/ArchipelagoThreadsComponent.h"), {
+        TEXT("AllowsGeneratedThreadStages() const { return false; }"),
+        TEXT("AllowsQuestExpiryTimerUI() const { return false; }")}, Errors);
 
     RequireFragments(Root, TEXT("Source/DarkArisen/Highmoore/LightElvesThreadComponent.cpp"), {
+        TEXT("thread.highmoore.light-elves"),
+        TEXT("HasElevenDaySpanElapsed"),
         TEXT("LordRefusals.Num() == 4"),
         TEXT("TakingAccounts.Num() != 4"),
         TEXT("ResolvedMoorSites.Num() == 3"),
         TEXT("HasReachedElevenDays()"),
         TEXT("EEllisLetterResponse::None")}, Errors);
+
+    RequireFragments(Root, TEXT("Source/DarkArisen/Highmoore/LightElvesThreadComponent.h"), {
+        TEXT("ElevenDaysInWorldMinutes"),
+        TEXT("AllowsFirstStoppedShaftCutscene() const { return false; }"),
+        TEXT("AllowsBossEndingCutscene() const { return false; }"),
+        TEXT("AllowsWestwardQuestReminder() const { return false; }"),
+        TEXT("AllowsFastTravelForCampaign() const { return false; }")}, Errors);
 
     RequireFragments(Root, TEXT("Source/DarkArisen/Highmoore/HighmooreReconstructionComponent.cpp"), {
         TEXT("thread.highmoore.reconstruction"),
@@ -219,6 +271,36 @@ int32 ValidateMissionContentCommand(const FParsedArgs& Args)
         TEXT("MakesJakeLordOfHighmoore() const { return false; }"),
         TEXT("RewardsGalleryGap() const { return false; }"),
         TEXT("RewardsRabbitHutches() const { return false; }")}, Errors);
+
+    RequireFragments(Root, TEXT("Source/DarkArisen/Missions/MemoryThreadsSubsystem.cpp"), {
+        TEXT("thread.cross.named-dead"),
+        TEXT("thread.cross.ethan"),
+        TEXT("ResolveBjornStatus"),
+        TEXT("RecordDreamEthanVoiceHeard"),
+        TEXT("CurrentChapter < 9")}, Errors);
+
+    RequireFragments(Root, TEXT("Source/DarkArisen/Missions/MemoryThreadsSubsystem.h"), {
+        TEXT("NamedDeadThreadHasEnding() const { return false; }"),
+        TEXT("EthanHasClosureMechanic() const { return false; }"),
+        TEXT("EthanHasSecretFinalLetter() const { return false; }"),
+        TEXT("AllowsClearEthanFlashbackFace() const { return false; }"),
+        TEXT("AwardsMemorialGameplayReward() const { return false; }")}, Errors);
+
+    RequireFragments(Root, TEXT("Source/DarkArisen/Missions/ThreadRuntimeCoverage.h"), {
+        TEXT("RequiredThreadCount = 17"),
+        TEXT("NativeContractWithAuthorshipGaps")}, Errors);
+
+    RequireFragments(Root, TEXT("Source/DarkArisen/Missions/ThreadRuntimeCoverage.cpp"), {
+        TEXT("design-gap.thread.salvio-parish-stage-chain"),
+        TEXT("design-gap.thread.esteban-last-chart-destination"),
+        TEXT("design-gap.thread.alliance-five-full-vision-connections"),
+        TEXT("design-gap.thread.vasquez-six-hour-stage-chain"),
+        TEXT("design-gap.thread.reconstruction-turned-west-diplomatic-content")}, Errors);
+
+    RequireFragments(Root, TEXT("Docs/THREAD_RUNTIME_COVERAGE.md"), {
+        TEXT("Every identity now has an explicit native C++ owner"),
+        TEXT("Seven stable gaps remain across five Threads"),
+        TEXT("275 individual Turn/Standing identities therefore remain unwritten by design")}, Errors);
 
     RequireFragments(Root, TEXT("Docs/QUEST_CONTENT_GAPS.md"), {
         TEXT("Missing Turn identities — 129"),
