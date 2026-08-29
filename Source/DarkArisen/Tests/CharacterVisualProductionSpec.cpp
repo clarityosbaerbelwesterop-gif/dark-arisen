@@ -25,8 +25,9 @@ bool FDarkArisenCharacterVisualProductionSpec::RunTest(const FString& Parameters
     int32 Ready = 0;
     int32 Blocked = 0;
     bool bElowenBlocked = false;
+    bool bEthanBlocked = false;
+    bool bDravenBlocked = false;
     bool bJakeFound = false;
-    bool bCrewFiveFound = false;
     int32 CrewCount = 0;
 
     for (const FCharacterVisualProductionBrief& Character : Briefs)
@@ -43,26 +44,37 @@ bool FDarkArisenCharacterVisualProductionSpec::RunTest(const FString& Parameters
                 && Character.ExplicitUnknowns.Contains(TEXT("Hair"), ESearchCase::CaseSensitive)
                 && Character.ExplicitUnknowns.Contains(TEXT("facial structure"), ESearchCase::CaseSensitive);
         }
-        if (Character.StableId == TEXT("character.jake-harlow"))
+        else if (Character.StableId == TEXT("character.ethan-harlow"))
+        {
+            bEthanBlocked = !Character.bProviderReferenceReady
+                && Character.GoverningSource.Contains(TEXT("DesignAuthority"), ESearchCase::CaseSensitive);
+        }
+        else if (Character.StableId == TEXT("character.draven-voss"))
+        {
+            bDravenBlocked = !Character.bProviderReferenceReady
+                && Character.GoverningSource.Contains(TEXT("DesignAuthority"), ESearchCase::CaseSensitive);
+        }
+        else if (Character.StableId == TEXT("character.jake-harlow"))
         {
             bJakeFound = Character.PhysicalFacts.Contains(TEXT("1.75 m"), ESearchCase::CaseSensitive)
                 && Character.PhysicalFacts.Contains(TEXT("green eyes"), ESearchCase::IgnoreCase);
         }
+
         if (Character.Role == ECharacterVisualProductionRole::CoreCrew)
         {
             ++CrewCount;
         }
     }
 
-    bCrewFiveFound = CrewCount == 5;
-
-    TestEqual(TEXT("Eight characters are source-complete enough for bounded reference generation"),
+    TestEqual(TEXT("Six characters are current-authority ready for bounded reference generation"),
         Ready, FCharacterVisualProductionCatalog::ProviderReadyCharacterCount);
-    TestEqual(TEXT("Exactly one major character remains explicitly blocked on physical visual facts"),
+    TestEqual(TEXT("Exactly three major characters remain explicitly blocked"),
         Blocked, FCharacterVisualProductionCatalog::ExplicitlyBlockedCharacterCount);
     TestTrue(TEXT("Elowen remains blocked rather than receiving an invented canonical appearance"), bElowenBlocked);
+    TestTrue(TEXT("Ethan remains blocked behind the Phase 11 rewrite decision"), bEthanBlocked);
+    TestTrue(TEXT("Draven remains blocked behind the Phase 11 rewrite decision"), bDravenBlocked);
     TestTrue(TEXT("Jake physical brief preserves authored height/eyes"), bJakeFound);
-    TestTrue(TEXT("Exactly five core crew visual briefs are present"), bCrewFiveFound);
+    TestEqual(TEXT("Exactly five core crew visual briefs are present"), CrewCount, 5);
 
     return true;
 }
