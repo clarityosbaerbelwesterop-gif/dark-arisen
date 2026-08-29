@@ -20,82 +20,97 @@ Executable Dark Arisen code remains native C++. Data/config/document formats rem
 ### P1 — Dungeon corpus
 
 - Reconcile the authored dungeon build list against `dungeon system global.md`, `regional dungeon catalog.md`, `dungeon design philosophy.md`, `secret bosses.md`, Highmoore sources and Crystal Caves sources.
-- Create a native C++ authored dungeon catalog with stable IDs and exact source citations for every individually specified site.
-- Represent discovery mode, cultural puzzle language, primary hazard, unforgettable image, boss/no-boss carve-out, reward/return question, inside-opened return requirement, music/marker/child-remains prohibitions and authored duration bounds.
-- Do not invent names or narrative content for the 20 minor sites. Their regional slot counts are locked; individual minor definitions remain explicit authoring gaps until a governing source exists.
-- Preserve the unresolved count tension: the global table says 41 named + 20 minor = 61 while Crystal Caves is separately described as a category of one. Source records the ambiguity instead of fabricating a reconciliation.
+- Maintain native C++ authored dungeon identities, production profiles, shared spatial progression, access rules, no-boss carve-outs, Secret Site decisions and native tests.
+- Do not invent names or narrative content for the 20 minor sites. Their regional slot counts are locked; individual definitions remain explicit authoring gaps until a governing source exists.
+- Preserve the unresolved count tension: the global table says 41 named + 20 minor = 61 while Crystal Caves is separately described as a category of one. Source records ambiguity instead of fabricating reconciliation.
 - Current source state: forty unambiguously named regional/cross-network sites are catalogued; Crystal Caves is separate; twenty minor slots are regionally reserved; the unresolved Region 06 named/Tier-E slot remains fail-closed.
 
-### P2 — Quest / mission corpus
+### P2 — Regions, levels and world population
 
-- Author all individually specified Threads and Turns from current quest catalogs.
-- Expand Standing mission variants only where the design corpus provides an actual authored variant; the exact type totals remain acceptance requirements, not a licence to auto-generate filler.
-- Bind each mission to the existing quest/journal, world-clock, economy, war, ship, settlement and progression authorities rather than creating parallel state.
+- Build native C++ level/runtime descriptors and authored placement contracts for the eight production region identities.
+- Integrate already-written M2-M6 systems into reachable game paths; eliminate the condition where major systems exist only as uninstantiated source/test classes.
+- Level geometry, art, materials, foliage, lighting, navigation and Unreal assets remain real authored production work and must cite source/spec ownership. No procedural world filler.
+- No region is called production-complete until an actual reviewed `.umap`/asset path is bound and runtime evidence exists.
 
-### P3 — Boss corpus
+### P3 — Treasures, rewards, unique items and physical evidence
 
-- Reconcile all nine Tier-1 bosses against the canonical register and `colonial war bosses.md`.
-- Build missing native C++ boss state/encounter classes from their authored mechanics.
-- Dungeon bosses remain a separate Tier-4 category and obey the dungeon silence/hazard rules.
+- Reconcile dungeon rewards, nine state treasures, unique weapons/items, letters/documents, Secret-Site take/leave objects and other authored physical rewards into one finite C++ production catalog.
+- Preserve source-specific ownership and consequences: a treasure/item is never substituted with generic loot just to populate a chest.
+- Reuse existing inventory/economy/quest/castle/dungeon owners; do not create a second reward economy.
+- Missing reward identity, location, quantity, ownership or consequence remains `DESIGN-GAP`.
 
-### P4 — Regions, levels and world population
+### P4 — Main quests, side quests and finite missions
 
-- Build native C++ level/runtime descriptors and authored placement contracts for Rexa, Fjordlund, Ashenmoor, Sea, Colonial, Region 06 and Highmoore.
-- Integrate already-written M2-M6 systems into reachable game paths; eliminate the current condition where major systems exist only as uninstantiated source/test classes.
-- Level geometry, art, materials and Unreal assets remain authored content and must cite source/spec ownership. No procedural world filler.
+- Finish the main-story production graph and all individually authored side-quest Threads/Turns from the existing corpus.
+- Expand Standing variants only where the corpus provides an actual authored identity; exact totals are acceptance requirements, not permission to generate filler.
+- Bind missions to existing journal, world-clock, economy, war, ship, settlement, social and progression authorities rather than parallel state.
+- Reconcile every mission's source identity, initiating person/place, world preconditions, outcome, reward/consequence, failure/expiry behavior and dialogue ownership.
 
-### P5 — Animation / cinematic production
+### P5 — Boss and encounter corpus
 
-- Use the 19-cutscene catalog and the 22 protected playable moments as separate production lists.
-- Protected playable moments may never be converted into Sequencer-owned cutscenes.
-- Create animation requirements, montage/state-machine contracts, camera ownership and timing sheets before asset generation/integration.
-- No unapproved slow motion, camera seizure, music sting, revive prompt or other spectacle layer may leak into locked moments.
+- Keep all nine Tier-1 commanders grounded in the canonical register and `colonial war bosses.md`.
+- Build/complete native C++ encounter state only where the authored mechanics require it; special cases remain explicit.
+- Dungeon bosses remain separate Tier-4 content and obey dungeon silence/hazard/spatial rules.
 
-### P6 — Game Studios + NVIDIA Kimi K3 assistance
+### P6 — Animation production
 
-`Donchitos/Claude-Code-Game-Studios` is a Claude Code studio template, not a Kimi runtime. Its agent frontmatter uses Claude Code model aliases such as `sonnet`; replacing that field with Kimi would not route inference to NVIDIA.
+- Use `animation system.md` plus existing combat/movement/wound/horse/weapon owners to produce the finite animation requirement set before asset generation/integration.
+- Preserve the six-frame deflection law, 8+ frame readable attack tells, non-cancellable recovery, wounded layers, Katana exception, mounted transitions and named hero animations.
+- Executable behavior stays native C++; animation assets are presentation/data, never gameplay authority.
+- No animation is called complete until a reviewed imported asset exists and is wired to the correct C++ state.
 
-The integration therefore has two layers:
+### P7 — Cutscenes and protected playable presentation
 
-1. **Studio methodology:** selected upstream Game Studios agents/skills are used as prompt/role sources for level design, world building, technical art, audio, narrative, QA and release review. Upstream shell hooks are not imported as Dark Arisen implementation code.
-2. **Native bridge:** `DarkArisenOps` owns the executable bridge that submits bounded studio jobs to NVIDIA NIM using model `moonshotai/kimi-k3`. GitHub Actions injects `NVIDIA_API_KEY` from repository secrets; the key is never read back, printed or committed.
+- Use the 19-cutscene catalog and 22 protected playable moments as separate production lists.
+- Protected playable moments may never become Sequencer-owned cutscenes.
+- Lock camera ownership, timing, animation priority, silence/music state and transitions before Sequencer/capture production.
+- No unapproved slow motion, camera seizure, music sting, revive prompt or spectacle layer may leak into protected moments.
 
-Kimi output is advisory/authored-proposal material, not automatic canon. It must cite the supplied governing documents and explicitly list unresolved design gaps. The bridge may write proposals to a dedicated review path/branch, but no generated proposal may auto-merge or silently become gameplay authority.
+### P8 — Game Studios + NVIDIA Kimi K3 assistance
 
-Because the allowed self-hosted runners are currently offline, the bridge/workflow can be source-complete now but background inference cannot honestly be reported as executed until a runner accepts the job.
+`Donchitos/Claude-Code-Game-Studios` is used as a studio-methodology source. A native `DarkArisenOps` bridge submits bounded proposal jobs to NVIDIA NIM model `moonshotai/kimi-k3` with `NVIDIA_API_KEY` injected from repository Secrets.
 
-### P7 — Dialogue, casting and voices
+Kimi is advisory, never design authority. Studio jobs cover dungeon/level production, world building, technical art/animation planning, mission gap review, QA and presentation review. Generated proposals cannot auto-merge or silently become canon. Unresolved material must remain `DESIGN-GAP`.
 
-- Build a dialogue-lock manifest, role/casting matrix, pronunciation guide and subtitle-ready list first.
-- AI Voice Generator may be used only for material that has a locked dialogue ID and a known role.
-- The operator has requested AI Voice Generator for voice production. Generated lines still require the dialogue-lock/casting/pronunciation/subtitle contract before being treated as production candidates.
-- Shipping integration additionally requires commercial-rights and cost approval evidence. Until that is established, generated clips remain auditions/prototypes rather than accepted Alpha assets.
-- No voice clone or imitation of a real performer is required by the design.
+Because the approved self-hosted runners are offline, background Kimi inference cannot honestly be reported as executed until a runner accepts a job. Source preparation continues independently.
 
-### P8 — Audio, music and credits
+### P9 — Audio, ambience, music and credits
 
 - Dungeon ambience remains environmental; no ambient dungeon score.
-- Music remains non-reactive globally.
-- Final credits require complete attribution plus an approved/licensed non-reactive cue.
+- Current locked law: music is non-reactive globally. Older conflicting event-reactive Highmoore text does not own runtime behavior.
+- Final music/SFX require actual assets, mastering/import, rights/licence/attribution evidence and runtime review.
+- Final credits require complete attribution plus approved/licensed material.
 
-### P9 — Save/load, accessibility, packaging and Alpha evidence
+### P10 — Dialogue lock, casting and final voices — LAST content-production stage
+
+**Operator order, 2026-08-29:** final voice production happens only after world/levels, dungeons, treasures/rewards, main/side missions, bosses, animation and cutscene production are substantially resolved and dialogue text is stable.
+
+- Build complete stable dialogue IDs, role/casting matrix, pronunciation, subtitle and scene-context packets first.
+- The first five connected generic AI Voice Generator auditions were reviewed and rejected for sounding synthetic/emotionally flat. They remain negative evidence only.
+- No further bulk synthesis from that generic provider for the core cast.
+- Tier-1 cast requires directed human-performance-quality review; human actors are the preferred path unless a future solution demonstrably passes the same bar.
+- Shipping integration requires performance acceptance, rights/contract evidence, mastering, subtitle timing, Unreal import and runtime verification.
+
+### P11 — Save/load, accessibility, packaging and Alpha evidence
 
 - Finish persistence wiring for authored content and existing M2-M6 systems.
 - Preserve Windows x64 + Linux x86_64 Alpha parity and the six-frame deflection law across accessibility/difficulty options.
 - Build immutable same-commit Shipping candidates with SHA-256 manifests.
-- Runtime/playthrough/performance/controller/privacy evidence stays open until it is actually observed on allowed UE 5.5 runners/hardware.
+- Runtime/playthrough/performance/controller/privacy evidence stays open until it is actually observed on approved UE 5.5 runners/hardware.
 - Native PS5 remains Beta-only.
 
 ## Commit discipline
 
-Each content family is a separate coherent commit: plan -> catalog/schema -> authored definitions -> integration -> native tests -> handover/checklist update. Re-fetch/compare before starting each new subsystem. The operator has authorised merging completed source work while unavailable UE runner evidence remains explicitly deferred; no merge may be reported as runtime/Alpha acceptance.
+Each content family is a separate coherent commit: plan -> catalog/schema -> authored definitions -> integration -> native tests -> handover/checklist update. Re-fetch/compare before starting each new subsystem. Unavailable UE runner evidence remains explicitly deferred; no merge may be reported as runtime/Alpha acceptance.
 
 ## Current execution line
 
-1. Finish dungeon runtime-authority wiring and hazard/system reuse on the grounded corpus.
-2. Complete the authored quest/mission register and standing-slot reconciliation.
-3. Complete the nine Tier-1 boss register/mechanics integration.
-4. Build region/world reachability descriptors and instantiate existing source systems through real game ownership paths.
-5. Build animation/cinematic production manifests and protected-playable ownership.
-6. Build dialogue locks, voice audition packets, audio/credits readiness and Alpha release evidence contracts.
-7. Merge only after source audit; UE compile/runtime/package evidence remains open until approved runners/editor hardware exist.
+1. Continue dungeon/world reachability and production binding.
+2. Build the finite Treasure/Reward/Unique Item authority from existing source.
+3. Finish main/side quest and finite mission identities without filler.
+4. Finish encounter/boss production integration.
+5. Build animation asset-production requirements and wiring.
+6. Build the 19 cutscene packets and protect all 22 playable moments.
+7. Finish audio/music/credits production.
+8. Lock full dialogue and cast/record voices last.
+9. Reconcile Alpha content, package only when actual assets/runtime evidence exist, then merge completed source work according to operator authorization.
