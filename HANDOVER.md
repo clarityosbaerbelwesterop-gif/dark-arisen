@@ -1,135 +1,119 @@
 # Engineering handover
 
-**Updated:** 2026-08-28  
-**Integrated baseline:** PR #7 merged to `develop` at `adfb49d8c6ef43d45701af496664d7155985d727`  
-**Active source work:** M5 Colonial War + M6 Highmoore source completion  
-**Active PR:** #8 — `feature/m5-m6-source-completion` → `develop`  
-**Runtime state:** UE 5.5 compile/runtime/playtest gates remain deferred under the current operator direction, not waived and not marked passed.  
-**Boundary records:** `Docs/M3_M4_SOURCE_COMPLETION.md`, `Docs/M5_M6_SOURCE_COMPLETION.md`
+**Updated:** 2026-08-29  
+**Integrated baseline:** `develop` at `6e1620b70d70d2535b94e0edf59d64debfc57d6b`  
+**Active source work:** authored content production toward the first private Alpha  
+**Active branch / PR:** `feature/content-alpha-production` / PR #13 → `develop`  
+**Current PR head at this handover update:** `b53d3844566aae3d7a8804251617abca9539ae75`  
+**Runtime state:** UE 5.5 Windows/Linux compile, automation, runtime, performance, packaging and playthrough gates are deferred while the matching self-hosted runners are offline. They are not waived or marked passed.
 
-## Current operator direction
+## Operator direction
 
-Flo directed on 2026-08-28 that unavailable UE 5.5 runtime/self-hosted-runner gates must not block source production. Source work may therefore advance while runtime evidence remains open. A source merge is integration only: no document, checkbox, PR or report may translate that deferral into a claim that UE compile, runtime, performance, packaging or Alpha acceptance passed.
+Continue source/content production without pausing for unavailable runners. Work through the game toward the first Alpha. Stop only for a real design/tool decision that cannot be resolved from repository authority, or when the requested work is actually complete.
 
-## Integrated baseline before PR #8
+Do not invent missing canon. In particular, if a quest is not individually described by an approved source, leave it unwritten and report the exact missing slot at the end.
 
-- M0/M1 project, interaction/combat, design-law audit, Pixel Streaming source path and platform contracts exist.
-- M2 Rexa source foundations exist, including markerless quest/journal state, Isabel Cruz, heat/Cenote state, exact forty-person Las Raíces roster, protected children and canonical world-clock integration. Authored M2 levels/navigation/animation/two-hour runtime evidence remain open.
-- M3 ship source closure and M4 systems source closure are integrated through PR #7. Their exact boundary and deferred runtime work are in `Docs/M3_M4_SOURCE_COMPLETION.md`.
-- Alpha remains Windows x64 + Linux x86_64 UE 5.5 Shipping from one accepted source commit; native PS5 remains Beta-only with authorised Sony tooling.
+All executable project implementation remains native C++. Repository/build/configuration formats remain in their required native formats.
 
-## M5 source completion in PR #8
+## Integrated history
 
-### Hidden regional war
+- PR #7 integrated M3 ship + M4 systems source closure.
+- PR #8 integrated M5 Colonial War + M6 Highmoore source closure.
+- PR #9 integrated M7/M8 source contracts and the native-C++ project-operations migration.
+- The follow-up CI/governance repair tranche is integrated on `develop` at `6e1620b...`.
+- Detailed earlier source boundaries remain in `Docs/M3_M4_SOURCE_COMPLETION.md`, `Docs/M5_M6_SOURCE_COMPLETION.md`, `Docs/M7_M8_SOURCE_PLAN.md` and the Alpha checklist.
 
-- `UColonialWarStateSubsystem` owns hidden Imperial Control, Albion Control, Liberation Strength and Crimson Threat per region. No numeric player-facing war meter is exposed.
-- Chapter momentum is Alpha for Chapters 4–6, Beta for 7–8 and Gamma for 9+.
-- Support / Break / Liberate are report-only consequences from already completed physical content; there is no strategy-menu action that performs them.
-- Crisis requires colonial control below 30. Fall is separate and requires an authored assault completion. After Fall, Liberation Strength ≥ 50 yields Liberation; otherwise Crimson pressure ≥ 50 can occupy the vacuum, else the result is Vacuum.
-- `FRegionalAutonomousWarTick` permits one authored non-player tick per region/chapter so the war moves without Jake. Duplicate ticks fail closed and actual rates remain data rather than invented engine constants.
+## Current authored-content production
 
-### Retaliation and hostages
+### Dungeons
 
-- `URetaliationSubsystem` keeps Imperial and Albion Heat separate and hidden.
-- Exact stages: 0–19 Unnoticed, 20–39 Letter, 40–59 Bounty, 60–74 CounterAttack, 75–89 Hostages, 90–100 ScorchedEarth.
-- Chapter caps are Bounty in 4–6, Hostages in 7–8 and ScorchedEarth in 9+; passive chapter decay applies only when the faction was not attacked.
-- Hostage selection uses hidden Attachment Score + ripple weight + region reachability and deterministic tie-breaking.
-- Children and explicitly narrative-protected people are absolute exclusions.
-- Canon conflict ruling: the later Phase-12 `crew system.md` supersedes the older Phase-7 blanket core-crew exclusion. Adult named crew are eligible unless individually protected. A lost crew teacher is not replaced.
+- The global 61-site structure is represented without procedural/radiant generation.
+- Forty source-grounded named regional sites are represented in native C++ production catalogs.
+- Crystal Caves remain a separate category-of-one contract.
+- Twenty Minor/Tier-A regional slots are reserved according to the canonical distribution without fabricated names or stories.
+- Named-site production profiles carry authored discovery/access, puzzle language, hazard, unforgettable image, boss/bottom and reward information where the source provides it.
+- Shared dungeon progression enforces Threshold → Descent → Turn → Depth → Floor → Return and prevents an outside-opened return shortcut.
+- Secret-site access/resolution rules and the four no-boss carve-outs are explicit.
+- Cenote, Drowned Mead Hall, Obsidian Vault and Hollow City have dedicated native mechanic owners in addition to the common authored-site boundary.
+- `DarkArisenOps validate-dungeons` is an additive fail-closed source gate.
+- Final `.umap` geometry, art, lighting, encounter placement, navmesh, creature assets, animation, VFX, audio and runtime playtesting remain real production work.
 
-### Holdings and colonies
+### Quests and missions
 
-- `UColonyHoldingComponent` implements Trade Post / Settlement / Military Stronghold / Alliance Bastion plus Claimed → Functional → Established → Developed → Thriving.
-- Claim requires an intact taken castle, Alliance old fortress or authored abandoned site. A razed castle cannot be owned.
-- Population is person-by-person: each delivered resident has a stable person ID, population kind and concrete voyage ID. A normal holding cannot reach Established with an empty delivered manifest.
-- Settlements declare their type at Established and may choose Plantation / Craft / Free Settlement / Port specialization.
-- Alliance Bastions are not Jake-owned and reject Jake-population delivery through this ownership path.
-- Persistent siege/retaliation damage is tracked until explicitly repaired.
+- All 17 named Threads are source-grounded in `FAuthoredQuestCatalog`; their governing sources and activation/expiration information are retained without inventing missing journal prose.
+- Phase 11 requires exactly 132 finite Turns. Only three individual Turn identities are currently authored strongly enough for native production: `Rexa.Turn.EmptyHammock`, `Rexa.Turn.ThreeCutsInStone`, `Rexa.Turn.SaltLedger`.
+- Standing requires exactly 147 finite variants. Only `Rexa.Standing.Salvage.SanTelmoBell` is currently an individually complete identity.
+- `FQuestCoverageRegister` now exposes the exact deliberate gap: **129 unauthored Turns + 146 unauthored Standing variants = 275 identities**.
+- Missing entries use neutral coverage IDs only. They have no invented title, NPC, location, dialogue, reward, premise or outcome.
+- The exact grouped gap list is `Docs/QUEST_CONTENT_GAPS.md`.
+- `DarkArisenOps validate-missions` requires the gap register and scans mission source for forbidden generated/radiant mission paths.
 
-### Sieges
+### Tier-1 bosses
 
-- `UCastleSiegeComponent` implements Approach → Investment → Breach → Assault → Resolved.
-- Wall / Back / Inside are distinct doors; skipping prep into a blind assault is legal.
-- Structural breach damage persists. A castle with breach damage cannot resolve as HeldIntact.
-- Defensive sieges use the same state authority and resolve only Defended/Lost.
+- The authoritative Nine Who Hold register remains exactly Herrera, Reyes, Cruz, de Silva, Vega, Blackwood, Sterling, Ashcroft and Thorne.
+- Shared native boss encounter authority covers source-backed arena/phase/resolution requirements while retaining specific exceptions such as Vega refusing a spare route.
+- Isabel Cruz retains her dedicated M2 encounter actor rather than being flattened into a generic commander.
+- Final arenas, character/weapon assets, animation, AI tuning, dialogue staging and runtime evidence remain open.
 
-### Armies and battles
+### World / regions
 
-- `UArmyCampaignComponent` has only named/cultural forces: Hired, SettlementMilitia, Alliance, FactionLevy and Crew. Crew are never counted as an army.
-- Upkeep anchors: hired 14 doubloons/man/chapter, militia 4, cavalry ×3, specialist ×2. Alliance/levy/crew have no generic cash upkeep here.
-- Company marines depart after one unpaid chapter; normal hired forces after two. Militia do not use the hired-desertion path.
-- Jake command capacity is 200 + 150 per named officer. Alliance forces reject Jake's orders.
-- The entire order vocabulary is HOLD / PRESS / BREAK OFF; no unit-card, formation, facing or selection-box system exists.
-- `ULargeBattleComponent` models 3–6 front segments with hidden Cohesion. Jake occupies at most one. Other segments can break independently and Rising battles reject direct Jake orders.
-- Final battle outcome cannot resolve until every segment resolves. Jake falling removes him from his segment but deliberately leaves the battle active.
+- Native authored-region registry and level-binding contracts exist for the production regions.
+- A level may not claim a canonical region identity without registering against the matching source-backed region authority.
+- This does not mean the final region `.umap` worlds, terrain, settlements, vegetation, fauna, populations, navmesh, lighting and streaming cells are already authored.
 
-## M6 source completion in PR #8
+### Presentation / animation
 
-### Crystal Caves
+- Native presentation contracts retain exactly 19 authored cinematics and 22 moments that must remain player-controlled.
+- The animation state bridge already consumes combat, weapon-weight, posture, wound and Crystal-Katana exception state.
+- The authored animation production catalog records named animation requirements instead of claiming missing binary assets exist.
+- Cutscene #9's local entry says P1 while the later aggregate P1 summary omits it; the narrower local entry is retained and the aggregate inconsistency remains a design-source discrepancy rather than silently rewritten.
 
-- `UCrystalCavesPassageComponent` is the only Highmoore route boundary.
-- First passage requires at least 90 real minutes plus observed physical movement.
-- Once opened, the route remains permanent. Repeat traversal requires an authored 4–6 real minutes plus physical movement.
-- No instant level/network/waypoint transition path exists in the component.
+### Voice
 
-### Crystal Guardian
+- Five canonical crew voice-audition texts are source-locked against the existing voice bibles.
+- AI Voice Generator audition previews have been generated for Mira, Big Tom, Ines, Father Salvio and Esteban.
+- These are auditions only. They are not Shipping voice assets and are not treated as commercially cleared until service rights/cost terms are explicitly confirmed acceptable.
 
-- `UCrystalGuardianComponent` starts Dormant and must be explicitly engaged; it does not attack first.
-- It consumes explicit light stimuli rather than body/player target state.
-- Locked phase bands are 100–75 / 75–45 / 45–20 / 20–0.
-- It may be bypassed entirely; bypass yields no Crystal Katana.
-- Defeat enters Settling and holds four seconds before Defeated. No slow-motion/music-sting authority exists in this component.
+## Writing quality rule
 
-### Crystal Katana
+`Docs/WRITING_STYLE_GUARDRAILS.md` now applies to dialogue, journal prose, quest text, lore, item text and AI-assisted writing.
 
-- `UCrystalKatanaComponent` can be acquired only from a defeated Guardian.
-- Locked physical anchors: 74 cm blade and 1.1 kg.
-- Attack stamina cost is condition-independent: the authored base cost is returned unchanged regardless of Jake's condition.
-- Conventional armour-ignore and resting/moving light read are encoded.
-- No durability, repair, sharpening or upgrade system exists.
+Key rule: source-backed character voice beats polish. Do not homogenise people into a shared eloquent style. Avoid machine-shaped rhetorical symmetry, generic solemnity, exposition disguised as banter and invented dialect decoration. If the information itself is not authored, do not write the line.
 
-### Highmoore horse and authored rides
+## Game Studios / Kimi K3
 
-- `UHighmooreHorseComponent` has bond 0–3, Walk/Trot/Canter/Gallop and qualitative mood with no player-facing stamina number.
-- Permanent horse death persists.
-- Lake ride: exactly 9 real minutes, gait cannot exceed Trot.
-- Arion ride: 4 real minutes, unbroken Gallop, horse stamina suspended.
-- Belos continuation: 6 real minutes, Gallop and the same suspension.
-- After Belos the horse has lasting exhaustion; Return is ~40 real minutes capped to Walk.
+- The imported Game Studios agent profiles are methodology only; Dark Arisen design authority remains above them.
+- `DarkArisenOps studio-kimi` uses NVIDIA NIM model `moonshotai/kimi-k3` and reads `NVIDIA_API_KEY` only from the process environment.
+- No secret is stored in source or proposal output.
+- Kimi output is restricted to `Docs/AIProposals/` review material and isolated `ai/...` branches; it never becomes canon or merges automatically.
+- The Game Studios workflow now has bounded jobs for:
+  - dungeon spatial production,
+  - world-region production,
+  - mission-authorship gap review,
+  - animation coverage.
+- Mission review is explicitly not a mission generator. Writing guardrails and the quest-gap register are supplied as governing context.
+- The Kimi workflow still cannot execute until the required UE 5.5 self-hosted Windows runner is online.
 
-### Princess quest / Arrow / Belos / Return
+## Remaining large Alpha work
 
-- `UPrincessQuestStateComponent` begins canonical M4 Lake→Dock autosave suppression when the false letter is handed over and only ends it at the dock.
-- The Arrow law is explicit: no slow motion, no cue change, no camera move, no audio telegraph, no revive prompt; player control remains.
-- Arion children and all noncombatants are non-damageable through the quest-state safety boundary.
-- The real letter remains optional to read; walking past it is representable.
-- Turning west at Arion is a valid unmarked terminal branch before Belos.
-- Belos has distinct Katana-assault-interrupted and ordinary-weapon-overwhelmed outcomes.
-- No systemic romance or systemic magic layer is introduced. No Belos undercroft rendering/level actor is implemented; the locked undercroft rule remains intact.
+1. Finish source-backed Thread implementation from each cited design source; do not touch the 275 neutral quest gaps unless new approved design appears.
+2. Continue dungeon mechanics/integration and real level-production requirements for every source-grounded site.
+3. Finish region/world integration contracts, populations, fauna, reconstruction, assassin-network and remaining authored content.
+4. Finish boss-specific mechanics and presentation requirements.
+5. Finish animation/cutscene/dialogue/subtitle/audio production contracts, then create/integrate actual UE assets when editor/runtime access exists.
+6. Resolve credits/music/licensing and voice commercial-use approval before Shipping promotion.
+7. Bring Windows/Linux UE 5.5 runners online and execute compile + Unreal Automation.
+8. Author/validate final `.umap`/`.uasset` content in UE 5.5.
+9. Run save/load, performance, accessibility/controller and full start-to-credits regression.
+10. Produce same-commit Windows x64 + Linux x86_64 Shipping candidates, checksums, private Pixel Streaming access test and final operator Alpha approval.
 
-## Verification encoded in PR #8
+## Never claim without evidence
 
-- `.github/workflows/ci.yml` is additive and now runs M0, M1, M2, M3/M4, M5/M6, Alpha-platform and design-law validators on both configured platforms before UE build/test steps.
-- `Tools/ci/validate_m5_m6.py` checks the M5/M6 source set and fails closed on fast-travel/teleport symbols, compass/minimap/player-dot, systemic romance/relationship UI, systemic magic, illegal autosave helpers, Belos undercroft rendering, Katana maintenance, Princess revive/slow-motion helpers and RTS-style army UI/control.
-- Negative Python tests deliberately inject prohibited fast travel, systemic magic, crew-hostage exclusion and Arrow slow motion.
-- Native `M5M6SystemsSpec.cpp` covers regional Crisis/Fall/Liberation, Chapter 4–10 autonomous movement, duplicate-tick rejection, retaliation caps, child exclusion/adult-crew eligibility, holding person-manifest growth, persistent siege damage, army upkeep/capacity/desertion, independent battle segments/Jake fall, Crystal-Caves timing, Guardian bypass, Katana anchors, authored horse rides and Princess Arrow/Arion safety laws.
-- Existing M0–M4 validators and gates were not removed or weakened.
-
-## Deferred UE/runtime acceptance
-
-- Windows/Linux UE 5.5 compilation and Unreal Automation execution on matching self-hosted runners.
-- M2 authored Rexa levels/navigation/animation and two-hour evidence.
-- M3 authored full ship geometry, ocean/physics/animation/audio and measured sea-passage playtest.
-- M4 production 68-node canon Data Asset, all teaching scenes and final persistence/social/economy presentation.
-- M5 authored colony/holding/castle environments, real siege traversal/bombardment, army camps/AI, retaliation missions, battle-scale simulation/performance and full campaign evidence.
-- M6 authored Crystal Caves/minecart/puzzles, Guardian AI/model/animation/audio, Katana assets, horse locomotion/physics, Highmoore locations/populations, Princess staging/dialogue/audio and measured ride/return evidence.
-- Save/load persistence, frame-time, packaging, private Pixel Streaming/iPad and Alpha acceptance.
-
-## Cost / service state
-
-- No GPU host, VM, paid runner, domain, certificate, TURN endpoint, voice generation, paid asset service or deployment was started in PR #8.
-- Any future billable infrastructure remains an explicit operator approval gate.
-
-## Next engineering line
-
-PR #8 remains Draft until its source audit is complete and the operator decides whether to merge. After M5/M6 source integration, the next source milestone is M7 content scale-out unless the operator redirects to deferred runtime authoring. Do not fill missing content with invented canon and do not convert source closure into runtime acceptance.
+- UE compilation passed,
+- Unreal Automation passed,
+- a binary level/animation/audio asset exists merely because a C++ contract exists,
+- 60 fps passed,
+- start-to-credits passed,
+- voice/music usage is commercially cleared,
+- Windows/Linux packages are Alpha-ready,
+- the Alpha is accepted.
