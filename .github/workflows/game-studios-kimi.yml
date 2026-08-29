@@ -1,0 +1,59 @@
+name: Game Studios Kimi K3 Content Proposals
+
+on:
+  workflow_dispatch:
+    inputs:
+      job:
+        description: Bounded studio production job
+        required: true
+        type: choice
+        default: dungeon-spatial-production
+        options:
+          - dungeon-spatial-production
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dark-arisen-kimi-${{ github.ref }}-${{ inputs.job }}
+  cancel-in-progress: false
+
+jobs:
+  dungeon-studio:
+    name: Kimi K3 dungeon and level studio proposal
+    runs-on: [self-hosted, Windows, X64, ue5.5, dark-arisen]
+    timeout-minutes: 120
+    environment: m0-streaming
+
+    steps:
+      - name: Check out current private source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          lfs: false
+
+      - name: Build native C++ operations owner
+        shell: cmd
+        run: 'call "%UE55_ROOT%\Engine\Build\BatchFiles\Build.bat" DarkArisenOps Win64 Development "-Project=%GITHUB_WORKSPACE%\DarkArisen.uproject" -WaitMutex -WarningsAsErrors'
+
+      - name: Verify approved UE 5.5 runner
+        shell: cmd
+        run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" runner-check "--root=%GITHUB_WORKSPACE%" "--engine=%UE55_ROOT%"'
+
+      - name: Produce bounded Kimi K3 review proposal
+        if: inputs.job == 'dungeon-spatial-production'
+        shell: cmd
+        env:
+          NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
+        run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" studio-kimi "--root=%GITHUB_WORKSPACE%" "--task-file=Docs/AIJobs/dungeon-spatial-production.md" "--role-file=.claude/agents/level-designer.md" "--context-list=Docs/AIJobs/dungeon-spatial-production.context" "--output=Docs/AIProposals/kimi-dungeons-${{ github.run_id }}-${{ github.run_attempt }}.md" "--max-tokens=16384"'
+
+      - name: Commit proposal to isolated review branch
+        if: inputs.job == 'dungeon-spatial-production'
+        shell: cmd
+        run: >-
+          git config user.name "dark-arisen-kimi-studio" &&
+          git config user.email "dark-arisen-kimi-studio@users.noreply.github.com" &&
+          git checkout -b "ai/kimi-dungeons-${{ github.run_id }}-${{ github.run_attempt }}" &&
+          git add "Docs/AIProposals/kimi-dungeons-${{ github.run_id }}-${{ github.run_attempt }}.md" &&
+          git commit -m "proposal(ai): Kimi K3 dungeon production review ${{ github.run_id }}.${{ github.run_attempt }}" &&
+          git push origin HEAD
