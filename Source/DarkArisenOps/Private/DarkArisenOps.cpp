@@ -15,6 +15,7 @@ void PrintUsage()
     UE_LOG(LogTemp, Display, TEXT("  build --root=<repo> --engine=<UE5.5> [--automation]"));
     UE_LOG(LogTemp, Display, TEXT("  package-alpha --revision=<40sha> [--output=<dir>]"));
     UE_LOG(LogTemp, Display, TEXT("  promote-alpha --evidence=<json> --windows=<zip> --linux=<zip> --output=<dir>"));
+    UE_LOG(LogTemp, Display, TEXT("  studio-kimi --task-file=<repo-relative> --role-file=<repo-relative> --output=<Docs/AIProposals/...> [--max-tokens=4096]"));
     UE_LOG(LogTemp, Display, TEXT("  bootstrap-streaming [--infra=<dir>] [--force-rebuild]"));
     UE_LOG(LogTemp, Display, TEXT("  stream-signalling | stream-turn | stream-launch | stream-deploy"));
     UE_LOG(LogTemp, Display, TEXT("  stream-install-services | stream-idle-shutdown | stream-provider-shutdown"));
@@ -54,6 +55,10 @@ INT32_MAIN_INT32_ARGC_TCHAR_ARGV()
         else if (Command == TEXT("promote-alpha"))
         {
             Result = DarkArisenOps::PromoteAlphaCommand(Args);
+        }
+        else if (Command == TEXT("studio-kimi"))
+        {
+            Result = DarkArisenOps::StudioKimiCommand(Args);
         }
         else if (Command == TEXT("help") || Command == TEXT("--help") || Command == TEXT("-h"))
         {
