@@ -24,8 +24,11 @@ void UCombatProximitySubsystem::BroadcastCombatActivity(const FVector& WorldLoca
     {
         return !Responder.IsValid();
     });
-    for (const TWeakObjectPtr<AActor>& Responder : Responders)
+    // Iterate a copy: a responder may destroy actors or unregister itself while reacting.
+    const TArray<TWeakObjectPtr<AActor>> PendingResponders = Responders;
+    for (const TWeakObjectPtr<AActor>& Responder : PendingResponders)
     {
+        if (!Responder.IsValid()) continue;
         ICombatProximityResponder::Execute_ReceiveCombatActivity(
             Responder.Get(), WorldLocation);
     }
