@@ -71,7 +71,7 @@ Source for the quotas: `mission types.md` Sections 1–10 and the native `FMissi
 
 **275 = 129 Turns + 146 Standing variants.**
 
-These 275 entries are not failures to generate content. They are intentional fail-closed gaps because the design corpus does not currently provide enough approved narrative material to author them honestly.
+These 275 entries are intentional fail-closed gaps. They remain unwritten until approved design authority supplies enough concrete narrative material.
 
 ## Promotion rule
 
