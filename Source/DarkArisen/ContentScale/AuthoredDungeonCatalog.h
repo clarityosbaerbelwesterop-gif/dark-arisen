@@ -122,6 +122,9 @@ public:
     /** Crystal Caves is represented separately because the newest global document calls it a category of one. */
     static FAuthoredDungeonCatalogEntry BuildCrystalCavesCarveout();
 
+    /** Runtime-safe lookup. Does not treat Crystal Caves as an ordinary dungeon site. */
+    static bool TryGetKnownSite(FName StableId, FAuthoredDungeonCatalogEntry& OutEntry);
+
     /** Canon gaps that must be resolved rather than filled by AI or procedural generation. */
     static TArray<FDungeonCatalogDesignGap> BuildDesignGaps();
 
