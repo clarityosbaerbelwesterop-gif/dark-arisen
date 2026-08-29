@@ -17,7 +17,7 @@ enum class EPresentationControlOwnership : uint8
 {
     SequencerOwned,
     AnchoredPlayerMovement,
-    BriefInsert,
+    BriefAuthoredTakeover,
     SlowPushOnly,
     PlayerControlled
 };
