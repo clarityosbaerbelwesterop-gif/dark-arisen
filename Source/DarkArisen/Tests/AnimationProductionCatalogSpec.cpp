@@ -63,6 +63,14 @@ bool FDarkArisenAnimationProductionCatalogSpec::RunTest(const FString& Parameter
         TestEqual(TEXT("Great recovery is 44 frames"), Timings[3].RecoveryFrames, 44);
         TestEqual(TEXT("Polearm startup is 15 frames"), Timings[4].StartupFrames, 15);
         TestEqual(TEXT("Polearm recovery is 24 frames"), Timings[4].RecoveryFrames, 24);
+
+        for (const FAnimationWeightTiming& Timing : Timings)
+        {
+            TestTrue(TEXT("Every weapon class preserves the eight-frame attack readability floor"),
+                Timing.StartupFrames >= FAnimationProductionCatalog::MinimumAttackTellFrames);
+            TestTrue(TEXT("Every weapon class preserves non-zero authored recovery commitment"),
+                Timing.RecoveryFrames > 0);
+        }
     }
 
     const TArray<FAnimationWoundLayerRequirement> Wounds = FAnimationProductionCatalog::BuildWoundLayerRequirements();
