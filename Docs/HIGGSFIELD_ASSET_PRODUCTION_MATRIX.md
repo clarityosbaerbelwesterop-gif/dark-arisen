@@ -12,9 +12,9 @@
 | Grounded named dungeons | 40 | Briefed | None claimed | None claimed | 20 minor identities + unresolved named Region 06 slot are not invented |
 | World regions | 8 | Briefed | None claimed | Runtime maps remain unauthored | no coordinates/unnamed locations invented |
 | Highmoore named anchors | 12 | Briefed | None claimed | Runtime placements remain unauthored | no generic lesser-House castle substitution |
+| Major character source sheets | 9 | 8 provider-ready, 1 blocked | None claimed | None claimed | Elowen lacks a sufficient canonical physical feature sheet; no appearance is invented |
 | State Treasures | 9 | Briefed | None claimed | Physical assets/placements remain unauthored | — |
 | Current grounded unique reward | 1 | Briefed | None claimed | Physical asset/import remains unauthored | — |
-| Character look/reference | source reconnaissance next | Not yet counted | None claimed | None claimed | visual facts must come from character/NPC source first |
 | Creature/boss look/reference | source reconnaissance next | Not yet counted | None claimed | None claimed | only individually authored identities may enter |
 | La Liberación / ship production | source reconnaissance next | Not yet counted | None claimed | final hull/interior remains unauthored | derive only from ship sources |
 | Candidate 3D meshes/rigged meshes | 0 verified connected-model paths | Blocked | None claimed | None claimed | connected Higgsfield search returned no usable 3D model/action |
@@ -22,7 +22,7 @@
 
 ## Current finite Higgsfield brief total
 
-The native `FExternalAssetProductionCatalog` currently expects **107** source-derived Higgsfield briefs before character/creature/ship batches are added:
+The native `FExternalAssetProductionCatalog` currently expects **115** source-derived Higgsfield briefs before creature/boss/ship batches are added:
 
 - 11 named animation requirements;
 - 12 system animation requirements;
@@ -30,10 +30,29 @@ The native `FExternalAssetProductionCatalog` currently expects **107** source-de
 - 40 grounded named dungeons;
 - 8 world regions;
 - 12 Highmoore named anchors;
+- 8 source-ready major-character reference briefs;
 - 9 State Treasures;
 - 1 currently grounded unique reward.
 
 The number is a coverage count, not an asset-completion count.
+
+## Major-character reconnaissance result
+
+The first source pass covers:
+
+- Jake Harlow;
+- Mira;
+- Big Tom;
+- Ines;
+- Father Salvio;
+- Esteban;
+- Elowen Arion;
+- Ethan Harlow;
+- Captain Draven Voss.
+
+Eight have enough source-backed physical facts for a bounded reference-generation brief. Elowen is intentionally excluded from provider generation: her character, voice, interiority, riding and social presence are deeply authored, but the current source does not sufficiently lock hair, eyes, height, build, skin, facial structure or a production costume sheet. Those facts are not filled with a generic AI-princess design.
+
+Jake, Ethan and Draven have strong physical descriptions but incomplete costume sheets. Their provider briefs therefore allow source-grounded physical reference work only; unspecified wardrobe treatment is explicitly non-canonical until approved.
 
 ## Explicit no-generation boundaries
 
@@ -44,6 +63,7 @@ These identities must not be sent to a provider merely to close a count:
 - 20 unauthored minor-dungeon identities;
 - the unresolved additional named Region 06 dungeon slot;
 - 5 unresolved final-act cutscene identities;
+- Elowen's missing physical visual facts;
 - any character visual detail not supplied by an approved source;
 - any main-story beat whose trigger/actors/outcome are not resolved by governing design.
 
