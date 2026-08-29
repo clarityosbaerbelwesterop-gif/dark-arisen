@@ -171,7 +171,8 @@ bool ULiberationAllianceSubsystem::RecordAuthoredConnectionCompleted(const FName
         return false;
     }
 
-    const FAllianceConnectionDefinition* Definition = GetConnectionDefinitions().FindByPredicate(
+    const TArray<FAllianceConnectionDefinition> Definitions = GetConnectionDefinitions();
+    const FAllianceConnectionDefinition* Definition = Definitions.FindByPredicate(
         [ConnectionId](const FAllianceConnectionDefinition& Candidate)
         {
             return Candidate.StableId == ConnectionId;
