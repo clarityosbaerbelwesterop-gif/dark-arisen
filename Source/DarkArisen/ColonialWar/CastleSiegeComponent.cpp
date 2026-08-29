@@ -94,7 +94,7 @@ bool UCastleSiegeComponent::RecordCommanderResolved(const FName CommanderId)
 
 bool UCastleSiegeComponent::RecordStateTreasureRecovered(const FName TreasureId)
 {
-    if (Phase != ESiegePhase::Assault || TreasureId.IsNone() || RecoveredStateTreasures.Contains(TreasureId))
+    if (Phase != ESiegePhase::Assault || TreasureId.IsNone())
     {
         return false;
     }
@@ -111,7 +111,13 @@ bool UCastleSiegeComponent::RecordStateTreasureRecovered(const FName TreasureId)
         return false;
     }
 
-    RecoveredStateTreasures.Add(TreasureId);
+    const FName CanonicalTreasureId = Binding->SourceContentId;
+    if (RecoveredStateTreasures.Contains(CanonicalTreasureId))
+    {
+        return false;
+    }
+
+    RecoveredStateTreasures.Add(CanonicalTreasureId);
     return true;
 }
 
