@@ -17,7 +17,7 @@ bool FDarkArisenAlphaContentReadinessSpec::RunTest(const FString& Parameters)
     TestEqual(TEXT("Readiness snapshot has no structural errors"), Errors.Num(), 0);
 
     const TArray<FAlphaContentFamilyStatus> Snapshot = FAlphaContentReadiness::BuildCurrentSnapshot();
-    TestEqual(TEXT("Fourteen Alpha content families are reconciled"), Snapshot.Num(), 14);
+    TestEqual(TEXT("Sixteen Alpha content families are reconciled"), Snapshot.Num(), 16);
 
     TArray<FString> Blockers;
     TestFalse(TEXT("Source cannot self-certify complete Alpha production"), FAlphaContentReadiness::IsContentProductionComplete(Blockers));
@@ -38,9 +38,22 @@ bool FDarkArisenAlphaContentReadinessSpec::RunTest(const FString& Parameters)
 
     const FAlphaContentFamilyStatus* Turns = Find(TEXT("alpha-content.turns"));
     TestNotNull(TEXT("Turn status exists"), Turns);
-    if (Turns)
+    if (Turns) TestEqual(TEXT("Three of 132 Turn identities are grounded"), Turns->SourceGroundedCount, 3);
+
+    const FAlphaContentFamilyStatus* StateTreasures = Find(TEXT("alpha-content.state-treasures"));
+    TestNotNull(TEXT("State treasure status exists"), StateTreasures);
+    if (StateTreasures)
     {
-        TestEqual(TEXT("Three of 132 Turn identities are grounded"), Turns->SourceGroundedCount, 3);
+        TestEqual(TEXT("All nine state treasure identities are now source grounded"), StateTreasures->SourceGroundedCount, 9);
+        TestEqual(TEXT("No physical state-treasure production asset is falsely claimed"), StateTreasures->ProductionAssetCount, 0);
+    }
+
+    const FAlphaContentFamilyStatus* HighmooreAnchors = Find(TEXT("alpha-content.highmoore-world-anchors"));
+    TestNotNull(TEXT("Highmoore anchor status exists"), HighmooreAnchors);
+    if (HighmooreAnchors)
+    {
+        TestEqual(TEXT("Twelve current Highmoore named anchors are source grounded"), HighmooreAnchors->SourceGroundedCount, 12);
+        TestEqual(TEXT("No Highmoore runtime placement is falsely claimed"), HighmooreAnchors->ProductionAssetCount, 0);
     }
 
     const FAlphaContentFamilyStatus* Voices = Find(TEXT("alpha-content.core-crew-voice"));

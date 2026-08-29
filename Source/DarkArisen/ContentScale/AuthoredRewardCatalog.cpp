@@ -38,6 +38,20 @@ EAuthoredRewardFamily FamilyForDungeon(const FName DungeonId)
     return EAuthoredRewardFamily::DungeonOutcome;
 }
 
+EAuthoredTreasureClass TreasureClassForFamily(const EAuthoredRewardFamily Family)
+{
+    switch (Family)
+    {
+    case EAuthoredRewardFamily::DocumentaryEvidence:
+    case EAuthoredRewardFamily::StateTreasure:
+        return EAuthoredTreasureClass::Document;
+    case EAuthoredRewardFamily::NavigationalKnowledge:
+        return EAuthoredTreasureClass::Map;
+    default:
+        return EAuthoredTreasureClass::Object;
+    }
+}
+
 bool CarriesCommunityOwnershipQuestion(const FName DungeonId)
 {
     static const TSet<FName> CommunityOwned = {
@@ -50,6 +64,26 @@ bool CarriesCommunityOwnershipQuestion(const FName DungeonId)
         TEXT("dungeon.fjordlund.one-that-waited")
     };
     return CommunityOwned.Contains(DungeonId);
+}
+
+FAuthoredRewardBinding StateTreasure(
+    const TCHAR* StableId,
+    const TCHAR* SourceContentId,
+    const TCHAR* DisplayName,
+    const TCHAR* CastleId,
+    const TCHAR* SourceDetail)
+{
+    FAuthoredRewardBinding Result;
+    Result.StableId = StableId;
+    Result.SourceContentId = SourceContentId;
+    Result.DisplayName = DisplayName;
+    Result.GoverningSource = TEXT("treasure system.md Section 4; castle catalog.md Section 13");
+    Result.AuthoredOutcome = SourceDetail;
+    Result.Family = EAuthoredRewardFamily::StateTreasure;
+    Result.TreasureClass = EAuthoredTreasureClass::Document;
+    Result.bIdentityAuthored = true;
+    Result.OriginStableId = CastleId;
+    return Result;
 }
 }
 
@@ -68,7 +102,9 @@ TArray<FAuthoredRewardBinding> FAuthoredRewardCatalog::BuildDungeonRewardBinding
         Reward.GoverningSource = Profile.GoverningSource;
         Reward.AuthoredOutcome = Profile.RewardDetail;
         Reward.Family = FamilyForDungeon(Profile.StableId);
+        Reward.TreasureClass = TreasureClassForFamily(Reward.Family);
         Reward.bCommunityOwnershipQuestion = CarriesCommunityOwnershipQuestion(Profile.StableId);
+        Reward.bCountsTowardReturnQuestion = Reward.bCommunityOwnershipQuestion;
         Reward.bExplicitlyNothing = Profile.bRewardExplicitlyNone;
         Reward.bWithheldOrUnresolved = Profile.bRewardWithheldOrUnresolved;
         Reward.bIdentityAuthored = Reward.bExplicitlyNothing
@@ -77,6 +113,7 @@ TArray<FAuthoredRewardBinding> FAuthoredRewardCatalog::BuildDungeonRewardBinding
         if (Reward.bExplicitlyNothing)
         {
             Reward.Family = EAuthoredRewardFamily::ExplicitNothing;
+            Reward.bCountsTowardReturnQuestion = false;
         }
         Results.Add(MoveTemp(Reward));
     }
@@ -86,23 +123,62 @@ TArray<FAuthoredRewardBinding> FAuthoredRewardCatalog::BuildDungeonRewardBinding
 
 TArray<FAuthoredRewardBinding> FAuthoredRewardCatalog::BuildStateTreasureSlots()
 {
-    TArray<FAuthoredRewardBinding> Results;
-    Results.Reserve(StateTreasureSlotCount);
-
-    for (int32 Index = 0; Index < StateTreasureSlotCount; ++Index)
-    {
-        FAuthoredRewardBinding Slot;
-        Slot.StableId = FName(*FString::Printf(TEXT("reward.state-treasure.slot-%02d"), Index + 1));
-        Slot.SourceContentId = FName(*FString::Printf(TEXT("state-treasure.slot-%02d"), Index + 1));
-        Slot.DisplayName = FString::Printf(TEXT("State Treasure authoring slot %02d"), Index + 1);
-        Slot.GoverningSource = TEXT("cutscene catalog.md Insert I-2; ColonialWar/CastleSiegeComponent state-treasure recovery contract");
-        Slot.AuthoredOutcome = TEXT("A state treasure must be a concrete physical authored object recovered through castle/siege content. This slot does not invent its identity.");
-        Slot.Family = EAuthoredRewardFamily::StateTreasure;
-        Slot.bIdentityAuthored = false;
-        Slot.bWithheldOrUnresolved = true;
-        Results.Add(MoveTemp(Slot));
-    }
-    return Results;
+    return {
+        StateTreasure(
+            TEXT("reward.state-treasure.conquest-archives-1651"),
+            TEXT("state-treasure.conquest-archives-1651"),
+            TEXT("The Conquest Archives, 1651"),
+            TEXT("castle.la-ciudadela"),
+            TEXT("The Conquest Archives, 1651, physically recovered from La Ciudadela.")),
+        StateTreasure(
+            TEXT("reward.state-treasure.labor-ledgers"),
+            TEXT("state-treasure.labor-ledgers"),
+            TEXT("The Labor Ledgers"),
+            TEXT("castle.fuerte-esperanza"),
+            TEXT("The Labor Ledgers, physically recovered from Fuerte Esperanza.")),
+        StateTreasure(
+            TEXT("reward.state-treasure.1846-patrol-reports"),
+            TEXT("state-treasure.1846-patrol-reports"),
+            TEXT("The 1846 Patrol Reports"),
+            TEXT("castle.fuerte-san-rafael"),
+            TEXT("The 1846 Patrol Reports, physically recovered from Fuerte San Rafael.")),
+        StateTreasure(
+            TEXT("reward.state-treasure.bribe-ledgers"),
+            TEXT("state-treasure.bribe-ledgers"),
+            TEXT("The Bribe Ledgers"),
+            TEXT("castle.castillo-dorado"),
+            TEXT("The Bribe Ledgers, physically recovered from Castillo Dorado.")),
+        StateTreasure(
+            TEXT("reward.state-treasure.vegas-eleven-years"),
+            TEXT("state-treasure.vegas-eleven-years"),
+            TEXT("Vega's Eleven Years"),
+            TEXT("castle.puesto-del-norte"),
+            TEXT("Vega's Eleven Years, physically recovered from Puesto del Norte.")),
+        StateTreasure(
+            TEXT("reward.state-treasure.master-ledger"),
+            TEXT("state-treasure.master-ledger"),
+            TEXT("The Master Ledger"),
+            TEXT("castle.coventry-house"),
+            TEXT("The Master Ledger, physically recovered from Coventry House.")),
+        StateTreasure(
+            TEXT("reward.state-treasure.sterlings-correspondence"),
+            TEXT("state-treasure.sterlings-correspondence"),
+            TEXT("Sterling's Correspondence"),
+            TEXT("castle.sterling-bastion"),
+            TEXT("Sterling's Correspondence from the Sterling Bastion. On the alliance path Sterling may hand it over herself; taking and being given it remain distinct authored acquisition routes.")),
+        StateTreasure(
+            TEXT("reward.state-treasure.four-thousand-contracts"),
+            TEXT("state-treasure.four-thousand-contracts"),
+            TEXT("The Four Thousand Contracts"),
+            TEXT("castle.ashcroft-hall"),
+            TEXT("The Four Thousand Contracts, physically recovered from Ashcroft Hall.")),
+        StateTreasure(
+            TEXT("reward.state-treasure.thornes-dispatches"),
+            TEXT("state-treasure.thornes-dispatches"),
+            TEXT("Thorne's Dispatches"),
+            TEXT("castle.fort-resolute"),
+            TEXT("Thorne's Dispatches, physically recovered from Fort Resolute."))
+    };
 }
 
 TArray<FAuthoredRewardBinding> FAuthoredRewardCatalog::BuildNamedUniqueRewards()
@@ -114,9 +190,31 @@ TArray<FAuthoredRewardBinding> FAuthoredRewardCatalog::BuildNamedUniqueRewards()
     Katana.GoverningSource = TEXT("crystal guardian.md Section 7.3; crystal katana.md; CrystalKatanaComponent");
     Katana.AuthoredOutcome = TEXT("Physical 74 cm, 1.1 kg unique weapon obtained only after defeating the Crystal Guardian; bypassing the Guardian yields no Katana.");
     Katana.Family = EAuthoredRewardFamily::UniqueWeapon;
+    Katana.TreasureClass = EAuthoredTreasureClass::Object;
     Katana.bIdentityAuthored = true;
 
     return { Katana };
+}
+
+TArray<FRewardProductionDesignGap> FAuthoredRewardCatalog::BuildDesignGaps()
+{
+    return {
+        {
+            TEXT("design-gap.return-question-artifact-identities"),
+            TEXT("Treasure canon says approximately forty artifacts ask sell/keep/return, but it does not provide forty individually reconciled identities in one authoritative list. The total is locked; absent identities are not fabricated."),
+            TEXT("treasure system.md Sections 1.4 and 7")
+        },
+        {
+            TEXT("design-gap.buried-hoard-identities"),
+            TEXT("Sixteen buried-hoard chains are required — twelve across the archipelago and four in Highmoore — but this source does not individually name all sixteen chains. No X-marks-the-spot filler is generated."),
+            TEXT("treasure system.md Section 6")
+        },
+        {
+            TEXT("design-gap.individual-treasure-class-mix"),
+            TEXT("The five class percentages are approximate corpus targets, not an authored per-item classification table. Individual treasure classes stay source-driven rather than being assigned merely to hit percentages."),
+            TEXT("treasure system.md Sections 1-2")
+        }
+    };
 }
 
 bool FAuthoredRewardCatalog::Validate(TArray<FString>& OutErrors)
@@ -159,20 +257,45 @@ bool FAuthoredRewardCatalog::Validate(TArray<FString>& OutErrors)
     const TArray<FAuthoredRewardBinding> StateTreasures = BuildStateTreasureSlots();
     if (StateTreasures.Num() != StateTreasureSlotCount)
     {
-        OutErrors.Add(TEXT("Exactly nine state-treasure authoring slots are required."));
+        OutErrors.Add(TEXT("Exactly nine state treasures are required."));
     }
     for (const FAuthoredRewardBinding& Treasure : StateTreasures)
     {
-        if (Treasure.bIdentityAuthored || !Treasure.bWithheldOrUnresolved || Treasure.Family != EAuthoredRewardFamily::StateTreasure)
+        if (!Treasure.bIdentityAuthored || Treasure.bWithheldOrUnresolved
+            || Treasure.Family != EAuthoredRewardFamily::StateTreasure
+            || Treasure.TreasureClass != EAuthoredTreasureClass::Document
+            || Treasure.DisplayName.IsEmpty() || Treasure.OriginStableId.IsNone())
         {
-            OutErrors.Add(TEXT("State-treasure slots must stay fail-closed until concrete identities are authored."));
+            OutErrors.Add(TEXT("Every state treasure must remain a named physical document bound to its authored castle."));
         }
+        if (Seen.Contains(Treasure.StableId))
+        {
+            OutErrors.Add(FString::Printf(TEXT("Duplicate state-treasure id: %s"), *Treasure.StableId.ToString()));
+        }
+        Seen.Add(Treasure.StableId);
     }
 
     const TArray<FAuthoredRewardBinding> UniqueRewards = BuildNamedUniqueRewards();
     if (UniqueRewards.Num() != 1 || UniqueRewards[0].DisplayName != TEXT("Crystal Katana") || !UniqueRewards[0].bIdentityAuthored)
     {
         OutErrors.Add(TEXT("Crystal Katana must remain the currently grounded named unique reward in this catalog."));
+    }
+
+    if (ApproxCoinPercent + ApproxMaterialPercent + ApproxDocumentPercent + ApproxMapPercent + ApproxObjectPercent != 100)
+    {
+        OutErrors.Add(TEXT("Approximate five-class treasure mix must sum to 100 percent."));
+    }
+    if (ArchipelagoBuriedHoardCount + HighmooreBuriedHoardCount != BuriedHoardCount)
+    {
+        OutErrors.Add(TEXT("Buried-hoard split must remain twelve archipelago plus four Highmoore = sixteen."));
+    }
+    if (AllowsRandomLootTables() || AllowsRarityColourCoding() || AllowsTreasureFoundCounterUI() || AllowsReturnedCountUI())
+    {
+        OutErrors.Add(TEXT("Treasure production may not gain loot tables, rarity colours or visible treasure/return counters."));
+    }
+    if (BuildDesignGaps().Num() != 3)
+    {
+        OutErrors.Add(TEXT("Treasure production must preserve the three current identity/classification gaps."));
     }
 
     return OutErrors.IsEmpty();

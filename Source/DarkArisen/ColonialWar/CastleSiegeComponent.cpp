@@ -2,6 +2,8 @@
 
 #include "ColonialWar/CastleSiegeComponent.h"
 
+#include "ContentScale/AuthoredRewardCatalog.h"
+
 UCastleSiegeComponent::UCastleSiegeComponent()
 {
     PrimaryComponentTick.bCanEverTick = false;
@@ -92,11 +94,30 @@ bool UCastleSiegeComponent::RecordCommanderResolved(const FName CommanderId)
 
 bool UCastleSiegeComponent::RecordStateTreasureRecovered(const FName TreasureId)
 {
-    if (Phase != ESiegePhase::Assault || TreasureId.IsNone() || RecoveredStateTreasures.Contains(TreasureId))
+    if (Phase != ESiegePhase::Assault || TreasureId.IsNone())
     {
         return false;
     }
-    RecoveredStateTreasures.Add(TreasureId);
+
+    const TArray<FAuthoredRewardBinding> StateTreasures =
+        FAuthoredRewardCatalog::BuildStateTreasureSlots();
+    const FAuthoredRewardBinding* Binding = StateTreasures.FindByPredicate(
+        [TreasureId](const FAuthoredRewardBinding& Entry)
+        {
+            return Entry.SourceContentId == TreasureId || Entry.StableId == TreasureId;
+        });
+    if (!Binding || Binding->OriginStableId != CastleId)
+    {
+        return false;
+    }
+
+    const FName CanonicalTreasureId = Binding->SourceContentId;
+    if (RecoveredStateTreasures.Contains(CanonicalTreasureId))
+    {
+        return false;
+    }
+
+    RecoveredStateTreasures.Add(CanonicalTreasureId);
     return true;
 }
 
