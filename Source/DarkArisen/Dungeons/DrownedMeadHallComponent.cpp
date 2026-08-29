@@ -3,6 +3,8 @@
 #include "Dungeons/DrownedMeadHallComponent.h"
 
 #include "Dungeons/AuthoredDungeonSiteComponent.h"
+#include "Engine/World.h"
+#include "GameFramework/Actor.h"
 #include "World/DarkArisenWorldRulesSubsystem.h"
 
 namespace
