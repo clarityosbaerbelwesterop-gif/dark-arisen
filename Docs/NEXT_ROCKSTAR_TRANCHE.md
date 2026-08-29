@@ -1,50 +1,32 @@
-# Next Rockstar-path production tranche
+# Rockstar-path production tranche history
 
-**Date:** 2026-08-29  
-**Base:** `develop` at `d9f268ddf4dee30160d4f50e520fbba241d50adf`  
-**Branch:** `feature/world-rewards-encounters-production`  
-**Purpose:** continue authored game production after the Animation + Presentation source merge without treating unavailable UE runtime evidence as passed.
+**Status:** the world/rewards/encounter tranche described by the previous version of this file is integrated.  
+**Integrated merge:** PR #17 → `develop` at `04a34e37f4f0c2f982cf28b942e11e120d103d29`.  
+**Detailed completion record:** `Docs/WORLD_REWARDS_ENCOUNTERS_SOURCE_COMPLETION.md`.  
+**Current active plan:** `Docs/PRE_RUNNER_ASSET_PRODUCTION_PLAN.md` on `feature/pre-runner-asset-production` / Draft PR #18.
 
-## Operator direction
+## What the integrated tranche closed at source level
 
-Continue immediately on the Rockstar path. Do not optimise for the shortest route to an Alpha label. Preserve authored specificity, physical-world readability, finite content, restrained presentation, native-C++ ownership and fail-closed design gaps. Review the tranche at the end and merge it when coherent; runtime/editor gates remain open until they actually execute.
+- exact authored State Treasure identities and castle binding;
+- hidden sell / keep / return persistence without a visible tally;
+- physical travel-law authority including Crystal Caves timing and horse-only stable relocation;
+- source-grounded Highmoore anchors/scale laws;
+- stronger reward/world/Alpha reconciliation gates.
 
-## Production line
+It did **not** create or prove final Unreal maps, animation, audio, AI, navigation, performance, packaging or playthrough evidence.
 
-1. **World reachability and region integration**
-   - strengthen source-backed region entry/exit/traversal contracts so major M2-M6 systems are reachable through authored world routes rather than existing only as isolated components;
-   - encode settlement/landmark placement requirements where governing sources give real identities;
-   - never claim a `.umap`, navmesh, foliage, lighting, crowd, creature or streaming cell exists until reviewed Unreal asset evidence exists.
+## Current Rockstar-path direction
 
-2. **Treasures, rewards and physical evidence**
-   - reconcile finite named treasures, letters, state treasures, unique weapons/items and authored take/leave objects into one source-backed authority;
-   - keep ownership, location, consequence and acquisition physical where written;
-   - prohibit generic loot substitution and invented filler rewards.
+PR #18 continues from the exact merged PR #17 head and shifts focus to the production boundary before runner/editor acceptance:
 
-3. **Mission/main-story integration**
-   - continue only source-backed identities and state ownership;
-   - preserve the 275 unauthored Turn/Standing identities as deliberate gaps;
-   - bind authored content to existing journal, war, settlement, ship, social, progression and world-clock authorities instead of parallel systems.
+1. reconcile stale governance/checklist state;
+2. create explicit provenance/evidence ownership for external images, motion-previs, 3D candidates and voice auditions;
+3. use Higgsfield only where provider plan/cost/rights permit it, and never confuse a generated media file with an accepted Unreal asset;
+4. translate existing Animation/Presentation/World/Prop canon into provider-safe production briefs without inventing missing visual identities or coordinates;
+5. continue source-backed integration until the next real blocker is the unauthored quest corpus;
+6. stop rather than fabricate the 129 missing Turns or 146 missing Standing identities;
+7. keep UE5.5 compile/Automation/runtime/performance/package gates open until actual self-hosted runner/editor evidence exists.
 
-4. **Encounter integration**
-   - strengthen boss/dungeon/world encounter dependencies where source is concrete;
-   - preserve special cases rather than flattening them into one generic boss or arena path;
-   - keep final arenas/AI assets/animation/runtime evidence open until actual Unreal production exists.
+## Evidence boundary
 
-5. **World population/ecology quality**
-   - extend source-backed placement/readability contracts for Highmoore and archipelago settlements/ecology where the design corpus is explicit;
-   - no random authored population, wildlife, generic spawn substitution or procedural mission filler.
-
-## Non-negotiable evidence boundary
-
-This tranche may add native source contracts, integration code, tests, validators and documentation. It may **not** claim:
-
-- UE 5.5 compilation passed;
-- Unreal Automation passed;
-- a production `.umap`/`.uasset` exists merely because a C++ path/contract exists;
-- 60 fps passed;
-- Windows/Linux Shipping candidates exist;
-- start-to-credits passed;
-- Alpha acceptance passed.
-
-The required self-hosted UE 5.5 runners are still offline/queued. Queued is not passed.
+A source contract, an external preview video, a concept image or a candidate GLB is not a completed game asset. Only actual UE import/review can establish an imported production asset, and runtime acceptance requires evidence on the exact commit.
