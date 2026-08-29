@@ -8,13 +8,16 @@ UCrewPersonalThreadsComponent::UCrewPersonalThreadsComponent()
 {
     PrimaryComponentTick.bCanEverTick = false;
 
-    ThreadStates.Reserve(5);
-    for (const ECrewPersonalThread Thread : {
+    static constexpr ECrewPersonalThread CanonicalThreads[] = {
         ECrewPersonalThread::InesEsperanza,
         ECrewPersonalThread::MirasCoast,
         ECrewPersonalThread::BigTomsService,
         ECrewPersonalThread::FatherSalviosParish,
-        ECrewPersonalThread::EstebansLastChart})
+        ECrewPersonalThread::EstebansLastChart
+    };
+
+    ThreadStates.Reserve(UE_ARRAY_COUNT(CanonicalThreads));
+    for (const ECrewPersonalThread Thread : CanonicalThreads)
     {
         FCrewThreadRuntimeState State;
         State.Thread = Thread;
