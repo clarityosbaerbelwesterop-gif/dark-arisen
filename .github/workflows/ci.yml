@@ -35,6 +35,9 @@ jobs:
       - name: Validate authored dungeons
         shell: cmd
         run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" validate-dungeons "--root=%GITHUB_WORKSPACE%"'
+      - name: Validate authored rewards and treasures
+        shell: cmd
+        run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" validate-rewards "--root=%GITHUB_WORKSPACE%"'
       - name: Validate authored missions
         shell: cmd
         run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" validate-missions "--root=%GITHUB_WORKSPACE%"'
@@ -82,6 +85,9 @@ jobs:
       - name: Validate authored dungeons
         shell: bash
         run: '"$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" validate-dungeons "--root=$GITHUB_WORKSPACE"'
+      - name: Validate authored rewards and treasures
+        shell: bash
+        run: '"$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" validate-rewards "--root=$GITHUB_WORKSPACE"'
       - name: Validate authored missions
         shell: bash
         run: '"$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" validate-missions "--root=$GITHUB_WORKSPACE"'
