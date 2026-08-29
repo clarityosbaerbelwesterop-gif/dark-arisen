@@ -48,6 +48,7 @@ FString OpsBinaryPath(const FString& Root);
 int32 ValidateCommand(const FParsedArgs& Args);
 int32 ValidateDungeonContentCommand(const FParsedArgs& Args);
 int32 ValidateMissionContentCommand(const FParsedArgs& Args);
+int32 ValidateBossContentCommand(const FParsedArgs& Args);
 int32 RunnerCheckCommand(const FParsedArgs& Args);
 int32 BuildCommand(const FParsedArgs& Args);
 int32 PackageAlphaCommand(const FParsedArgs& Args);
