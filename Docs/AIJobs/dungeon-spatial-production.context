@@ -6,6 +6,7 @@ dungeon system global.md
 dungeon design philosophy.md
 regional dungeon catalog.md
 secret bosses.md
+docs/design/colonial_war/indigenous_liberation_alliance.md
 highmoore overview.md
 crystal caves.md
 crystal guardian.md
@@ -15,7 +16,13 @@ Source/DarkArisen/ContentScale/AuthoredDungeonCatalog.h
 Source/DarkArisen/ContentScale/AuthoredDungeonCatalog.cpp
 Source/DarkArisen/ContentScale/AuthoredMinorDungeonCatalog.h
 Source/DarkArisen/ContentScale/AuthoredMinorDungeonCatalog.cpp
+Source/DarkArisen/ContentScale/AuthoredDungeonProductionProfile.h
+Source/DarkArisen/ContentScale/DungeonProfiles_RexaFjord.cpp
+Source/DarkArisen/ContentScale/DungeonProfiles_AshenSea.cpp
+Source/DarkArisen/ContentScale/DungeonProfiles_ColonialRegion06.cpp
+Source/DarkArisen/ContentScale/DungeonProfiles_Highmoore.cpp
 Source/DarkArisen/Dungeons/AuthoredDungeonSiteComponent.h
+Source/DarkArisen/Dungeons/SecretDungeonAccessRules.h
 Source/DarkArisen/Dungeons/CenoteFirstMotherComponent.h
 Source/DarkArisen/Dungeons/DrownedMeadHallComponent.h
 Source/DarkArisen/Dungeons/ObsidianVaultComponent.h
