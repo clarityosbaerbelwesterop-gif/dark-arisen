@@ -21,7 +21,7 @@ EAuthoredRewardFamily FamilyForDungeon(const FName DungeonId)
         TEXT("dungeon.sea.deep-harbour")
     };
     static const TSet<FName> Tactical = {
-        TEXT("dungeon.colonial.siege-tunnels-la-ciudadela")
+        TEXT("dungeon.colonial.siege-tunnels-ciudadela")
     };
     static const TSet<FName> Cultural = {
         TEXT("dungeon.rexa.cenote-first-mother"),
