@@ -3,6 +3,7 @@
 #include "Dungeons/ObsidianVaultComponent.h"
 
 #include "Dungeons/AuthoredDungeonSiteComponent.h"
+#include "GameFramework/Actor.h"
 
 UObsidianVaultComponent::UObsidianVaultComponent()
 {
