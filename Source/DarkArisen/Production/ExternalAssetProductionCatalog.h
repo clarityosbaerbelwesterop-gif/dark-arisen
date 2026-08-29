@@ -11,7 +11,6 @@ enum class EExternalAssetProvider : uint8
     AIVoiceGenerator
 };
 
-/** What an external output is useful for before Unreal acceptance. */
 enum class EExternalAssetMediaKind : uint8
 {
     ConceptReferenceImage,
@@ -24,10 +23,6 @@ enum class EExternalAssetMediaKind : uint8
     VoiceAudition
 };
 
-/**
- * Evidence state is deliberately monotonic. A provider generation cannot jump directly to
- * ImportedForReview or RuntimeAccepted: those require actual Unreal-side evidence.
- */
 enum class EExternalAssetEvidenceState : uint8
 {
     RequirementOnly,
@@ -46,20 +41,10 @@ struct FExternalAssetProductionBrief
     EExternalAssetProvider Provider = EExternalAssetProvider::Higgsfield;
     EExternalAssetMediaKind MediaKind = EExternalAssetMediaKind::ConceptReferenceImage;
     EExternalAssetEvidenceState EvidenceState = EExternalAssetEvidenceState::RequirementOnly;
-
-    /** What the provider may help communicate; never a replacement for the governing source. */
     FString ProductionPurpose;
-
-    /** Empty until a real provider job is created. */
     FString ProviderJobId;
-
-    /** Empty until real external media exists. Never store credentials or signed upload URLs. */
     FString MediaReference;
-
-    /** Empty until an actual UE import exists on the repository/runtime side. */
     FString UnrealAssetPath;
-
-    /** Rights/cost clearance is independent from whether a preview was generated. */
     bool bProviderCostApproved = false;
     bool bShippingRightsCleared = false;
 };
@@ -71,10 +56,6 @@ struct FExternalAssetProductionDesignGap
     FString GoverningSource;
 };
 
-/**
- * Finite provider-facing brief catalog built from existing Dark Arisen source authorities.
- * It does not call providers, create files, import assets or mutate runtime state.
- */
 class DARKARISEN_API FExternalAssetProductionCatalog
 {
 public:
@@ -84,6 +65,7 @@ public:
     static constexpr int32 GroundedDungeonBriefCount = 40;
     static constexpr int32 WorldRegionBriefCount = 8;
     static constexpr int32 HighmooreWorldBriefCount = 12;
+    static constexpr int32 ProviderReadyCharacterBriefCount = 8;
     static constexpr int32 StateTreasureBriefCount = 9;
     static constexpr int32 UniqueRewardBriefCount = 1;
     static constexpr int32 UnresolvedPresentationIdentityCount = 5;
@@ -97,6 +79,7 @@ public:
         + GroundedDungeonBriefCount
         + WorldRegionBriefCount
         + HighmooreWorldBriefCount
+        + ProviderReadyCharacterBriefCount
         + StateTreasureBriefCount
         + UniqueRewardBriefCount;
 
