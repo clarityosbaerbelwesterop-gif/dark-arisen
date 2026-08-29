@@ -88,10 +88,14 @@ int32 ValidateMissionContentCommand(const FParsedArgs& Args)
         TEXT("Source/DarkArisen/Missions/AuthoredQuestCatalog.cpp"),
         TEXT("Source/DarkArisen/Missions/MissionScaleRequirements.h"),
         TEXT("Source/DarkArisen/Missions/MissionScaleRequirements.cpp"),
+        TEXT("Source/DarkArisen/Missions/QuestCoverageRegister.h"),
+        TEXT("Source/DarkArisen/Missions/QuestCoverageRegister.cpp"),
         TEXT("Source/DarkArisen/ContentScale/StandingMissionPoolComponent.h"),
         TEXT("Source/DarkArisen/ContentScale/StandingMissionPoolComponent.cpp"),
         TEXT("Source/DarkArisen/Tests/AuthoredQuestCatalogSpec.cpp"),
-        TEXT("Source/DarkArisen/Tests/MissionScaleRequirementsSpec.cpp")
+        TEXT("Source/DarkArisen/Tests/MissionScaleRequirementsSpec.cpp"),
+        TEXT("Source/DarkArisen/Tests/QuestCoverageRegisterSpec.cpp"),
+        TEXT("Docs/QUEST_CONTENT_GAPS.md")
     };
     for (const FString& Relative : RequiredFiles)
     {
@@ -137,6 +141,27 @@ int32 ValidateMissionContentCommand(const FParsedArgs& Args)
         TEXT("EM7StandingMissionType::Salvage, 14, 1"),
         TEXT("design-gap.standing-region-allocation"),
         TEXT("design-gap.pay-curve-middle")}, Errors);
+
+    RequireFragments(Root, TEXT("Source/DarkArisen/Missions/QuestCoverageRegister.h"), {
+        TEXT("MissingTurns = RequiredTurns - AuthoredTurns"),
+        TEXT("MissingStanding = RequiredStanding - AuthoredStanding"),
+        TEXT("TotalMissingQuestIdentities = MissingTurns + MissingStanding"),
+        TEXT("ReservedUnauthored")}, Errors);
+
+    RequireFragments(Root, TEXT("Source/DarkArisen/Missions/QuestCoverageRegister.cpp"), {
+        TEXT("turn-gap.%s"),
+        TEXT("standing-gap.%s"),
+        TEXT("Rexa.Turn.EmptyHammock"),
+        TEXT("Rexa.Turn.ThreeCutsInStone"),
+        TEXT("Rexa.Turn.SaltLedger"),
+        TEXT("Rexa.Standing.Salvage.SanTelmoBell"),
+        TEXT("Reserved quest slot %s must not carry an invented authored identity")}, Errors);
+
+    RequireFragments(Root, TEXT("Docs/QUEST_CONTENT_GAPS.md"), {
+        TEXT("Missing Turn identities — 129"),
+        TEXT("Missing Standing identities — 146"),
+        TEXT("275 = 129 Turns + 146 Standing variants"),
+        TEXT("Forbidden:")}, Errors);
 
     RequireFragments(Root, TEXT("Source/DarkArisen/ContentScale/StandingMissionPoolComponent.h"), {
         TEXT("TArray<FStandingMissionVariantDefinition> AuthoredVariants"),
