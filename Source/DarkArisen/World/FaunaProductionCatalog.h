@@ -20,6 +20,7 @@ struct FFaunaCorpusContract
     int32 RequiredBaseIdentityCount = 0;
     int32 RequiredLegendaryCount = 0;
     bool bCountIsMinimum = false;
+    bool bLegendaryCountIncludedInBase = false;
     FString GoverningSource;
 };
 
@@ -63,10 +64,13 @@ public:
     static constexpr int32 BirdSpeciesCount = 52;
     static constexpr int32 BirdLegendaryCount = 4;
     static constexpr int32 SeaSpeciesCount = 65;
+    static constexpr int32 SeaLegendaryWithinSpeciesCount = 2;
     static constexpr int32 SmallCreatureTypeCount = 45;
     static constexpr int32 SmallCreatureLegendaryCount = 3;
     static constexpr int32 PlantSpeciesMinimum = 60;
     static constexpr int32 PlantLegendaryCount = 4;
+    static constexpr int32 HighmooreMvpCoreSpeciesCount = 5;
+    static constexpr int32 RequiredRegionalEcologyProfiles = 8;
 
     static TArray<FFaunaCorpusContract> BuildCorpusContracts();
     static TArray<FRegionalFaunaIdentity> BuildRegionalIdentities();
@@ -78,4 +82,5 @@ public:
     static bool AllowsGenericSpawnPointSubstitution() { return false; }
     static bool RequiresCulturalConsequenceWhereAuthored() { return true; }
     static bool RequiresEcologicalPersistenceWhereAuthored() { return true; }
+    static bool AllowsHorseIntoStoppedLightShaft() { return false; }
 };
