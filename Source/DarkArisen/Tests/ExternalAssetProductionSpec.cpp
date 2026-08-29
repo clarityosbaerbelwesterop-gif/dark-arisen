@@ -19,12 +19,16 @@ bool FDarkArisenExternalAssetProductionSpec::RunTest(const FString& Parameters)
 
     const TArray<FExternalAssetProductionBrief> Briefs =
         FExternalAssetProductionCatalog::BuildHiggsfieldBriefs();
-    TestEqual(TEXT("Exactly fifty-nine source-derived Higgsfield briefs exist"),
+    TestEqual(TEXT("Exactly the finite source-derived Higgsfield brief set exists"),
         Briefs.Num(), FExternalAssetProductionCatalog::RequiredHiggsfieldBriefCount);
 
     int32 MotionOrPerformance = 0;
     int32 Cinematic = 0;
     int32 Concepts = 0;
+    int32 DungeonLooks = 0;
+    int32 RegionLooks = 0;
+    int32 HighmooreAnchors = 0;
+    int32 Props = 0;
 
     for (const FExternalAssetProductionBrief& Brief : Briefs)
     {
@@ -35,6 +39,17 @@ bool FDarkArisenExternalAssetProductionSpec::RunTest(const FString& Parameters)
         TestTrue(TEXT("No Unreal asset path is fabricated"), Brief.UnrealAssetPath.IsEmpty());
         TestFalse(TEXT("Provider cost approval is not self-granted"), Brief.bProviderCostApproved);
         TestFalse(TEXT("Shipping rights are not self-granted"), Brief.bShippingRightsCleared);
+
+        const FString Id = Brief.StableId.ToString();
+        const FString SourceId = Brief.SourceRequirementId.ToString();
+        TestFalse(TEXT("No unauthored Turn slot is sent to the provider"), SourceId.StartsWith(TEXT("turn-gap.")));
+        TestFalse(TEXT("No unauthored Standing slot is sent to the provider"), SourceId.StartsWith(TEXT("standing-gap.")));
+        TestFalse(TEXT("No unauthored minor-dungeon slot is sent to the provider"), SourceId.Contains(TEXT("minor-slot")));
+
+        if (Id.StartsWith(TEXT("external.higgsfield.dungeon."))) ++DungeonLooks;
+        else if (Id.StartsWith(TEXT("external.higgsfield.region."))) ++RegionLooks;
+        else if (Id.StartsWith(TEXT("external.higgsfield.world."))) ++HighmooreAnchors;
+        else if (Id.StartsWith(TEXT("external.higgsfield.prop."))) ++Props;
 
         switch (Brief.MediaKind)
         {
@@ -60,11 +75,30 @@ bool FDarkArisenExternalAssetProductionSpec::RunTest(const FString& Parameters)
     TestEqual(TEXT("Fourteen cinematic-previs briefs derive only from resolved cutscene identities"),
         Cinematic,
         FExternalAssetProductionCatalog::ResolvedPresentationBriefCount);
-    TestEqual(TEXT("Twenty-two concept briefs cover twelve Highmoore anchors plus ten grounded props"),
+    TestEqual(TEXT("Forty grounded named dungeons have source-backed visual briefs"),
+        DungeonLooks, FExternalAssetProductionCatalog::GroundedDungeonBriefCount);
+    TestEqual(TEXT("Eight world regions have source-backed visual briefs"),
+        RegionLooks, FExternalAssetProductionCatalog::WorldRegionBriefCount);
+    TestEqual(TEXT("Twelve Highmoore anchors remain individually briefed"),
+        HighmooreAnchors, FExternalAssetProductionCatalog::HighmooreWorldBriefCount);
+    TestEqual(TEXT("Nine State Treasures plus the grounded unique reward remain individually briefed"),
+        Props,
+        FExternalAssetProductionCatalog::StateTreasureBriefCount
+            + FExternalAssetProductionCatalog::UniqueRewardBriefCount);
+    TestEqual(TEXT("Concept-reference coverage includes dungeons, regions, Highmoore anchors and grounded props"),
         Concepts,
-        FExternalAssetProductionCatalog::HighmooreWorldBriefCount
+        FExternalAssetProductionCatalog::GroundedDungeonBriefCount
+            + FExternalAssetProductionCatalog::WorldRegionBriefCount
+            + FExternalAssetProductionCatalog::HighmooreWorldBriefCount
             + FExternalAssetProductionCatalog::StateTreasureBriefCount
             + FExternalAssetProductionCatalog::UniqueRewardBriefCount);
+
+    TestEqual(TEXT("Five unresolved final-act cutscenes remain outside provider production"),
+        FExternalAssetProductionCatalog::UnresolvedPresentationIdentityCount, 5);
+    TestEqual(TEXT("Twenty minor-dungeon identities remain outside provider production"),
+        FExternalAssetProductionCatalog::UnauthoredMinorDungeonIdentityCount, 20);
+    TestEqual(TEXT("Two hundred seventy-five Turn/Standing identities remain outside provider production"),
+        FExternalAssetProductionCatalog::DeliberateTurnStandingIdentityGapCount, 275);
 
     TestFalse(TEXT("External providers can never create canon"),
         FExternalAssetProductionCatalog::AllowsProviderToCreateCanon());
