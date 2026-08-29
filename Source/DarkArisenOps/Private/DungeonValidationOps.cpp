@@ -102,6 +102,8 @@ int32 ValidateDungeonContentCommand(const FParsedArgs& Args)
         TEXT("Source/DarkArisen/ContentScale/DungeonProfiles_Highmoore.cpp"),
         TEXT("Source/DarkArisen/Dungeons/AuthoredDungeonSiteComponent.h"),
         TEXT("Source/DarkArisen/Dungeons/AuthoredDungeonSiteComponent.cpp"),
+        TEXT("Source/DarkArisen/Dungeons/DungeonSpatialProgressionComponent.h"),
+        TEXT("Source/DarkArisen/Dungeons/DungeonSpatialProgressionComponent.cpp"),
         TEXT("Source/DarkArisen/Dungeons/SecretDungeonAccessRules.h"),
         TEXT("Source/DarkArisen/Dungeons/SecretDungeonAccessRules.cpp"),
         TEXT("Source/DarkArisen/Dungeons/CenoteFirstMotherComponent.h"),
@@ -114,6 +116,7 @@ int32 ValidateDungeonContentCommand(const FParsedArgs& Args)
         TEXT("Source/DarkArisen/Tests/DungeonCatalogSpec.cpp"),
         TEXT("Source/DarkArisen/Tests/DungeonProductionProfilesSpec.cpp"),
         TEXT("Source/DarkArisen/Tests/DungeonMvpSystemsSpec.cpp"),
+        TEXT("Source/DarkArisen/Tests/DungeonSpatialProgressionSpec.cpp"),
         TEXT("Source/DarkArisen/Tests/SecretDungeonAccessSpec.cpp")
     };
     for (const FString& Relative : RequiredFiles)
@@ -166,6 +169,19 @@ int32 ValidateDungeonContentCommand(const FParsedArgs& Args)
         TEXT("CachedProductionProfile.bBossWithheldOrUnresolved"),
         TEXT("CachedProductionProfile.bRewardExplicitlyNone"),
         TEXT("CachedProductionProfile.bRewardWithheldOrUnresolved")}, Errors);
+
+    RequireFragments(Root, TEXT("Source/DarkArisen/Dungeons/DungeonSpatialProgressionComponent.h"), {
+        TEXT("Threshold"),
+        TEXT("Descent"),
+        TEXT("Turn"),
+        TEXT("Depth"),
+        TEXT("Floor"),
+        TEXT("ReturnOpened"),
+        TEXT("IsLegalNextBeat")}, Errors);
+    RequireFragments(Root, TEXT("Source/DarkArisen/Dungeons/DungeonSpatialProgressionComponent.cpp"), {
+        TEXT("!SiteAuthority->bEntered"),
+        TEXT("!IsLegalNextBeat(CurrentBeat, Beat)"),
+        TEXT("SiteAuthority->OpenReturnShortcutFromInside")}, Errors);
 
     RequireFragments(Root, TEXT("Source/DarkArisen/Dungeons/SecretDungeonAccessRules.cpp"), {
         TEXT("dungeon.rexa.grove-beneath-grove"),
