@@ -40,6 +40,7 @@ struct FRegionalPopulationProductionProfile
     FString DailyRhythm;
     FString JakeReactionRule;
     bool bPopulationDefinedByAbsence = false;
+    bool bDemographicPercentagesUnspecified = false;
     bool bHighDensityCity = false;
     bool bRuntimeCrowdAssetsAuthored = false;
     FString RuntimeCrowdAssetRoot;
@@ -60,11 +61,12 @@ struct FPopulationProductionDesignGap
 class DARKARISEN_API FPopulationProductionCatalog
 {
 public:
-    static constexpr int32 RequiredRegionalProfiles = 7;
+    static constexpr int32 RequiredRegionalProfiles = 8;
     static constexpr int32 MinimumAmbientLinesPerMajorRegion = 200;
     static constexpr int32 CrowdReturnMinimumMinutes = 2;
     static constexpr int32 CrowdReturnMaximumMinutes = 5;
     static constexpr int32 PopulationTierCount = 3;
+    static constexpr int32 HighmooreClassCount = 4;
 
     static TArray<FPopulationDensityContract> BuildDensityContracts();
     static TArray<FRegionalPopulationProductionProfile> BuildRegionalProfiles();
@@ -75,4 +77,5 @@ public:
     static bool RequiresPurposeDrivenPathing() { return true; }
     static bool RequiresChildEngineProtection() { return true; }
     static bool RequiresChapterEvolution() { return true; }
+    static bool AllowsHighmooreReputationMeter() { return false; }
 };
