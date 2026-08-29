@@ -69,6 +69,7 @@ class DARKARISEN_API FThreeDAssetReadinessCatalog
 public:
     static constexpr int32 CharacterRecordCount = 9;
     static constexpr int32 BossVisualRecordCount = 21;
+    static constexpr int32 CurrentTier1BossRecordCount = 9;
     static constexpr int32 ShipRecordCount = 6;
     static constexpr int32 FaunaRecordCount = 24;
     static constexpr int32 FloraRecordCount = 9;
@@ -78,6 +79,7 @@ public:
     static constexpr int32 RequiredRecordCount =
         CharacterRecordCount
         + BossVisualRecordCount
+        + CurrentTier1BossRecordCount
         + ShipRecordCount
         + FaunaRecordCount
         + FloraRecordCount
@@ -87,7 +89,7 @@ public:
 
     static constexpr int32 CandidateGeometryReadyCount = 105;
     static constexpr int32 ReferenceOnlyCount = 14;
-    static constexpr int32 BlockedCount = 12;
+    static constexpr int32 BlockedCount = 21;
 
     static TArray<FThreeDAssetReadinessRecord> BuildRecords();
     static TArray<FThreeDAssetReadinessDesignGap> BuildDesignGaps();
