@@ -80,8 +80,8 @@ bool UDrownedMeadHallComponent::IsDryWindowActive() const
         return false;
     }
 
-    const UWorld* World = GetWorld();
-    const UDarkArisenWorldRulesSubsystem* Rules = World ? World->GetSubsystem<UDarkArisenWorldRulesSubsystem>() : nullptr;
+    UWorld* World = GetWorld();
+    UDarkArisenWorldRulesSubsystem* Rules = World ? World->GetSubsystem<UDarkArisenWorldRulesSubsystem>() : nullptr;
     return Rules && IsDryWindowMinute(Rules->GetMinuteOfDay(), AuthoredFirstDryWindowStartMinute);
 }
 
