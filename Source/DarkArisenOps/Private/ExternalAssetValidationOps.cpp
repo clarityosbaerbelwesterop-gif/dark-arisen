@@ -2,6 +2,8 @@
 
 #include "Misc/Paths.h"
 
+#include <initializer_list>
+
 namespace DarkArisenOps
 {
 namespace
@@ -47,7 +49,8 @@ int32 ValidateExternalAssetProductionCommand(const FParsedArgs& Args)
         TEXT("Source/DarkArisen/Production/ExternalAssetProductionCatalog.cpp"),
         TEXT("Source/DarkArisen/Tests/ExternalAssetProductionSpec.cpp"),
         TEXT("Docs/PRE_RUNNER_ASSET_PRODUCTION_PLAN.md"),
-        TEXT("Docs/HIGGSFIELD_GAME_ASSET_PIPELINE.md")})
+        TEXT("Docs/HIGGSFIELD_GAME_ASSET_PIPELINE.md"),
+        TEXT("Docs/HIGGSFIELD_ASSET_PRODUCTION_MATRIX.md")})
     {
         RequireFile(Root, Relative, Errors);
     }
@@ -58,6 +61,11 @@ int32 ValidateExternalAssetProductionCommand(const FParsedArgs& Args)
         TEXT("CandidateAssetGenerated"),
         TEXT("ImportedForReview"),
         TEXT("RuntimeAccepted"),
+        TEXT("GroundedDungeonBriefCount = 40"),
+        TEXT("WorldRegionBriefCount = 8"),
+        TEXT("UnresolvedPresentationIdentityCount = 5"),
+        TEXT("UnauthoredMinorDungeonIdentityCount = 20"),
+        TEXT("DeliberateTurnStandingIdentityGapCount = 275"),
         TEXT("RequiredHiggsfieldBriefCount"),
         TEXT("AllowsProviderToCreateCanon() { return false; }"),
         TEXT("AllowsGeneratedMediaToCountAsImportedAsset() { return false; }"),
@@ -68,16 +76,27 @@ int32 ValidateExternalAssetProductionCommand(const FParsedArgs& Args)
         TEXT("FAnimationProductionCatalog::BuildNamedBibleRequirements"),
         TEXT("FAnimationProductionCatalog::BuildSystemRequirements"),
         TEXT("FPresentationProductionCatalog::BuildCutscenes"),
+        TEXT("FAuthoredDungeonProductionProfiles::BuildAllKnownProfiles"),
+        TEXT("FAuthoredDungeonCatalog::TryGetKnownSite"),
+        TEXT("FAuthoredWorldRegionRegistry::BuildAll"),
         TEXT("FHighmooreWorldProductionCatalog::BuildNamedAnchors"),
         TEXT("FAuthoredRewardCatalog::BuildStateTreasureSlots"),
         TEXT("FAuthoredRewardCatalog::BuildNamedUniqueRewards"),
         TEXT("EvidenceState = EExternalAssetEvidenceState::RequirementOnly"),
+        TEXT("turn-gap."),
+        TEXT("standing-gap."),
+        TEXT("minor-slot"),
+        TEXT("design-gap.external-assets.provider-3d-path"),
         TEXT("design-gap.external-assets.unreal-import"),
         TEXT("design-gap.external-assets.runtime-acceptance"),
         TEXT("design-gap.external-assets.shipping-rights")}, Errors);
 
     RequireFragments(Root, TEXT("Source/DarkArisen/Tests/ExternalAssetProductionSpec.cpp"), {
-        TEXT("Exactly fifty-nine source-derived Higgsfield briefs exist"),
+        TEXT("Forty grounded named dungeons have source-backed visual briefs"),
+        TEXT("Eight world regions have source-backed visual briefs"),
+        TEXT("No unauthored Turn slot is sent to the provider"),
+        TEXT("No unauthored Standing slot is sent to the provider"),
+        TEXT("No unauthored minor-dungeon slot is sent to the provider"),
         TEXT("No provider job id is fabricated"),
         TEXT("No Unreal asset path is fabricated"),
         TEXT("Provider cost approval is not self-granted"),
@@ -92,16 +111,29 @@ int32 ValidateExternalAssetProductionCommand(const FParsedArgs& Args)
         TEXT("ImportedForReview"),
         TEXT("RuntimeAccepted"),
         TEXT("Requires basic plan or higher"),
-        TEXT("do not buy/upgrade automatically")}, Errors);
+        TEXT("zero credits were consumed"),
+        TEXT("129 missing Turn identities"),
+        TEXT("146 missing Standing identities")}, Errors);
 
     RequireFragments(Root, TEXT("Docs/HIGGSFIELD_GAME_ASSET_PIPELINE.md"), {
         TEXT("Seedance"),
-        TEXT("Meshy"),
         TEXT("AnimMontage"),
         TEXT("AnimNotify"),
         TEXT("Sequencer"),
-        TEXT("provider-plan blocked"),
-        TEXT("zero credits consumed")}, Errors);
+        TEXT("forty currently grounded named dungeon"),
+        TEXT("twenty unauthored minor-dungeon identities"),
+        TEXT("Requires basic plan or higher"),
+        TEXT("zero credits consumed"),
+        TEXT("3D-model search did not return a usable connected 3D generation model/action")}, Errors);
+
+    RequireFragments(Root, TEXT("Docs/HIGGSFIELD_ASSET_PRODUCTION_MATRIX.md"), {
+        TEXT("107"),
+        TEXT("40 grounded named dungeons"),
+        TEXT("8 world regions"),
+        TEXT("12 Highmoore named anchors"),
+        TEXT("129 unauthored Turn identities"),
+        TEXT("146 unauthored Standing variants"),
+        TEXT("Total deliberate Turn/Standing identity gap remains **275**")}, Errors);
 
     if (!Errors.IsEmpty())
     {
