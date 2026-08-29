@@ -4,6 +4,8 @@
 
 #include "Missions/AuthoredQuestCatalog.h"
 
+#include <initializer_list>
+
 namespace
 {
 FThreadNativeCoverageEntry Covered(
