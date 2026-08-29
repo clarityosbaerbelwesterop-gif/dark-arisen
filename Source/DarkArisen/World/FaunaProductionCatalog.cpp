@@ -169,7 +169,9 @@ bool FFaunaProductionCatalog::Validate(TArray<FString>& OutErrors)
         OutErrors.Add(TEXT("Fauna/flora production requires exactly five corpus families."));
     }
 
-    TSet<EFaunaCorpusFamily> Families;
+    // Use the enum's byte representation as the set key so validation does not depend on an
+    // engine-version-specific GetTypeHash overload for a plain enum class.
+    TSet<uint8> Families;
     for (const FFaunaCorpusContract& CorpusEntry : Corpora)
     {
         if (CorpusEntry.DisplayName.IsEmpty() || CorpusEntry.RequiredBaseIdentityCount <= 0
@@ -177,11 +179,12 @@ bool FFaunaProductionCatalog::Validate(TArray<FString>& OutErrors)
         {
             OutErrors.Add(TEXT("Every fauna corpus family requires a valid count contract and governing source."));
         }
-        if (Families.Contains(CorpusEntry.Family))
+        const uint8 FamilyKey = static_cast<uint8>(CorpusEntry.Family);
+        if (Families.Contains(FamilyKey))
         {
-            OutErrors.Add(FString::Printf(TEXT("Duplicate fauna corpus family: %d"), static_cast<int32>(CorpusEntry.Family)));
+            OutErrors.Add(FString::Printf(TEXT("Duplicate fauna corpus family: %d"), static_cast<int32>(FamilyKey)));
         }
-        Families.Add(CorpusEntry.Family);
+        Families.Add(FamilyKey);
     }
 
     if (LandAnimalSpeciesCount != 42 || LandLegendaryVariantCount != 6
