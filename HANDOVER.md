@@ -2,7 +2,7 @@
 
 **Updated:** 2026-08-29  
 **Integrated baseline:** `develop` at `d9f268ddf4dee30160d4f50e520fbba241d50adf` after PR #15  
-**Current source tranche:** `feature/world-rewards-encounters-production` / PR #16 → `develop`  
+**Current source tranche:** `feature/world-rewards-encounters-production` / replacement PR #17 (former Draft PR #16) → `develop`  
 **Merge direction:** operator explicitly authorized review and merge of this tranche when coherent.  
 **Runtime state:** UE 5.5 Windows/Linux compile, Unreal Automation, runtime, performance, packaging and playthrough gates remain deferred/unverified while matching self-hosted runners are offline/queued. Queued is not passed.
 
@@ -21,7 +21,9 @@ Executable project implementation remains native C++. Required data/config/docum
 - PR #15: Rockstar-path authored dungeon/world/population/fauna, all 17 Thread owners, fail-closed mission gaps, Tier-1 boss constraints, Animation + Presentation source boundary. Merge commit `d9f268ddf4dee30160d4f50e520fbba241d50adf`.
 - Detailed prior boundaries: `Docs/M3_M4_SOURCE_COMPLETION.md`, `Docs/M5_M6_SOURCE_COMPLETION.md`, `Docs/M7_M8_SOURCE_PLAN.md`, `Docs/ANIMATION_PRESENTATION_SOURCE_COMPLETION.md`.
 
-## Current PR #16 — World + Rewards + Encounter production
+## Current replacement PR #17 — World + Rewards + Encounter production
+
+Draft PR #16 carried the same feature branch but was closed unmerged because the connected GitHub Draft→Ready mutation fails at the connector GraphQL response layer. Replacement PR #17 is non-draft; no code or gate was bypassed.
 
 Detailed boundary: `Docs/WORLD_REWARDS_ENCOUNTERS_SOURCE_COMPLETION.md`.
 
@@ -50,6 +52,7 @@ Detailed boundary: `Docs/WORLD_REWARDS_ENCOUNTERS_SOURCE_COMPLETION.md`.
 
 - `UCastleSiegeComponent::RecordStateTreasureRecovered` now resolves against the nine authored state treasures.
 - A real treasure at the wrong castle fails closed; an arbitrary ID cannot become canon.
+- Canonical persistence prevents a duplicate recovery through stable-ID aliases.
 - This is source/runtime-state integration only. Physical document assets, castle placement and acquisition presentation are still real Unreal production work.
 
 ### Travel / reachability
@@ -102,7 +105,7 @@ Detailed boundary: `Docs/WORLD_REWARDS_ENCOUNTERS_SOURCE_COMPLETION.md`.
 - Presentation remains exactly 19 cutscene slots, 22 protected playable moments, 5 inserts and 6 slow pushes. Final-act #15–#19 remain unresolved rather than invented.
 - Final voices remain intentionally late; prior AI voice previews are auditions only and not Shipping/commercial-clearance evidence.
 
-## Next Rockstar-path work after PR #16 merge
+## Next Rockstar-path work after replacement PR #17 merge
 
 1. Branch from the exact new `develop` merge head.
 2. Continue real world/region/settlement/dungeon reachability and authored placement contracts from concrete source.
