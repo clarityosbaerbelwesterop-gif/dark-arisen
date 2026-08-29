@@ -4,14 +4,13 @@
 **Integrated baseline:** `develop` at `6e1620b70d70d2535b94e0edf59d64debfc57d6b`  
 **Active source work:** authored content production toward the first private Alpha  
 **Active branch / PR:** `feature/content-alpha-production` / PR #13 → `develop`  
-**Current PR head at this handover update:** `b53d3844566aae3d7a8804251617abca9539ae75`  
-**Runtime state:** UE 5.5 Windows/Linux compile, automation, runtime, performance, packaging and playthrough gates are deferred while the matching self-hosted runners are offline. They are not waived or marked passed.
+**Runtime state:** UE 5.5 Windows/Linux compile, automation, runtime, performance, packaging and playthrough gates are deferred while matching self-hosted runners are offline. They are not waived or marked passed.
 
 ## Operator direction
 
 Continue source/content production without pausing for unavailable runners. Work through the game toward the first Alpha. Stop only for a real design/tool decision that cannot be resolved from repository authority, or when the requested work is actually complete.
 
-Do not invent missing canon. In particular, if a quest is not individually described by an approved source, leave it unwritten and report the exact missing slot at the end.
+Do not invent missing canon. If a quest is not individually described by an approved source, leave it unwritten and report the exact missing slot at the end.
 
 All executable project implementation remains native C++. Repository/build/configuration formats remain in their required native formats.
 
@@ -43,7 +42,7 @@ All executable project implementation remains native C++. Repository/build/confi
 - All 17 named Threads are source-grounded in `FAuthoredQuestCatalog`; their governing sources and activation/expiration information are retained without inventing missing journal prose.
 - Phase 11 requires exactly 132 finite Turns. Only three individual Turn identities are currently authored strongly enough for native production: `Rexa.Turn.EmptyHammock`, `Rexa.Turn.ThreeCutsInStone`, `Rexa.Turn.SaltLedger`.
 - Standing requires exactly 147 finite variants. Only `Rexa.Standing.Salvage.SanTelmoBell` is currently an individually complete identity.
-- `FQuestCoverageRegister` now exposes the exact deliberate gap: **129 unauthored Turns + 146 unauthored Standing variants = 275 identities**.
+- `FQuestCoverageRegister` exposes the exact deliberate gap: **129 unauthored Turns + 146 unauthored Standing variants = 275 identities**.
 - Missing entries use neutral coverage IDs only. They have no invented title, NPC, location, dialogue, reward, premise or outcome.
 - The exact grouped gap list is `Docs/QUEST_CONTENT_GAPS.md`.
 - `DarkArisenOps validate-missions` requires the gap register and scans mission source for forbidden generated/radiant mission paths.
@@ -70,15 +69,15 @@ All executable project implementation remains native C++. Repository/build/confi
 
 ### Voice
 
-- Five canonical crew voice-audition texts are source-locked against the existing voice bibles.
-- AI Voice Generator audition previews have been generated for Mira, Big Tom, Ines, Father Salvio and Esteban.
+- Five canonical crew voice-audition texts are source-locked against existing voice bibles.
+- AI Voice Generator audition previews were generated for Mira, Big Tom, Ines, Father Salvio and Esteban.
 - These are auditions only. They are not Shipping voice assets and are not treated as commercially cleared until service rights/cost terms are explicitly confirmed acceptable.
 
 ## Writing quality rule
 
-`Docs/WRITING_STYLE_GUARDRAILS.md` now applies to dialogue, journal prose, quest text, lore, item text and AI-assisted writing.
+`Docs/WRITING_STYLE_GUARDRAILS.md` applies to dialogue, journal prose, quest text, lore, item text and AI-assisted writing.
 
-Key rule: source-backed character voice beats polish. Do not homogenise people into a shared eloquent style. Avoid machine-shaped rhetorical symmetry, generic solemnity, exposition disguised as banter and invented dialect decoration. If the information itself is not authored, do not write the line.
+Source-backed character voice beats polish. Do not homogenise people into a shared eloquent style. Avoid machine-shaped rhetorical symmetry, generic solemnity, exposition disguised as banter and invented dialect decoration. If the information itself is not authored, do not write the line.
 
 ## Game Studios / Kimi K3
 
@@ -86,11 +85,7 @@ Key rule: source-backed character voice beats polish. Do not homogenise people i
 - `DarkArisenOps studio-kimi` uses NVIDIA NIM model `moonshotai/kimi-k3` and reads `NVIDIA_API_KEY` only from the process environment.
 - No secret is stored in source or proposal output.
 - Kimi output is restricted to `Docs/AIProposals/` review material and isolated `ai/...` branches; it never becomes canon or merges automatically.
-- The Game Studios workflow now has bounded jobs for:
-  - dungeon spatial production,
-  - world-region production,
-  - mission-authorship gap review,
-  - animation coverage.
+- The Game Studios workflow has bounded jobs for dungeon spatial production, world-region production, mission-authorship gap review and animation coverage.
 - Mission review is explicitly not a mission generator. Writing guardrails and the quest-gap register are supplied as governing context.
 - The Kimi workflow still cannot execute until the required UE 5.5 self-hosted Windows runner is online.
 
