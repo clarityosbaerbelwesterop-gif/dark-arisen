@@ -10,6 +10,7 @@
 #include "Production/BossVisualProductionCatalog.h"
 #include "Production/CharacterVisualProductionCatalog.h"
 #include "Production/FaunaVisualProductionCatalog.h"
+#include "Production/FloraVisualProductionCatalog.h"
 #include "Production/ShipVisualProductionCatalog.h"
 #include "World/AuthoredWorldRegionRegistry.h"
 #include "World/HighmooreWorldProductionCatalog.h"
@@ -245,6 +246,27 @@ TArray<FExternalAssetProductionBrief> FExternalAssetProductionCatalog::BuildHigg
                 *Fauna.AntiInventionBoundary)));
     }
 
+    for (const FFloraVisualProductionBrief& Flora : FFloraVisualProductionCatalog::BuildBriefs())
+    {
+        if (!Flora.bProviderReferenceReady)
+        {
+            continue;
+        }
+
+        Result.Add(HiggsfieldBrief(
+            BriefId(TEXT("external.higgsfield.flora"), Flora.StableId),
+            Flora.StableId,
+            Flora.DisplayName,
+            Flora.GoverningSource,
+            EExternalAssetMediaKind::ConceptReferenceImage,
+            FString::Printf(
+                TEXT("Source-grounded flora/environment reference only. Visual facts: %s Behavior/phenomenon: %s Environment: %s Anti-invention boundary: %s Do not turn metaphorical or runtime phenomena into fixed mesh detail, invent broad Phase-4 filler species, or freeze deliberately unstable Region-06 geometry into canon."),
+                *Flora.AuthoredVisualFacts,
+                *Flora.BehaviorOrPhenomenonRead,
+                *Flora.EnvironmentRead,
+                *Flora.AntiInventionBoundary)));
+    }
+
     for (const FAuthoredRewardBinding& Treasure : FAuthoredRewardCatalog::BuildStateTreasureSlots())
     {
         Result.Add(HiggsfieldBrief(
@@ -294,6 +316,11 @@ TArray<FExternalAssetProductionDesignGap> FExternalAssetProductionCatalog::Build
             TEXT("Production/FaunaVisualProductionCatalog; highmoore fauna.md; docs/design/fauna/legendary_creatures.md")
         },
         {
+            TEXT("design-gap.external-assets.flora-variable-identity"),
+            TEXT("Flora provider briefs include only individually grounded visual records. Ethan's Grove remains blocked behind current Phase-11 story authority; broad Phase-4 flora totals do not authorize synthetic plant species or fixed interpretations of unstable Region-06 phenomena."),
+            TEXT("Production/FloraVisualProductionCatalog; Docs/DesignAuthority.md")
+        },
+        {
             TEXT("design-gap.external-assets.provider-3d-path"),
             TEXT("The connected Higgsfield model discovery currently exposes image/video production but did not return a usable 3D mesh model. Do not claim GLB/rigged-mesh generation until a supported provider action/model is actually available."),
             TEXT("Docs/PRE_RUNNER_ASSET_PRODUCTION_PLAN.md; connected-provider preflight 2026-08-30")
@@ -338,6 +365,7 @@ bool FExternalAssetProductionCatalog::Validate(TArray<FString>& OutErrors)
     int32 BossVisualCount = 0;
     int32 ShipVisualCount = 0;
     int32 FaunaVisualCount = 0;
+    int32 FloraVisualCount = 0;
     int32 PropCount = 0;
     TSet<FName> SeenBriefIds;
 
@@ -385,6 +413,7 @@ bool FExternalAssetProductionCatalog::Validate(TArray<FString>& OutErrors)
         else if (Id.StartsWith(TEXT("external.higgsfield.boss-visual."))) ++BossVisualCount;
         else if (Id.StartsWith(TEXT("external.higgsfield.ship."))) ++ShipVisualCount;
         else if (Id.StartsWith(TEXT("external.higgsfield.fauna."))) ++FaunaVisualCount;
+        else if (Id.StartsWith(TEXT("external.higgsfield.flora."))) ++FloraVisualCount;
         else if (Id.StartsWith(TEXT("external.higgsfield.prop."))) ++PropCount;
         else OutErrors.Add(FString::Printf(TEXT("Unknown external brief family: %s"), *Id));
 
@@ -402,7 +431,8 @@ bool FExternalAssetProductionCatalog::Validate(TArray<FString>& OutErrors)
             || SourceId == TEXT("fauna.highmoore.grouse")
             || SourceId == TEXT("fauna.highmoore.hare")
             || SourceId == TEXT("fauna.highmoore.fox")
-            || SourceId == TEXT("fauna.highmoore.fell-wolf"))
+            || SourceId == TEXT("fauna.highmoore.fell-wolf")
+            || SourceId == TEXT("flora.story.ethans-grove"))
         {
             OutErrors.Add(FString::Printf(TEXT("Unauthored or authority-blocked identity leaked into provider briefs: %s"), *SourceId));
         }
@@ -450,6 +480,11 @@ bool FExternalAssetProductionCatalog::Validate(TArray<FString>& OutErrors)
     {
         OutErrors.Add(TEXT("External fauna-reference coverage must include exactly the individually grounded provider-ready fauna briefs and exclude variable/underspecified identities."));
     }
+    if (FloraVisualCount != ProviderReadyFloraVisualBriefCount
+        || ProviderReadyFloraVisualBriefCount != FFloraVisualProductionCatalog::ProviderReadyBriefCount)
+    {
+        OutErrors.Add(TEXT("External flora-reference coverage must include exactly the individually grounded provider-ready flora briefs and exclude story-conflicted identities."));
+    }
     if (PropCount != StateTreasureBriefCount + UniqueRewardBriefCount)
     {
         OutErrors.Add(TEXT("External prop brief coverage must remain nine State Treasures plus the currently grounded unique reward."));
@@ -472,9 +507,9 @@ bool FExternalAssetProductionCatalog::Validate(TArray<FString>& OutErrors)
         OutErrors.Add(TEXT("External provider authority may not create canon, self-promote media or purchase provider access."));
     }
 
-    if (BuildDesignGaps().Num() != 7)
+    if (BuildDesignGaps().Num() != 8)
     {
-        OutErrors.Add(TEXT("External asset production must retain character/final-act-boss/fauna/3D/import/runtime/rights design gaps."));
+        OutErrors.Add(TEXT("External asset production must retain character/final-act-boss/fauna/flora/3D/import/runtime/rights design gaps."));
     }
 
     return OutErrors.IsEmpty();
