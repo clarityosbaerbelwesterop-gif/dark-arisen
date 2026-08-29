@@ -106,22 +106,22 @@ TArray<FCharacterVisualProductionBrief> FCharacterVisualProductionCatalog::Build
             TEXT("character.ethan-harlow"),
             TEXT("Ethan Harlow"),
             ECharacterVisualProductionRole::MajorNarrative,
-            TEXT("docs/characters/docs/characters/ethan_harlow.md"),
-            TEXT("Age 22 at start, 23-24 when Jake finds him; 1.88 m; broad-shouldered and powerfully built from years of sea work; dark-brown hair shorter than Jake's and often tied back; hazel-brown eyes; scar over right eyebrow from childhood."),
-            TEXT("The character bible does not lock a complete canonical costume sheet. Later identity includes a captain's coat, but exact construction is not authored here."),
-            TEXT("Charismatic born leader. Combat is aggressive, forward and space-taking with a two-handed sword; emotional mask changes across the confrontation with Jake."),
-            TEXT("Skin tone, exact facial proportions and full costume design remain unlocked in this source."),
-            true),
+            TEXT("docs/characters/docs/characters/ethan_harlow.md; Docs/DesignAuthority.md"),
+            TEXT("The legacy character bible contains detailed physical facts, but current DesignAuthority states the Ethan character/boss material conflicts with the Phase 11 story structure."),
+            TEXT("Legacy costume/combat presentation must not be promoted into current canon until Ethan is rewritten against Phase 11 or the older branch is explicitly restored."),
+            TEXT("No Higgsfield performance/look production while the final-act identity is canon-conflicted."),
+            TEXT("Current Phase 11 physical/costume/performance sheet is unresolved. Treat all legacy specifics as reference-only history, not provider-ready canon."),
+            false),
         Brief(
             TEXT("character.draven-voss"),
             TEXT("Captain Draven Voss"),
             ECharacterVisualProductionRole::MajorAntagonist,
-            TEXT("docs/characters/docs/characters/docs/characters/draven_voss.md"),
-            TEXT("Age 45; 1.90 m; wiry rather than bulky; posture carries twenty years of naval training; black hair with silver streaks, neatly tied back; narrow well-kept beard; ice-blue eyes; old burn scar on left side of neck."),
-            TEXT("Former Imperial naval officer and current Crimson Armada captain. The source does not supply a complete canonical clothing construction or color sheet."),
-            TEXT("Quiet, measured authority: never needs to shout. Combat is classically trained, economical and precise with sabre and pistol before the authored final unarmed phase."),
-            TEXT("Skin tone, exact facial proportions and full officer/pirate costume breakdown remain unlocked in this source."),
-            true)
+            TEXT("docs/characters/docs/characters/docs/characters/draven_voss.md; Docs/DesignAuthority.md"),
+            TEXT("The legacy character bible contains detailed physical facts, but current DesignAuthority states the Draven character/boss material conflicts with the Phase 11 story structure."),
+            TEXT("Legacy officer/pirate costume and final-fight presentation must not be promoted into current canon until Draven is rewritten against Phase 11 or the older branch is explicitly restored."),
+            TEXT("No Higgsfield performance/look production while the final-act identity is canon-conflicted."),
+            TEXT("Current Phase 11 physical/costume/performance sheet is unresolved. Treat all legacy specifics as reference-only history, not provider-ready canon."),
+            false)
     };
 }
 
@@ -134,9 +134,14 @@ TArray<FCharacterVisualProductionDesignGap> FCharacterVisualProductionCatalog::B
             TEXT("the princess.md Sections 2-5")
         },
         {
-            TEXT("design-gap.character-visual.primary-costume-sheets"),
-            TEXT("Jake, Ethan and Draven have strong physical descriptions but incomplete production costume sheets. Provider reference work must not silently promote invented clothing into canon."),
-            TEXT("docs/characters/jake_harlow.md; docs/characters/docs/characters/ethan_harlow.md; docs/characters/docs/characters/docs/characters/draven_voss.md")
+            TEXT("design-gap.character-visual.jake-primary-costume-sheet"),
+            TEXT("Jake has a source-backed physical description but no complete canonical production costume sheet. Provider reference work must not silently promote invented clothing into canon."),
+            TEXT("docs/characters/jake_harlow.md")
+        },
+        {
+            TEXT("design-gap.character-visual.phase11-ethan-draven-rewrite"),
+            TEXT("DesignAuthority explicitly requires Ethan and Draven character/boss material to be rewritten against the current Phase 11 story or the older betrayal branch to be explicitly restored. Both identities remain provider-blocked until that canon decision is resolved."),
+            TEXT("Docs/DesignAuthority.md")
         }
     };
 }
@@ -184,12 +189,12 @@ bool FCharacterVisualProductionCatalog::Validate(TArray<FString>& OutErrors)
 
     if (ReadyCount != ProviderReadyCharacterCount || BlockedCount != ExplicitlyBlockedCharacterCount)
     {
-        OutErrors.Add(TEXT("Major-character provider-ready/blocked split drifted from source-backed visual completeness."));
+        OutErrors.Add(TEXT("Major-character provider-ready/blocked split drifted from current source authority."));
     }
 
-    if (BuildDesignGaps().Num() != 2)
+    if (BuildDesignGaps().Num() != 3)
     {
-        OutErrors.Add(TEXT("Character visual production must retain the Elowen physical-sheet and primary-costume gaps."));
+        OutErrors.Add(TEXT("Character visual production must retain Elowen, Jake-costume and Phase-11 Ethan/Draven design gaps."));
     }
 
     return OutErrors.IsEmpty();
