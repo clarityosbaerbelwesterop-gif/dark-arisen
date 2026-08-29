@@ -60,16 +60,18 @@ The following are not filled with invented material:
 
 The Rockstar-path continuation also moved the world layer forward instead of jumping directly to packaging:
 
-- regional population production contracts now encode source-authored density ranges, demographic shares, regional daily rhythms, Jake-reaction rules, chapter evolution, purpose-driven routines and child-protection requirements;
+- regional population production contracts encode source-authored density ranges, demographic shares where percentages are actually authored, daily rhythms, Jake-reaction rules, chapter evolution, purpose-driven routines and child-protection requirements;
+- Highmoore uses its later `highmoore populations.md` authority as a fifth-register population: Houses, Yeomanry, Villages and Roads remain four distinct classes, but no percentage split is fabricated and no reputation meter is introduced;
 - Region 06 remains population-by-absence rather than receiving generic crowd filler;
-- fauna/flora production locks the Phase-4 corpus scale: 42 land animals + 6 legendary variants, 52 birds + 4 legendary, 65 sea species, 45 small-creature types + 3 legendary, and at least 60 plants/herbs + 4 legendary;
+- fauna/flora production locks the Phase-4 corpus scale: 42 land animals + 6 legendary variants, 52 birds + 4 legendary, 65 sea species including two legendary identities inside that 65, 45 small-creature types + 3 legendary, and at least 60 plants/herbs + 4 legendary;
+- Highmoore has a separate later ecology profile instead of being silently counted inside Phase 4: its MVP five are grouse, hare, red deer, fox and fell wolf; the stopped-shaft absence and horse refusal remain production laws;
 - regional ecological/audio identities are explicit and generic/random wildlife substitution is prohibited;
 - The Patriarch, The Keeper Below and The Canopy Jaguar are explicit source-backed production anchors rather than generic spawn variants;
 - runtime crowd/creature/plant assets remain open evidence rather than false source assertions.
 
 ## Native source gates added/strengthened
 
-`DarkArisenOps validate-world` now includes the population/fauna production files, counts, named ecological anchors and a source scan against random/generic authored-world generation paths.
+`DarkArisenOps validate-world` now includes the population/fauna production files, counts, Highmoore population/ecology rules, named ecological anchors and a source scan against random/generic authored-world generation paths.
 
 `DarkArisenOps validate-presentation` now requires the explicit animation readability/tuning contracts and the special presentation control-ownership boundaries.
 
