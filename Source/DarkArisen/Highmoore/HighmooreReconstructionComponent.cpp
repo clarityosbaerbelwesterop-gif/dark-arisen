@@ -9,6 +9,31 @@ UHighmooreReconstructionComponent::UHighmooreReconstructionComponent()
     PrimaryComponentTick.bCanEverTick = false;
 }
 
+EHighmooreReconstructionPath UHighmooreReconstructionComponent::ResolvePathFromPrincessFacts(
+    const EBelosPathResolution BelosResolution,
+    const bool bWentToUndercroftStair)
+{
+    if (bWentToUndercroftStair)
+    {
+        return EHighmooreReconstructionPath::PermanentlyUnavailableAfterStair;
+    }
+
+    if (BelosResolution == EBelosPathResolution::TurnedAway)
+    {
+        // The source says this path becomes diplomatic rather than constructive, but does not
+        // provide the replacement project set. It remains a distinct fail-closed production gap.
+        return EHighmooreReconstructionPath::TurnedWest;
+    }
+
+    if (BelosResolution == EBelosPathResolution::KatanaAssaultInterrupted
+        || BelosResolution == EBelosPathResolution::OrdinaryWeaponOverwhelmed)
+    {
+        return EHighmooreReconstructionPath::StandardAfterBelos;
+    }
+
+    return EHighmooreReconstructionPath::NotAvailableYet;
+}
+
 bool UHighmooreReconstructionComponent::InitializeFromPrincessState(
     const UPrincessQuestStateComponent* PrincessState)
 {
@@ -19,33 +44,18 @@ bool UHighmooreReconstructionComponent::InitializeFromPrincessState(
         return false;
     }
 
+    const EHighmooreReconstructionPath ResolvedPath = ResolvePathFromPrincessFacts(
+        PrincessState->GetBelosResolution(),
+        PrincessState->DidGoToUndercroftStair());
+    if (ResolvedPath == EHighmooreReconstructionPath::NotAvailableYet)
+    {
+        return false;
+    }
+
     bInitialized = true;
     bRealLetterStillOnPillow = !PrincessState->DidReadRealLetter();
-
-    if (PrincessState->DidGoToUndercroftStair())
-    {
-        Path = EHighmooreReconstructionPath::PermanentlyUnavailableAfterStair;
-        return true;
-    }
-
-    if (PrincessState->GetBelosResolution() == EBelosPathResolution::TurnedAway)
-    {
-        // The source says this path becomes diplomatic rather than constructive, but does not
-        // provide the replacement project set. Keep it distinct and fail closed below.
-        Path = EHighmooreReconstructionPath::TurnedWest;
-        return true;
-    }
-
-    if (PrincessState->GetBelosResolution() == EBelosPathResolution::KatanaAssaultInterrupted
-        || PrincessState->GetBelosResolution() == EBelosPathResolution::OrdinaryWeaponOverwhelmed)
-    {
-        Path = EHighmooreReconstructionPath::StandardAfterBelos;
-        return true;
-    }
-
-    bInitialized = false;
-    Path = EHighmooreReconstructionPath::NotAvailableYet;
-    return false;
+    Path = ResolvedPath;
+    return true;
 }
 
 bool UHighmooreReconstructionComponent::IsReconstructionAvailable() const
