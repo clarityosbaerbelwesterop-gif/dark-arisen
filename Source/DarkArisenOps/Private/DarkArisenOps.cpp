@@ -15,6 +15,8 @@ void PrintUsage()
     UE_LOG(LogTemp, Display, TEXT("  validate-missions --root=<repo>"));
     UE_LOG(LogTemp, Display, TEXT("  validate-bosses --root=<repo>"));
     UE_LOG(LogTemp, Display, TEXT("  validate-world --root=<repo>"));
+    UE_LOG(LogTemp, Display, TEXT("  validate-presentation --root=<repo>"));
+    UE_LOG(LogTemp, Display, TEXT("  validate-audio-voice --root=<repo>"));
     UE_LOG(LogTemp, Display, TEXT("  runner-check --root=<repo> --engine=<UE5.5> [--min-disk-gb=120]"));
     UE_LOG(LogTemp, Display, TEXT("  build --root=<repo> --engine=<UE5.5> [--automation]"));
     UE_LOG(LogTemp, Display, TEXT("  package-alpha --revision=<40sha> [--output=<dir>]"));
@@ -59,6 +61,14 @@ INT32_MAIN_INT32_ARGC_TCHAR_ARGV()
         else if (Command == TEXT("validate-world"))
         {
             Result = DarkArisenOps::ValidateWorldContentCommand(Args);
+        }
+        else if (Command == TEXT("validate-presentation"))
+        {
+            Result = DarkArisenOps::ValidatePresentationContentCommand(Args);
+        }
+        else if (Command == TEXT("validate-audio-voice"))
+        {
+            Result = DarkArisenOps::ValidateAudioVoiceContentCommand(Args);
         }
         else if (Command == TEXT("runner-check"))
         {
