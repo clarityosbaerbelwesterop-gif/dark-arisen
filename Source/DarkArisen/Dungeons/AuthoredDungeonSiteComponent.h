@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "ContentScale/AuthoredDungeonCatalog.h"
+#include "ContentScale/AuthoredDungeonProductionProfile.h"
 #include "AuthoredDungeonSiteComponent.generated.h"
 
 UENUM(BlueprintType)
@@ -47,10 +48,40 @@ public:
     FString GetAuthoredDisplayName() const;
 
     UFUNCTION(BlueprintPure, Category="Dungeon|Definition")
+    FString GetAuthoredAccessAndDiscovery() const;
+
+    UFUNCTION(BlueprintPure, Category="Dungeon|Definition")
+    FString GetAuthoredPuzzleDetail() const;
+
+    UFUNCTION(BlueprintPure, Category="Dungeon|Definition")
+    FString GetAuthoredHazardDetail() const;
+
+    UFUNCTION(BlueprintPure, Category="Dungeon|Definition")
+    FString GetAuthoredImageBrief() const;
+
+    UFUNCTION(BlueprintPure, Category="Dungeon|Definition")
+    FString GetAuthoredBossOrBottomDetail() const;
+
+    UFUNCTION(BlueprintPure, Category="Dungeon|Definition")
+    FString GetAuthoredRewardDetail() const;
+
+    UFUNCTION(BlueprintPure, Category="Dungeon|Definition")
     bool IsSecretSite() const;
 
     UFUNCTION(BlueprintPure, Category="Dungeon|Definition")
     bool IsNoBossSite() const;
+
+    UFUNCTION(BlueprintPure, Category="Dungeon|Definition")
+    bool IsImageWithheld() const;
+
+    UFUNCTION(BlueprintPure, Category="Dungeon|Definition")
+    bool IsRewardExplicitlyNone() const;
+
+    UFUNCTION(BlueprintPure, Category="Dungeon|Definition")
+    bool IsWarReactive() const;
+
+    UFUNCTION(BlueprintPure, Category="Dungeon|Definition")
+    bool SupportsExplicitNonCombatResolution() const;
 
     /** Cartographic discovery is the only mode that may be physically recorded before entry. */
     UFUNCTION(BlueprintPure, Category="Dungeon|Discovery")
@@ -106,4 +137,5 @@ public:
 private:
     bool bDefinitionValid = false;
     FAuthoredDungeonCatalogEntry CachedDefinition;
+    FAuthoredDungeonProductionProfile CachedProductionProfile;
 };
