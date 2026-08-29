@@ -4,7 +4,13 @@
 **Authority:** operator direction on 2026-08-29 + existing design corpus  
 **Rule:** if a Turn or Standing mission is not actually described by an approved design source, implementation skips it. Kimi, Game Studios, editor tooling and gameplay code may not synthesize a story, person, place, dialogue, reward or outcome merely to satisfy a target count.
 
-This document records **coverage slots**, not quest names. Neutral IDs exist only so the missing content can be counted and located without pretending that a quest has already been designed.
+This document records **coverage slots**, not quest names. Neutral IDs exist only so missing content can be counted and located without pretending that a quest has already been designed.
+
+## Threads are not part of this gap count
+
+All **17/17 Threads are named and source-grounded** by `side quest catalog.md`. Their implementation may continue from the cited subsystem/character sources. Where a Thread source still omits a concrete line, journal entry, trigger detail or outcome, that specific detail remains a local `DESIGN-GAP`; it does not authorise invention.
+
+The missing counts below concern only the individually unwritten **Turn** and **Standing** identities.
 
 ## Current authored identities
 
@@ -39,6 +45,8 @@ The Phase-11 regional totals are canonical. The following slots have **no author
 | **Total** | **132** | **3** | **129** | |
 
 Source for the quotas: `side quest catalog.md` Section 4 and the native `FAuthoredQuestCatalog` / `FMissionScaleRequirements` contracts.
+
+`side quest catalog.md` gives the Turn composition shapes and regional weighting, but those are not individual quest identities. A shape such as “somebody is lying” is not enough to invent a person, motive, place or outcome.
 
 ## Missing Standing identities — 146
 
