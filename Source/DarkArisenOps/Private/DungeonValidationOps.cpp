@@ -106,6 +106,8 @@ int32 ValidateDungeonContentCommand(const FParsedArgs& Args)
         TEXT("Source/DarkArisen/Dungeons/DungeonSpatialProgressionComponent.cpp"),
         TEXT("Source/DarkArisen/Dungeons/SecretDungeonAccessRules.h"),
         TEXT("Source/DarkArisen/Dungeons/SecretDungeonAccessRules.cpp"),
+        TEXT("Source/DarkArisen/Dungeons/SecretDungeonResolutionComponent.h"),
+        TEXT("Source/DarkArisen/Dungeons/SecretDungeonResolutionComponent.cpp"),
         TEXT("Source/DarkArisen/Dungeons/CenoteFirstMotherComponent.h"),
         TEXT("Source/DarkArisen/Dungeons/DrownedMeadHallComponent.h"),
         TEXT("Source/DarkArisen/Dungeons/DrownedMeadHallComponent.cpp"),
@@ -117,7 +119,8 @@ int32 ValidateDungeonContentCommand(const FParsedArgs& Args)
         TEXT("Source/DarkArisen/Tests/DungeonProductionProfilesSpec.cpp"),
         TEXT("Source/DarkArisen/Tests/DungeonMvpSystemsSpec.cpp"),
         TEXT("Source/DarkArisen/Tests/DungeonSpatialProgressionSpec.cpp"),
-        TEXT("Source/DarkArisen/Tests/SecretDungeonAccessSpec.cpp")
+        TEXT("Source/DarkArisen/Tests/SecretDungeonAccessSpec.cpp"),
+        TEXT("Source/DarkArisen/Tests/SecretDungeonResolutionSpec.cpp")
     };
     for (const FString& Relative : RequiredFiles)
     {
@@ -192,6 +195,22 @@ int32 ValidateDungeonContentCommand(const FParsedArgs& Args)
         TEXT("dungeon.sea.harbour-that-was-first"),
         TEXT("ELiberationNetwork::DeedJudgers"),
         TEXT("Secret site is absent on the Empire path")}, Errors);
+
+    RequireFragments(Root, TEXT("Source/DarkArisen/Dungeons/SecretDungeonResolutionComponent.h"), {
+        TEXT("GroveTakeNothing"),
+        TEXT("LeaveValuedOffering"),
+        TEXT("WaitThreeGameDays"),
+        TEXT("AgreementNoFight"),
+        TEXT("FourthFortressWithheld"),
+        TEXT("DocumentOrTakeBoat"),
+        TEXT("RequiredWyrmWaitGameMinutes = 3 * 24 * 60")}, Errors);
+    RequireFragments(Root, TEXT("Source/DarkArisen/Dungeons/SecretDungeonResolutionComponent.cpp"), {
+        TEXT("secret.grove.left-untouched"),
+        TEXT("secret.steersman.valued-offering-left"),
+        TEXT("secret.wyrm.waited-three-game-days"),
+        TEXT("secret.fifth-connection.agreement"),
+        TEXT("secret.harbour.documented-and-left"),
+        TEXT("FourthFortressWithheld")}, Errors);
 
     RequireFragments(Root, TEXT("Source/DarkArisen/Dungeons/DrownedMeadHallComponent.h"), {
         TEXT("DryWindowDurationWorldMinutes = 40"),
