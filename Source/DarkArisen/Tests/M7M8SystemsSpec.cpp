@@ -45,29 +45,38 @@ UContentScaleManifestDataAsset* BuildStructurallyCompleteManifest()
     AddScaledEntries(Manifest, EScaledContentKind::StandingVariant, EM7StandingMissionType::Hunt, 13, TEXT("standing.hunt"));
     AddScaledEntries(Manifest, EScaledContentKind::StandingVariant, EM7StandingMissionType::Salvage, 14, TEXT("standing.salvage"));
 
+    // Global count: 20 Tier-A minor sites. TierA is a retained serialization alias only; new
+    // authored records use Minor because Tier A and minor are the same canonical category.
     for (int32 Index = 0; Index < 20; ++Index)
     {
         FDungeonManifestEntry Entry;
         Entry.StableId = FName(*FString::Printf(TEXT("dungeon.minor.%02d"), Index + 1));
         Entry.Tier = EContentDungeonTier::Minor;
         Entry.GoverningSource = TEXT("dungeon system global.md");
-        Entry.AuthoredMaximumMinutes = 30.0f;
+        Entry.AuthoredMaximumMinutes = 0.0f;
         Manifest->Dungeons.Add(Entry);
     }
-    for (int32 Index = 0; Index < 40; ++Index)
+
+    // The structural fixture does not invent narrative identities. It only supplies the required
+    // forty-one named records to exercise the count contract. Each synthetic record is Tier B so
+    // the mandatory inside-opened return law is exercised as well.
+    for (int32 Index = 0; Index < 41; ++Index)
     {
         FDungeonManifestEntry Entry;
         Entry.StableId = FName(*FString::Printf(TEXT("dungeon.named.%02d"), Index + 1));
-        Entry.Tier = Index < 20 ? EContentDungeonTier::TierA : EContentDungeonTier::TierB;
-        Entry.GoverningSource = TEXT("dungeon system global.md");
-        Entry.bReturnShortcutFromInside = Entry.Tier == EContentDungeonTier::TierB;
-        Entry.AuthoredMaximumMinutes = 45.0f;
+        Entry.Tier = EContentDungeonTier::TierB;
+        Entry.GoverningSource = TEXT("dungeon system global.md structural fixture");
+        Entry.bReturnShortcutFromInside = true;
+        Entry.AuthoredMaximumMinutes = 0.0f;
         Manifest->Dungeons.Add(Entry);
     }
+
+    // Crystal Caves is the separate category-of-one carve-out, not one of the forty-one named
+    // global sites used to make the 61 count.
     FDungeonManifestEntry Crystal;
-    Crystal.StableId = TEXT("dungeon.crystal-caves");
+    Crystal.StableId = TEXT("passage.highmoore.crystal-caves");
     Crystal.Tier = EContentDungeonTier::CrystalCaves;
-    Crystal.GoverningSource = TEXT("crystal caves.md");
+    Crystal.GoverningSource = TEXT("dungeon system global.md Section 4; crystal caves.md");
     Crystal.bReturnShortcutFromInside = true;
     Crystal.AuthoredMaximumMinutes = 120.0f;
     Manifest->Dungeons.Add(Crystal);
@@ -101,9 +110,10 @@ UContentScaleManifestDataAsset* BuildStructurallyCompleteManifest()
         Cutscene.bSequencerOwnedCutscene = true;
         Manifest->PresentationMoments.Add(Cutscene);
     }
+
     // Entries #15-#19 are deferred to a governing document that does not exist in this repository,
     // so the fixture stands them in by count only. They are not canonical ids and must not become
-    // one until `bosses/crimson_armada.md` is authored.
+    // one until the missing final-act source is authored.
     for (int32 Index = 0; Index < 5; ++Index)
     {
         FPresentationMomentManifestEntry Cutscene;
@@ -112,6 +122,7 @@ UContentScaleManifestDataAsset* BuildStructurallyCompleteManifest()
         Cutscene.bSequencerOwnedCutscene = true;
         Manifest->PresentationMoments.Add(Cutscene);
     }
+
     const TArray<FName> ProtectedIds = {
         TEXT("playable.arrow.after-thirty-seconds"), TEXT("playable.lake.standing"), TEXT("playable.archer.kill"),
         TEXT("playable.real-letter.reading"), TEXT("playable.cassian.kill"), TEXT("playable.belos.nine-minutes"),
@@ -187,12 +198,18 @@ bool FDarkArisenM7ContentManifestSpec::RunTest(const FString& Parameters)
     if (!Manifest) return false;
 
     TArray<FString> Errors;
-    TestTrue(TEXT("Exact 61/17/132/147/9/19/22 structural manifest passes"), Manifest->ValidateManifest(Errors));
+    TestTrue(TEXT("Exact 61 global sites + 1 Crystal carve-out / 17 / 132 / 147 / 9 / 19 / 22 structural manifest passes"), Manifest->ValidateManifest(Errors));
     TestEqual(TEXT("Synthetic manifest has no structural errors"), Errors.Num(), 0);
 
     Manifest->Dungeons[0].bHasMapMarker = true;
     TestFalse(TEXT("Any dungeon marker fails closed"), Manifest->ValidateManifest(Errors));
     Manifest->Dungeons[0].bHasMapMarker = false;
+
+    // Legacy TierA must not silently become a second minor/named category.
+    const EContentDungeonTier OriginalTier = Manifest->Dungeons[0].Tier;
+    Manifest->Dungeons[0].Tier = EContentDungeonTier::TierA;
+    TestFalse(TEXT("Legacy TierA records fail closed; new Tier-A minor sites use Minor"), Manifest->ValidateManifest(Errors));
+    Manifest->Dungeons[0].Tier = OriginalTier;
 
     FPresentationMomentManifestEntry& ArrowAftermath = Manifest->PresentationMoments[19];
     ArrowAftermath.bSequencerOwnedCutscene = true;
@@ -242,8 +259,8 @@ bool FDarkArisenM7StandingFinitePoolSpec::RunTest(const FString& Parameters)
 
     TestFalse(TEXT("Six fixtures are intentionally not mistaken for the complete 147-variant production pool"), [&]()
     {
-        TArray<FString> Errors;
-        return Pool->ValidateAuthoredPool(Errors);
+        TArray<FString> LocalErrors;
+        return Pool->ValidateAuthoredPool(LocalErrors);
     }());
 
     for (int32 Index = 0; Index < 6; ++Index)
