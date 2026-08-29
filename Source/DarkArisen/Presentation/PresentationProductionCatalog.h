@@ -16,6 +16,7 @@ enum class EPresentationAnimationPriority : uint8
 enum class EPresentationControlOwnership : uint8
 {
     SequencerOwned,
+    AnchoredPlayerMovement,
     BriefInsert,
     SlowPushOnly,
     PlayerControlled
@@ -53,10 +54,6 @@ struct FPresentationDesignGap
     FString GoverningSource;
 };
 
-/**
- * Phase-10 production authority for the nineteen cutscene slots and twenty-two moments that may
- * never become cutscenes. It does not create Sequencer assets or claim capture/audio exists.
- */
 class DARKARISEN_API FPresentationProductionCatalog
 {
 public:
