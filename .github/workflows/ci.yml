@@ -50,6 +50,9 @@ jobs:
       - name: Validate audio and voice production
         shell: cmd
         run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" validate-audio-voice "--root=%GITHUB_WORKSPACE%"'
+      - name: Reconcile Alpha content readiness
+        shell: cmd
+        run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" validate-alpha-content "--root=%GITHUB_WORKSPACE%"'
       - name: Compile Development and Shipping
         if: github.event_name == 'push'
         shell: cmd
@@ -94,6 +97,9 @@ jobs:
       - name: Validate audio and voice production
         shell: bash
         run: '"$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" validate-audio-voice "--root=$GITHUB_WORKSPACE"'
+      - name: Reconcile Alpha content readiness
+        shell: bash
+        run: '"$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" validate-alpha-content "--root=$GITHUB_WORKSPACE"'
       - name: Compile Development and Shipping
         if: github.event_name == 'push'
         shell: bash
