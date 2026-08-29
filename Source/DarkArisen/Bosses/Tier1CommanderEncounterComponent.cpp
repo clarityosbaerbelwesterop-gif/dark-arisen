@@ -97,9 +97,18 @@ bool UTier1CommanderEncounterComponent::ResolveInternal(
         return false;
     }
 
-    if (NewResolution == ETier1CommanderResolution::Avoided && RouteId.IsNone())
+    if (NewResolution == ETier1CommanderResolution::Avoided)
     {
-        return false;
+        if (RouteId.IsNone() || !Definition.AllowedAvoidedRouteIds.Contains(RouteId))
+        {
+            return false;
+        }
+
+        const FName VegaWalkAway(TEXT("avoid.vega.walk-away-after-spare-refusal"));
+        if (RouteId == VegaWalkAway && !bSpareRefusedObserved)
+        {
+            return false;
+        }
     }
 
     Resolution = NewResolution;
@@ -134,8 +143,8 @@ bool UTier1CommanderEncounterComponent::TryResolveSpared()
 
 bool UTier1CommanderEncounterComponent::ResolveAvoided(const FName RouteId)
 {
-    // Avoidance may resolve before the direct encounter begins: uprising, purchase, recall, supply cut,
-    // alliance, standoff, heist, dispatch exposure and education are all authored pre-combat paths.
+    // Avoidance may resolve before the direct encounter begins, but only through one of the finite
+    // source-authored paths in FTier1CommanderCatalog. No arbitrary route string becomes canon.
     return ResolveInternal(ETier1CommanderResolution::Avoided, RouteId);
 }
 
