@@ -53,6 +53,8 @@ int32 ValidateExternalAssetProductionCommand(const FParsedArgs& Args)
         TEXT("Source/DarkArisen/Production/BossVisualAuthorityPolicy.cpp"),
         TEXT("Source/DarkArisen/Production/BossVisualProductionCatalog.h"),
         TEXT("Source/DarkArisen/Production/BossVisualProductionCatalog.cpp"),
+        TEXT("Source/DarkArisen/Production/Tier1BossVisualReadinessCatalog.h"),
+        TEXT("Source/DarkArisen/Production/Tier1BossVisualReadinessCatalog.cpp"),
         TEXT("Source/DarkArisen/Production/ShipVisualProductionCatalog.h"),
         TEXT("Source/DarkArisen/Production/ShipVisualProductionCatalog.cpp"),
         TEXT("Source/DarkArisen/Production/FaunaVisualProductionCatalog.h"),
@@ -60,6 +62,7 @@ int32 ValidateExternalAssetProductionCommand(const FParsedArgs& Args)
         TEXT("Source/DarkArisen/Tests/ExternalAssetProductionSpec.cpp"),
         TEXT("Source/DarkArisen/Tests/CharacterVisualProductionSpec.cpp"),
         TEXT("Source/DarkArisen/Tests/BossVisualAuthoritySpec.cpp"),
+        TEXT("Source/DarkArisen/Tests/Tier1BossVisualReadinessSpec.cpp"),
         TEXT("Source/DarkArisen/Tests/ShipVisualProductionSpec.cpp"),
         TEXT("Source/DarkArisen/Tests/FaunaVisualProductionSpec.cpp"),
         TEXT("Docs/PRE_RUNNER_ASSET_PRODUCTION_PLAN.md"),
@@ -147,6 +150,23 @@ int32 ValidateExternalAssetProductionCommand(const FParsedArgs& Args)
         TEXT("ProviderReadyBossBriefCount = 19"),
         TEXT("AuthorityBlockedBossBriefCount = 2")}, Errors);
 
+    RequireFragments(Root, TEXT("Source/DarkArisen/Production/Tier1BossVisualReadinessCatalog.h"), {
+        TEXT("RequiredTier1BossCount = 9"),
+        TEXT("ProviderFullLookReadyCount = 0"),
+        TEXT("ProviderBlockedFullLookCount = RequiredTier1BossCount")}, Errors);
+
+    RequireFragments(Root, TEXT("Source/DarkArisen/Production/Tier1BossVisualReadinessCatalog.cpp"), {
+        TEXT("boss.herrera"),
+        TEXT("boss.reyes"),
+        TEXT("boss.cruz"),
+        TEXT("boss.de_silva"),
+        TEXT("boss.vega"),
+        TEXT("boss.blackwood"),
+        TEXT("boss.sterling"),
+        TEXT("boss.ashcroft"),
+        TEXT("boss.thorne"),
+        TEXT("BuildDesignGaps().Num() != ProviderBlockedFullLookCount")}, Errors);
+
     RequireFragments(Root, TEXT("Source/DarkArisen/Production/ShipVisualProductionCatalog.h"), {
         TEXT("RequiredBriefCount = 6"),
         TEXT("ProviderReadyBriefCount = 5"),
@@ -178,6 +198,11 @@ int32 ValidateExternalAssetProductionCommand(const FParsedArgs& Args)
     RequireFragments(Root, TEXT("Source/DarkArisen/Tests/CharacterVisualProductionSpec.cpp"), {
         TEXT("Six characters are current-authority ready for bounded reference generation"),
         TEXT("Exactly three major characters remain explicitly blocked")}, Errors);
+
+    RequireFragments(Root, TEXT("Source/DarkArisen/Tests/Tier1BossVisualReadinessSpec.cpp"), {
+        TEXT("Exactly the Nine Who Hold are tracked"),
+        TEXT("No current Tier-1 full look is fabricated"),
+        TEXT("Nine explicit current-boss visual design gaps remain")}, Errors);
 
     RequireFragments(Root, TEXT("Source/DarkArisen/Tests/FaunaVisualProductionSpec.cpp"), {
         TEXT("Nineteen individually grounded legendary fauna identities are indexed"),
@@ -222,6 +247,9 @@ int32 ValidateExternalAssetProductionCommand(const FParsedArgs& Args)
         TEXT("156"),
         TEXT("40 named dungeons"),
         TEXT("6 current-authority character references"),
+        TEXT("Current Tier-1 bosses — Nine Who Hold"),
+        TEXT("0 full-look ready / 9 tracked gaps"),
+        TEXT("0/9 full looks are provider-ready"),
         TEXT("19 non-conflicted deep-dive boss/creature references"),
         TEXT("5 La Liberación deck/interior references"),
         TEXT("19 fauna references"),
