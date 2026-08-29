@@ -15,6 +15,7 @@ void PrintUsage()
     UE_LOG(LogTemp, Display, TEXT("  validate-missions --root=<repo>"));
     UE_LOG(LogTemp, Display, TEXT("  validate-bosses --root=<repo>"));
     UE_LOG(LogTemp, Display, TEXT("  validate-world --root=<repo>"));
+    UE_LOG(LogTemp, Display, TEXT("  validate-rewards --root=<repo>"));
     UE_LOG(LogTemp, Display, TEXT("  validate-presentation --root=<repo>"));
     UE_LOG(LogTemp, Display, TEXT("  validate-audio-voice --root=<repo>"));
     UE_LOG(LogTemp, Display, TEXT("  validate-alpha-content --root=<repo>"));
@@ -48,6 +49,7 @@ INT32_MAIN_INT32_ARGC_TCHAR_ARGV()
         else if (Command == TEXT("validate-missions")) Result = DarkArisenOps::ValidateMissionContentCommand(Args);
         else if (Command == TEXT("validate-bosses")) Result = DarkArisenOps::ValidateBossContentCommand(Args);
         else if (Command == TEXT("validate-world")) Result = DarkArisenOps::ValidateWorldContentCommand(Args);
+        else if (Command == TEXT("validate-rewards")) Result = DarkArisenOps::ValidateRewardContentCommand(Args);
         else if (Command == TEXT("validate-presentation")) Result = DarkArisenOps::ValidatePresentationContentCommand(Args);
         else if (Command == TEXT("validate-audio-voice")) Result = DarkArisenOps::ValidateAudioVoiceContentCommand(Args);
         else if (Command == TEXT("validate-alpha-content")) Result = DarkArisenOps::ValidateAlphaContentCommand(Args);
