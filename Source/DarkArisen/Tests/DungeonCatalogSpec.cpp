@@ -4,6 +4,7 @@
 
 #include "Misc/AutomationTest.h"
 #include "ContentScale/AuthoredDungeonCatalog.h"
+#include "ContentScale/AuthoredMinorDungeonCatalog.h"
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
     FDarkArisenAuthoredDungeonCatalogSpec,
@@ -54,6 +55,35 @@ bool FDarkArisenAuthoredDungeonCatalogSpec::RunTest(const FString& Parameters)
     TestEqual(TEXT("Crystal Caves authored ceiling remains two hours"), Crystal.ExactMaximumMinutes, 120.0f);
     TestFalse(TEXT("Crystal Caves is not folded into the forty known regional named sites"), SeenIds.Contains(Crystal.StableId));
 
+    TArray<FString> MinorErrors;
+    TestTrue(TEXT("Twenty canonical Tier-A/minor slots validate"),
+        FAuthoredMinorDungeonCatalog::ValidateSlots(MinorErrors));
+    TestEqual(TEXT("Minor slot catalog has no structural errors"), MinorErrors.Num(), 0);
+
+    const TArray<FAuthoredMinorDungeonSlot> MinorSlots = FAuthoredMinorDungeonCatalog::BuildSlots();
+    TestEqual(TEXT("Global Tier-A/minor count is exactly twenty"), MinorSlots.Num(), 20);
+
+    TMap<EDungeonCatalogRegion, int32> MinorCounts;
+    TSet<FName> MinorIds;
+    for (const FAuthoredMinorDungeonSlot& Slot : MinorSlots)
+    {
+        TestFalse(TEXT("Minor slot IDs remain unique"), MinorIds.Contains(Slot.StableId));
+        MinorIds.Add(Slot.StableId);
+        MinorCounts.FindOrAdd(Slot.Region)++;
+
+        TestFalse(TEXT("Unnamed minor identities remain explicitly unauthored"), Slot.bIdentityAuthored);
+        TestFalse(TEXT("Minor placements remain explicitly unauthored"), Slot.bPlacementAuthored);
+        TestFalse(TEXT("Minor sites are never runtime-generated/radiant"), Slot.bGeneratedAtRuntime);
+    }
+
+    TestEqual(TEXT("Rexa/Moran minor quota"), MinorCounts.FindRef(EDungeonCatalogRegion::RexaMoran), 4);
+    TestEqual(TEXT("Fjordlund minor quota"), MinorCounts.FindRef(EDungeonCatalogRegion::Fjordlund), 3);
+    TestEqual(TEXT("Ashenmoor minor quota"), MinorCounts.FindRef(EDungeonCatalogRegion::Ashenmoor), 4);
+    TestEqual(TEXT("Sea minor quota"), MinorCounts.FindRef(EDungeonCatalogRegion::Sea), 3);
+    TestEqual(TEXT("Colonial minor quota"), MinorCounts.FindRef(EDungeonCatalogRegion::Colonial), 2);
+    TestEqual(TEXT("Region 06 minor quota"), MinorCounts.FindRef(EDungeonCatalogRegion::Region06), 1);
+    TestEqual(TEXT("Highmoore minor quota"), MinorCounts.FindRef(EDungeonCatalogRegion::Highmoore), 3);
+
     const TArray<FDungeonCatalogDesignGap> Gaps = FAuthoredDungeonCatalog::BuildDesignGaps();
     TestEqual(TEXT("Three explicit catalog-level design gaps remain"), Gaps.Num(), 3);
 
@@ -64,7 +94,7 @@ bool FDarkArisenAuthoredDungeonCatalogSpec::RunTest(const FString& Parameters)
     }
     TestTrue(TEXT("Missing Region 06 Tier-E definition remains explicit"), GapIds.Contains(TEXT("design-gap.region06.second-tier-e")));
     TestTrue(TEXT("Crystal/global-count conflict remains explicit"), GapIds.Contains(TEXT("design-gap.crystal-caves-global-count")));
-    TestTrue(TEXT("Twenty unnamed minor-site definitions remain explicit"), GapIds.Contains(TEXT("design-gap.minor-sites-authored-definitions")));
+    TestTrue(TEXT("Minor-site identity/placement authoring remains explicit"), GapIds.Contains(TEXT("design-gap.minor-sites-authored-definitions")));
 
     return true;
 }
