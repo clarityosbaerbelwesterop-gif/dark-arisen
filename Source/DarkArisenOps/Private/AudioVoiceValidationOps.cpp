@@ -68,7 +68,9 @@ int32 ValidateAudioVoiceContentCommand(const FParsedArgs& Args)
 
     RequireFragments(Root, TEXT("Source/DarkArisen/Audio/VoiceProductionCatalog.h"), {
         TEXT("CoreCrewRoleCount = 5"),
-        TEXT("bDialogueLocked = false"),
+        TEXT("RejectedSynthetic"),
+        TEXT("bDirectedPerformanceReviewRequired = true"),
+        TEXT("bCurrentSyntheticProviderRejected = false"),
         TEXT("bCommercialRightsApproved = false")}, Errors);
     RequireFragments(Root, TEXT("Source/DarkArisen/Audio/VoiceProductionCatalog.cpp"), {
         TEXT("voice.crew.mira"),
@@ -76,23 +78,27 @@ int32 ValidateAudioVoiceContentCommand(const FParsedArgs& Args)
         TEXT("voice.crew.ines"),
         TEXT("voice.crew.father-salvio"),
         TEXT("voice.crew.esteban"),
-        TEXT("bDialogueLocked = true"),
-        TEXT("bSubtitleReady = true"),
-        TEXT("design-gap.voice-commercial-rights")}, Errors);
+        TEXT("AuditionDisposition = EVoiceAuditionDisposition::RejectedSynthetic"),
+        TEXT("bDirectedPerformanceReviewRequired = true"),
+        TEXT("bCurrentSyntheticProviderRejected = true"),
+        TEXT("design-gap.tier1-performance-casting")}, Errors);
 
     RequireFragments(Root, TEXT("Docs/Voice/CORE_CREW_AUDITION_EVIDENCE.md"), {
-        TEXT("audition/reference evidence only"),
+        TEXT("Disposition:** **REJECTED"),
+        TEXT("synthetic / emotionally flat"),
         TEXT("cc8c322eaabf41a69db2c05206e40ec1"),
         TEXT("c8846ec4fce6424a81adaa78c4600cd0"),
         TEXT("b26bf00ae737438986876426040e2437"),
         TEXT("974b632e64ad4b59b1c7dc0789ce50a1"),
         TEXT("7befac8f8007447cbaf80733e752f2f6"),
-        TEXT("not shipping audio")}, Errors);
+        TEXT("negative evidence")}, Errors);
 
     RequireFragments(Root, TEXT("Source/DarkArisen/Tests/AudioVoiceProductionSpec.cpp"), {
         TEXT("No production music reacts to gameplay events"),
         TEXT("Exactly five core crew voice roles are locked"),
-        TEXT("does not convert audition evidence into shipping acceptance")}, Errors);
+        TEXT("Generic synthetic audition remains rejected"),
+        TEXT("Directed performance review is mandatory"),
+        TEXT("Current synthetic provider remains rejected for core cast")}, Errors);
 
     if (!Errors.IsEmpty())
     {
@@ -104,7 +110,7 @@ int32 ValidateAudioVoiceContentCommand(const FParsedArgs& Args)
         return 1;
     }
 
-    UE_LOG(LogTemp, Display, TEXT("Audio/voice production source validation passed."));
+    UE_LOG(LogTemp, Display, TEXT("Audio/voice production source validation passed; rejected synthetic core auditions remain fail-closed."));
     return 0;
 }
 }
