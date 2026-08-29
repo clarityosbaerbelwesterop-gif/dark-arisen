@@ -83,11 +83,32 @@ UContentScaleManifestDataAsset* BuildStructurallyCompleteManifest()
         Manifest->Tier1Bosses.Add(Boss);
     }
 
-    for (int32 Index = 0; Index < 19; ++Index)
+    // The fourteen `cutscene catalog.md` Section 3 names individually. The manifest is pinned to
+    // these by identity, so the fixture must use the canonical ids rather than generated ones.
+    const TArray<FName> CanonicalCutsceneIds = {
+        TEXT("cutscene.opening.the-brother"), TEXT("cutscene.opening.la-liberacion"),
+        TEXT("cutscene.archipelago.first-letter"), TEXT("cutscene.archipelago.the-grove"),
+        TEXT("cutscene.archipelago.dream-fight-entry"), TEXT("cutscene.archipelago.alejandro-strain"),
+        TEXT("cutscene.highmoore.emergence"), TEXT("cutscene.highmoore.voice-from-behind"),
+        TEXT("cutscene.highmoore.ejection"), TEXT("cutscene.highmoore.false-letter"),
+        TEXT("cutscene.highmoore.arrow"), TEXT("cutscene.highmoore.real-letter"),
+        TEXT("cutscene.highmoore.she-wrote-two"), TEXT("cutscene.highmoore.wizards-question")};
+    for (const FName CutsceneId : CanonicalCutsceneIds)
     {
         FPresentationMomentManifestEntry Cutscene;
-        Cutscene.StableId = FName(*FString::Printf(TEXT("cutscene.%02d"), Index + 1));
-        Cutscene.GoverningSource = TEXT("cutscene catalog.md");
+        Cutscene.StableId = CutsceneId;
+        Cutscene.GoverningSource = TEXT("cutscene catalog.md Section 3");
+        Cutscene.bSequencerOwnedCutscene = true;
+        Manifest->PresentationMoments.Add(Cutscene);
+    }
+    // Entries #15-#19 are deferred to a governing document that does not exist in this repository,
+    // so the fixture stands them in by count only. They are not canonical ids and must not become
+    // one until `bosses/crimson_armada.md` is authored.
+    for (int32 Index = 0; Index < 5; ++Index)
+    {
+        FPresentationMomentManifestEntry Cutscene;
+        Cutscene.StableId = FName(*FString::Printf(TEXT("cutscene.endgame.unnamed-%02d"), Index + 15));
+        Cutscene.GoverningSource = TEXT("cutscene catalog.md Section 3.4 (governing document absent)");
         Cutscene.bSequencerOwnedCutscene = true;
         Manifest->PresentationMoments.Add(Cutscene);
     }
@@ -177,6 +198,18 @@ bool FDarkArisenM7ContentManifestSpec::RunTest(const FString& Parameters)
     ArrowAftermath.bSequencerOwnedCutscene = true;
     TestFalse(TEXT("A protected playable moment cannot become a cutscene"), Manifest->ValidateManifest(Errors));
     ArrowAftermath.bSequencerOwnedCutscene = false;
+
+    // The count alone used to be the whole check, so nineteen arbitrary ids passed. The authored
+    // fourteen are now pinned by identity; renaming one keeps the count at nineteen and must
+    // still fail.
+    FPresentationMomentManifestEntry& NamedCutscene = Manifest->PresentationMoments[0];
+    const FName CanonicalId = NamedCutscene.StableId;
+    NamedCutscene.StableId = TEXT("cutscene.substituted-for-a-canonical-entry");
+    TestFalse(
+        TEXT("A canonical Section-3 cutscene cannot be substituted while the count still reads nineteen"),
+        Manifest->ValidateManifest(Errors));
+    NamedCutscene.StableId = CanonicalId;
+    TestTrue(TEXT("Restoring the canonical cutscene id passes again"), Manifest->ValidateManifest(Errors));
 
     Manifest->QuestAndMissionEntries[0].bGeneratedOrRadiant = true;
     TestFalse(TEXT("Radiant/generated M7 content fails closed"), Manifest->ValidateManifest(Errors));
