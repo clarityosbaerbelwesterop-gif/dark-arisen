@@ -29,6 +29,7 @@ bool FDarkArisenExternalAssetProductionSpec::RunTest(const FString& Parameters)
     int32 RegionLooks = 0;
     int32 HighmooreAnchors = 0;
     int32 CharacterLooks = 0;
+    int32 BossLooks = 0;
     int32 Props = 0;
 
     for (const FExternalAssetProductionBrief& Brief : Briefs)
@@ -47,11 +48,16 @@ bool FDarkArisenExternalAssetProductionSpec::RunTest(const FString& Parameters)
         TestFalse(TEXT("No unauthored Standing slot is sent to the provider"), SourceId.StartsWith(TEXT("standing-gap.")));
         TestFalse(TEXT("No unauthored minor-dungeon slot is sent to the provider"), SourceId.Contains(TEXT("minor-slot")));
         TestFalse(TEXT("Elowen remains provider-blocked until physical visual authority exists"), SourceId == TEXT("character.elowen-arion"));
+        TestFalse(TEXT("Legacy Ethan character visual stays provider-blocked"), SourceId == TEXT("character.ethan-harlow"));
+        TestFalse(TEXT("Legacy Draven character visual stays provider-blocked"), SourceId == TEXT("character.draven-voss"));
+        TestFalse(TEXT("Legacy Ethan boss visual stays provider-blocked"), SourceId == TEXT("boss-visual.ethan-harlow"));
+        TestFalse(TEXT("Legacy Draven boss visual stays provider-blocked"), SourceId == TEXT("boss-visual.draven-voss"));
 
         if (Id.StartsWith(TEXT("external.higgsfield.dungeon."))) ++DungeonLooks;
         else if (Id.StartsWith(TEXT("external.higgsfield.region."))) ++RegionLooks;
         else if (Id.StartsWith(TEXT("external.higgsfield.world."))) ++HighmooreAnchors;
         else if (Id.StartsWith(TEXT("external.higgsfield.character."))) ++CharacterLooks;
+        else if (Id.StartsWith(TEXT("external.higgsfield.boss-visual."))) ++BossLooks;
         else if (Id.StartsWith(TEXT("external.higgsfield.prop."))) ++Props;
 
         switch (Brief.MediaKind)
@@ -84,18 +90,21 @@ bool FDarkArisenExternalAssetProductionSpec::RunTest(const FString& Parameters)
         RegionLooks, FExternalAssetProductionCatalog::WorldRegionBriefCount);
     TestEqual(TEXT("Twelve Highmoore anchors remain individually briefed"),
         HighmooreAnchors, FExternalAssetProductionCatalog::HighmooreWorldBriefCount);
-    TestEqual(TEXT("Eight source-ready major characters have bounded visual-reference briefs"),
+    TestEqual(TEXT("Six current-authority major characters have bounded visual-reference briefs"),
         CharacterLooks, FExternalAssetProductionCatalog::ProviderReadyCharacterBriefCount);
+    TestEqual(TEXT("Nineteen non-conflicted deep-dive boss visuals have bounded visual-reference briefs"),
+        BossLooks, FExternalAssetProductionCatalog::ProviderReadyBossVisualBriefCount);
     TestEqual(TEXT("Nine State Treasures plus the grounded unique reward remain individually briefed"),
         Props,
         FExternalAssetProductionCatalog::StateTreasureBriefCount
             + FExternalAssetProductionCatalog::UniqueRewardBriefCount);
-    TestEqual(TEXT("Concept-reference coverage includes dungeons, regions, Highmoore anchors, characters and grounded props"),
+    TestEqual(TEXT("Concept-reference coverage includes dungeons, regions, Highmoore anchors, characters, boss visuals and grounded props"),
         Concepts,
         FExternalAssetProductionCatalog::GroundedDungeonBriefCount
             + FExternalAssetProductionCatalog::WorldRegionBriefCount
             + FExternalAssetProductionCatalog::HighmooreWorldBriefCount
             + FExternalAssetProductionCatalog::ProviderReadyCharacterBriefCount
+            + FExternalAssetProductionCatalog::ProviderReadyBossVisualBriefCount
             + FExternalAssetProductionCatalog::StateTreasureBriefCount
             + FExternalAssetProductionCatalog::UniqueRewardBriefCount);
 
