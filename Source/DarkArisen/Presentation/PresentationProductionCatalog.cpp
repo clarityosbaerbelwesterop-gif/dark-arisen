@@ -12,7 +12,8 @@ FAuthoredCutsceneDefinition Cutscene(
     const TCHAR* Camera,
     const TCHAR* Music,
     const float Seconds,
-    const EPresentationAnimationPriority Priority)
+    const EPresentationAnimationPriority Priority,
+    const EPresentationControlOwnership Control = EPresentationControlOwnership::SequencerOwned)
 {
     FAuthoredCutsceneDefinition Entry;
     Entry.CatalogNumber = Number;
@@ -23,6 +24,7 @@ FAuthoredCutsceneDefinition Cutscene(
     Entry.MusicRule = Music;
     Entry.TargetSeconds = Seconds;
     Entry.AnimationPriority = Priority;
+    Entry.ControlOwnership = Control;
     return Entry;
 }
 
@@ -63,7 +65,8 @@ TArray<FAuthoredCutsceneDefinition> FPresentationProductionCatalog::BuildCutscen
     Result.Add(Cutscene(4, TEXT("cutscene.archipelago.the-grove"), TEXT("The Grove"),
         TEXT("cutscene catalog.md Section 3.2 #4"),
         TEXT("Anchored wide for six seconds on entry, then release."),
-        TEXT("Ethan motif, unresolved."), 50.0f, EPresentationAnimationPriority::P2));
+        TEXT("Ethan motif, unresolved."), 50.0f, EPresentationAnimationPriority::P2,
+        EPresentationControlOwnership::AnchoredPlayerMovement));
     Result.Add(Cutscene(5, TEXT("cutscene.archipelago.dream-fight-entry"), TEXT("The Dream Fight Entry"),
         TEXT("cutscene catalog.md Section 3.2 #5; cannabis system.md Section 6"),
         TEXT("Authored non-realist visual grammar; sole permitted exception."),
@@ -73,13 +76,15 @@ TArray<FAuthoredCutsceneDefinition> FPresentationProductionCatalog::BuildCutscen
         TEXT("Slow push, then static hold on hands."),
         TEXT("None."), 65.0f, EPresentationAnimationPriority::P1));
     Result.Add(Cutscene(7, TEXT("cutscene.highmoore.emergence"), TEXT("The Emergence"),
-        TEXT("cutscene catalog.md Section 3.3 #7; highmoore region.md Section 1.2"),
-        TEXT("Anchored wide six seconds facing basin, then release; never a flythrough."),
-        TEXT("Warm minor Highmoore cue, unresolved."), 6.0f, EPresentationAnimationPriority::NoneRequired));
+        TEXT("cutscene catalog.md Section 3.3 #7; highmoore region.md Section 1.2; camera system.md Section 6.1"),
+        TEXT("Anchored wide six seconds facing basin, then release; never a flythrough; movement remains available."),
+        TEXT("Warm minor Highmoore cue, unresolved."), 6.0f, EPresentationAnimationPriority::NoneRequired,
+        EPresentationControlOwnership::AnchoredPlayerMovement));
     Result.Add(Cutscene(8, TEXT("cutscene.highmoore.voice-from-behind"), TEXT("The Voice From Behind"),
         TEXT("cutscene catalog.md Section 3.3 #8; princess quest the ball.md Section 4.4"),
-        TEXT("Authored over-shoulder for turn only, then free."),
-        TEXT("Diegetic Arion musicians."), 18.0f, EPresentationAnimationPriority::P1));
+        TEXT("Authored over-shoulder for the turn only, then free."),
+        TEXT("Diegetic Arion musicians."), 18.0f, EPresentationAnimationPriority::P1,
+        EPresentationControlOwnership::BriefAuthoredTakeover));
     Result.Add(Cutscene(9, TEXT("cutscene.highmoore.ejection"), TEXT("The Ejection"),
         TEXT("cutscene catalog.md Section 3.3 #9"),
         TEXT("Static two-shot, no coverage cuts."),
@@ -93,7 +98,8 @@ TArray<FAuthoredCutsceneDefinition> FPresentationProductionCatalog::BuildCutscen
             TEXT("cutscene catalog.md Section 3.3 #11; princess quest the lake.md Section 8"),
             TEXT("Camera does not move; control taken for catch only, exactly 1.5 seconds, then returned."),
             TEXT("Rain-dance cue continues unchanged for ninety more seconds and finishes."),
-            1.5f, EPresentationAnimationPriority::P1);
+            1.5f, EPresentationAnimationPriority::P1,
+            EPresentationControlOwnership::BriefAuthoredTakeover);
         Entry.bCameraMustRemainStatic = true;
         Entry.bMusicMustContinueUnchanged = true;
         Result.Add(Entry);
@@ -101,7 +107,8 @@ TArray<FAuthoredCutsceneDefinition> FPresentationProductionCatalog::BuildCutscen
     Result.Add(Cutscene(12, TEXT("cutscene.highmoore.real-letter"), TEXT("The Letter — Real"),
         TEXT("cutscene catalog.md Section 3.3 #12; princess quest arion falls.md Section 4.4"),
         TEXT("Eight-second slow push onto pillow only; reading remains player-paced/free."),
-        TEXT("None; rain on glass."), 8.0f, EPresentationAnimationPriority::P3));
+        TEXT("None; rain on glass."), 8.0f, EPresentationAnimationPriority::P3,
+        EPresentationControlOwnership::SlowPushOnly));
     Result.Add(Cutscene(13, TEXT("cutscene.highmoore.she-wrote-two"), TEXT("She Wrote Two"),
         TEXT("cutscene catalog.md Section 3.3 #13"),
         TEXT("Static two-shot in rain with Maerwyn permanently in frame and never cut to."),
@@ -196,7 +203,7 @@ TArray<FPresentationDesignGap> FPresentationProductionCatalog::BuildDesignGaps()
         {
             TEXT("design-gap.presentation-assets"),
             TEXT("No reviewed Sequencer/performance-capture/facial-animation asset set exists in repository evidence; this catalog is production authority only, not proof of authored Unreal assets."),
-            TEXT("Docs/CONTENT_ALPHA_PRODUCTION_PLAN.md P5; repository content audit")
+            TEXT("Docs/CONTENT_ALPHA_PRODUCTION_PLAN.md P7; repository content audit")
         }
     };
 }
@@ -262,13 +269,41 @@ bool FPresentationProductionCatalog::Validate(TArray<FString>& OutErrors)
         OutErrors.Add(TEXT("Presentation inserts/slow pushes must remain exactly five/six."));
     }
 
-    const FAuthoredCutsceneDefinition* Arrow = Cutscenes.FindByPredicate([](const FAuthoredCutsceneDefinition& Entry)
+    const auto FindCutscene = [&Cutscenes](const TCHAR* StableId) -> const FAuthoredCutsceneDefinition*
     {
-        return Entry.StableId == FName(TEXT("cutscene.highmoore.arrow"));
-    });
-    if (!Arrow || !Arrow->bCameraMustRemainStatic || !Arrow->bMusicMustContinueUnchanged || !FMath::IsNearlyEqual(Arrow->TargetSeconds, 1.5f))
+        return Cutscenes.FindByPredicate([StableId](const FAuthoredCutsceneDefinition& Entry)
+        {
+            return Entry.StableId == FName(StableId);
+        });
+    };
+
+    const FAuthoredCutsceneDefinition* Grove = FindCutscene(TEXT("cutscene.archipelago.the-grove"));
+    const FAuthoredCutsceneDefinition* Emergence = FindCutscene(TEXT("cutscene.highmoore.emergence"));
+    if (!Grove || !Emergence
+        || Grove->ControlOwnership != EPresentationControlOwnership::AnchoredPlayerMovement
+        || Emergence->ControlOwnership != EPresentationControlOwnership::AnchoredPlayerMovement)
     {
-        OutErrors.Add(TEXT("Arrow cutscene must remain 1.5 seconds, static-camera and non-reactive-music."));
+        OutErrors.Add(TEXT("Grove and Emergence must use anchored camera ownership while preserving player movement."));
+    }
+
+    const FAuthoredCutsceneDefinition* VoiceFromBehind = FindCutscene(TEXT("cutscene.highmoore.voice-from-behind"));
+    if (!VoiceFromBehind || VoiceFromBehind->ControlOwnership != EPresentationControlOwnership::BriefAuthoredTakeover)
+    {
+        OutErrors.Add(TEXT("Voice From Behind may take control only for its authored turn before returning to free camera."));
+    }
+
+    const FAuthoredCutsceneDefinition* Arrow = FindCutscene(TEXT("cutscene.highmoore.arrow"));
+    if (!Arrow || !Arrow->bCameraMustRemainStatic || !Arrow->bMusicMustContinueUnchanged
+        || !FMath::IsNearlyEqual(Arrow->TargetSeconds, 1.5f)
+        || Arrow->ControlOwnership != EPresentationControlOwnership::BriefAuthoredTakeover)
+    {
+        OutErrors.Add(TEXT("Arrow must remain a 1.5-second brief takeover with static camera and non-reactive music."));
+    }
+
+    const FAuthoredCutsceneDefinition* RealLetter = FindCutscene(TEXT("cutscene.highmoore.real-letter"));
+    if (!RealLetter || RealLetter->ControlOwnership != EPresentationControlOwnership::SlowPushOnly)
+    {
+        OutErrors.Add(TEXT("Real Letter cutscene ownership ends with the eight-second pillow push; reading remains player-paced."));
     }
 
     if (BuildDesignGaps().Num() != 3)
