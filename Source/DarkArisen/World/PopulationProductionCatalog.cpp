@@ -124,6 +124,17 @@ TArray<FRegionalPopulationProductionProfile> FPopulationProductionCatalog::Build
 
     {
         FRegionalPopulationProductionProfile Entry = Profile(
+            TEXT("population.highmoore"), TEXT("Highmoore — The Fifth Register"),
+            TEXT("highmoore populations.md Sections 1-8; highmoore settlements.md; highmoore region.md"),
+            {},
+            TEXT("Population life follows House war, levy/burning seasons, fortified farms, villages, three market towns and roads. Ambient layers cover base culture, current events, Jake reaction, weather and time; Belos/reconstruction alter the world without turning gossip into a morality meter."),
+            TEXT("Every interaction begins from the problem of 'whose man are you'; yeomen may respect Jake but never become deferential. Standing is read through gates, names, road wardens and repeated local recognition, never a reputation meter."));
+        Entry.bDemographicPercentagesUnspecified = true;
+        Result.Add(Entry);
+    }
+
+    {
+        FRegionalPopulationProductionProfile Entry = Profile(
             TEXT("population.region-06"), TEXT("Region 06 — The Absence"),
             TEXT("docs/design/npcs/regional_populations.md Section 9"),
             {},
@@ -140,9 +151,9 @@ TArray<FPopulationProductionDesignGap> FPopulationProductionCatalog::BuildDesign
 {
     return {
         {
-            TEXT("design-gap.population.highmoore"),
-            TEXT("The Phase-5 regional population master does not define Highmoore demographics/density. Highmoore population production must use its later narrow regional/house sources rather than inherit an invented archipelago profile."),
-            TEXT("docs/design/npcs/regional_populations.md; highmoore region.md")
+            TEXT("design-gap.population.highmoore-percentages"),
+            TEXT("Highmoore's later population master explicitly defines four classes — Houses, Yeomanry, Villages and Roads — but does not assign demographic percentages. Production must preserve the classes without inventing a 100-percent split."),
+            TEXT("highmoore populations.md Section 2")
         },
         {
             TEXT("design-gap.population.open-sea"),
@@ -152,7 +163,7 @@ TArray<FPopulationProductionDesignGap> FPopulationProductionCatalog::BuildDesign
         {
             TEXT("design-gap.population.runtime-assets"),
             TEXT("Crowd meshes, culturally reviewed dress sets, routines, audio beds, ambient-line assets and actual level placements are not evidenced as reviewed Unreal assets."),
-            TEXT("docs/design/npcs/regional_populations.md Sections 10-15; repository asset evidence")
+            TEXT("docs/design/npcs/regional_populations.md Sections 10-15; highmoore populations.md; repository asset evidence")
         }
     };
 }
@@ -222,9 +233,14 @@ bool FPopulationProductionCatalog::Validate(TArray<FString>& OutErrors)
                 OutErrors.Add(FString::Printf(TEXT("Population profile %s demographic shares must total 100; found %d."), *ProfileEntry.StableId.ToString(), TotalPercentage));
             }
         }
-        else if (!ProfileEntry.bPopulationDefinedByAbsence)
+        else if (!ProfileEntry.bPopulationDefinedByAbsence && !ProfileEntry.bDemographicPercentagesUnspecified)
         {
-            OutErrors.Add(FString::Printf(TEXT("Population profile %s has no demographics without being the authored absence profile."), *ProfileEntry.StableId.ToString()));
+            OutErrors.Add(FString::Printf(TEXT("Population profile %s has no demographic split without an explicit source reason."), *ProfileEntry.StableId.ToString()));
+        }
+
+        if (ProfileEntry.bPopulationDefinedByAbsence && ProfileEntry.bDemographicPercentagesUnspecified)
+        {
+            OutErrors.Add(FString::Printf(TEXT("Population profile %s cannot be both absence-defined and an unspecified demographic population."), *ProfileEntry.StableId.ToString()));
         }
 
         if (ProfileEntry.bRuntimeCrowdAssetsAuthored || !ProfileEntry.RuntimeCrowdAssetRoot.IsEmpty())
@@ -233,16 +249,25 @@ bool FPopulationProductionCatalog::Validate(TArray<FString>& OutErrors)
         }
     }
 
+    const FRegionalPopulationProductionProfile* Highmoore = Profiles.FindByPredicate([](const FRegionalPopulationProductionProfile& Entry)
+    {
+        return Entry.StableId == FName(TEXT("population.highmoore"));
+    });
+    if (!Highmoore || !Highmoore->bDemographicPercentagesUnspecified || !Highmoore->Demographics.IsEmpty())
+    {
+        OutErrors.Add(TEXT("Highmoore must preserve its four authored classes without inventing demographic percentages."));
+    }
+
     if (MinimumAmbientLinesPerMajorRegion != 200
         || CrowdReturnMinimumMinutes != 2
         || CrowdReturnMaximumMinutes != 5
-        || PopulationTierCount != 3)
+        || PopulationTierCount != 3 || HighmooreClassCount != 4)
     {
-        OutErrors.Add(TEXT("Population master constants drifted from regional_populations.md."));
+        OutErrors.Add(TEXT("Population master constants drifted from regional_populations.md / highmoore populations.md."));
     }
-    if (AllowsRandomAuthoredPopulationGeneration())
+    if (AllowsRandomAuthoredPopulationGeneration() || AllowsHighmooreReputationMeter())
     {
-        OutErrors.Add(TEXT("Authored population production may not gain a random content-generation path."));
+        OutErrors.Add(TEXT("Authored population production may not gain random content generation or a Highmoore reputation meter."));
     }
     if (!RequiresPurposeDrivenPathing() || !RequiresChildEngineProtection() || !RequiresChapterEvolution())
     {
