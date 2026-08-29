@@ -63,6 +63,9 @@ public:
     static const FName ThreadId;
     static constexpr int64 ElevenDaysInWorldMinutes = 11LL * 24LL * 60LL;
 
+    /** Pure C++ timing contract used by runtime and native automation; no timer UI is implied. */
+    static bool HasElevenDaySpanElapsed(int64 StartWorldMinutes, int64 CurrentWorldMinutes);
+
     /** External proof is the authored Arion ejection; the current Princess owner begins later. */
     UFUNCTION(BlueprintCallable, Category="Highmoore|Light Elves")
     bool BeginAtDroversRest(bool bArionEjectionCompleted);
@@ -136,6 +139,5 @@ private:
     UPROPERTY(SaveGame)
     int64 CampaignStartWorldMinutes = INDEX_NONE;
 
-    bool IsAtLeast(ELightElvesThreadStage Required) const;
     int64 ReadWorldMinutes() const;
 };
