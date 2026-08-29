@@ -84,7 +84,8 @@ int32 ValidateBossContentCommand(const FParsedArgs& Args)
         TEXT("Source/DarkArisen/Bosses/Tier1CommanderCatalog.cpp"),
         TEXT("Source/DarkArisen/Bosses/Tier1CommanderEncounterComponent.h"),
         TEXT("Source/DarkArisen/Bosses/Tier1CommanderEncounterComponent.cpp"),
-        TEXT("Source/DarkArisen/Tests/Tier1CommanderSystemsSpec.cpp")
+        TEXT("Source/DarkArisen/Tests/Tier1CommanderSystemsSpec.cpp"),
+        TEXT("Source/DarkArisen/Tests/Tier1CommanderAvoidanceSpec.cpp")
     };
     for (const FString& Relative : RequiredFiles)
     {
@@ -97,25 +98,27 @@ int32 ValidateBossContentCommand(const FParsedArgs& Args)
         TEXT("NegotiationPursuit"),
         TEXT("VerticalPursuit"),
         TEXT("NavalEngagement"),
-        TEXT("SpareRefusedLeaveOnly")}, Errors);
+        TEXT("SpareRefusedLeaveOnly"),
+        TEXT("AllowedAvoidedRouteIds")}, Errors);
 
     RequireFragments(Root, TEXT("Source/DarkArisen/Bosses/Tier1CommanderCatalog.cpp"), {
-        TEXT("boss.herrera"), TEXT("0.70f, 0.35f"),
-        TEXT("boss.reyes"), TEXT("0.60f, 0.25f"),
-        TEXT("boss.cruz"), TEXT("0.65f, 0.30f"),
-        TEXT("boss.de_silva"), TEXT("NegotiationPursuit"),
-        TEXT("boss.vega"), TEXT("SpareRefusedLeaveOnly"),
-        TEXT("boss.blackwood"), TEXT("VerticalPursuit"),
-        TEXT("boss.sterling"), TEXT("NavalEngagement"),
-        TEXT("boss.ashcroft"),
-        TEXT("boss.thorne"), TEXT("bGarrisonWeakensOverTime = true")}, Errors);
+        TEXT("boss.herrera"), TEXT("0.70f, 0.35f"), TEXT("avoid.herrera.barrio-rising"),
+        TEXT("boss.reyes"), TEXT("0.60f, 0.25f"), TEXT("avoid.reyes.uprising-takes-fort"),
+        TEXT("boss.cruz"), TEXT("0.65f, 0.30f"), TEXT("avoid.cruz.cisterns-mountain-paths-surrender"),
+        TEXT("boss.de_silva"), TEXT("NegotiationPursuit"), TEXT("avoid.de-silva.purchase-colony"),
+        TEXT("boss.vega"), TEXT("SpareRefusedLeaveOnly"), TEXT("avoid.vega.walk-away-after-spare-refusal"),
+        TEXT("boss.blackwood"), TEXT("VerticalPursuit"), TEXT("avoid.blackwood.shareholder-recall"),
+        TEXT("boss.sterling"), TEXT("NavalEngagement"), TEXT("avoid.sterling.alliance-common-cause"), TEXT("avoid.sterling.neutral-standoff"),
+        TEXT("boss.ashcroft"), TEXT("avoid.ashcroft.contracts-heist"),
+        TEXT("boss.thorne"), TEXT("bGarrisonWeakensOverTime = true"), TEXT("avoid.thorne.dispatch-exposure"), TEXT("avoid.thorne.education-recommendation")}, Errors);
 
     RequireFragments(Root, TEXT("Source/DarkArisen/Bosses/Tier1CommanderEncounterComponent.cpp"), {
         TEXT("UpdateHealthFraction"),
         TEXT("AdvanceScriptedStage"),
         TEXT("bSpareRefusedObserved = true"),
-        TEXT("ResolveInternal(ETier1CommanderResolution::Avoided"),
-        TEXT("Avoidance may resolve before the direct encounter begins")}, Errors);
+        TEXT("!Definition.AllowedAvoidedRouteIds.Contains(RouteId)"),
+        TEXT("avoid.vega.walk-away-after-spare-refusal"),
+        TEXT("only through one of the finite")}, Errors);
 
     RequireFragments(Root, TEXT("Source/DarkArisen/Bosses/IsabelCruzCharacter.h"), {
         TEXT("ListPhaseHealthFraction = 0.65f"),
@@ -128,6 +131,13 @@ int32 ValidateBossContentCommand(const FParsedArgs& Args)
         TEXT("Vega refuses a clean spare"),
         TEXT("scripted stage cannot skip ahead"),
         TEXT("Sterling alliance path can resolve before combat")}, Errors);
+
+    RequireFragments(Root, TEXT("Source/DarkArisen/Tests/Tier1CommanderAvoidanceSpec.cpp"), {
+        TEXT("exactly twelve source-authored non-combat route ids"),
+        TEXT("arbitrary avoidance string cannot become a Herrera resolution"),
+        TEXT("Vega cannot use the walk-away route before he actually refuses mercy"),
+        TEXT("After refusal Jake may leave"),
+        TEXT("Sterling's authored neutral standoff")}, Errors);
 
     ScanBossSourceForForbiddenSpectacle(Root, Errors);
 
