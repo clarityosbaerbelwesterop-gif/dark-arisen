@@ -2,6 +2,8 @@
 
 #include "Animation/AnimationProductionCatalog.h"
 
+#include "CoreLoopTuning.h"
+
 namespace
 {
 FAnimationProductionRequirement Requirement(
@@ -20,6 +22,32 @@ FAnimationProductionRequirement Requirement(
     Result.GameplayAuthority = Authority;
     Result.AcceptanceRead = Acceptance;
     return Result;
+}
+
+FAnimationWeightTiming WeightTiming(
+    const EAnimationWeaponWeightClass WeightClass,
+    const int32 StartupFrames,
+    const int32 RecoveryFrames)
+{
+    FAnimationWeightTiming Timing;
+    Timing.WeightClass = WeightClass;
+    Timing.StartupFrames = StartupFrames;
+    Timing.RecoveryFrames = RecoveryFrames;
+    Timing.GoverningSource = TEXT("animation system.md Section 3; CoreLoopTuning.h");
+    return Timing;
+}
+
+FAnimationWoundLayerRequirement WoundRequirement(
+    const EAnimationWoundLayer Layer,
+    const TCHAR* Trigger,
+    const TCHAR* RequiredBodyRead)
+{
+    FAnimationWoundLayerRequirement RequirementValue;
+    RequirementValue.Layer = Layer;
+    RequirementValue.Trigger = Trigger;
+    RequirementValue.RequiredBodyRead = RequiredBodyRead;
+    RequirementValue.GoverningSource = TEXT("animation system.md Section 5.2; CoreLoopTuning.h");
+    return RequirementValue;
 }
 }
 
@@ -102,11 +130,21 @@ TArray<FAnimationProductionRequirement> FAnimationProductionCatalog::BuildSystem
             EAnimationProductionFamily::Combat,
             TEXT("CombatComponent / animation notifies"),
             TEXT("Every attack silhouette changes at least eight frames before contact; six-frame deflection window remains unchanged.")),
+        Requirement(TEXT("anim.system.non-cancellable-recovery"), TEXT("Committed attack recovery"),
+            TEXT("animation system.md Section 1.1 and 3"),
+            EAnimationProductionFamily::Combat,
+            TEXT("CombatComponent / action montage ownership"),
+            TEXT("Every attack completes its authored recovery; no cancel into dodge or block exists to speed combat up.")),
         Requirement(TEXT("anim.system.horse-gaits"), TEXT("Horse gait transitions"),
             TEXT("animation system.md Section 9.2; mounted travel.md Section 5.1"),
             EAnimationProductionFamily::Mounted,
             TEXT("HighmooreHorseComponent"),
             TEXT("Walk↔Trot, Trot↔Canter, Canter↔Gallop require real transition animations both directions.")),
+        Requirement(TEXT("anim.system.horse-mood-body-read"), TEXT("Horse mood body read"),
+            TEXT("animation system.md Section 9.1"),
+            EAnimationProductionFamily::Mounted,
+            TEXT("HighmooreHorseComponent / mounted animation graph"),
+            TEXT("Mood reads through ears, head carriage, gait quality, mane and tail; no stamina/mood HUD number substitutes for it.")),
         Requirement(TEXT("anim.system.bad-rider-layer"), TEXT("Jake permanently worse rider layer"),
             TEXT("animation system.md Section 9.3"),
             EAnimationProductionFamily::Mounted,
@@ -121,12 +159,56 @@ TArray<FAnimationProductionRequirement> FAnimationProductionCatalog::BuildSystem
             TEXT("animation system.md Section 8"),
             EAnimationProductionFamily::Interaction,
             TEXT("InteractionComponent"),
-            TEXT("Pickups, doors, ladders, carried people and object handling use visible interaction rather than fade-to-black.")),
+            TEXT("Pickups, doors, ladders and object handling use visible interaction rather than fade-to-black.")),
+        Requirement(TEXT("anim.system.people-carried"), TEXT("Full-body carried-person set"),
+            TEXT("animation system.md Section 8; colony system core.md Section 3; castle ownership.md Section 4.2"),
+            EAnimationProductionFamily::Interaction,
+            TEXT("Population/voyage/holding interaction owners"),
+            TEXT("People are physically carried with visible full-body weight; no teleport/fade substitutes for relocation interaction.")),
         Requirement(TEXT("anim.system.traversal-no-magnet"), TEXT("Traversal effort/no ledge magnetism"),
             TEXT("animation system.md Section 6.3; movement physics.md"),
             EAnimationProductionFamily::Traversal,
             TEXT("JakeCharacter traversal owner"),
-            TEXT("Climb/vine/obstacle transitions show weight and may fail; no hidden ledge magnetism."))
+            TEXT("Climb/vine/obstacle transitions show weight and may fail; no hidden ledge magnetism.")),
+        Requirement(TEXT("anim.system.katana-clean-under-wounds"), TEXT("Katana clean-set exception"),
+            TEXT("animation system.md Sections 3.1 and 5.3; crystal katana.md"),
+            EAnimationProductionFamily::WoundDeterioration,
+            TEXT("WoundStateComponent / CrystalKatanaComponent / DarkArisenAnimInstance"),
+            TEXT("At every wound layer the Crystal Katana remains on its clean weapon set at the same authored speed; Jake's body still deteriorates."))
+    };
+}
+
+TArray<FAnimationWeightTiming> FAnimationProductionCatalog::BuildWeightTimings()
+{
+    using namespace DarkArisen::CoreLoopTuning;
+    return {
+        WeightTiming(EAnimationWeaponWeightClass::Light, LightStartupFrames, LightRecoveryFrames),
+        WeightTiming(EAnimationWeaponWeightClass::Medium, MediumStartupFrames, MediumRecoveryFrames),
+        WeightTiming(EAnimationWeaponWeightClass::Heavy, HeavyStartupFrames, HeavyRecoveryFrames),
+        WeightTiming(EAnimationWeaponWeightClass::Great, GreatStartupFrames, GreatRecoveryFrames),
+        WeightTiming(EAnimationWeaponWeightClass::Polearm, PolearmStartupFrames, PolearmRecoveryFrames)
+    };
+}
+
+TArray<FAnimationWoundLayerRequirement> FAnimationProductionCatalog::BuildWoundLayerRequirements()
+{
+    return {
+        WoundRequirement(
+            EAnimationWoundLayer::Winded,
+            TEXT("Stamina < 30%"),
+            TEXT("Breathing audible; guard slower to return.")),
+        WoundRequirement(
+            EAnimationWoundLayer::Hurt,
+            TEXT("HP < 60%"),
+            TEXT("Favoured side; off-hand guards a wound.")),
+        WoundRequirement(
+            EAnimationWoundLayer::Bad,
+            TEXT("HP < 30%"),
+            TEXT("Stance collapsed; walk becomes limp; run becomes stagger-run.")),
+        WoundRequirement(
+            EAnimationWoundLayer::Failing,
+            TEXT("HP < 12%"),
+            TEXT("Cannot sprint; weapon drags between swings."))
     };
 }
 
@@ -162,34 +244,64 @@ bool FAnimationProductionCatalog::Validate(TArray<FString>& OutErrors)
     }
 
     TSet<FName> Seen;
-    const auto ValidateRequirement = [&Seen, &OutErrors](const FAnimationProductionRequirement& Requirement)
+    const auto ValidateRequirement = [&Seen, &OutErrors](const FAnimationProductionRequirement& RequirementValue)
     {
-        if (Requirement.StableId.IsNone()
-            || Requirement.DisplayName.IsEmpty()
-            || Requirement.GoverningSource.IsEmpty()
-            || Requirement.GameplayAuthority.IsEmpty()
-            || Requirement.AcceptanceRead.IsEmpty())
+        if (RequirementValue.StableId.IsNone()
+            || RequirementValue.DisplayName.IsEmpty()
+            || RequirementValue.GoverningSource.IsEmpty()
+            || RequirementValue.GameplayAuthority.IsEmpty()
+            || RequirementValue.AcceptanceRead.IsEmpty())
         {
             OutErrors.Add(TEXT("Every animation production requirement needs id, name, source, authority and acceptance read."));
         }
-        if (Seen.Contains(Requirement.StableId))
+        if (Seen.Contains(RequirementValue.StableId))
         {
-            OutErrors.Add(FString::Printf(TEXT("Duplicate animation production id: %s"), *Requirement.StableId.ToString()));
+            OutErrors.Add(FString::Printf(TEXT("Duplicate animation production id: %s"), *RequirementValue.StableId.ToString()));
         }
-        Seen.Add(Requirement.StableId);
-        if (Requirement.bAssetAuthored || !Requirement.AssetPath.IsEmpty())
+        Seen.Add(RequirementValue.StableId);
+        if (RequirementValue.bAssetAuthored || !RequirementValue.AssetPath.IsEmpty())
         {
-            OutErrors.Add(FString::Printf(TEXT("Animation requirement %s may not claim an asset until an imported/reviewed asset exists."), *Requirement.StableId.ToString()));
+            OutErrors.Add(FString::Printf(TEXT("Animation requirement %s may not claim an asset until an imported/reviewed asset exists."), *RequirementValue.StableId.ToString()));
         }
     };
 
-    for (const FAnimationProductionRequirement& Requirement : Named)
+    for (const FAnimationProductionRequirement& RequirementValue : Named)
     {
-        ValidateRequirement(Requirement);
+        ValidateRequirement(RequirementValue);
     }
-    for (const FAnimationProductionRequirement& Requirement : BuildSystemRequirements())
+    for (const FAnimationProductionRequirement& RequirementValue : BuildSystemRequirements())
     {
-        ValidateRequirement(Requirement);
+        ValidateRequirement(RequirementValue);
+    }
+
+    const TArray<FAnimationWeightTiming> WeightTimings = BuildWeightTimings();
+    if (WeightTimings.Num() != RequiredWeightClassCount)
+    {
+        OutErrors.Add(FString::Printf(TEXT("Animation timing contract requires exactly %d weight classes; found %d."), RequiredWeightClassCount, WeightTimings.Num()));
+    }
+    const int32 ExpectedStartup[] = {9, 13, 19, 26, 15};
+    const int32 ExpectedRecovery[] = {14, 20, 31, 44, 24};
+    for (int32 Index = 0; Index < WeightTimings.Num() && Index < RequiredWeightClassCount; ++Index)
+    {
+        if (WeightTimings[Index].StartupFrames != ExpectedStartup[Index]
+            || WeightTimings[Index].RecoveryFrames != ExpectedRecovery[Index]
+            || WeightTimings[Index].GoverningSource.IsEmpty())
+        {
+            OutErrors.Add(FString::Printf(TEXT("Animation weight timing %d no longer matches the authored frame table."), Index));
+        }
+    }
+
+    const TArray<FAnimationWoundLayerRequirement> WoundLayers = BuildWoundLayerRequirements();
+    if (WoundLayers.Num() != RequiredWoundLayerCount)
+    {
+        OutErrors.Add(FString::Printf(TEXT("Animation wound contract requires exactly %d layers; found %d."), RequiredWoundLayerCount, WoundLayers.Num()));
+    }
+    for (const FAnimationWoundLayerRequirement& WoundLayer : WoundLayers)
+    {
+        if (WoundLayer.Trigger.IsEmpty() || WoundLayer.RequiredBodyRead.IsEmpty() || WoundLayer.GoverningSource.IsEmpty())
+        {
+            OutErrors.Add(TEXT("Every wounded animation layer requires a source trigger and visible body read."));
+        }
     }
 
     if (MinimumAttackTellFrames != 8 || LockedDeflectionWindowFrames != 6)
