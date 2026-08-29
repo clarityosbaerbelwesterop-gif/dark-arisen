@@ -36,6 +36,9 @@ struct FTier1CommanderDefinition
     FString AvoidedPath;
     FString PrimaryReward;
 
+    /** Finite technical IDs for only the non-combat resolutions explicitly authored in the source. */
+    TArray<FName> AllowedAvoidedRouteIds;
+
     bool bDirectCombatant = true;
     bool bHasUndercityVariant = false;
     bool bHasBoardingVariant = false;
