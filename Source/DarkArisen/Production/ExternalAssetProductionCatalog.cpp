@@ -7,6 +7,7 @@
 #include "ContentScale/AuthoredDungeonProductionProfile.h"
 #include "ContentScale/AuthoredRewardCatalog.h"
 #include "Presentation/PresentationProductionCatalog.h"
+#include "Production/CharacterVisualProductionCatalog.h"
 #include "World/AuthoredWorldRegionRegistry.h"
 #include "World/HighmooreWorldProductionCatalog.h"
 
@@ -39,13 +40,9 @@ FExternalAssetProductionBrief HiggsfieldBrief(
 
 EExternalAssetMediaKind AnimationMediaKind(const EAnimationProductionFamily Family)
 {
-    switch (Family)
-    {
-    case EAnimationProductionFamily::PerformanceMoment:
-        return EExternalAssetMediaKind::FacialPerformanceReference;
-    default:
-        return EExternalAssetMediaKind::MotionPrevisVideo;
-    }
+    return Family == EAnimationProductionFamily::PerformanceMoment
+        ? EExternalAssetMediaKind::FacialPerformanceReference
+        : EExternalAssetMediaKind::MotionPrevisVideo;
 }
 
 const TCHAR* BoolRead(const bool bValue)
@@ -161,6 +158,27 @@ TArray<FExternalAssetProductionBrief> FExternalAssetProductionCatalog::BuildHigg
                 *Anchor.ProductionRead)));
     }
 
+    for (const FCharacterVisualProductionBrief& Character : FCharacterVisualProductionCatalog::BuildMajorCharacterBriefs())
+    {
+        if (!Character.bProviderReferenceReady)
+        {
+            continue;
+        }
+
+        Result.Add(HiggsfieldBrief(
+            BriefId(TEXT("external.higgsfield.character"), Character.StableId),
+            Character.StableId,
+            Character.DisplayName,
+            Character.GoverningSource,
+            EExternalAssetMediaKind::ConceptReferenceImage,
+            FString::Printf(
+                TEXT("Source-grounded character reference only. Physical facts: %s Wardrobe/objects: %s Performance read: %s Explicit unknowns: %s Unknowns must remain unknown; neutral/non-canonical treatment may be used only where needed to visualize already-authored physical facts."),
+                *Character.PhysicalFacts,
+                *Character.WardrobeAndObjects,
+                *Character.PerformanceRead,
+                *Character.ExplicitUnknowns)));
+    }
+
     for (const FAuthoredRewardBinding& Treasure : FAuthoredRewardCatalog::BuildStateTreasureSlots())
     {
         Result.Add(HiggsfieldBrief(
@@ -196,8 +214,8 @@ TArray<FExternalAssetProductionDesignGap> FExternalAssetProductionCatalog::Build
     return {
         {
             TEXT("design-gap.external-assets.approved-character-visual-references"),
-            TEXT("External motion/performance generation must not invent a canonical Jake/crew/major-NPC face or costume where no approved visual reference is registered. Character briefs require source-by-source visual extraction first."),
-            TEXT("Docs/DesignAuthority.md; docs/design/style_bible.md; character/NPC design sources")
+            TEXT("Source-backed character briefs can drive reference generation, but no generated face/costume becomes canonical until it is reviewed and explicitly approved. Characters whose physical sheet is insufficient remain provider-blocked."),
+            TEXT("Docs/DesignAuthority.md; docs/design/style_bible.md; Production/CharacterVisualProductionCatalog")
         },
         {
             TEXT("design-gap.external-assets.provider-3d-path"),
@@ -240,6 +258,7 @@ bool FExternalAssetProductionCatalog::Validate(TArray<FString>& OutErrors)
     int32 DungeonCount = 0;
     int32 RegionCount = 0;
     int32 HighmooreWorldCount = 0;
+    int32 CharacterCount = 0;
     int32 PropCount = 0;
     TSet<FName> SeenBriefIds;
 
@@ -283,6 +302,7 @@ bool FExternalAssetProductionCatalog::Validate(TArray<FString>& OutErrors)
         else if (Id.StartsWith(TEXT("external.higgsfield.dungeon."))) ++DungeonCount;
         else if (Id.StartsWith(TEXT("external.higgsfield.region."))) ++RegionCount;
         else if (Id.StartsWith(TEXT("external.higgsfield.world."))) ++HighmooreWorldCount;
+        else if (Id.StartsWith(TEXT("external.higgsfield.character."))) ++CharacterCount;
         else if (Id.StartsWith(TEXT("external.higgsfield.prop."))) ++PropCount;
         else OutErrors.Add(FString::Printf(TEXT("Unknown external brief family: %s"), *Id));
 
@@ -316,6 +336,11 @@ bool FExternalAssetProductionCatalog::Validate(TArray<FString>& OutErrors)
     if (HighmooreWorldCount != HighmooreWorldBriefCount)
     {
         OutErrors.Add(TEXT("External Highmoore world brief coverage drifted from the twelve source-backed anchors."));
+    }
+    if (CharacterCount != ProviderReadyCharacterBriefCount
+        || ProviderReadyCharacterBriefCount != FCharacterVisualProductionCatalog::ProviderReadyCharacterCount)
+    {
+        OutErrors.Add(TEXT("External character-reference coverage must include exactly the source-ready major-character briefs and exclude blocked identities."));
     }
     if (PropCount != StateTreasureBriefCount + UniqueRewardBriefCount)
     {
