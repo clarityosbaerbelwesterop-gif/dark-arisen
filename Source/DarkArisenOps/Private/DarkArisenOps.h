@@ -52,6 +52,7 @@ int32 ValidateBossContentCommand(const FParsedArgs& Args);
 int32 ValidateWorldContentCommand(const FParsedArgs& Args);
 int32 ValidatePresentationContentCommand(const FParsedArgs& Args);
 int32 ValidateAudioVoiceContentCommand(const FParsedArgs& Args);
+int32 ValidateAlphaContentCommand(const FParsedArgs& Args);
 int32 RunnerCheckCommand(const FParsedArgs& Args);
 int32 BuildCommand(const FParsedArgs& Args);
 int32 PackageAlphaCommand(const FParsedArgs& Args);
