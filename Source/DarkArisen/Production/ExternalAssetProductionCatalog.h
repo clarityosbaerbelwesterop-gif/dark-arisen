@@ -81,13 +81,21 @@ public:
     static constexpr int32 NamedAnimationBriefCount = 11;
     static constexpr int32 SystemAnimationBriefCount = 12;
     static constexpr int32 ResolvedPresentationBriefCount = 14;
+    static constexpr int32 GroundedDungeonBriefCount = 40;
+    static constexpr int32 WorldRegionBriefCount = 8;
     static constexpr int32 HighmooreWorldBriefCount = 12;
     static constexpr int32 StateTreasureBriefCount = 9;
     static constexpr int32 UniqueRewardBriefCount = 1;
+    static constexpr int32 UnresolvedPresentationIdentityCount = 5;
+    static constexpr int32 UnauthoredMinorDungeonIdentityCount = 20;
+    static constexpr int32 DeliberateTurnStandingIdentityGapCount = 275;
+
     static constexpr int32 RequiredHiggsfieldBriefCount =
         NamedAnimationBriefCount
         + SystemAnimationBriefCount
         + ResolvedPresentationBriefCount
+        + GroundedDungeonBriefCount
+        + WorldRegionBriefCount
         + HighmooreWorldBriefCount
         + StateTreasureBriefCount
         + UniqueRewardBriefCount;
