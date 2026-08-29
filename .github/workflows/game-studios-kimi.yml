@@ -23,7 +23,6 @@ jobs:
     name: Kimi K3 dungeon and level studio proposal
     runs-on: [self-hosted, Windows, X64, ue5.5, dark-arisen]
     timeout-minutes: 120
-    environment: m0-streaming
 
     steps:
       - name: Check out current private source
