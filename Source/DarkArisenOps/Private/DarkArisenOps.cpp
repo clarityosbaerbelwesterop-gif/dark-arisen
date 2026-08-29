@@ -17,6 +17,7 @@ void PrintUsage()
     UE_LOG(LogTemp, Display, TEXT("  validate-world --root=<repo>"));
     UE_LOG(LogTemp, Display, TEXT("  validate-presentation --root=<repo>"));
     UE_LOG(LogTemp, Display, TEXT("  validate-audio-voice --root=<repo>"));
+    UE_LOG(LogTemp, Display, TEXT("  validate-alpha-content --root=<repo>"));
     UE_LOG(LogTemp, Display, TEXT("  runner-check --root=<repo> --engine=<UE5.5> [--min-disk-gb=120]"));
     UE_LOG(LogTemp, Display, TEXT("  build --root=<repo> --engine=<UE5.5> [--automation]"));
     UE_LOG(LogTemp, Display, TEXT("  package-alpha --revision=<40sha> [--output=<dir>]"));
@@ -42,63 +43,25 @@ INT32_MAIN_INT32_ARGC_TCHAR_ARGV()
     {
         const FString Command(ArgV[1]);
         const DarkArisenOps::FParsedArgs Args = DarkArisenOps::ParseArgs(ArgC, ArgV);
-        if (Command == TEXT("validate"))
-        {
-            Result = DarkArisenOps::ValidateCommand(Args);
-        }
-        else if (Command == TEXT("validate-dungeons"))
-        {
-            Result = DarkArisenOps::ValidateDungeonContentCommand(Args);
-        }
-        else if (Command == TEXT("validate-missions"))
-        {
-            Result = DarkArisenOps::ValidateMissionContentCommand(Args);
-        }
-        else if (Command == TEXT("validate-bosses"))
-        {
-            Result = DarkArisenOps::ValidateBossContentCommand(Args);
-        }
-        else if (Command == TEXT("validate-world"))
-        {
-            Result = DarkArisenOps::ValidateWorldContentCommand(Args);
-        }
-        else if (Command == TEXT("validate-presentation"))
-        {
-            Result = DarkArisenOps::ValidatePresentationContentCommand(Args);
-        }
-        else if (Command == TEXT("validate-audio-voice"))
-        {
-            Result = DarkArisenOps::ValidateAudioVoiceContentCommand(Args);
-        }
-        else if (Command == TEXT("runner-check"))
-        {
-            Result = DarkArisenOps::RunnerCheckCommand(Args);
-        }
-        else if (Command == TEXT("build"))
-        {
-            Result = DarkArisenOps::BuildCommand(Args);
-        }
-        else if (Command == TEXT("package-alpha"))
-        {
-            Result = DarkArisenOps::PackageAlphaCommand(Args);
-        }
-        else if (Command == TEXT("promote-alpha"))
-        {
-            Result = DarkArisenOps::PromoteAlphaCommand(Args);
-        }
-        else if (Command == TEXT("studio-kimi"))
-        {
-            Result = DarkArisenOps::StudioKimiCommand(Args);
-        }
+        if (Command == TEXT("validate")) Result = DarkArisenOps::ValidateCommand(Args);
+        else if (Command == TEXT("validate-dungeons")) Result = DarkArisenOps::ValidateDungeonContentCommand(Args);
+        else if (Command == TEXT("validate-missions")) Result = DarkArisenOps::ValidateMissionContentCommand(Args);
+        else if (Command == TEXT("validate-bosses")) Result = DarkArisenOps::ValidateBossContentCommand(Args);
+        else if (Command == TEXT("validate-world")) Result = DarkArisenOps::ValidateWorldContentCommand(Args);
+        else if (Command == TEXT("validate-presentation")) Result = DarkArisenOps::ValidatePresentationContentCommand(Args);
+        else if (Command == TEXT("validate-audio-voice")) Result = DarkArisenOps::ValidateAudioVoiceContentCommand(Args);
+        else if (Command == TEXT("validate-alpha-content")) Result = DarkArisenOps::ValidateAlphaContentCommand(Args);
+        else if (Command == TEXT("runner-check")) Result = DarkArisenOps::RunnerCheckCommand(Args);
+        else if (Command == TEXT("build")) Result = DarkArisenOps::BuildCommand(Args);
+        else if (Command == TEXT("package-alpha")) Result = DarkArisenOps::PackageAlphaCommand(Args);
+        else if (Command == TEXT("promote-alpha")) Result = DarkArisenOps::PromoteAlphaCommand(Args);
+        else if (Command == TEXT("studio-kimi")) Result = DarkArisenOps::StudioKimiCommand(Args);
         else if (Command == TEXT("help") || Command == TEXT("--help") || Command == TEXT("-h"))
         {
             PrintUsage();
             Result = 0;
         }
-        else
-        {
-            Result = DarkArisenOps::StreamingCommand(Command, Args);
-        }
+        else Result = DarkArisenOps::StreamingCommand(Command, Args);
     }
 
     FEngineLoop::AppPreExit();
