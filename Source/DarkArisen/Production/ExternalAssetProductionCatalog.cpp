@@ -9,6 +9,7 @@
 #include "Presentation/PresentationProductionCatalog.h"
 #include "Production/BossVisualProductionCatalog.h"
 #include "Production/CharacterVisualProductionCatalog.h"
+#include "Production/FaunaVisualProductionCatalog.h"
 #include "Production/ShipVisualProductionCatalog.h"
 #include "World/AuthoredWorldRegionRegistry.h"
 #include "World/HighmooreWorldProductionCatalog.h"
@@ -223,6 +224,27 @@ TArray<FExternalAssetProductionBrief> FExternalAssetProductionCatalog::BuildHigg
                 *Ship.AntiInventionBoundary)));
     }
 
+    for (const FFaunaVisualProductionBrief& Fauna : FFaunaVisualProductionCatalog::BuildAllBriefs())
+    {
+        if (!Fauna.bProviderReferenceReady)
+        {
+            continue;
+        }
+
+        Result.Add(HiggsfieldBrief(
+            BriefId(TEXT("external.higgsfield.fauna"), Fauna.StableId),
+            Fauna.StableId,
+            Fauna.DisplayName,
+            Fauna.GoverningSource,
+            EExternalAssetMediaKind::ConceptReferenceImage,
+            FString::Printf(
+                TEXT("Source-grounded fauna/ecology reference only. Visual facts: %s Behavior/motion: %s Environment: %s Anti-invention boundary: %s Do not turn natural animals into fantasy monsters, resolve deliberately ambiguous anatomy, or synthesize unnamed species merely to meet Phase-4 scale targets."),
+                *Fauna.AuthoredVisualFacts,
+                *Fauna.BehaviorAndMotionRead,
+                *Fauna.EnvironmentRead,
+                *Fauna.AntiInventionBoundary)));
+    }
+
     for (const FAuthoredRewardBinding& Treasure : FAuthoredRewardCatalog::BuildStateTreasureSlots())
     {
         Result.Add(HiggsfieldBrief(
@@ -265,6 +287,11 @@ TArray<FExternalAssetProductionDesignGap> FExternalAssetProductionCatalog::Build
             TEXT("design-gap.external-assets.boss-final-act-authority"),
             TEXT("Legacy Ethan/Draven boss visuals are excluded because DesignAuthority requires a Phase 11 rewrite or explicit restoration of the older branch. Other deep-dive boss visuals remain reference-only and do not override the authoritative category registers."),
             TEXT("Docs/DesignAuthority.md; Docs/M7_TIER1_BOSS_REGISTER.md; Production/BossVisualProductionCatalog")
+        },
+        {
+            TEXT("design-gap.external-assets.fauna-variable-identity"),
+            TEXT("Fauna provider briefs include only individually grounded visual records. Player-history-dependent Final Wolf and insufficiently specified Highmoore species variants remain blocked; Phase-4 species totals never authorize synthetic filler."),
+            TEXT("Production/FaunaVisualProductionCatalog; highmoore fauna.md; docs/design/fauna/legendary_creatures.md")
         },
         {
             TEXT("design-gap.external-assets.provider-3d-path"),
@@ -310,6 +337,7 @@ bool FExternalAssetProductionCatalog::Validate(TArray<FString>& OutErrors)
     int32 CharacterCount = 0;
     int32 BossVisualCount = 0;
     int32 ShipVisualCount = 0;
+    int32 FaunaVisualCount = 0;
     int32 PropCount = 0;
     TSet<FName> SeenBriefIds;
 
@@ -356,6 +384,7 @@ bool FExternalAssetProductionCatalog::Validate(TArray<FString>& OutErrors)
         else if (Id.StartsWith(TEXT("external.higgsfield.character."))) ++CharacterCount;
         else if (Id.StartsWith(TEXT("external.higgsfield.boss-visual."))) ++BossVisualCount;
         else if (Id.StartsWith(TEXT("external.higgsfield.ship."))) ++ShipVisualCount;
+        else if (Id.StartsWith(TEXT("external.higgsfield.fauna."))) ++FaunaVisualCount;
         else if (Id.StartsWith(TEXT("external.higgsfield.prop."))) ++PropCount;
         else OutErrors.Add(FString::Printf(TEXT("Unknown external brief family: %s"), *Id));
 
@@ -368,7 +397,12 @@ bool FExternalAssetProductionCatalog::Validate(TArray<FString>& OutErrors)
             || SourceId == TEXT("character.draven-voss")
             || SourceId == TEXT("boss-visual.ethan-harlow")
             || SourceId == TEXT("boss-visual.draven-voss")
-            || SourceId == TEXT("ship-visual.la-liberacion.exterior"))
+            || SourceId == TEXT("ship-visual.la-liberacion.exterior")
+            || SourceId == TEXT("fauna.legendary.final-wolf")
+            || SourceId == TEXT("fauna.highmoore.grouse")
+            || SourceId == TEXT("fauna.highmoore.hare")
+            || SourceId == TEXT("fauna.highmoore.fox")
+            || SourceId == TEXT("fauna.highmoore.fell-wolf"))
         {
             OutErrors.Add(FString::Printf(TEXT("Unauthored or authority-blocked identity leaked into provider briefs: %s"), *SourceId));
         }
@@ -411,6 +445,11 @@ bool FExternalAssetProductionCatalog::Validate(TArray<FString>& OutErrors)
     {
         OutErrors.Add(TEXT("External ship-reference coverage must include exactly the five source-ready La Liberacion deck/interior briefs and exclude unresolved exterior silhouette canon."));
     }
+    if (FaunaVisualCount != ProviderReadyFaunaVisualBriefCount
+        || ProviderReadyFaunaVisualBriefCount != FFaunaVisualProductionCatalog::ProviderReadyBriefCount)
+    {
+        OutErrors.Add(TEXT("External fauna-reference coverage must include exactly the individually grounded provider-ready fauna briefs and exclude variable/underspecified identities."));
+    }
     if (PropCount != StateTreasureBriefCount + UniqueRewardBriefCount)
     {
         OutErrors.Add(TEXT("External prop brief coverage must remain nine State Treasures plus the currently grounded unique reward."));
@@ -433,9 +472,9 @@ bool FExternalAssetProductionCatalog::Validate(TArray<FString>& OutErrors)
         OutErrors.Add(TEXT("External provider authority may not create canon, self-promote media or purchase provider access."));
     }
 
-    if (BuildDesignGaps().Num() != 6)
+    if (BuildDesignGaps().Num() != 7)
     {
-        OutErrors.Add(TEXT("External asset production must retain character/final-act-boss/3D/import/runtime/rights design gaps."));
+        OutErrors.Add(TEXT("External asset production must retain character/final-act-boss/fauna/3D/import/runtime/rights design gaps."));
     }
 
     return OutErrors.IsEmpty();
