@@ -117,9 +117,13 @@ int32 ValidatePresentationContentCommand(const FParsedArgs& Args)
 
     RequireFragments(Root, TEXT("Source/DarkArisen/Animation/AnimationProductionCatalog.h"), {
         TEXT("NamedBibleRequirementCount = 11"),
+        TEXT("RequiredWeightClassCount = 5"),
+        TEXT("RequiredWoundLayerCount = 4"),
         TEXT("RequiredHorseGaitTransitionCount = 6"),
         TEXT("MinimumAttackTellFrames = 8"),
-        TEXT("LockedDeflectionWindowFrames = 6")}, Errors);
+        TEXT("LockedDeflectionWindowFrames = 6"),
+        TEXT("BuildWeightTimings"),
+        TEXT("BuildWoundLayerRequirements")}, Errors);
 
     RequireFragments(Root, TEXT("Source/DarkArisen/Animation/AnimationProductionCatalog.cpp"), {
         TEXT("anim.named.bad-catch"),
@@ -128,7 +132,16 @@ int32 ValidatePresentationContentCommand(const FParsedArgs& Args)
         TEXT("anim.named.bailiffs-leaving"),
         TEXT("anim.named.mount-three-attempts"),
         TEXT("anim.system.wounded-four-layers"),
-        TEXT("Katana suppresses wounded weapon-set swap"),
+        TEXT("anim.system.non-cancellable-recovery"),
+        TEXT("anim.system.horse-mood-body-read"),
+        TEXT("anim.system.people-carried"),
+        TEXT("anim.system.katana-clean-under-wounds"),
+        TEXT("LightStartupFrames"), TEXT("LightRecoveryFrames"),
+        TEXT("MediumStartupFrames"), TEXT("MediumRecoveryFrames"),
+        TEXT("HeavyStartupFrames"), TEXT("HeavyRecoveryFrames"),
+        TEXT("GreatStartupFrames"), TEXT("GreatRecoveryFrames"),
+        TEXT("PolearmStartupFrames"), TEXT("PolearmRecoveryFrames"),
+        TEXT("Stamina < 30%"), TEXT("HP < 60%"), TEXT("HP < 30%"), TEXT("HP < 12%"),
         TEXT("design-gap.animation-assets")}, Errors);
 
     RequireFragments(Root, TEXT("Source/DarkArisen/Animation/DarkArisenAnimInstance.h"), {
@@ -136,6 +149,13 @@ int32 ValidatePresentationContentCommand(const FParsedArgs& Args)
         TEXT("EWoundLayer WoundLayer"),
         TEXT("bool bUseWoundedAnimationSet"),
         TEXT("bool bKatanaEquipped")}, Errors);
+
+    RequireFragments(Root, TEXT("Source/DarkArisen/Tests/AnimationProductionCatalogSpec.cpp"), {
+        TEXT("Five exact weapon weight timing classes exist"),
+        TEXT("Great recovery is 44 frames"),
+        TEXT("Four source-authored wound animation layers exist"),
+        TEXT("People carrying is an explicit full-body requirement"),
+        TEXT("Katana clean-set exception is explicit")}, Errors);
 
     ScanForForbiddenPresentationAuthority(Root, Errors);
 
