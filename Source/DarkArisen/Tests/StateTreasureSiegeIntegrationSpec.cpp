@@ -24,6 +24,7 @@ bool FDarkArisenStateTreasureSiegeIntegrationSpec::RunTest(const FString& Parame
     TestFalse(TEXT("A real state treasure cannot be recovered from the wrong castle"), Ciudadela->RecordStateTreasureRecovered(TEXT("state-treasure.labor-ledgers")));
     TestTrue(TEXT("La Ciudadela accepts its Conquest Archives"), Ciudadela->RecordStateTreasureRecovered(TEXT("state-treasure.conquest-archives-1651")));
     TestFalse(TEXT("The same state treasure cannot be recorded twice"), Ciudadela->RecordStateTreasureRecovered(TEXT("state-treasure.conquest-archives-1651")));
+    TestFalse(TEXT("Stable reward alias cannot record the same state treasure a second time"), Ciudadela->RecordStateTreasureRecovered(TEXT("reward.state-treasure.conquest-archives-1651")));
 
     UCastleSiegeComponent* Sterling = NewObject<UCastleSiegeComponent>();
     TestNotNull(TEXT("Sterling Bastion siege component constructs"), Sterling);
@@ -32,8 +33,7 @@ bool FDarkArisenStateTreasureSiegeIntegrationSpec::RunTest(const FString& Parame
     TestTrue(TEXT("Sterling siege begins"), Sterling->BeginSiege(false));
     TestTrue(TEXT("Sterling breach route commits"), Sterling->CommitBreachDoor(ESiegeDoor::Back));
     TestTrue(TEXT("Sterling breach reaches assault"), Sterling->RecordBreachCompleted(false));
-    TestTrue(TEXT("Sterling Bastion recognizes Sterling's Correspondence as its authored state-treasure identity"),
-        Sterling->RecordStateTreasureRecovered(TEXT("state-treasure.sterlings-correspondence")));
+    TestTrue(TEXT("Sterling Bastion recognizes Sterling's Correspondence as its authored state-treasure identity"), Sterling->RecordStateTreasureRecovered(TEXT("state-treasure.sterlings-correspondence")));
 
     return true;
 }
