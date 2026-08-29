@@ -40,14 +40,16 @@ struct FBossVisualProductionDesignGap
 };
 
 /**
- * Visual/reference authority for the twenty-one existing deep-dive boss specifications.
- * It does not replace encounter gameplay authority, the Nine Who Hold registry or runtime AI.
+ * Visual/reference index over the twenty-one legacy/deep-dive boss specifications.
+ * It is not a gameplay boss register. Current DesignAuthority blocks the legacy Ethan/Draven
+ * final-act material until it is rewritten against Phase 11 or explicitly restored.
  */
 class DARKARISEN_API FBossVisualProductionCatalog
 {
 public:
     static constexpr int32 DeepDiveBossBriefCount = 21;
-    static constexpr int32 ProviderReadyBossBriefCount = 21;
+    static constexpr int32 ProviderReadyBossBriefCount = 19;
+    static constexpr int32 AuthorityBlockedBossBriefCount = 2;
 
     static TArray<FBossVisualProductionBrief> BuildDeepDiveBossBriefs();
     static TArray<FBossVisualProductionDesignGap> BuildDesignGaps();
