@@ -40,7 +40,9 @@ void ScanMissionSourceForForbiddenGeneration(const FString& Root, TArray<FString
 {
     const TArray<FString> Roots = {
         FPaths::Combine(Root, TEXT("Source/DarkArisen/Missions")),
-        FPaths::Combine(Root, TEXT("Source/DarkArisen/ContentScale"))
+        FPaths::Combine(Root, TEXT("Source/DarkArisen/ContentScale")),
+        FPaths::Combine(Root, TEXT("Source/DarkArisen/Highmoore")),
+        FPaths::Combine(Root, TEXT("Source/DarkArisen/ColonialWar"))
     };
     const TArray<FString> Forbidden = {
         TEXT("GenerateRadiantQuest"),
@@ -90,11 +92,22 @@ int32 ValidateMissionContentCommand(const FParsedArgs& Args)
         TEXT("Source/DarkArisen/Missions/MissionScaleRequirements.cpp"),
         TEXT("Source/DarkArisen/Missions/QuestCoverageRegister.h"),
         TEXT("Source/DarkArisen/Missions/QuestCoverageRegister.cpp"),
+        TEXT("Source/DarkArisen/Missions/AssassinNetworkThreadComponent.h"),
+        TEXT("Source/DarkArisen/Missions/AssassinNetworkThreadComponent.cpp"),
+        TEXT("Source/DarkArisen/ColonialWar/LiberationAllianceSubsystem.h"),
+        TEXT("Source/DarkArisen/ColonialWar/LiberationAllianceSubsystem.cpp"),
+        TEXT("Source/DarkArisen/Highmoore/LightElvesThreadComponent.h"),
+        TEXT("Source/DarkArisen/Highmoore/LightElvesThreadComponent.cpp"),
+        TEXT("Source/DarkArisen/Highmoore/HighmooreReconstructionComponent.h"),
+        TEXT("Source/DarkArisen/Highmoore/HighmooreReconstructionComponent.cpp"),
         TEXT("Source/DarkArisen/ContentScale/StandingMissionPoolComponent.h"),
         TEXT("Source/DarkArisen/ContentScale/StandingMissionPoolComponent.cpp"),
         TEXT("Source/DarkArisen/Tests/AuthoredQuestCatalogSpec.cpp"),
         TEXT("Source/DarkArisen/Tests/MissionScaleRequirementsSpec.cpp"),
         TEXT("Source/DarkArisen/Tests/QuestCoverageRegisterSpec.cpp"),
+        TEXT("Source/DarkArisen/Tests/AssassinNetworkThreadSpec.cpp"),
+        TEXT("Source/DarkArisen/Tests/LiberationAllianceSpec.cpp"),
+        TEXT("Source/DarkArisen/Tests/HighmooreThreadContractsSpec.cpp"),
         TEXT("Docs/QUEST_CONTENT_GAPS.md")
     };
     for (const FString& Relative : RequiredFiles)
@@ -113,6 +126,8 @@ int32 ValidateMissionContentCommand(const FParsedArgs& Args)
         TEXT("thread.crew.ines-esperanza"),
         TEXT("thread.archipelago.assassin-network"),
         TEXT("thread.highmoore.princess"),
+        TEXT("thread.highmoore.light-elves"),
+        TEXT("thread.highmoore.reconstruction"),
         TEXT("thread.cross.named-dead"),
         TEXT("thread.cross.ethan"),
         TEXT("region.rexa-moran"), TEXT("22"),
@@ -156,6 +171,54 @@ int32 ValidateMissionContentCommand(const FParsedArgs& Args)
         TEXT("Rexa.Turn.SaltLedger"),
         TEXT("Rexa.Standing.Salvage.SanTelmoBell"),
         TEXT("Reserved quest slot %s must not carry an invented authored identity")}, Errors);
+
+    RequireFragments(Root, TEXT("Source/DarkArisen/Missions/AssassinNetworkThreadComponent.cpp"), {
+        TEXT("thread.archipelago.assassin-network"),
+        TEXT("HasReachedStageAtLeastOnce"),
+        TEXT("RecordVidalConfessionTaken"),
+        TEXT("ResolveCofradiaByWithdrawal"),
+        TEXT("ResolveRegulatorsBySettlement"),
+        TEXT("bUnactionedRegulatorContractRecovered")}, Errors);
+
+    RequireFragments(Root, TEXT("Source/DarkArisen/ColonialWar/LiberationAllianceSubsystem.cpp"), {
+        TEXT("thread.archipelago.liberation-connections"),
+        TEXT("alliance.connection.cultural-recovery"),
+        TEXT("alliance.connection.cultural-mountain"),
+        TEXT("alliance.connection.mountain-patient"),
+        TEXT("alliance.connection.patient-deed"),
+        TEXT("alliance.connection.recovery-deed"),
+        TEXT("FullVisionGap"),
+        TEXT("case 5: return 1.60f")}, Errors);
+
+    RequireFragments(Root, TEXT("Source/DarkArisen/Highmoore/LightElvesThreadComponent.h"), {
+        TEXT("thread.highmoore.light-elves"),
+        TEXT("ElevenDaysInWorldMinutes"),
+        TEXT("AllowsFirstStoppedShaftCutscene() const { return false; }"),
+        TEXT("AllowsBossEndingCutscene() const { return false; }"),
+        TEXT("AllowsWestwardQuestReminder() const { return false; }"),
+        TEXT("AllowsFastTravelForCampaign() const { return false; }")}, Errors);
+
+    RequireFragments(Root, TEXT("Source/DarkArisen/Highmoore/LightElvesThreadComponent.cpp"), {
+        TEXT("LordRefusals.Num() == 4"),
+        TEXT("TakingAccounts.Num() != 4"),
+        TEXT("ResolvedMoorSites.Num() == 3"),
+        TEXT("HasReachedElevenDays()"),
+        TEXT("EEllisLetterResponse::None")}, Errors);
+
+    RequireFragments(Root, TEXT("Source/DarkArisen/Highmoore/HighmooreReconstructionComponent.cpp"), {
+        TEXT("thread.highmoore.reconstruction"),
+        TEXT("PermanentlyUnavailableAfterStair"),
+        TEXT("TurnedWest"),
+        TEXT("ConnectArchipelagoSupplyLine"),
+        TEXT("BuildFordBridge"),
+        TEXT("bCadwallMasonsSecured")}, Errors);
+
+    RequireFragments(Root, TEXT("Source/DarkArisen/Highmoore/HighmooreReconstructionComponent.h"), {
+        TEXT("AllowsRedemptionMeter() const { return false; }"),
+        TEXT("AllowsForgivenessReward() const { return false; }"),
+        TEXT("MakesJakeLordOfHighmoore() const { return false; }"),
+        TEXT("RewardsGalleryGap() const { return false; }"),
+        TEXT("RewardsRabbitHutches() const { return false; }")}, Errors);
 
     RequireFragments(Root, TEXT("Docs/QUEST_CONTENT_GAPS.md"), {
         TEXT("Missing Turn identities — 129"),
