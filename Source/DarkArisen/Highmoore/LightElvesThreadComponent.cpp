@@ -12,6 +12,15 @@ ULightElvesThreadComponent::ULightElvesThreadComponent()
     PrimaryComponentTick.bCanEverTick = false;
 }
 
+bool ULightElvesThreadComponent::HasElevenDaySpanElapsed(
+    const int64 StartWorldMinutes,
+    const int64 CurrentWorldMinutes)
+{
+    return StartWorldMinutes >= 0
+        && CurrentWorldMinutes >= StartWorldMinutes
+        && (CurrentWorldMinutes - StartWorldMinutes) >= ElevenDaysInWorldMinutes;
+}
+
 bool ULightElvesThreadComponent::BeginAtDroversRest(const bool bArionEjectionCompleted)
 {
     if (Stage != ELightElvesThreadStage::Dormant || !bArionEjectionCompleted)
@@ -153,19 +162,13 @@ int64 ULightElvesThreadComponent::GetElapsedWorldMinutes() const
 
 bool ULightElvesThreadComponent::HasReachedElevenDays() const
 {
-    return CampaignStartWorldMinutes != INDEX_NONE
-        && GetElapsedWorldMinutes() >= ElevenDaysInWorldMinutes;
-}
-
-bool ULightElvesThreadComponent::IsAtLeast(const ELightElvesThreadStage Required) const
-{
-    return static_cast<uint8>(Stage) >= static_cast<uint8>(Required);
+    return HasElevenDaySpanElapsed(CampaignStartWorldMinutes, ReadWorldMinutes());
 }
 
 int64 ULightElvesThreadComponent::ReadWorldMinutes() const
 {
-    const UWorld* World = GetWorld();
-    const UDarkArisenWorldRulesSubsystem* Rules =
+    UWorld* World = GetWorld();
+    UDarkArisenWorldRulesSubsystem* Rules =
         World ? World->GetSubsystem<UDarkArisenWorldRulesSubsystem>() : nullptr;
     return Rules ? Rules->GetTotalWorldMinutes() : INDEX_NONE;
 }
