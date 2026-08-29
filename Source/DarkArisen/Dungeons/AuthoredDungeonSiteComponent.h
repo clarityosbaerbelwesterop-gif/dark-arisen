@@ -37,6 +37,9 @@ public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Dungeon|Definition")
     FName DungeonStableId;
 
+    /** Deterministic C++ initialization used by BeginPlay and native automation tests. */
+    bool InitializeDefinition();
+
     UFUNCTION(BlueprintPure, Category="Dungeon|Definition")
     bool IsDefinitionValid() const { return bDefinitionValid; }
 
