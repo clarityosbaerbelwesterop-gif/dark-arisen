@@ -15,22 +15,64 @@ void UAuthoredDungeonSiteComponent::BeginPlay()
 
 bool UAuthoredDungeonSiteComponent::InitializeDefinition()
 {
-    bDefinitionValid = FAuthoredDungeonCatalog::TryGetKnownSite(DungeonStableId, CachedDefinition);
+    FAuthoredDungeonCatalogEntry Definition;
+    FAuthoredDungeonProductionProfile ProductionProfile;
+
+    const bool bHasCatalogDefinition =
+        FAuthoredDungeonCatalog::TryGetKnownSite(DungeonStableId, Definition);
+    const bool bHasProductionProfile =
+        FAuthoredDungeonProductionProfiles::TryGetProfile(DungeonStableId, ProductionProfile);
+
+    bDefinitionValid = bHasCatalogDefinition && bHasProductionProfile;
     if (!bDefinitionValid)
     {
         UE_LOG(
             LogTemp,
             Error,
-            TEXT("Authored dungeon site on %s has unknown/unresolved stable ID '%s'. It remains inert rather than inventing a definition."),
+            TEXT("Authored dungeon site on %s has incomplete/unknown stable ID '%s'. It remains inert rather than inventing a definition."),
             *GetNameSafe(GetOwner()),
             *DungeonStableId.ToString());
+        return false;
     }
-    return bDefinitionValid;
+
+    CachedDefinition = MoveTemp(Definition);
+    CachedProductionProfile = MoveTemp(ProductionProfile);
+    return true;
 }
 
 FString UAuthoredDungeonSiteComponent::GetAuthoredDisplayName() const
 {
     return bDefinitionValid ? CachedDefinition.DisplayName : FString();
+}
+
+FString UAuthoredDungeonSiteComponent::GetAuthoredAccessAndDiscovery() const
+{
+    return bDefinitionValid ? CachedProductionProfile.AccessAndDiscovery : FString();
+}
+
+FString UAuthoredDungeonSiteComponent::GetAuthoredPuzzleDetail() const
+{
+    return bDefinitionValid ? CachedProductionProfile.PuzzleLanguageDetail : FString();
+}
+
+FString UAuthoredDungeonSiteComponent::GetAuthoredHazardDetail() const
+{
+    return bDefinitionValid ? CachedProductionProfile.HazardDetail : FString();
+}
+
+FString UAuthoredDungeonSiteComponent::GetAuthoredImageBrief() const
+{
+    return bDefinitionValid ? CachedProductionProfile.UnforgettableImage : FString();
+}
+
+FString UAuthoredDungeonSiteComponent::GetAuthoredBossOrBottomDetail() const
+{
+    return bDefinitionValid ? CachedProductionProfile.BossOrBottomDetail : FString();
+}
+
+FString UAuthoredDungeonSiteComponent::GetAuthoredRewardDetail() const
+{
+    return bDefinitionValid ? CachedProductionProfile.RewardDetail : FString();
 }
 
 bool UAuthoredDungeonSiteComponent::IsSecretSite() const
@@ -41,6 +83,26 @@ bool UAuthoredDungeonSiteComponent::IsSecretSite() const
 bool UAuthoredDungeonSiteComponent::IsNoBossSite() const
 {
     return bDefinitionValid && CachedDefinition.BossState == EDungeonCatalogBossState::NoBoss;
+}
+
+bool UAuthoredDungeonSiteComponent::IsImageWithheld() const
+{
+    return bDefinitionValid && CachedProductionProfile.bImageWithheld;
+}
+
+bool UAuthoredDungeonSiteComponent::IsRewardExplicitlyNone() const
+{
+    return bDefinitionValid && CachedProductionProfile.bRewardExplicitlyNone;
+}
+
+bool UAuthoredDungeonSiteComponent::IsWarReactive() const
+{
+    return bDefinitionValid && CachedProductionProfile.bWarReactive;
+}
+
+bool UAuthoredDungeonSiteComponent::SupportsExplicitNonCombatResolution() const
+{
+    return bDefinitionValid && CachedProductionProfile.bSupportsExplicitNonCombatResolution;
 }
 
 bool UAuthoredDungeonSiteComponent::CanBeRecordedOnPhysicalMapBeforeEntry() const
@@ -69,6 +131,12 @@ bool UAuthoredDungeonSiteComponent::MarkUnforgettableImageWitnessed()
     {
         return false;
     }
+    if (CachedProductionProfile.bImageWithheld)
+    {
+        // A withheld image is not a license for generic spectacle. It stays unresolved until canon
+        // authors it, so common progression cannot self-certify the image beat.
+        return false;
+    }
     bUnforgettableImageWitnessed = true;
     return true;
 }
@@ -77,6 +145,11 @@ bool UAuthoredDungeonSiteComponent::MarkBottomResolved(const FName ResolutionId)
 {
     if (!bDefinitionValid || !bEntered || bBottomResolved || ResolutionId.IsNone())
     {
+        return false;
+    }
+    if (CachedProductionProfile.bBossWithheldOrUnresolved)
+    {
+        // Withheld/unresolved bottom content remains locked rather than accepting an invented result.
         return false;
     }
     bBottomResolved = true;
@@ -105,7 +178,9 @@ bool UAuthoredDungeonSiteComponent::RecordArtifactDisposition(
     if (!bDefinitionValid
         || !bEntered
         || Disposition == EDungeonArtifactDisposition::None
-        || ArtifactDisposition != EDungeonArtifactDisposition::None)
+        || ArtifactDisposition != EDungeonArtifactDisposition::None
+        || CachedProductionProfile.bRewardExplicitlyNone
+        || CachedProductionProfile.bRewardWithheldOrUnresolved)
     {
         return false;
     }
@@ -116,7 +191,9 @@ bool UAuthoredDungeonSiteComponent::RecordArtifactDisposition(
 
 bool UAuthoredDungeonSiteComponent::IsStructurallyComplete() const
 {
-    if (!bDefinitionValid)
+    if (!bDefinitionValid
+        || CachedProductionProfile.bImageWithheld
+        || CachedProductionProfile.bBossWithheldOrUnresolved)
     {
         return false;
     }
