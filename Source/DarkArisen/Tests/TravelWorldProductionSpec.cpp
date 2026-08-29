@@ -14,23 +14,19 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(
 bool FDarkArisenTravelWorldProductionSpec::RunTest(const FString& Parameters)
 {
     TArray<FString> TravelErrors;
-    TestTrue(TEXT("Authored travel production catalog validates"),
-        FAuthoredTravelProductionCatalog::Validate(TravelErrors));
+    TestTrue(TEXT("Authored travel production catalog validates"), FAuthoredTravelProductionCatalog::Validate(TravelErrors));
     TestEqual(TEXT("Travel production has no structural errors"), TravelErrors.Num(), 0);
 
     const TArray<FAuthoredTravelProductionRoute> Routes = FAuthoredTravelProductionCatalog::BuildCoreRoutes();
     TestEqual(TEXT("Six core travel law routes are represented"), Routes.Num(), 6);
-    TestFalse(TEXT("Water fast travel remains impossible"), FAuthoredTravelProductionCatalog::AllowsFastTravelOverWater());
+    TestFalse(TEXT("Water fast travel remains impossible"), FAuthoredTravelProductionCatalog::AllowsInstantWaterTravel());
     TestFalse(TEXT("Map-click movement remains impossible"), FAuthoredTravelProductionCatalog::AllowsMapClickMovement());
     TestFalse(TEXT("Compass remains absent"), FAuthoredTravelProductionCatalog::AllowsCompass());
-    TestFalse(TEXT("Minimap remains absent"), FAuthoredTravelProductionCatalog::AllowsMinimap());
+    TestFalse(TEXT("Mini-map remains absent"), FAuthoredTravelProductionCatalog::AllowsMiniMapDisplay());
     TestFalse(TEXT("Player dot remains absent"), FAuthoredTravelProductionCatalog::AllowsPlayerDot());
     TestEqual(TEXT("Six feared-water regions remain trust/guide opened"), FAuthoredTravelProductionCatalog::FearedWaterRegionCount, 6);
 
-    const FAuthoredTravelProductionRoute* FirstCaves = Routes.FindByPredicate([](const FAuthoredTravelProductionRoute& Entry)
-    {
-        return Entry.Mode == EAuthoredTravelMode::CrystalCavesFirstPassage;
-    });
+    const FAuthoredTravelProductionRoute* FirstCaves = Routes.FindByPredicate([](const FAuthoredTravelProductionRoute& Entry){ return Entry.Mode == EAuthoredTravelMode::CrystalCavesFirstPassage; });
     TestNotNull(TEXT("First Crystal Caves passage route exists"), FirstCaves);
     if (FirstCaves)
     {
@@ -39,10 +35,7 @@ bool FDarkArisenTravelWorldProductionSpec::RunTest(const FString& Parameters)
         TestTrue(TEXT("First Crystal passage requires physical traversal"), FirstCaves->bRequiresPhysicalTraversal);
     }
 
-    const FAuthoredTravelProductionRoute* RepeatCaves = Routes.FindByPredicate([](const FAuthoredTravelProductionRoute& Entry)
-    {
-        return Entry.Mode == EAuthoredTravelMode::CrystalCavesRepeatPassage;
-    });
+    const FAuthoredTravelProductionRoute* RepeatCaves = Routes.FindByPredicate([](const FAuthoredTravelProductionRoute& Entry){ return Entry.Mode == EAuthoredTravelMode::CrystalCavesRepeatPassage; });
     TestNotNull(TEXT("Repeat Crystal Caves passage route exists"), RepeatCaves);
     if (RepeatCaves)
     {
@@ -51,10 +44,7 @@ bool FDarkArisenTravelWorldProductionSpec::RunTest(const FString& Parameters)
         TestTrue(TEXT("Repeat Crystal passage remains traversal rather than a menu"), RepeatCaves->bRequiresPhysicalTraversal && !RepeatCaves->bMenuTravelPermitted);
     }
 
-    const FAuthoredTravelProductionRoute* Stable = Routes.FindByPredicate([](const FAuthoredTravelProductionRoute& Entry)
-    {
-        return Entry.Mode == EAuthoredTravelMode::HorseStableRelocation;
-    });
+    const FAuthoredTravelProductionRoute* Stable = Routes.FindByPredicate([](const FAuthoredTravelProductionRoute& Entry){ return Entry.Mode == EAuthoredTravelMode::HorseStableRelocation; });
     TestNotNull(TEXT("Highmoore stable relocation route exists"), Stable);
     if (Stable)
     {
@@ -63,8 +53,7 @@ bool FDarkArisenTravelWorldProductionSpec::RunTest(const FString& Parameters)
     }
 
     TArray<FString> HighmooreErrors;
-    TestTrue(TEXT("Highmoore world production catalog validates"),
-        FHighmooreWorldProductionCatalog::Validate(HighmooreErrors));
+    TestTrue(TEXT("Highmoore world production catalog validates"), FHighmooreWorldProductionCatalog::Validate(HighmooreErrors));
     TestEqual(TEXT("Highmoore world catalog has no structural errors"), HighmooreErrors.Num(), 0);
 
     const TArray<FHighmooreWorldProductionAnchor> Anchors = FHighmooreWorldProductionCatalog::BuildNamedAnchors();
