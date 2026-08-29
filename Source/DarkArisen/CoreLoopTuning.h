@@ -33,6 +33,7 @@ namespace DarkArisen::CoreLoopTuning
     inline constexpr float PostureRegenDelaySeconds = 3.0f;
     inline constexpr float PostureRegenPerSecond = 30.0f;
 
+    inline constexpr int32 MinimumReadableAttackTellFrames = 8;
     inline constexpr int32 LightStartupFrames = 9;
     inline constexpr int32 LightRecoveryFrames = 14;
     inline constexpr int32 MediumStartupFrames = 13;
@@ -47,4 +48,12 @@ namespace DarkArisen::CoreLoopTuning
     static_assert(FramesToSeconds(DesignLaws::DeflectionWindowFrames) ==
         DesignLaws::DeflectionWindowSeconds,
         "M1 frame conversion must preserve the locked deflection window.");
+    static_assert(DesignLaws::DeflectionWindowFrames == 6,
+        "Animation/combat contract must preserve the six-frame deflection window.");
+    static_assert(LightStartupFrames >= MinimumReadableAttackTellFrames
+        && MediumStartupFrames >= MinimumReadableAttackTellFrames
+        && HeavyStartupFrames >= MinimumReadableAttackTellFrames
+        && GreatStartupFrames >= MinimumReadableAttackTellFrames
+        && PolearmStartupFrames >= MinimumReadableAttackTellFrames,
+        "Every weapon-class attack startup must preserve the eight-frame readability floor.");
 }
