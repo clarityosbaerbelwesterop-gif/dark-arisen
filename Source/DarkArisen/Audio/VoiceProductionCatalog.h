@@ -21,6 +21,13 @@ enum class EVoiceProductionTier : uint8
     Tier5Atmosphere
 };
 
+enum class EVoiceAuditionDisposition : uint8
+{
+    NotAuditioned,
+    RejectedSynthetic,
+    ApprovedReference
+};
+
 struct FVoiceRoleProductionDefinition
 {
     FName RoleId;
@@ -34,7 +41,16 @@ struct FVoiceRoleProductionDefinition
     FString PronunciationReference;
     bool bDialogueLocked = false;
     bool bSubtitleReady = false;
-    bool bAuditionGenerated = false;
+
+    /** The connected generic AI voice auditions were heard and rejected; never reinterpret them as approvals. */
+    EVoiceAuditionDisposition AuditionDisposition = EVoiceAuditionDisposition::NotAuditioned;
+
+    /** Tier-1 performances must pass a directed human-performance-quality review before shipping. */
+    bool bDirectedPerformanceReviewRequired = true;
+
+    /** Current connected generic synthetic voice provider is not an approved source for this role. */
+    bool bCurrentSyntheticProviderRejected = false;
+
     bool bCommercialRightsApproved = false;
     FString ShippingAssetPath;
 };
