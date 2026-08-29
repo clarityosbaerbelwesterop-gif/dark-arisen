@@ -90,6 +90,9 @@ int32 ValidatePresentationContentCommand(const FParsedArgs& Args)
         TEXT("Source/DarkArisen/Animation/AnimationProductionCatalog.h"),
         TEXT("Source/DarkArisen/Animation/AnimationProductionCatalog.cpp"),
         TEXT("Source/DarkArisen/Animation/DarkArisenAnimInstance.h"),
+        TEXT("Source/DarkArisen/Components/WoundStateComponent.h"),
+        TEXT("Source/DarkArisen/Components/WoundStateComponent.cpp"),
+        TEXT("Source/DarkArisen/CoreLoopTuning.h"),
         TEXT("Source/DarkArisen/Tests/PresentationProductionCatalogSpec.cpp"),
         TEXT("Source/DarkArisen/Tests/AnimationProductionCatalogSpec.cpp")})
     {
@@ -102,14 +105,25 @@ int32 ValidatePresentationContentCommand(const FParsedArgs& Args)
         TEXT("UnresolvedEndgameCutsceneCount = 5"),
         TEXT("RequiredProtectedPlayableCount = 22"),
         TEXT("RequiredInsertCount = 5"),
-        TEXT("RequiredSlowPushCount = 6")}, Errors);
+        TEXT("RequiredSlowPushCount = 6"),
+        TEXT("AnchoredPlayerMovement"),
+        TEXT("BriefAuthoredTakeover"),
+        TEXT("SlowPushOnly")}, Errors);
 
     RequireFragments(Root, TEXT("Source/DarkArisen/Presentation/PresentationProductionCatalog.cpp"), {
         TEXT("cutscene.opening.the-brother"),
+        TEXT("cutscene.archipelago.the-grove"),
+        TEXT("cutscene.highmoore.emergence"),
+        TEXT("cutscene.highmoore.voice-from-behind"),
         TEXT("cutscene.highmoore.arrow"),
+        TEXT("cutscene.highmoore.real-letter"),
+        TEXT("EPresentationControlOwnership::AnchoredPlayerMovement"),
+        TEXT("EPresentationControlOwnership::BriefAuthoredTakeover"),
+        TEXT("EPresentationControlOwnership::SlowPushOnly"),
         TEXT("bCameraMustRemainStatic = true"),
         TEXT("bMusicMustContinueUnchanged = true"),
         TEXT("cutscene.endgame.slot-%d"),
+        TEXT("playable.arrow.after-thirty-seconds"),
         TEXT("playable.boss-death.hold"),
         TEXT("playable.ibarra.garden"),
         TEXT("playable.liberation.aftermath"),
@@ -149,6 +163,38 @@ int32 ValidatePresentationContentCommand(const FParsedArgs& Args)
         TEXT("EWoundLayer WoundLayer"),
         TEXT("bool bUseWoundedAnimationSet"),
         TEXT("bool bKatanaEquipped")}, Errors);
+
+    RequireFragments(Root, TEXT("Source/DarkArisen/Components/WoundStateComponent.h"), {
+        TEXT("DESIGN-GAP: animation_system.md requires a visible Winded layer"),
+        TEXT("WindedMovementSpeedScale"),
+        TEXT("HurtMovementSpeedScale"),
+        TEXT("BadMovementSpeedScale"),
+        TEXT("FailingMovementSpeedScale"),
+        TEXT("WindedCameraInstabilityAlpha"),
+        TEXT("HurtCameraInstabilityAlpha"),
+        TEXT("BadCameraInstabilityAlpha"),
+        TEXT("FailingCameraInstabilityAlpha"),
+        TEXT("EditDefaultsOnly")}, Errors);
+
+    RequireFragments(Root, TEXT("Source/DarkArisen/Components/WoundStateComponent.cpp"), {
+        TEXT("BuildPresentationProfileForLayer"),
+        TEXT("Profile.bAudibleBreathing = true"),
+        TEXT("Profile.bLimp = true"),
+        TEXT("Profile.bStaggerRun = true"),
+        TEXT("Profile.bWeaponDrag = true")}, Errors);
+
+    RequireFragments(Root, TEXT("Source/DarkArisen/CoreLoopTuning.h"), {
+        TEXT("MinimumReadableAttackTellFrames = 8"),
+        TEXT("DesignLaws::DeflectionWindowFrames == 6"),
+        TEXT("LightStartupFrames >= MinimumReadableAttackTellFrames"),
+        TEXT("PolearmStartupFrames >= MinimumReadableAttackTellFrames")}, Errors);
+
+    RequireFragments(Root, TEXT("Source/DarkArisen/Tests/PresentationProductionCatalogSpec.cpp"), {
+        TEXT("Grove uses anchored camera while movement stays with player"),
+        TEXT("Emergence uses anchored player-movement ownership"),
+        TEXT("Arrow is a brief takeover, not a full cinematic lock"),
+        TEXT("Real Letter owns only the eight-second slow push"),
+        TEXT("Every boss death remains protected gameplay")}, Errors);
 
     RequireFragments(Root, TEXT("Source/DarkArisen/Tests/AnimationProductionCatalogSpec.cpp"), {
         TEXT("Five exact weapon weight timing classes exist"),
