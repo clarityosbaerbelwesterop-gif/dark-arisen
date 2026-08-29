@@ -15,6 +15,39 @@ enum class EAnimationProductionFamily : uint8
     PerformanceMoment
 };
 
+enum class EAnimationWeaponWeightClass : uint8
+{
+    Light,
+    Medium,
+    Heavy,
+    Great,
+    Polearm
+};
+
+enum class EAnimationWoundLayer : uint8
+{
+    Winded,
+    Hurt,
+    Bad,
+    Failing
+};
+
+struct FAnimationWeightTiming
+{
+    EAnimationWeaponWeightClass WeightClass = EAnimationWeaponWeightClass::Light;
+    int32 StartupFrames = 0;
+    int32 RecoveryFrames = 0;
+    FString GoverningSource;
+};
+
+struct FAnimationWoundLayerRequirement
+{
+    EAnimationWoundLayer Layer = EAnimationWoundLayer::Winded;
+    FString Trigger;
+    FString RequiredBodyRead;
+    FString GoverningSource;
+};
+
 struct FAnimationProductionRequirement
 {
     FName StableId;
@@ -42,12 +75,16 @@ class DARKARISEN_API FAnimationProductionCatalog
 {
 public:
     static constexpr int32 NamedBibleRequirementCount = 11;
+    static constexpr int32 RequiredWeightClassCount = 5;
+    static constexpr int32 RequiredWoundLayerCount = 4;
     static constexpr int32 RequiredHorseGaitTransitionCount = 6;
     static constexpr int32 MinimumAttackTellFrames = 8;
     static constexpr int32 LockedDeflectionWindowFrames = 6;
 
     static TArray<FAnimationProductionRequirement> BuildNamedBibleRequirements();
     static TArray<FAnimationProductionRequirement> BuildSystemRequirements();
+    static TArray<FAnimationWeightTiming> BuildWeightTimings();
+    static TArray<FAnimationWoundLayerRequirement> BuildWoundLayerRequirements();
     static TArray<FAnimationProductionDesignGap> BuildDesignGaps();
     static bool Validate(TArray<FString>& OutErrors);
 };
