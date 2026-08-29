@@ -21,14 +21,11 @@ struct FAuthoredTravelProductionRoute
     FString GoverningSource;
     FString RuntimeOwner;
     EAuthoredTravelMode Mode = EAuthoredTravelMode::SeaPassage;
-
     bool bMovesJake = true;
     bool bMovesHorseOnly = false;
     bool bRequiresPhysicalTraversal = true;
     bool bRequiresGuideOrTrust = false;
     bool bMenuTravelPermitted = false;
-
-    /** INDEX_NONE means the source does not lock a real-time duration for this generic route. */
     int32 MinimumRealMinutes = INDEX_NONE;
     int32 MaximumRealMinutes = INDEX_NONE;
 };
@@ -40,10 +37,6 @@ struct FAuthoredTravelDesignGap
     FString GoverningSource;
 };
 
-/**
- * Production routing authority for travel laws. Runtime movement stays with ship, Crystal Caves,
- * horse and character owners. This catalog never loads a level or moves an actor itself.
- */
 class DARKARISEN_API FAuthoredTravelProductionCatalog
 {
 public:
@@ -58,9 +51,9 @@ public:
     static TArray<FAuthoredTravelDesignGap> BuildDesignGaps();
     static bool Validate(TArray<FString>& OutErrors);
 
-    static bool AllowsFastTravelOverWater() { return false; }
+    static bool AllowsInstantWaterTravel() { return false; }
     static bool AllowsMapClickMovement() { return false; }
     static bool AllowsCompass() { return false; }
-    static bool AllowsMinimap() { return false; }
+    static bool AllowsMiniMapDisplay() { return false; }
     static bool AllowsPlayerDot() { return false; }
 };
