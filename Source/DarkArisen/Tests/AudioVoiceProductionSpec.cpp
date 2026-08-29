@@ -48,7 +48,10 @@ bool FDarkArisenCoreVoiceProductionCatalogSpec::RunTest(const FString& Parameter
     {
         TestTrue(TEXT("Audition dialogue is locked"), Role.bDialogueLocked);
         TestTrue(TEXT("Audition subtitle is locked"), Role.bSubtitleReady);
-        TestFalse(TEXT("Source catalog does not convert audition evidence into shipping acceptance"), Role.bCommercialRightsApproved);
+        TestEqual(TEXT("Generic synthetic audition remains rejected"), Role.AuditionDisposition, EVoiceAuditionDisposition::RejectedSynthetic);
+        TestTrue(TEXT("Directed performance review is mandatory"), Role.bDirectedPerformanceReviewRequired);
+        TestTrue(TEXT("Current synthetic provider remains rejected for core cast"), Role.bCurrentSyntheticProviderRejected);
+        TestFalse(TEXT("Rejected audition is not commercial/shipping acceptance"), Role.bCommercialRightsApproved);
         TestTrue(TEXT("No shipping audio path exists yet"), Role.ShippingAssetPath.IsEmpty());
     }
     TestEqual(TEXT("Three voice production gaps remain explicit"), FVoiceProductionCatalog::BuildDesignGaps().Num(), 3);
