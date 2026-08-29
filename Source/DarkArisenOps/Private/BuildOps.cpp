@@ -111,9 +111,14 @@ bool RunAutomation(const FString& Root, const FString& Engine)
         UE_LOG(LogTemp, Error, TEXT("Automation log is missing: %s"), *LogPath);
         return false;
     }
-    if (Log.Contains(TEXT("Result={Fail}"))
+    // Unreal writes "Result={Failed}". A literal "Result={Fail}" is not a substring of it, so
+    // that spelling alone can never match and would leave this gate resting on the log line
+    // below it. Both spellings are accepted, and a reported failure counts as well as an error.
+    if (Log.Contains(TEXT("Result={Failed}"))
+        || Log.Contains(TEXT("Result={Fail}"))
         || Log.Contains(TEXT("Automation Test Failed"))
-        || Log.Contains(TEXT("LogAutomationController: Error")))
+        || Log.Contains(TEXT("LogAutomationController: Error"))
+        || Log.Contains(TEXT("LogAutomationController: Warning: Test Failed")))
     {
         UE_LOG(LogTemp, Error, TEXT("At least one DarkArisen automation test failed: %s"), *LogPath);
         return false;
@@ -384,7 +389,11 @@ int32 RunnerCheckCommand(const FParsedArgs& Args)
         return 1;
     }
 #endif
-    const int64 MinimumGb = FCString::Atoi64(*Args.Get(TEXT("min-disk-gb"), TEXT("120")));
+    // Atoi64 yields 0 for a non-numeric argument, which would silently disable the gate.
+    // The floor may be raised, never lowered or switched off.
+    constexpr int64 MinimumGbFloor = 120;
+    const int64 RequestedGb = FCString::Atoi64(*Args.Get(TEXT("min-disk-gb"), TEXT("120")));
+    const int64 MinimumGb = FMath::Max(RequestedGb, MinimumGbFloor);
     const int64 FreeBytes = FreeDiskBytes(Root);
     if (FreeBytes < MinimumGb * 1024ll * 1024ll * 1024ll)
     {
