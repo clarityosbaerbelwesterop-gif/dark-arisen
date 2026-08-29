@@ -45,6 +45,31 @@ namespace DarkArisen::DesignLaws
         Count
     };
 
+    /** Law 9. The three axes are separate kinds of capability and never exchange. */
+    enum class EProgressionAxis : uint8
+    {
+        Body,
+        Craft,
+        Standing,
+        Count
+    };
+
+    /**
+     * Law 9 mirrors of the M4 catalog shape. UProgressionEconomyComponent owns the runtime
+     * enforcement; these exist so the same numbers also fail the compile, which matters because
+     * every other check in this repository now needs a licensed engine before it can run.
+     */
+    inline constexpr int32 CraftNodeCount = 68;
+    inline constexpr int32 CraftNodeTotalMarkCost = 141;
+    inline constexpr int32 MarksAvailableInOnePlaythrough = 94;
+    inline constexpr int32 NamedTeacherCount = 23;
+
+    /** Law 9. No reallocation, no consumable, no NPC service, no paid concession. */
+    inline constexpr bool bRespecExists = false;
+
+    /** Law 9. Money buys equipment, ships, settlements, armies and information — never capability. */
+    inline constexpr bool bCapabilityIsPurchasable = false;
+
     static_assert(TargetFramesPerSecond == 60, "Design law: 60 fps is the hard floor.");
     static_assert(DeflectionWindowFrames == 6, "Design law: deflection is exactly six frames.");
     static_assert(DeflectionWindowSeconds > 0.099f && DeflectionWindowSeconds < 0.101f,
@@ -57,5 +82,23 @@ namespace DarkArisen::DesignLaws
         "The prohibited cinematic list is locked at twenty-two.");
     static_assert(static_cast<uint8>(EAutosaveTrigger::Count) == 2,
         "Autosave must have exactly two triggers.");
+
+    static_assert(InteractionPromptRangeMetres > 1.39f && InteractionPromptRangeMetres < 1.41f,
+        "Design law: the corner prompt exists only at 1.4 m.");
+    static_assert(LandTraversalExceptionEntries == 3,
+        "Design law: water travel is never skipped; exactly three authored land exceptions.");
+
+    static_assert(static_cast<uint8>(EProgressionAxis::Count) == 3,
+        "Design law: Body, Craft and Standing are the only three axes.");
+    static_assert(!bRespecExists, "Design law: no respec exists.");
+    static_assert(!bCapabilityIsPurchasable, "Design law: money never buys capability.");
+    static_assert(CraftNodeCount == 68, "The Craft tree is locked at sixty-eight nodes.");
+    static_assert(CraftNodeTotalMarkCost == 141,
+        "Opening every Craft node costs exactly one hundred and forty-one Marks.");
+    static_assert(MarksAvailableInOnePlaythrough == 94,
+        "A perfect playthrough yields exactly ninety-four Marks.");
+    static_assert(MarksAvailableInOnePlaythrough < CraftNodeTotalMarkCost,
+        "Incompleteness is the design: available Marks must never open the whole tree.");
+    static_assert(NamedTeacherCount == 23, "The teacher register is locked at twenty-three.");
 }
 
