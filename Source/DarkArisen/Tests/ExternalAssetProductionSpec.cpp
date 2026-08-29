@@ -31,6 +31,7 @@ bool FDarkArisenExternalAssetProductionSpec::RunTest(const FString& Parameters)
     int32 CharacterLooks = 0;
     int32 BossLooks = 0;
     int32 ShipLooks = 0;
+    int32 FaunaLooks = 0;
     int32 Props = 0;
 
     for (const FExternalAssetProductionBrief& Brief : Briefs)
@@ -54,6 +55,11 @@ bool FDarkArisenExternalAssetProductionSpec::RunTest(const FString& Parameters)
         TestFalse(TEXT("Legacy Ethan boss visual stays provider-blocked"), SourceId == TEXT("boss-visual.ethan-harlow"));
         TestFalse(TEXT("Legacy Draven boss visual stays provider-blocked"), SourceId == TEXT("boss-visual.draven-voss"));
         TestFalse(TEXT("Unresolved La Liberacion exterior silhouette stays provider-blocked"), SourceId == TEXT("ship-visual.la-liberacion.exterior"));
+        TestFalse(TEXT("Player-history-dependent Final Wolf stays provider-blocked"), SourceId == TEXT("fauna.legendary.final-wolf"));
+        TestFalse(TEXT("Unspecified Highmoore grouse variant stays provider-blocked"), SourceId == TEXT("fauna.highmoore.grouse"));
+        TestFalse(TEXT("Unspecified Highmoore hare variant stays provider-blocked"), SourceId == TEXT("fauna.highmoore.hare"));
+        TestFalse(TEXT("Unspecified Highmoore fox variant stays provider-blocked"), SourceId == TEXT("fauna.highmoore.fox"));
+        TestFalse(TEXT("Unspecified Highmoore Fell Wolf variant stays provider-blocked"), SourceId == TEXT("fauna.highmoore.fell-wolf"));
 
         if (Id.StartsWith(TEXT("external.higgsfield.dungeon."))) ++DungeonLooks;
         else if (Id.StartsWith(TEXT("external.higgsfield.region."))) ++RegionLooks;
@@ -61,6 +67,7 @@ bool FDarkArisenExternalAssetProductionSpec::RunTest(const FString& Parameters)
         else if (Id.StartsWith(TEXT("external.higgsfield.character."))) ++CharacterLooks;
         else if (Id.StartsWith(TEXT("external.higgsfield.boss-visual."))) ++BossLooks;
         else if (Id.StartsWith(TEXT("external.higgsfield.ship."))) ++ShipLooks;
+        else if (Id.StartsWith(TEXT("external.higgsfield.fauna."))) ++FaunaLooks;
         else if (Id.StartsWith(TEXT("external.higgsfield.prop."))) ++Props;
 
         switch (Brief.MediaKind)
@@ -85,8 +92,7 @@ bool FDarkArisenExternalAssetProductionSpec::RunTest(const FString& Parameters)
         FExternalAssetProductionCatalog::NamedAnimationBriefCount
             + FExternalAssetProductionCatalog::SystemAnimationBriefCount);
     TestEqual(TEXT("Fourteen cinematic-previs briefs derive only from resolved cutscene identities"),
-        Cinematic,
-        FExternalAssetProductionCatalog::ResolvedPresentationBriefCount);
+        Cinematic, FExternalAssetProductionCatalog::ResolvedPresentationBriefCount);
     TestEqual(TEXT("Forty grounded named dungeons have source-backed visual briefs"),
         DungeonLooks, FExternalAssetProductionCatalog::GroundedDungeonBriefCount);
     TestEqual(TEXT("Eight world regions have source-backed visual briefs"),
@@ -99,11 +105,13 @@ bool FDarkArisenExternalAssetProductionSpec::RunTest(const FString& Parameters)
         BossLooks, FExternalAssetProductionCatalog::ProviderReadyBossVisualBriefCount);
     TestEqual(TEXT("Five source-ready La Liberacion deck/interior visuals have bounded reference briefs"),
         ShipLooks, FExternalAssetProductionCatalog::ProviderReadyShipVisualBriefCount);
+    TestEqual(TEXT("Nineteen individually grounded fauna visuals have bounded reference briefs"),
+        FaunaLooks, FExternalAssetProductionCatalog::ProviderReadyFaunaVisualBriefCount);
     TestEqual(TEXT("Nine State Treasures plus the grounded unique reward remain individually briefed"),
         Props,
         FExternalAssetProductionCatalog::StateTreasureBriefCount
             + FExternalAssetProductionCatalog::UniqueRewardBriefCount);
-    TestEqual(TEXT("Concept-reference coverage includes dungeons, regions, Highmoore anchors, characters, boss visuals, ship spaces and grounded props"),
+    TestEqual(TEXT("Concept-reference coverage includes all current provider-ready visual families"),
         Concepts,
         FExternalAssetProductionCatalog::GroundedDungeonBriefCount
             + FExternalAssetProductionCatalog::WorldRegionBriefCount
@@ -111,6 +119,7 @@ bool FDarkArisenExternalAssetProductionSpec::RunTest(const FString& Parameters)
             + FExternalAssetProductionCatalog::ProviderReadyCharacterBriefCount
             + FExternalAssetProductionCatalog::ProviderReadyBossVisualBriefCount
             + FExternalAssetProductionCatalog::ProviderReadyShipVisualBriefCount
+            + FExternalAssetProductionCatalog::ProviderReadyFaunaVisualBriefCount
             + FExternalAssetProductionCatalog::StateTreasureBriefCount
             + FExternalAssetProductionCatalog::UniqueRewardBriefCount);
 
