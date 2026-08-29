@@ -23,7 +23,7 @@ struct FCharacterVisualProductionBrief
     FString PerformanceRead;
     FString ExplicitUnknowns;
 
-    /** True only when the source has enough visual facts for a bounded provider reference prompt. */
+    /** True only when current design authority has enough non-conflicting visual facts for a bounded provider reference prompt. */
     bool bProviderReferenceReady = false;
 
     /** External output has not been generated/reviewed merely because this source brief exists. */
@@ -43,8 +43,8 @@ class DARKARISEN_API FCharacterVisualProductionCatalog
 {
 public:
     static constexpr int32 MajorCharacterBriefCount = 9;
-    static constexpr int32 ProviderReadyCharacterCount = 8;
-    static constexpr int32 ExplicitlyBlockedCharacterCount = 1;
+    static constexpr int32 ProviderReadyCharacterCount = 6;
+    static constexpr int32 ExplicitlyBlockedCharacterCount = 3;
 
     static TArray<FCharacterVisualProductionBrief> BuildMajorCharacterBriefs();
     static TArray<FCharacterVisualProductionDesignGap> BuildDesignGaps();
