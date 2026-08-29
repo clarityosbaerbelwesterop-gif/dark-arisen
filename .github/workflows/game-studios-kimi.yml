@@ -10,6 +10,9 @@ on:
         default: dungeon-spatial-production
         options:
           - dungeon-spatial-production
+          - world-region-production
+          - mission-authorship-gap-review
+          - animation-coverage
 
 permissions:
   contents: write
@@ -19,8 +22,8 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  dungeon-studio:
-    name: Kimi K3 dungeon and level studio proposal
+  studio:
+    name: Kimi K3 bounded Game Studios proposal
     runs-on: [self-hosted, Windows, X64, ue5.5, dark-arisen]
     timeout-minutes: 120
 
@@ -43,18 +46,55 @@ jobs:
         shell: cmd
         run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" validate "--root=%GITHUB_WORKSPACE%"'
 
-      - name: Validate authored dungeon source contracts
+      - name: Validate dungeon source contracts
+        if: inputs.job == 'dungeon-spatial-production'
         shell: cmd
         run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" validate-dungeons "--root=%GITHUB_WORKSPACE%"'
 
-      - name: Produce bounded Kimi K3 review proposal
+      - name: Validate world source contracts
+        if: inputs.job == 'world-region-production'
+        shell: cmd
+        run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" validate-world "--root=%GITHUB_WORKSPACE%"'
+
+      - name: Validate mission source contracts
+        if: inputs.job == 'mission-authorship-gap-review'
+        shell: cmd
+        run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" validate-missions "--root=%GITHUB_WORKSPACE%"'
+
+      - name: Validate presentation source contracts
+        if: inputs.job == 'animation-coverage'
+        shell: cmd
+        run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" validate-presentation "--root=%GITHUB_WORKSPACE%"'
+
+      - name: Produce dungeon spatial proposal
         if: inputs.job == 'dungeon-spatial-production'
         shell: cmd
         env:
           NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
         run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" studio-kimi "--root=%GITHUB_WORKSPACE%" "--task-file=Docs/AIJobs/dungeon-spatial-production.md" "--role-file=.claude/agents/level-designer.md" "--context-list=Docs/AIJobs/dungeon-spatial-production.context" "--output=Docs/AIProposals/kimi-dungeons-${{ github.run_id }}-${{ github.run_attempt }}.md" "--max-tokens=16384"'
 
-      - name: Commit proposal to isolated review branch
+      - name: Produce world-region proposal
+        if: inputs.job == 'world-region-production'
+        shell: cmd
+        env:
+          NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
+        run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" studio-kimi "--root=%GITHUB_WORKSPACE%" "--task-file=Docs/AIJobs/world-region-production.md" "--role-file=.claude/agents/world-builder.md" "--context-list=Docs/AIJobs/world-region-production.context" "--output=Docs/AIProposals/kimi-world-${{ github.run_id }}-${{ github.run_attempt }}.md" "--max-tokens=16384"'
+
+      - name: Produce mission authorship-gap review
+        if: inputs.job == 'mission-authorship-gap-review'
+        shell: cmd
+        env:
+          NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
+        run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" studio-kimi "--root=%GITHUB_WORKSPACE%" "--task-file=Docs/AIJobs/mission-authorship-gap-review.md" "--role-file=.claude/agents/producer.md" "--context-list=Docs/AIJobs/mission-authorship-gap-review.context" "--output=Docs/AIProposals/kimi-mission-review-${{ github.run_id }}-${{ github.run_attempt }}.md" "--max-tokens=16384"'
+
+      - name: Produce animation coverage proposal
+        if: inputs.job == 'animation-coverage'
+        shell: cmd
+        env:
+          NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
+        run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" studio-kimi "--root=%GITHUB_WORKSPACE%" "--task-file=Docs/AIJobs/animation-coverage.md" "--role-file=.claude/agents/technical-artist.md" "--context-list=Docs/AIJobs/animation-coverage.context" "--output=Docs/AIProposals/kimi-animation-${{ github.run_id }}-${{ github.run_attempt }}.md" "--max-tokens=16384"'
+
+      - name: Commit dungeon proposal to isolated review branch
         if: inputs.job == 'dungeon-spatial-production'
         shell: cmd
         run: >-
@@ -62,5 +102,38 @@ jobs:
           git config user.email "dark-arisen-kimi-studio@users.noreply.github.com" &&
           git checkout -b "ai/kimi-dungeons-${{ github.run_id }}-${{ github.run_attempt }}" &&
           git add "Docs/AIProposals/kimi-dungeons-${{ github.run_id }}-${{ github.run_attempt }}.md" &&
-          git commit -m "proposal(ai): Kimi K3 dungeon production review ${{ github.run_id }}.${{ github.run_attempt }}" &&
+          git commit -m "proposal(ai): Kimi K3 dungeon review ${{ github.run_id }}.${{ github.run_attempt }}" &&
+          git push origin HEAD
+
+      - name: Commit world proposal to isolated review branch
+        if: inputs.job == 'world-region-production'
+        shell: cmd
+        run: >-
+          git config user.name "dark-arisen-kimi-studio" &&
+          git config user.email "dark-arisen-kimi-studio@users.noreply.github.com" &&
+          git checkout -b "ai/kimi-world-${{ github.run_id }}-${{ github.run_attempt }}" &&
+          git add "Docs/AIProposals/kimi-world-${{ github.run_id }}-${{ github.run_attempt }}.md" &&
+          git commit -m "proposal(ai): Kimi K3 world review ${{ github.run_id }}.${{ github.run_attempt }}" &&
+          git push origin HEAD
+
+      - name: Commit mission review to isolated review branch
+        if: inputs.job == 'mission-authorship-gap-review'
+        shell: cmd
+        run: >-
+          git config user.name "dark-arisen-kimi-studio" &&
+          git config user.email "dark-arisen-kimi-studio@users.noreply.github.com" &&
+          git checkout -b "ai/kimi-missions-${{ github.run_id }}-${{ github.run_attempt }}" &&
+          git add "Docs/AIProposals/kimi-mission-review-${{ github.run_id }}-${{ github.run_attempt }}.md" &&
+          git commit -m "proposal(ai): Kimi K3 mission review ${{ github.run_id }}.${{ github.run_attempt }}" &&
+          git push origin HEAD
+
+      - name: Commit animation review to isolated review branch
+        if: inputs.job == 'animation-coverage'
+        shell: cmd
+        run: >-
+          git config user.name "dark-arisen-kimi-studio" &&
+          git config user.email "dark-arisen-kimi-studio@users.noreply.github.com" &&
+          git checkout -b "ai/kimi-animation-${{ github.run_id }}-${{ github.run_attempt }}" &&
+          git add "Docs/AIProposals/kimi-animation-${{ github.run_id }}-${{ github.run_attempt }}.md" &&
+          git commit -m "proposal(ai): Kimi K3 animation review ${{ github.run_id }}.${{ github.run_attempt }}" &&
           git push origin HEAD
