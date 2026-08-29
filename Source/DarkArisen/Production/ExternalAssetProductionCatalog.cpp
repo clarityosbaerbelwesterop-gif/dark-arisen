@@ -7,6 +7,7 @@
 #include "ContentScale/AuthoredDungeonProductionProfile.h"
 #include "ContentScale/AuthoredRewardCatalog.h"
 #include "Presentation/PresentationProductionCatalog.h"
+#include "Production/BossVisualProductionCatalog.h"
 #include "Production/CharacterVisualProductionCatalog.h"
 #include "World/AuthoredWorldRegionRegistry.h"
 #include "World/HighmooreWorldProductionCatalog.h"
@@ -172,11 +173,33 @@ TArray<FExternalAssetProductionBrief> FExternalAssetProductionCatalog::BuildHigg
             Character.GoverningSource,
             EExternalAssetMediaKind::ConceptReferenceImage,
             FString::Printf(
-                TEXT("Source-grounded character reference only. Physical facts: %s Wardrobe/objects: %s Performance read: %s Explicit unknowns: %s Unknowns must remain unknown; neutral/non-canonical treatment may be used only where needed to visualize already-authored physical facts."),
+                TEXT("Source-grounded character reference only. Physical facts: %s Wardrobe/objects: %s Performance read: %s Explicit unknowns: %s Unknowns must remain unknown and no provider output becomes canonical without review."),
                 *Character.PhysicalFacts,
                 *Character.WardrobeAndObjects,
                 *Character.PerformanceRead,
                 *Character.ExplicitUnknowns)));
+    }
+
+    for (const FBossVisualProductionBrief& Boss : FBossVisualProductionCatalog::BuildDeepDiveBossBriefs())
+    {
+        if (!Boss.bProviderReferenceReady)
+        {
+            continue;
+        }
+
+        Result.Add(HiggsfieldBrief(
+            BriefId(TEXT("external.higgsfield.boss-visual"), Boss.StableId),
+            Boss.StableId,
+            Boss.DisplayName,
+            Boss.GoverningSource,
+            EExternalAssetMediaKind::ConceptReferenceImage,
+            FString::Printf(
+                TEXT("Source-grounded boss/creature visual reference only; this does not select gameplay boss authority. Visual facts: %s Equipment/silhouette: %s Arena visual read: %s Performance read: %s Explicit unknowns: %s Do not infer missing canon or alter the authoritative Tier-1/dungeon/secret boss categories."),
+                *Boss.VisualFacts,
+                *Boss.EquipmentOrSilhouette,
+                *Boss.ArenaVisualRead,
+                *Boss.PerformanceRead,
+                *Boss.ExplicitUnknowns)));
     }
 
     for (const FAuthoredRewardBinding& Treasure : FAuthoredRewardCatalog::BuildStateTreasureSlots())
@@ -214,8 +237,13 @@ TArray<FExternalAssetProductionDesignGap> FExternalAssetProductionCatalog::Build
     return {
         {
             TEXT("design-gap.external-assets.approved-character-visual-references"),
-            TEXT("Source-backed character briefs can drive reference generation, but no generated face/costume becomes canonical until it is reviewed and explicitly approved. Characters whose physical sheet is insufficient remain provider-blocked."),
-            TEXT("Docs/DesignAuthority.md; docs/design/style_bible.md; Production/CharacterVisualProductionCatalog")
+            TEXT("Source-backed character briefs can drive reference generation, but no generated face/costume becomes canonical until it is reviewed and explicitly approved. Elowen and canon-conflicted Ethan/Draven remain provider-blocked."),
+            TEXT("Docs/DesignAuthority.md; Production/CharacterVisualProductionCatalog")
+        },
+        {
+            TEXT("design-gap.external-assets.boss-final-act-authority"),
+            TEXT("Legacy Ethan/Draven boss visuals are excluded because DesignAuthority requires a Phase 11 rewrite or explicit restoration of the older branch. Other deep-dive boss visuals remain reference-only and do not override the authoritative category registers."),
+            TEXT("Docs/DesignAuthority.md; Docs/M7_TIER1_BOSS_REGISTER.md; Production/BossVisualProductionCatalog")
         },
         {
             TEXT("design-gap.external-assets.provider-3d-path"),
@@ -259,6 +287,7 @@ bool FExternalAssetProductionCatalog::Validate(TArray<FString>& OutErrors)
     int32 RegionCount = 0;
     int32 HighmooreWorldCount = 0;
     int32 CharacterCount = 0;
+    int32 BossVisualCount = 0;
     int32 PropCount = 0;
     TSet<FName> SeenBriefIds;
 
@@ -303,15 +332,20 @@ bool FExternalAssetProductionCatalog::Validate(TArray<FString>& OutErrors)
         else if (Id.StartsWith(TEXT("external.higgsfield.region."))) ++RegionCount;
         else if (Id.StartsWith(TEXT("external.higgsfield.world."))) ++HighmooreWorldCount;
         else if (Id.StartsWith(TEXT("external.higgsfield.character."))) ++CharacterCount;
+        else if (Id.StartsWith(TEXT("external.higgsfield.boss-visual."))) ++BossVisualCount;
         else if (Id.StartsWith(TEXT("external.higgsfield.prop."))) ++PropCount;
         else OutErrors.Add(FString::Printf(TEXT("Unknown external brief family: %s"), *Id));
 
         const FString SourceId = Brief.SourceRequirementId.ToString();
         if (SourceId.StartsWith(TEXT("turn-gap."))
             || SourceId.StartsWith(TEXT("standing-gap."))
-            || SourceId.Contains(TEXT("minor-slot")))
+            || SourceId.Contains(TEXT("minor-slot"))
+            || SourceId == TEXT("character.ethan-harlow")
+            || SourceId == TEXT("character.draven-voss")
+            || SourceId == TEXT("boss-visual.ethan-harlow")
+            || SourceId == TEXT("boss-visual.draven-voss"))
         {
-            OutErrors.Add(FString::Printf(TEXT("Unauthored mission/minor-dungeon identity leaked into provider briefs: %s"), *SourceId));
+            OutErrors.Add(FString::Printf(TEXT("Unauthored or authority-blocked identity leaked into provider briefs: %s"), *SourceId));
         }
     }
 
@@ -340,7 +374,12 @@ bool FExternalAssetProductionCatalog::Validate(TArray<FString>& OutErrors)
     if (CharacterCount != ProviderReadyCharacterBriefCount
         || ProviderReadyCharacterBriefCount != FCharacterVisualProductionCatalog::ProviderReadyCharacterCount)
     {
-        OutErrors.Add(TEXT("External character-reference coverage must include exactly the source-ready major-character briefs and exclude blocked identities."));
+        OutErrors.Add(TEXT("External character-reference coverage must include exactly current-authority provider-ready character briefs."));
+    }
+    if (BossVisualCount != ProviderReadyBossVisualBriefCount
+        || ProviderReadyBossVisualBriefCount != FBossVisualProductionCatalog::ProviderReadyBossBriefCount)
+    {
+        OutErrors.Add(TEXT("External boss-reference coverage must include exactly current-authority provider-ready deep-dive visuals and exclude legacy Ethan/Draven."));
     }
     if (PropCount != StateTreasureBriefCount + UniqueRewardBriefCount)
     {
@@ -364,9 +403,9 @@ bool FExternalAssetProductionCatalog::Validate(TArray<FString>& OutErrors)
         OutErrors.Add(TEXT("External provider authority may not create canon, self-promote media or purchase provider access."));
     }
 
-    if (BuildDesignGaps().Num() != 5)
+    if (BuildDesignGaps().Num() != 6)
     {
-        OutErrors.Add(TEXT("External asset production must retain all five character/3D/import/runtime/rights design gaps."));
+        OutErrors.Add(TEXT("External asset production must retain character/final-act-boss/3D/import/runtime/rights design gaps."));
     }
 
     return OutErrors.IsEmpty();
