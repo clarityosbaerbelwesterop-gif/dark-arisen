@@ -293,7 +293,9 @@ void ValidateM7M8Contracts(const FString& Root, TArray<FString>& Errors)
         TEXT("EM7StandingMissionType::Salvage, 14"),
         TEXT("generated/radiant content is forbidden"),
         TEXT("only Crystal Caves may exceed 90 minutes"),
-        TEXT("protected playable moment may never be Sequencer-owned")}, Errors);
+        TEXT("protected playable moment may never be Sequencer-owned"),
+        TEXT("CanonicalAuthoredCutscenes"),
+        TEXT("authored cutscene register is missing canonical Section-3 entry")}, Errors);
 
     RequireFragments(Root, TEXT("Source/DarkArisen/ContentScale/StandingMissionPoolComponent.h"), {
         TEXT("TArray<FStandingMissionVariantDefinition> AuthoredVariants"),
@@ -332,6 +334,7 @@ void ValidateM7M8Contracts(const FString& Root, TArray<FString>& Errors)
         TEXT("DarkArisen.M7.ContentManifestAndProtectedMoments"),
         TEXT("Any dungeon marker fails closed"),
         TEXT("A protected playable moment cannot become a cutscene"),
+        TEXT("A canonical Section-3 cutscene cannot be substituted while the count still reads nineteen"),
         TEXT("Radiant/generated M7 content fails closed"),
         TEXT("DarkArisen.M7.FiniteStandingPool"),
         TEXT("Sixth run pays exactly 60 percent"),

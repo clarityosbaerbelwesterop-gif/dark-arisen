@@ -30,6 +30,40 @@ void RequireSource(const FString& Source, const FName StableId, TArray<FString>&
     }
 }
 
+/**
+ * The authored cutscenes `cutscene catalog.md` Section 3 names individually.
+ *
+ * Section 3 locks nineteen, but names only these fourteen. Entries #15-#19 are deferred to
+ * "bosses/crimson_armada.md and the main-story documents", and `bosses/crimson_armada.md` does
+ * not exist in this repository. The five final-act sequences are therefore a genuine authoring
+ * gap, not an omission here, and they are deliberately not invented.
+ *
+ * DESIGN-GAP: cutscenes #15-#19 have no governing document. Until one exists, the manifest is
+ * pinned by identity for these fourteen and by count alone for the remaining five.
+ */
+const TSet<FName>& CanonicalAuthoredCutscenes()
+{
+    static const TSet<FName> Ids = {
+        // Section 3.1 — Chapters 1-3, the opening.
+        TEXT("cutscene.opening.the-brother"),
+        TEXT("cutscene.opening.la-liberacion"),
+        // Section 3.2 — Chapters 4-6, the archipelago.
+        TEXT("cutscene.archipelago.first-letter"),
+        TEXT("cutscene.archipelago.the-grove"),
+        TEXT("cutscene.archipelago.dream-fight-entry"),
+        TEXT("cutscene.archipelago.alejandro-strain"),
+        // Section 3.3 — Chapters 6-8, Highmoore.
+        TEXT("cutscene.highmoore.emergence"),
+        TEXT("cutscene.highmoore.voice-from-behind"),
+        TEXT("cutscene.highmoore.ejection"),
+        TEXT("cutscene.highmoore.false-letter"),
+        TEXT("cutscene.highmoore.arrow"),
+        TEXT("cutscene.highmoore.real-letter"),
+        TEXT("cutscene.highmoore.she-wrote-two"),
+        TEXT("cutscene.highmoore.wizards-question")};
+    return Ids;
+}
+
 const TSet<FName>& CanonicalProtectedPlayableMoments()
 {
     static const TSet<FName> Ids = {
@@ -303,6 +337,7 @@ bool UContentScaleManifestDataAsset::ValidateManifest(TArray<FString>& OutErrors
 
     TSet<FName> PresentationIds;
     TSet<FName> ProtectedIds;
+    TSet<FName> CutsceneIds;
     int32 CutsceneCount = 0;
     int32 ProtectedCount = 0;
     for (const FPresentationMomentManifestEntry& Entry : PresentationMoments)
@@ -316,6 +351,7 @@ bool UContentScaleManifestDataAsset::ValidateManifest(TArray<FString>& OutErrors
         if (Entry.bSequencerOwnedCutscene)
         {
             ++CutsceneCount;
+            CutsceneIds.Add(Entry.StableId);
         }
         if (Entry.bProtectedPlayableMoment)
         {
@@ -331,6 +367,17 @@ bool UContentScaleManifestDataAsset::ValidateManifest(TArray<FString>& OutErrors
     {
         OutErrors.Add(FString::Printf(TEXT("presentation manifest requires exactly 19 cutscenes and 22 protected playable moments; found %d/%d"), CutsceneCount, ProtectedCount));
     }
+    const TSet<FName>& CanonicalCutscenes = CanonicalAuthoredCutscenes();
+    for (const FName Canonical : CanonicalCutscenes)
+    {
+        if (!CutsceneIds.Contains(Canonical))
+        {
+            OutErrors.Add(FString::Printf(
+                TEXT("authored cutscene register is missing canonical Section-3 entry: %s"),
+                *Canonical.ToString()));
+        }
+    }
+
     const TSet<FName>& CanonicalProtected = CanonicalProtectedPlayableMoments();
     if (ProtectedIds.Num() != CanonicalProtected.Num())
     {

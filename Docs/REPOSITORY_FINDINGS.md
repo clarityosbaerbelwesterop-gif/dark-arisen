@@ -77,8 +77,8 @@ But the code models content that does not exist:
 | Turns | 132 | **3** |
 | Standing mission variants | 147 | **1** |
 | Tier-1 bosses | 9 (all named with stable IDs) | **1 with a class** |
-| Cutscenes | 19 | 0 |
-| Protected playable moments | 22 (all enumerated by ID) | 0 |
+| Cutscenes | 19 | **14 pinned by identity**; #15-#19 have no governing document |
+| Protected playable moments | 22 (all enumerated by ID) | 22 pinned by identity |
 | `.uasset` / `.umap` / any asset | — | **0** |
 
 `UContentScaleManifestDataAsset` can *verify* every one of those counts. No populated manifest instance exists; the only place one is ever built is a test fixture. The forty-person Las Raíces roster is the sole genuinely authored content in the repository — and it is reachable only through `ARexaSettlementDirector`, which nothing places.
