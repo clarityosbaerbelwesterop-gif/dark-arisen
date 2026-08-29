@@ -56,8 +56,12 @@ namespace DarkArisen::DesignLaws
 
     /**
      * Law 9 mirrors of the M4 catalog shape. UProgressionEconomyComponent owns the runtime
-     * enforcement; these exist so the same numbers also fail the compile, which matters because
-     * every other check in this repository now needs a licensed engine before it can run.
+     * enforcement; these exist so the same numbers also fail the compile.
+     *
+     * These asserts are not engine-independent — this header includes CoreMinimal.h and there is
+     * no non-UE build path in the repository — but they fire during the module compile, which is
+     * strictly earlier than the automation tests and the DarkArisenOps validator. A drift between
+     * these numbers and the component's constants breaks the build rather than a later gate.
      */
     inline constexpr int32 CraftNodeCount = 68;
     inline constexpr int32 CraftNodeTotalMarkCost = 141;

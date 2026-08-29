@@ -3,7 +3,7 @@
 **Written:** 2026-08-28  
 **Purpose:** remove every unknown from the one blocker that gates M2, M3, M4 and Alpha simultaneously, so the remaining question is a single yes/no for Flo.
 
-The repository has no self-hosted runner carrying the labels the workflow requires, so both UE 5.5 jobs sit `queued` forever. Nothing else on the ladder can move until that changes. No amount of additional source advances any milestone.
+The repository has no self-hosted runner carrying the labels the workflow requires. Until recently that meant both UE 5.5 jobs sat `queued` until they expired; since the `DarkArisenOps` migration it has been worse, because the workflow files stopped parsing and GitHub created no jobs at all — see §6. Either way, nothing on the ladder can move. No amount of additional source advances any milestone.
 
 ## 1. What the workflow actually demands
 
@@ -64,7 +64,7 @@ Royalty terms are unchanged by any of this: games are free to use with a 5% roya
 | Disk total | **500 GB NVMe minimum, 1 TB recommended** | 500 GB min, 700 GB–1 TB if source-building |
 | GPU | **none** | **none** |
 | OS | Windows Server 2022/2025 or Windows 10/11 x64 | **Ubuntu 24.04 LTS** — it ships clang 18.1.3, which is what the preflight demands |
-| Also required | **PowerShell 7 (`pwsh`)**, Git, Git LFS, real Python 3, VS 2022 17.8+ with MSVC ≥14.38 and a Windows SDK, .NET 8 | Git, Git LFS, Python 3, `clang` 18 as the unversioned name, `zip` |
+| Also required | Git, Git LFS, VS 2022 17.8+ with MSVC ≥14.38 and a Windows SDK, .NET 8 | Git, Git LFS, `clang` 18 as the unversioned name, `zip` |
 
 **GitHub-hosted runners are structurally impossible here**, independent of the label constraint: they provide 14 GB of disk. The engine alone is 3–9× that.
 
@@ -74,7 +74,7 @@ Note the preflight measures free space on the drive of the *project root*. Putti
 
 Repository → Settings → Actions → Runners → New self-hosted runner. The registration token is valid about one hour and is a secret — never commit, echo, screenshot, or paste it into an issue or PR.
 
-**Windows** (runner v2.337.0), after installing `pwsh`, VS 2022 with the C++ workload, real Python 3, Git and Git LFS, and setting `UE55_ROOT` machine-scoped:
+**Windows** (runner v2.337.0), after installing VS 2022 with the C++ workload, Git and Git LFS, and setting `UE55_ROOT` machine-scoped. PowerShell 7 and Python are **no longer required** — the migration to `DarkArisenOps` removed every script dependency:
 
 ```powershell
 ./config.cmd --url https://github.com/clarityosbaerbelwesterop-gif/dark-arisen `
@@ -131,7 +131,7 @@ Self-hosted runner minutes are **free today**. GitHub proposed a $0.002/min char
 
 In (c1) the standing **EBS cost dominates**: keeping the engine on live volumes is ~$76/month at zero builds. Parking it as snapshots drops that to ~$22 per 400 GiB at the price of a restore step and a cold DDC every run.
 
-**Recommendation: (a).** It is the only option that consumes none of Flo's cost-approval budget, it is the one the README already anticipates, and it is the fastest path to clearing the queue before more runs expire. Escalate to (c1) only if no suitable hardware exists.
+**Recommendation: (a).** It is the only option that consumes none of Flo's cost-approval budget, it needs no new infrastructure and no new secret surface, and it is the fastest path to clearing the queue before more runs expire. Escalate to (c1) only if no suitable hardware exists.
 
 ### The streaming host is not the build runner
 
