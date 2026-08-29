@@ -113,11 +113,13 @@ int32 ValidateWorldContentCommand(const FParsedArgs& Args)
         TEXT("LoadedRegion.bSourceRegistryKnown")}, Errors);
 
     RequireFragments(Root, TEXT("Source/DarkArisen/World/PopulationProductionCatalog.h"), {
-        TEXT("RequiredRegionalProfiles = 7"),
+        TEXT("RequiredRegionalProfiles = 8"),
+        TEXT("HighmooreClassCount = 4"),
         TEXT("MinimumAmbientLinesPerMajorRegion = 200"),
         TEXT("CrowdReturnMinimumMinutes = 2"),
         TEXT("CrowdReturnMaximumMinutes = 5"),
-        TEXT("AllowsRandomAuthoredPopulationGeneration() { return false; }")}, Errors);
+        TEXT("AllowsRandomAuthoredPopulationGeneration() { return false; }"),
+        TEXT("AllowsHighmooreReputationMeter() { return false; }")}, Errors);
 
     RequireFragments(Root, TEXT("Source/DarkArisen/World/PopulationProductionCatalog.cpp"), {
         TEXT("Major Imperial City"), TEXT("80, 150, 20, 50"),
@@ -126,17 +128,23 @@ int32 ValidateWorldContentCommand(const FParsedArgs& Args)
         TEXT("population.ashenmoor"),
         TEXT("population.quiet-coast"),
         TEXT("population.pirate-havens"),
+        TEXT("population.highmoore"),
+        TEXT("bDemographicPercentagesUnspecified = true"),
         TEXT("population.region-06"),
-        TEXT("design-gap.population.highmoore"),
+        TEXT("design-gap.population.highmoore-percentages"),
         TEXT("design-gap.population.runtime-assets")}, Errors);
 
     RequireFragments(Root, TEXT("Source/DarkArisen/World/FaunaProductionCatalog.h"), {
         TEXT("LandAnimalSpeciesCount = 42"),
         TEXT("BirdSpeciesCount = 52"),
         TEXT("SeaSpeciesCount = 65"),
+        TEXT("SeaLegendaryWithinSpeciesCount = 2"),
         TEXT("SmallCreatureTypeCount = 45"),
         TEXT("PlantSpeciesMinimum = 60"),
-        TEXT("AllowsRandomEncounterGeneration() { return false; }")}, Errors);
+        TEXT("HighmooreMvpCoreSpeciesCount = 5"),
+        TEXT("RequiredRegionalEcologyProfiles = 8"),
+        TEXT("AllowsRandomEncounterGeneration() { return false; }"),
+        TEXT("AllowsHorseIntoStoppedLightShaft() { return false; }")}, Errors);
 
     RequireFragments(Root, TEXT("Source/DarkArisen/World/FaunaProductionCatalog.cpp"), {
         TEXT("fauna.region.rexa-moran"),
@@ -145,11 +153,14 @@ int32 ValidateWorldContentCommand(const FParsedArgs& Args)
         TEXT("fauna.region.pale-isle"),
         TEXT("fauna.region.quiet-coast"),
         TEXT("fauna.region.at-sea"),
+        TEXT("fauna.region.highmoore"),
         TEXT("fauna.region.06"),
+        TEXT("SeaLegendaryWithinSpeciesCount"),
         TEXT("fauna.patriarch"),
         TEXT("fauna.keeper-below"),
         TEXT("fauna.canopy-jaguar"),
         TEXT("design-gap.fauna.identity-import"),
+        TEXT("design-gap.fauna.highmoore-complete-roster"),
         TEXT("design-gap.fauna.runtime-assets")}, Errors);
 
     RequireFragments(Root, TEXT("Source/DarkArisen/Tests/AuthoredWorldRegionRegistrySpec.cpp"), {
@@ -157,10 +168,13 @@ int32 ValidateWorldContentCommand(const FParsedArgs& Args)
         TEXT("Source does not falsely claim reviewed region .umap exists")}, Errors);
 
     RequireFragments(Root, TEXT("Source/DarkArisen/Tests/PopulationFaunaProductionSpec.cpp"), {
-        TEXT("Seven source-backed population profiles are registered"),
+        TEXT("Eight source-backed population profiles are registered"),
+        TEXT("Highmoore demographic percentages remain explicitly unspecified"),
         TEXT("Population production requires engine-level child protection"),
         TEXT("Land animal corpus remains 42 species"),
         TEXT("Sea corpus remains 65 species"),
+        TEXT("Highmoore MVP ecology keeps five core species"),
+        TEXT("Horse never enters a stopped Highmoore light shaft"),
         TEXT("Fauna never gains random encounter generation"),
         TEXT("The Patriarch remains a named ecological anchor")}, Errors);
 
