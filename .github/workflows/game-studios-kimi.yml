@@ -39,6 +39,14 @@ jobs:
         shell: cmd
         run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" runner-check "--root=%GITHUB_WORKSPACE%" "--engine=%UE55_ROOT%"'
 
+      - name: Validate repository source contracts
+        shell: cmd
+        run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" validate "--root=%GITHUB_WORKSPACE%"'
+
+      - name: Validate authored dungeon source contracts
+        shell: cmd
+        run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" validate-dungeons "--root=%GITHUB_WORKSPACE%"'
+
       - name: Produce bounded Kimi K3 review proposal
         if: inputs.job == 'dungeon-spatial-production'
         shell: cmd
