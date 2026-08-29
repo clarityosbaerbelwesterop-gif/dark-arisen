@@ -9,6 +9,7 @@
 #include "Presentation/PresentationProductionCatalog.h"
 #include "Production/BossVisualProductionCatalog.h"
 #include "Production/CharacterVisualProductionCatalog.h"
+#include "Production/ShipVisualProductionCatalog.h"
 #include "World/AuthoredWorldRegionRegistry.h"
 #include "World/HighmooreWorldProductionCatalog.h"
 
@@ -202,6 +203,26 @@ TArray<FExternalAssetProductionBrief> FExternalAssetProductionCatalog::BuildHigg
                 *Boss.ExplicitUnknowns)));
     }
 
+    for (const FShipVisualProductionBrief& Ship : FShipVisualProductionCatalog::BuildLaLiberacionBriefs())
+    {
+        if (!Ship.bProviderReferenceReady)
+        {
+            continue;
+        }
+
+        Result.Add(HiggsfieldBrief(
+            BriefId(TEXT("external.higgsfield.ship"), Ship.StableId),
+            Ship.StableId,
+            Ship.DisplayName,
+            Ship.GoverningSource,
+            EExternalAssetMediaKind::ConceptReferenceImage,
+            FString::Printf(
+                TEXT("La Liberacion source-backed deck/interior reference only. Authored visual facts: %s Functional objects/zones: %s Anti-invention boundary: %s The final exterior silhouette remains blocked and no provider image may select hull class, dimensions, mast/sail plan, colors or figurehead canon."),
+                *Ship.AuthoredVisualFacts,
+                *Ship.FunctionalObjects,
+                *Ship.AntiInventionBoundary)));
+    }
+
     for (const FAuthoredRewardBinding& Treasure : FAuthoredRewardCatalog::BuildStateTreasureSlots())
     {
         Result.Add(HiggsfieldBrief(
@@ -288,6 +309,7 @@ bool FExternalAssetProductionCatalog::Validate(TArray<FString>& OutErrors)
     int32 HighmooreWorldCount = 0;
     int32 CharacterCount = 0;
     int32 BossVisualCount = 0;
+    int32 ShipVisualCount = 0;
     int32 PropCount = 0;
     TSet<FName> SeenBriefIds;
 
@@ -333,6 +355,7 @@ bool FExternalAssetProductionCatalog::Validate(TArray<FString>& OutErrors)
         else if (Id.StartsWith(TEXT("external.higgsfield.world."))) ++HighmooreWorldCount;
         else if (Id.StartsWith(TEXT("external.higgsfield.character."))) ++CharacterCount;
         else if (Id.StartsWith(TEXT("external.higgsfield.boss-visual."))) ++BossVisualCount;
+        else if (Id.StartsWith(TEXT("external.higgsfield.ship."))) ++ShipVisualCount;
         else if (Id.StartsWith(TEXT("external.higgsfield.prop."))) ++PropCount;
         else OutErrors.Add(FString::Printf(TEXT("Unknown external brief family: %s"), *Id));
 
@@ -340,10 +363,12 @@ bool FExternalAssetProductionCatalog::Validate(TArray<FString>& OutErrors)
         if (SourceId.StartsWith(TEXT("turn-gap."))
             || SourceId.StartsWith(TEXT("standing-gap."))
             || SourceId.Contains(TEXT("minor-slot"))
+            || SourceId == TEXT("character.elowen-arion")
             || SourceId == TEXT("character.ethan-harlow")
             || SourceId == TEXT("character.draven-voss")
             || SourceId == TEXT("boss-visual.ethan-harlow")
-            || SourceId == TEXT("boss-visual.draven-voss"))
+            || SourceId == TEXT("boss-visual.draven-voss")
+            || SourceId == TEXT("ship-visual.la-liberacion.exterior"))
         {
             OutErrors.Add(FString::Printf(TEXT("Unauthored or authority-blocked identity leaked into provider briefs: %s"), *SourceId));
         }
@@ -380,6 +405,11 @@ bool FExternalAssetProductionCatalog::Validate(TArray<FString>& OutErrors)
         || ProviderReadyBossVisualBriefCount != FBossVisualProductionCatalog::ProviderReadyBossBriefCount)
     {
         OutErrors.Add(TEXT("External boss-reference coverage must include exactly current-authority provider-ready deep-dive visuals and exclude legacy Ethan/Draven."));
+    }
+    if (ShipVisualCount != ProviderReadyShipVisualBriefCount
+        || ProviderReadyShipVisualBriefCount != FShipVisualProductionCatalog::ProviderReadyBriefCount)
+    {
+        OutErrors.Add(TEXT("External ship-reference coverage must include exactly the five source-ready La Liberacion deck/interior briefs and exclude unresolved exterior silhouette canon."));
     }
     if (PropCount != StateTreasureBriefCount + UniqueRewardBriefCount)
     {
