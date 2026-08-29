@@ -10,6 +10,7 @@ FFaunaCorpusContract Corpus(
     const int32 BaseCount,
     const int32 LegendaryCount,
     const bool bMinimum,
+    const bool bLegendaryIncludedInBase,
     const TCHAR* Source)
 {
     FFaunaCorpusContract Result;
@@ -18,6 +19,7 @@ FFaunaCorpusContract Corpus(
     Result.RequiredBaseIdentityCount = BaseCount;
     Result.RequiredLegendaryCount = LegendaryCount;
     Result.bCountIsMinimum = bMinimum;
+    Result.bLegendaryCountIncludedInBase = bLegendaryIncludedInBase;
     Result.GoverningSource = Source;
     return Result;
 }
@@ -59,19 +61,19 @@ TArray<FFaunaCorpusContract> FFaunaProductionCatalog::BuildCorpusContracts()
 {
     return {
         Corpus(EFaunaCorpusFamily::LandAnimals, TEXT("Land Animals"),
-            LandAnimalSpeciesCount, LandLegendaryVariantCount, false,
+            LandAnimalSpeciesCount, LandLegendaryVariantCount, false, false,
             TEXT("docs/design/fauna/land_animals.md Section 1")),
         Corpus(EFaunaCorpusFamily::Birds, TEXT("Birds"),
-            BirdSpeciesCount, BirdLegendaryCount, false,
+            BirdSpeciesCount, BirdLegendaryCount, false, false,
             TEXT("docs/design/fauna/birds.md Section 1")),
         Corpus(EFaunaCorpusFamily::SeaAnimals, TEXT("Sea Animals"),
-            SeaSpeciesCount, 0, false,
-            TEXT("docs/design/fauna/sea_animals.md Section 1")),
+            SeaSpeciesCount, SeaLegendaryWithinSpeciesCount, false, true,
+            TEXT("docs/design/fauna/sea_animals.md Section 1 — 65 total includes one legendary whale and one legendary shark")),
         Corpus(EFaunaCorpusFamily::SmallCreatures, TEXT("Insects & Small Creatures"),
-            SmallCreatureTypeCount, SmallCreatureLegendaryCount, false,
+            SmallCreatureTypeCount, SmallCreatureLegendaryCount, false, false,
             TEXT("docs/design/fauna/insects_and_small_creatures.md Section 1")),
         Corpus(EFaunaCorpusFamily::PlantsAndHerbs, TEXT("Plants & Herbs"),
-            PlantSpeciesMinimum, PlantLegendaryCount, true,
+            PlantSpeciesMinimum, PlantLegendaryCount, true, false,
             TEXT("docs/design/fauna/plants_and_herbs.md Section 1"))
     };
 }
@@ -112,6 +114,12 @@ TArray<FRegionalFaunaIdentity> FFaunaProductionCatalog::BuildRegionalIdentities(
             TEXT("Long ocean passages use sparse seabird presence, including the lonely albatross motif, rather than constant crowd noise."),
             TEXT("Open-ocean large species and deep-water monster-tier creatures belong to authored waters/weather/depth contexts, never arbitrary encounter rolls.")),
         Region(
+            TEXT("fauna.region.highmoore"), TEXT("Highmoore"),
+            TEXT("highmoore fauna.md; highmoore region.md Sections 2.3 and 6.1"),
+            TEXT("Sparse moorland sound: grouse flushes are deliberate sudden punctuation; open distance and the stopped-shaft absence are as important as animal calls."),
+            TEXT("Five ecological zones remain distinct. MVP production must include grouse, hare, red deer, fox and fell wolf; hunting rights are political, horses may bolt from wolves, and nothing lives on the stopped-light bare ground."),
+            true),
+        Region(
             TEXT("fauna.region.06"), TEXT("Region 06"),
             TEXT("docs/design/fauna/birds.md Section 2.1; land_animals.md Section 1; sea_animals.md Section 1"),
             TEXT("Calls are wrong or absent: unknown song-language and silence where birds should be are part of the horror."),
@@ -147,9 +155,9 @@ TArray<FFaunaProductionDesignGap> FFaunaProductionCatalog::BuildDesignGaps()
             TEXT("docs/design/fauna/land_animals.md; birds.md; sea_animals.md; insects_and_small_creatures.md; plants_and_herbs.md")
         },
         {
-            TEXT("design-gap.fauna.highmoore"),
-            TEXT("Highmoore is a later authored landmass and is not part of the six-region Phase-4 fauna corpus summary. Its horse/wildlife production must use Highmoore-specific sources instead of being silently folded into these counts."),
-            TEXT("highmoore overview.md; mounted travel.md; docs/design/fauna Phase-4 sources")
+            TEXT("design-gap.fauna.highmoore-complete-roster"),
+            TEXT("Highmoore's later fauna master defines its five zones, MVP species and Full Vision interactions but does not publish a closed numeric species roster comparable to the Phase-4 archipelago summary. Do not invent a total."),
+            TEXT("highmoore fauna.md Sections 1, 4, 5 and 9")
         },
         {
             TEXT("design-gap.fauna.runtime-assets"),
@@ -169,8 +177,6 @@ bool FFaunaProductionCatalog::Validate(TArray<FString>& OutErrors)
         OutErrors.Add(TEXT("Fauna/flora production requires exactly five corpus families."));
     }
 
-    // Use the enum's byte representation as the set key so validation does not depend on an
-    // engine-version-specific GetTypeHash overload for a plain enum class.
     TSet<uint8> Families;
     for (const FFaunaCorpusContract& CorpusEntry : Corpora)
     {
@@ -187,19 +193,29 @@ bool FFaunaProductionCatalog::Validate(TArray<FString>& OutErrors)
         Families.Add(FamilyKey);
     }
 
+    const FFaunaCorpusContract* Sea = Corpora.FindByPredicate([](const FFaunaCorpusContract& Entry)
+    {
+        return Entry.Family == EFaunaCorpusFamily::SeaAnimals;
+    });
+    if (!Sea || Sea->RequiredLegendaryCount != SeaLegendaryWithinSpeciesCount || !Sea->bLegendaryCountIncludedInBase)
+    {
+        OutErrors.Add(TEXT("Sea corpus must preserve the two legendary identities inside the authored 65-species total."));
+    }
+
     if (LandAnimalSpeciesCount != 42 || LandLegendaryVariantCount != 6
         || BirdSpeciesCount != 52 || BirdLegendaryCount != 4
-        || SeaSpeciesCount != 65 || SmallCreatureTypeCount != 45
-        || SmallCreatureLegendaryCount != 3 || PlantSpeciesMinimum != 60
-        || PlantLegendaryCount != 4)
+        || SeaSpeciesCount != 65 || SeaLegendaryWithinSpeciesCount != 2
+        || SmallCreatureTypeCount != 45 || SmallCreatureLegendaryCount != 3
+        || PlantSpeciesMinimum != 60 || PlantLegendaryCount != 4
+        || HighmooreMvpCoreSpeciesCount != 5)
     {
-        OutErrors.Add(TEXT("Fauna/flora corpus counts drifted from the Phase-4 source summaries."));
+        OutErrors.Add(TEXT("Fauna/flora corpus counts drifted from the Phase-4 / Highmoore source summaries."));
     }
 
     const TArray<FRegionalFaunaIdentity> Regional = BuildRegionalIdentities();
-    if (Regional.Num() != 7)
+    if (Regional.Num() != RequiredRegionalEcologyProfiles)
     {
-        OutErrors.Add(TEXT("Fauna regional production must preserve the seven source-backed archipelago/open-sea identities."));
+        OutErrors.Add(FString::Printf(TEXT("Fauna regional production requires exactly %d source-backed ecology profiles; found %d."), RequiredRegionalEcologyProfiles, Regional.Num()));
     }
     TSet<FName> RegionalIds;
     for (const FRegionalFaunaIdentity& Entry : Regional)
@@ -214,6 +230,10 @@ bool FFaunaProductionCatalog::Validate(TArray<FString>& OutErrors)
             OutErrors.Add(FString::Printf(TEXT("Duplicate regional fauna identity: %s"), *Entry.StableId.ToString()));
         }
         RegionalIds.Add(Entry.StableId);
+    }
+    if (!RegionalIds.Contains(TEXT("fauna.region.highmoore")))
+    {
+        OutErrors.Add(TEXT("Highmoore's later narrow fauna authority must be represented separately from the Phase-4 archipelago counts."));
     }
 
     TSet<FName> AnchorIds;
@@ -235,9 +255,9 @@ bool FFaunaProductionCatalog::Validate(TArray<FString>& OutErrors)
         }
     }
 
-    if (AllowsRandomEncounterGeneration() || AllowsGenericSpawnPointSubstitution())
+    if (AllowsRandomEncounterGeneration() || AllowsGenericSpawnPointSubstitution() || AllowsHorseIntoStoppedLightShaft())
     {
-        OutErrors.Add(TEXT("Fauna production may not replace authored ecology with random encounters or generic spawn-point substitution."));
+        OutErrors.Add(TEXT("Fauna production may not replace authored ecology with random/generic encounters or allow the Highmoore horse into a stopped light shaft."));
     }
     if (!RequiresCulturalConsequenceWhereAuthored() || !RequiresEcologicalPersistenceWhereAuthored())
     {
