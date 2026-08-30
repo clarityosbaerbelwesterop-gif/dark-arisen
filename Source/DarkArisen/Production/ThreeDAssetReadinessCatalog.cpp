@@ -9,6 +9,7 @@
 #include "Production/FaunaVisualProductionCatalog.h"
 #include "Production/FloraVisualProductionCatalog.h"
 #include "Production/ShipVisualProductionCatalog.h"
+#include "Production/Tier1BossVisualReadinessCatalog.h"
 #include "World/HighmooreWorldProductionCatalog.h"
 
 namespace
@@ -52,6 +53,19 @@ bool IsFaunaReferenceOnly3D(const FName StableId)
         FName(TEXT("fauna.legendary.deep-one"))
     };
     return ReferenceOnly.Contains(StableId);
+}
+
+EThreeDAssetCandidateKind BossCandidateKind(const EBossVisualProductionKind Kind)
+{
+    switch (Kind)
+    {
+    case EBossVisualProductionKind::MythicCreature:
+    case EBossVisualProductionKind::MonsterCreature:
+    case EBossVisualProductionKind::ConstructCreature:
+        return EThreeDAssetCandidateKind::RiggedCreature;
+    default:
+        return EThreeDAssetCandidateKind::RiggedCharacter;
+    }
 }
 }
 
@@ -98,13 +112,33 @@ TArray<FThreeDAssetReadinessRecord> FThreeDAssetReadinessCatalog::BuildRecords()
             Boss.StableId,
             Boss.DisplayName,
             Boss.GoverningSource,
-            EThreeDAssetCandidateKind::RiggedCreature,
+            BossCandidateKind(Boss.Kind),
             Readiness,
             FString::Printf(TEXT("Visual candidate scope: %s Equipment/silhouette: %s"), *Boss.VisualFacts, *Boss.EquipmentOrSilhouette),
             Boss.bProviderReferenceReady
                 ? TEXT("A rigged/sculpt candidate may preserve the visual source, but the deep-dive visual catalog is not boss-count/gameplay authority. No mesh candidate can promote itself into the current Tier-1, dungeon, secret or final-act gameplay registers.")
                 : Boss.ExplicitUnknowns,
             false));
+    }
+
+    for (const FTier1BossVisualReadiness& Boss : FTier1BossVisualReadinessCatalog::BuildAll())
+    {
+        Result.Add(Record(
+            RecordId(TEXT("3d.current-tier1-boss"), Boss.BossStableId),
+            Boss.BossStableId,
+            Boss.DisplayName,
+            Boss.GoverningSource,
+            EThreeDAssetCandidateKind::RiggedCharacter,
+            EThreeDSourceReadiness::Blocked,
+            FString::Printf(
+                TEXT("Current Tier-1 silhouette/performance authority only. Age/role: %s Weapon/silhouette: %s Performance: %s Arena: %s"),
+                *Boss.AuthoredAgeRole,
+                *Boss.AuthoredWeaponSilhouette,
+                *Boss.AuthoredPerformanceRead,
+                *Boss.AuthoredArenaRead),
+            FString::Printf(
+                TEXT("Current gameplay identity is authoritative, but full rig/model generation is blocked until physical visual authority exists: %s"),
+                *Boss.MissingPhysicalAuthority)));
     }
 
     for (const FShipVisualProductionBrief& Ship : FShipVisualProductionCatalog::BuildLaLiberacionBriefs())
@@ -267,8 +301,8 @@ TArray<FThreeDAssetReadinessDesignGap> FThreeDAssetReadinessCatalog::BuildDesign
         },
         {
             TEXT("design-gap.3d.boss-gameplay-authority"),
-            TEXT("Nineteen legacy/deep-dive boss visuals are detailed enough for non-shipping sculpt/rig candidates, but that catalog is not boss gameplay/count authority and cannot select final encounters."),
-            TEXT("Production/BossVisualProductionCatalog; Docs/M7_TIER1_BOSS_REGISTER.md; Docs/DesignAuthority.md")
+            TEXT("Nineteen legacy/deep-dive boss visuals are detailed enough for non-shipping sculpt/rig candidates but are not boss-count authority. Separately, all nine current Nine-Who-Hold gameplay identities remain full-rig blocked because current Tier-1 sources do not provide complete physical look sheets."),
+            TEXT("Production/BossVisualProductionCatalog; Production/Tier1BossVisualReadinessCatalog; Docs/M7_TIER1_BOSS_REGISTER.md; Docs/DesignAuthority.md")
         },
         {
             TEXT("design-gap.3d.variable-or-hidden-geometry"),
@@ -374,6 +408,19 @@ bool FThreeDAssetReadinessCatalog::Validate(TArray<FString>& OutErrors)
         if (Entry == nullptr || Entry->SourceReadiness != EThreeDSourceReadiness::Blocked)
         {
             OutErrors.Add(FString::Printf(TEXT("Authority-blocked 3D source leaked into candidate readiness: %s"), BlockedSource));
+        }
+    }
+
+    for (const FTier1BossVisualReadiness& Boss : FTier1BossVisualReadinessCatalog::BuildAll())
+    {
+        const FThreeDAssetReadinessRecord* Entry = FindBySource(*Boss.BossStableId.ToString());
+        if (Entry == nullptr
+            || Entry->SourceReadiness != EThreeDSourceReadiness::Blocked
+            || !Entry->bFinalGameplayIdentityAuthoritative)
+        {
+            OutErrors.Add(FString::Printf(
+                TEXT("Current Tier-1 boss %s must remain gameplay-authoritative but full-rig blocked until its physical sheet exists."),
+                *Boss.BossStableId.ToString()));
         }
     }
 
