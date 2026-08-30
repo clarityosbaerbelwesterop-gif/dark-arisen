@@ -1,6 +1,7 @@
 // Copyright (c) 2026 Dark Arisen. All Rights Reserved.
 
 #include "Production/BossVisualAuthorityPolicy.h"
+#include "Production/BossVisualProductionCatalog.h"
 
 namespace
 {
@@ -11,13 +12,39 @@ bool IsCurrentStoryConflictId(const FName StableId)
 {
     return StableId == EthanBossVisualId || StableId == DravenBossVisualId;
 }
+
+bool IsKnownDeepDiveVisualId(const FName StableId)
+{
+    if (StableId.IsNone())
+    {
+        return false;
+    }
+
+    for (const FBossVisualProductionBrief& Brief : FBossVisualProductionCatalog::BuildDeepDiveBossBriefs())
+    {
+        if (Brief.StableId == StableId)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
 }
 
 FBossVisualAuthorityDecision FBossVisualAuthorityPolicy::Evaluate(const FName BossVisualStableId)
 {
     FBossVisualAuthorityDecision Result;
     Result.BossVisualStableId = BossVisualStableId;
-    Result.GoverningSource = TEXT("Docs/DesignAuthority.md; Docs/M7_TIER1_BOSS_REGISTER.md");
+    Result.GoverningSource = TEXT("Docs/DesignAuthority.md; Docs/M7_TIER1_BOSS_REGISTER.md; BossVisualProductionCatalog");
+
+    if (!IsKnownDeepDiveVisualId(BossVisualStableId))
+    {
+        Result.State = EBossVisualAuthorityState::UnknownIdentity;
+        Result.Reason = TEXT("The requested boss visual identity is not one of the finite twenty-one indexed deep-dive references. Unknown identities fail closed and cannot enter art/reference production.");
+        Result.bProviderEligible = false;
+        return Result;
+    }
 
     if (IsCurrentStoryConflictId(BossVisualStableId))
     {
@@ -28,7 +55,7 @@ FBossVisualAuthorityDecision FBossVisualAuthorityPolicy::Evaluate(const FName Bo
     }
 
     Result.State = EBossVisualAuthorityState::UncontestedLegacyReference;
-    Result.Reason = TEXT("The deep-dive visual may be used as a bounded reference where no higher authority conflicts. It does not alter boss count, campaign placement, gameplay ownership or resolution contracts.");
+    Result.Reason = TEXT("The indexed deep-dive visual may be used as a bounded reference where no higher authority conflicts. It does not alter boss count, campaign placement, gameplay ownership or resolution contracts.");
     Result.bProviderEligible = true;
     return Result;
 }
@@ -46,6 +73,15 @@ TArray<FName> FBossVisualAuthorityPolicy::BuildCurrentStoryConflictIds()
 bool FBossVisualAuthorityPolicy::Validate(TArray<FString>& OutErrors)
 {
     OutErrors.Reset();
+
+    const TArray<FBossVisualProductionBrief> IndexedBriefs = FBossVisualProductionCatalog::BuildDeepDiveBossBriefs();
+    if (IndexedBriefs.Num() != DeepDiveVisualIdentityCount)
+    {
+        OutErrors.Add(FString::Printf(
+            TEXT("Boss visual authority expects exactly %d indexed deep-dive identities; found %d."),
+            DeepDiveVisualIdentityCount,
+            IndexedBriefs.Num()));
+    }
 
     const TArray<FName> ConflictIds = BuildCurrentStoryConflictIds();
     if (ConflictIds.Num() != CurrentStoryConflictCount)
@@ -77,7 +113,15 @@ bool FBossVisualAuthorityPolicy::Validate(TArray<FString>& OutErrors)
     if (NonConflict.State != EBossVisualAuthorityState::UncontestedLegacyReference
         || !NonConflict.bProviderEligible)
     {
-        OutErrors.Add(TEXT("Uncontested deep-dive visual references must remain provider-eligible without altering current boss authority."));
+        OutErrors.Add(TEXT("Indexed uncontested deep-dive visual references must remain reference-eligible without altering current boss authority."));
+    }
+
+    const FBossVisualAuthorityDecision Unknown = Evaluate(TEXT("boss-visual.not-authored"));
+    if (Unknown.State != EBossVisualAuthorityState::UnknownIdentity
+        || Unknown.bProviderEligible
+        || Unknown.Reason.IsEmpty())
+    {
+        OutErrors.Add(TEXT("Unknown boss visual identities must fail closed and remain ineligible for art/reference production."));
     }
 
     if (ProviderEligibleVisualIdentityCount != 19)
