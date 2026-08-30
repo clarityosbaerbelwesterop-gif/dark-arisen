@@ -6,6 +6,7 @@
 
 enum class EBossVisualAuthorityState : uint8
 {
+    UnknownIdentity,
     UncontestedLegacyReference,
     CurrentStoryConflict
 };
@@ -13,13 +14,17 @@ enum class EBossVisualAuthorityState : uint8
 struct FBossVisualAuthorityDecision
 {
     FName BossVisualStableId;
-    EBossVisualAuthorityState State = EBossVisualAuthorityState::UncontestedLegacyReference;
+    EBossVisualAuthorityState State = EBossVisualAuthorityState::UnknownIdentity;
     FString GoverningSource;
     FString Reason;
     bool bProviderEligible = false;
 };
 
-/** Fail-closed provider eligibility for the twenty-one deep-dive boss visual identities. */
+/**
+ * Fail-closed reference eligibility for the finite twenty-one deep-dive boss visual identities.
+ * "Provider" here is generic future reference/modeling eligibility; current Higgsfield routing is
+ * separately restricted to animation/performance/cinematic previs by ExternalAssetProductionCatalog.
+ */
 class DARKARISEN_API FBossVisualAuthorityPolicy
 {
 public:
