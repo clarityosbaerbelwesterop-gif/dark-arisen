@@ -79,15 +79,36 @@ Dark Arisen uses NVIDIA NIM model `moonshotai/kimi-k3` as a **bounded studio ass
 - Provider calls are performed only by native `DarkArisenOps` C++ tooling.
 - If the approved self-hosted runner is offline, jobs remain unexecuted; do not substitute an unapproved paid runner.
 
-## Higgsfield / external visual production
+## Higgsfield — current approved scope
 
-Higgsfield is a bounded upstream concept/previs/candidate-media provider, never design authority.
+Higgsfield is currently a bounded **animation, body/performance and cinematic/cutscene previs** provider. It is never design authority.
 
-- Send only source-backed provider briefs whose unknowns remain explicit.
-- A mood-only or style-adjective-only prompt is rejected before submission.
-- Generated output that fills a withheld fact or `DESIGN-GAP` is rejected even when visually strong.
-- Generated images/videos do not become canon, `.uasset`, AnimMontage, AnimNotify, Sequencer, mesh/skeleton or runtime evidence by generation alone.
-- Provider cost/plan/rights preflight remains mandatory; no purchase, subscription change or credit spend is self-authorized.
+Exactly the source-grounded motion/presentation requirements in `FExternalAssetProductionCatalog` may enter the current Higgsfield queue: 23 animation/performance requirements plus 14 resolved cinematic identities.
+
+Current Higgsfield scope explicitly excludes:
+
+- canonical character faces/costumes;
+- boss physical-look sheets;
+- dungeon/world/settlement look development;
+- La Liberación look development;
+- fauna/flora look development;
+- props/treasures;
+- general 3D meshes/GLBs/rigged-mesh production;
+- dialogue writing;
+- missing main-story or mission identities.
+
+Internal visual and 3D-readiness catalogs remain valid production authorities for later art/modeling work, but they are not Higgsfield submission queues.
+
+For every permitted Higgsfield brief:
+
+- send only source-backed requirements whose unknowns remain explicit;
+- reject mood/style-adjective-only prompts;
+- reject output that fills a withheld fact or `DESIGN-GAP`, even when visually strong;
+- generated video remains motion/camera/performance reference, not canon, an AnimSequence, AnimMontage, AnimNotify, retargeted clip, Sequencer asset or runtime evidence;
+- provider cost/plan/rights preflight remains mandatory;
+- no purchase, subscription change or credit spend is self-authorized.
+
+The connected Free-plan preflight currently blocks the tested Seedance path before job creation with `Requires basic plan or higher`; rejected attempts consumed zero credits. Do not upgrade the provider automatically.
 
 ## Voice production
 
@@ -96,6 +117,10 @@ AI-generated voices are a production aid, not an authority.
 - A shipping voice line requires a stable dialogue-lock ID, casting role, pronunciation record, subtitle text and rights/cost approval.
 - Unlocked lines may be used only as clearly labelled auditions/prototypes and must not be committed as shipping assets.
 - Do not imitate a real performer without appropriate authorization.
+
+## Main-story stop boundary
+
+`Docs/MAIN_QUEST_AUTHORITY_GAP.md` is the current stop boundary after the pre-main production families are reconciled. Do not implement main-mission chains from chapter summaries alone, and do not restore legacy Ethan/Draven final-act material unless current design authority explicitly resolves that conflict.
 
 ## Hard reporting rule
 
