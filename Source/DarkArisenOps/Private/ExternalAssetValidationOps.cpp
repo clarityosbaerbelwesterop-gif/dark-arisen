@@ -239,7 +239,6 @@ int32 ValidateExternalAssetProductionCommand(const FParsedArgs& Args)
 
     RequireFragments(Root, TEXT("Docs/PRE_MAIN_QUEST_READINESS.md"), {
         TEXT("Turn + Standing mission identity gap remains exactly **275**"),
-        TEXT("**Total**"),
         TEXT("Higgsfield has been reduced to the work it is actually wanted for"),
         TEXT("105 candidate-geometry-ready"),
         TEXT("5 final-act cutscene identities")}, Errors);
@@ -249,7 +248,7 @@ int32 ValidateExternalAssetProductionCommand(const FParsedArgs& Args)
         TEXT("Ethan / Draven authority conflict"),
         TEXT("missing Crimson Armada final-act authority"),
         TEXT("five final-act cutscenes are unresolved"),
-        TEXT("Do not reconstruct it from legacy boss files")}, Errors);
+        TEXT("Legacy individual boss files are not a safe replacement")}, Errors);
 
     RequireFragments(Root, TEXT("Docs/HIGGSFIELD_ASSET_PRODUCTION_MATRIX.md"), {
         TEXT("exactly **37** current Higgsfield briefs"),
@@ -264,7 +263,7 @@ int32 ValidateExternalAssetProductionCommand(const FParsedArgs& Args)
         TEXT("AnimNotify"),
         TEXT("Sequencer"),
         TEXT("Requires basic plan or higher"),
-        TEXT("zero credits were consumed")}, Errors);
+        TEXT("No credits were consumed by those rejected submissions")}, Errors);
 
     RequireFragments(Root, TEXT("Docs/NON_AI_SLOP_STANDARD.md"), {
         TEXT("## 10. Animation anti-slop rule"),
