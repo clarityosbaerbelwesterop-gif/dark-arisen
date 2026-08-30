@@ -2,6 +2,14 @@
 
 #include "Production/PreMainQuestReadinessCatalog.h"
 
+#include "Production/CharacterVisualProductionCatalog.h"
+#include "Production/ExternalAssetProductionCatalog.h"
+#include "Production/FaunaVisualProductionCatalog.h"
+#include "Production/FloraVisualProductionCatalog.h"
+#include "Production/ShipVisualProductionCatalog.h"
+#include "Production/ThreeDAssetReadinessCatalog.h"
+#include "Production/Tier1BossVisualReadinessCatalog.h"
+
 namespace
 {
 FPreMainQuestReadinessRecord Record(
@@ -24,6 +32,17 @@ FPreMainQuestReadinessRecord Record(
     Result.ExplicitGapCount = Gaps;
     Result.Boundary = Boundary;
     return Result;
+}
+
+void AppendSubcatalogErrors(
+    const TCHAR* Label,
+    const TArray<FString>& SubErrors,
+    TArray<FString>& OutErrors)
+{
+    for (const FString& Error : SubErrors)
+    {
+        OutErrors.Add(FString::Printf(TEXT("%s: %s"), Label, *Error));
+    }
 }
 }
 
@@ -231,6 +250,86 @@ TArray<FPreMainQuestStopReason> FPreMainQuestReadinessCatalog::BuildMainQuestSto
 bool FPreMainQuestReadinessCatalog::Validate(TArray<FString>& OutErrors)
 {
     OutErrors.Reset();
+
+    // The closure register is an aggregate gate. Validate the source/readiness catalogs it summarizes
+    // so a child catalog cannot drift while the top-level hard-coded accounting still appears closed.
+    TArray<FString> SubErrors;
+
+    if (!FCharacterVisualProductionCatalog::Validate(SubErrors))
+    {
+        AppendSubcatalogErrors(TEXT("CharacterVisualProductionCatalog"), SubErrors, OutErrors);
+    }
+    SubErrors.Reset();
+
+    if (!FShipVisualProductionCatalog::Validate(SubErrors))
+    {
+        AppendSubcatalogErrors(TEXT("ShipVisualProductionCatalog"), SubErrors, OutErrors);
+    }
+    SubErrors.Reset();
+
+    if (!FFaunaVisualProductionCatalog::Validate(SubErrors))
+    {
+        AppendSubcatalogErrors(TEXT("FaunaVisualProductionCatalog"), SubErrors, OutErrors);
+    }
+    SubErrors.Reset();
+
+    if (!FFloraVisualProductionCatalog::Validate(SubErrors))
+    {
+        AppendSubcatalogErrors(TEXT("FloraVisualProductionCatalog"), SubErrors, OutErrors);
+    }
+    SubErrors.Reset();
+
+    if (!FTier1BossVisualReadinessCatalog::Validate(SubErrors))
+    {
+        AppendSubcatalogErrors(TEXT("Tier1BossVisualReadinessCatalog"), SubErrors, OutErrors);
+    }
+    SubErrors.Reset();
+
+    if (!FThreeDAssetReadinessCatalog::Validate(SubErrors))
+    {
+        AppendSubcatalogErrors(TEXT("ThreeDAssetReadinessCatalog"), SubErrors, OutErrors);
+    }
+    SubErrors.Reset();
+
+    if (!FExternalAssetProductionCatalog::Validate(SubErrors))
+    {
+        AppendSubcatalogErrors(TEXT("ExternalAssetProductionCatalog"), SubErrors, OutErrors);
+    }
+
+    if (FCharacterVisualProductionCatalog::BuildMajorCharacterBriefs().Num() != MajorCharacterRecordCount)
+    {
+        OutErrors.Add(TEXT("Major-character readiness count drifted from CharacterVisualProductionCatalog."));
+    }
+
+    if (FShipVisualProductionCatalog::BuildLaLiberacionBriefs().Num() != ShipVisualRecordCount)
+    {
+        OutErrors.Add(TEXT("La Liberación readiness count drifted from ShipVisualProductionCatalog."));
+    }
+
+    if (FFaunaVisualProductionCatalog::BuildAllBriefs().Num() != FaunaRecordCount)
+    {
+        OutErrors.Add(TEXT("Fauna readiness count drifted from FaunaVisualProductionCatalog."));
+    }
+
+    if (FFloraVisualProductionCatalog::BuildBriefs().Num() != FloraRecordCount)
+    {
+        OutErrors.Add(TEXT("Flora readiness count drifted from FloraVisualProductionCatalog."));
+    }
+
+    if (FTier1BossVisualReadinessCatalog::BuildAll().Num() != RequiredTier1Bosses)
+    {
+        OutErrors.Add(TEXT("Current Tier-1 visual readiness count drifted from the Nine Who Hold."));
+    }
+
+    if (FThreeDAssetReadinessCatalog::BuildRecords().Num() != ThreeDRecordCount)
+    {
+        OutErrors.Add(TEXT("Cross-family 3D readiness count drifted from ThreeDAssetReadinessCatalog."));
+    }
+
+    if (FExternalAssetProductionCatalog::BuildHiggsfieldBriefs().Num() != HiggsfieldPrevisBriefCount)
+    {
+        OutErrors.Add(TEXT("Higgsfield motion/cinematic brief count drifted from ExternalAssetProductionCatalog."));
+    }
 
     const TArray<FPreMainQuestReadinessRecord> Records = BuildRecords();
     if (Records.Num() != RequiredFamilyCount)
