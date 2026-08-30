@@ -43,7 +43,7 @@ struct FPreMainQuestStopReason
 class DARKARISEN_API FPreMainQuestReadinessCatalog
 {
 public:
-    static constexpr int32 RequiredFamilyCount = 17;
+    static constexpr int32 RequiredFamilyCount = 19;
 
     static constexpr int32 RequiredDungeonSites = 61;
     static constexpr int32 GroundedDungeonSites = 40;
@@ -66,6 +66,15 @@ public:
     static constexpr int32 HighmooreAnchorCount = 12;
     static constexpr int32 StateTreasureCount = 9;
     static constexpr int32 NamedUniqueRewardCount = 1;
+
+    /** Aggregate of the six finite progression-readiness families. */
+    static constexpr int32 ProgressionFiniteRecordCount = 146;
+    static constexpr int32 ProgressionGroundedRecordCount = 66;
+    static constexpr int32 ProgressionExplicitGapCount = 80;
+
+    static constexpr int32 RequiredBuriedHoardChainCount = 16;
+    static constexpr int32 GroundedBuriedHoardChainCount = 0;
+    static constexpr int32 BuriedHoardChainIdentityGaps = 16;
 
     static constexpr int32 MajorCharacterRecordCount = 9;
     static constexpr int32 MajorCharacterGeometryReady = 5;
