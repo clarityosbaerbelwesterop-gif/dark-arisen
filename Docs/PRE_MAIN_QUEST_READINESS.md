@@ -80,7 +80,7 @@ Once the authored decisions above exist, these become the actual Alpha-productio
 
 ## Higgsfield boundary
 
-Higgsfield is used only for:
+Higgsfield has been reduced to the work it is actually wanted for:
 
 - animation motion reference;
 - body/facial-performance reference for already-authored beats;
