@@ -95,8 +95,18 @@ public:
     static TArray<FExternalAssetProductionDesignGap> BuildDesignGaps();
     static bool Validate(TArray<FString>& OutErrors);
 
+    /** Provider/source authority boundaries. */
     static bool AllowsProviderToCreateCanon() { return false; }
     static bool AllowsGeneratedMediaToCountAsImportedAsset() { return false; }
     static bool AllowsGeneratedMediaToCountAsRuntimeAccepted() { return false; }
     static bool AllowsAutomaticProviderPurchaseOrUpgrade() { return false; }
+
+    /** Mandatory NON_AI_SLOP production boundaries. */
+    static bool AllowsGenericFillerPrompt() { return false; }
+    static bool AllowsProviderToResolveDesignGap() { return false; }
+    static bool AllowsUngroundedDecorativeCompletion() { return false; }
+    static bool AllowsUnreviewedProviderDefaultToBecomeIdentity() { return false; }
+    static bool RequiresSourceSpecificity() { return true; }
+    static bool RequiresFunctionalLogicReview() { return true; }
+    static bool RequiresRestraintAndRepetitionReview() { return true; }
 };
