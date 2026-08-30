@@ -12,9 +12,14 @@
 - what systems/regions unlock per chapter;
 - the short-critical-path doctrine;
 - the chapter-gating laws;
-- current high-level facts such as Chapter 1 ending with Ethan dead, Highmoore opening in Chapter 6, Rache opening in Chapter 9 and the final act opening in Chapter 10.
+- Chapter 1 ending with Ethan dead;
+- Highmoore opening in Chapter 6;
+- Rache and Ethan's Grove opening in Chapter 9;
+- the final act opening in Chapter 10.
 
 It explicitly says it defines **structure**, not the complete plot/missions.
+
+Unless the operator explicitly overrides Phase 11, **Ethan's Chapter-1 death is the current baseline**. The missing design question is not whether an older captured/betrayal branch can silently come back; it cannot. The missing design is the exact current mission sequence around that death and the later memory/Grove/Dream material that replaces the legacy branch.
 
 ## Why implementation stops here
 
@@ -37,6 +42,7 @@ Current authority does not resolve those fields consistently across the ten-chap
 
 Examples:
 
+- Chapter 1 locks its function and endpoint — Ethan is dead and Jake has nothing — but not the complete finite mission sequence, exact fight/death staging and persistence contract that lead there.
 - Chapter 2 says Jake acquires La Liberación and Mira/Big Tom/Esteban join, but does not itself define the complete finite mission sequence that produces those events.
 - Chapter 3 opens free sailing / first bosses and ends with an indication that Ethan's death was not simple, but the chapter summary is not a mission-by-mission authoring contract.
 - Chapter 8 says the Crimson Armada becomes the proper endgame antagonist, but delegates the actual plot to a separate source.
@@ -48,16 +54,11 @@ Implementing quest chains by filling the space between those endpoints would be 
 `Docs/DesignAuthority.md` explicitly records a superseded story branch:
 
 - older GDD/character/boss material: Ethan is captured, joins Draven and becomes a Chapter-9 boss;
-- current Phase-10/11 direction: Ethan is dead from the opening structure and Chapter 9 uses Ethan's Grove / Dream material.
+- current Phase-10/11 direction: Chapter 1 ends with Ethan dead and Chapter 9 uses Ethan's Grove / Dream material.
 
 The repository still contains detailed old Ethan/Draven boss and character documents. Their detail does **not** make them current canon.
 
-Current authority requires one of two future operator/design actions before those materials can drive the main story:
-
-- rewrite Ethan/Draven/final-act material to the Phase-11 structure; or
-- explicitly restore the older betrayal branch.
-
-Until then, current production blocks those legacy final-act identities.
+Current authority therefore requires a rewrite of Ethan/Draven/final-act material to the Phase-11 structure before those old files can drive current implementation. Restoring the older betrayal branch would require an explicit operator override; it is not an equally valid default inferred by implementation.
 
 ## Stop reason 3 — missing Crimson Armada final-act authority
 
@@ -96,20 +97,36 @@ The following work has already been reconciled before this stop:
 
 Those systems can continue to receive later asset/runtime work without inventing main-story missions.
 
-## Exact questions that must be answered before main-quest implementation
+## Exact decisions needed before main-quest implementation
 
-### A. Current Ethan structure
+### A. Chapter 1 / Ethan under the current Phase-11 baseline
 
-- Is Phase 11's Chapter-1 Ethan death definitively the current story?
-- If yes, what replaces every later old Ethan-captured / Ethan-boss / Draven-adopted-son beat?
-- What is the exact meaning/function of Ethan's Grove in Chapter 9?
+Unless explicitly changed by the operator, **Ethan dies in Chapter 1**.
+
+What still needs authoring is:
+
+- the finite Chapter-1 mission list and stable IDs;
+- the exact mission/sequence in which Ethan dies;
+- its trigger, participants and physical location/route;
+- what Jake actually does during the playable sequence;
+- the exact death outcome and persistent facts written into the world/save state;
+- what Chapter 3 means by the first indication that Ethan's death "was not simple" without reviving the legacy capture branch;
+- the exact role of Ethan's Grove in Chapter 9;
+- the exact content and purpose of the authored Dream Fight referenced by the current structure/cutscene sources;
+- which memories, letters, objects or revelations replace the old Draven-adopted-son / Ethan-boss material.
 
 ### B. Crimson Armada / Draven final act
 
-- What is the current Chapter-8 reveal sequence?
-- What exact missions form Chapter 10?
-- Who/what is the final human antagonist under the Phase-11 structure?
-- What are the current allowed resolutions and their world-state consequences?
+Define the current Phase-11-compatible final-act authority:
+
+- what is revealed in Chapter 8;
+- Draven's current role and relationship to Ethan's death;
+- the finite Chapter-10 mission sequence;
+- who/what the final human antagonist is under this structure;
+- what the climax physically consists of;
+- which resolutions exist;
+- how the five colonial-war end states alter the climax;
+- the exact world/save consequences after resolution.
 
 ### C. Main-mission identities
 
@@ -123,19 +140,22 @@ For Chapters 1-10, define the finite mission list with stable IDs and, for each 
 - persistence consequence;
 - cutscene/playable ownership.
 
+The chapter scaffold can be used to verify this list, but not to invent it.
+
 ### D. Final five cinematics
 
-Resolve cutscene slots #15-#19 only after the final-act mission identities above exist.
+Resolve cutscene slots #15-#19 only after the final-act mission identities above exist. Higgsfield may previs them only after those identities and camera/control boundaries are authored.
 
 ## Do not do
 
-Until these questions are resolved, do not:
+Until these decisions are resolved, do not:
 
 - resurrect the legacy Ethan/Draven boss branch implicitly;
+- treat Ethan as alive after Chapter 1 merely because older files contain more detail;
 - invent a replacement final villain;
 - create Chapter-10 missions from atmosphere alone;
 - use Higgsfield/Kimi to generate missing final-act story;
 - generate dialogue to make a missing mission feel finished;
 - mark the five endgame cutscene slots resolved.
 
-This is the intended stopping point: the pre-main production families are reconciled, and the next meaningful work requires an explicit story decision rather than more implementation.
+This is the intended stopping point: the pre-main production families are reconciled, and the next meaningful authorship work requires explicit story decisions rather than more implementation.
