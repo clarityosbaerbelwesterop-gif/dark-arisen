@@ -1,78 +1,70 @@
-# Higgsfield asset-production matrix
+# Higgsfield animation / cinematic previs matrix
 
 **Branch:** `feature/pre-runner-asset-production`  
 **Evidence level:** planning / `RequirementOnly` unless real provider evidence is recorded.  
-**Rule:** only current-authority, individually grounded identities enter provider production.
+**Operator direction:** Higgsfield is used for **animation, performance and cinematic/cutscene previs**. It is not the canonical character-look, boss-look, world-look, dungeon-look, fauna/flora, ship, prop or general 3D owner.
 
-| Family | Grounded identities | Provider state | External media | Unreal state | Blocked / omitted |
+| Family | Grounded identities | Higgsfield state | External media | Unreal state | Blocked / omitted |
 | --- | ---: | --- | --- | --- | --- |
 | Named animation requirements | 11 | Briefed | None | None | — |
-| System animation requirements | 12 | Briefed | None | None | exact clip/blend tuning remains production work |
+| System animation requirements | 12 | Briefed | None | None | exact clip/blend/retarget tuning remains UE production work |
 | Resolved cutscenes | 14 | Briefed | None | None | 5 final-act cutscene identities unresolved |
-| Grounded named dungeons | 40 | Briefed | None | None | 20 minor identities + unresolved named Region 06 slot |
-| World regions | 8 | Briefed | None | Runtime maps unauthored | no invented coordinates/locations |
-| Highmoore named anchors | 12 | Briefed | None | Runtime placements unauthored | no generic replacement landmarks |
-| Major character source sheets | 9 | 6 ready / 3 blocked | None | None | Elowen physical sheet; Phase-11 Ethan/Draven conflict |
-| Current Tier-1 bosses — Nine Who Hold | 9 | 0 full-look ready / 9 tracked gaps | None | None | current sources lock age/role/weapon/performance/arena, not final face/body/wardrobe |
-| Deep-dive boss/creature visual sheets | 21 | 19 ready / 2 blocked | None | None | legacy Ethan/Draven blocked; does not replace Nine Who Hold |
-| La Liberación visual spaces | 6 | 5 ready / 1 blocked | None | None | final exterior silhouette unresolved |
-| Individually grounded fauna visuals | 24 | 19 ready / 5 blocked | None | None | Final Wolf save-dependent; four Highmoore species variants underspecified |
-| State Treasures | 9 | Briefed | None | Physical assets unauthored | — |
-| Current grounded unique reward | 1 | Briefed | None | Physical asset unauthored | — |
-| Candidate 3D meshes/rigged meshes | 0 verified connected-model paths | Blocked | None | None | no usable connected 3D generation action |
-| Voice shipping assets | 0 | Late-stage blocked | auditions are not shipping evidence | None | dialogue lock + rights/cost approval required |
+| Static character/world/dungeon/boss/ship/fauna/flora/prop looks | 0 | Deliberately outside Higgsfield provider catalog | None | Source-readiness tracked separately | use native visual/3D readiness catalogs |
+| 3D meshes/rigged meshes | 0 | Not assigned to Higgsfield | None | None | no verified connected 3D action; future 3D pipeline remains separate |
+| Voice shipping assets | 0 | Not a Higgsfield responsibility | None | None | AI Voice Generator is late-stage and separately gated |
 
-## Current finite provider brief total
+## Finite Higgsfield total
 
-`FExternalAssetProductionCatalog` now expects **156** source-derived Higgsfield briefs:
+`FExternalAssetProductionCatalog` expects exactly **37** current Higgsfield briefs:
 
-- 23 animation/performance requirements;
-- 14 resolved cutscenes;
-- 40 named dungeons;
-- 8 regions;
-- 12 Highmoore anchors;
-- 6 current-authority character references;
-- 19 non-conflicted deep-dive boss/creature references;
-- 5 La Liberación deck/interior references;
-- 19 fauna references;
-- 9 State Treasures;
-- 1 grounded unique reward.
+- 11 named animation requirements;
+- 12 system animation/performance requirements;
+- 14 resolved cinematic/cutscene identities.
 
-The nine current Tier-1 commanders add **zero** provider briefs today because their complete physical looks are not authored. Tracking a gap does not inflate the provider count.
+That is the entire provider-facing Higgsfield corpus at this stage.
 
-This is source coverage, not asset completion.
+A future operator instruction may expand the provider scope, but a model/provider cannot expand it by itself.
 
-## Character authority
+## What Higgsfield is for
 
-Ready: Jake plus Mira, Big Tom, Ines, Father Salvio and Esteban. Elowen is blocked because her concrete physical/costume sheet is incomplete. Ethan and Draven are blocked because `Docs/DesignAuthority.md` says their older character/boss branch conflicts with current Phase 11 and must be rewritten or explicitly restored.
+### Animation / performance reference
 
-## Current Tier-1 boss authority
+Higgsfield may help establish motion, body mechanics, timing feel, performance staging and camera-readable action for requirements that are already authored.
 
-`Docs/M7_TIER1_BOSS_REGISTER.md` and `colonial war bosses.md` define exactly the Nine Who Hold: Herrera, Reyes, Cruz, de Silva, Vega, Blackwood, Sterling, Ashcroft and Thorne.
+The output remains reference. It is **not** automatically:
 
-All nine now have visual-readiness records in `FTier1BossVisualReadinessCatalog`. Their current sources are strong on age/role, weapon or non-combat silhouette, combat/performance language and arena. They do **not** lock complete faces, bodies, hair, eyes, skin, scars, wardrobe packages and personal visual identifiers. Therefore **0/9 full looks are provider-ready**. Higgsfield must not choose those facts on behalf of design authority.
+- a retargeted animation;
+- an AnimSequence;
+- an AnimMontage;
+- an AnimGraph state;
+- an AnimNotify;
+- root-motion ownership;
+- a final facial rig performance;
+- runtime timing evidence.
 
-This does not block combat/arena production briefs that can use neutral placeholders later; it blocks canonical character-look generation.
+Locked Dark Arisen timing survives the provider output, not the other way around: readable attack tells, six-frame deflection, committed recovery, wound layers, horse gait ownership and the Crystal Katana clean-set exception remain source authority.
 
-## Legacy boss / creature visual authority
+### Cinematic / cutscene previs
 
-The 21 older deep-dive boss visual sheets remain a separate visual-reference corpus. Nineteen are non-conflicted and may drive bounded non-canon reference work. Ethan and Draven are excluded. This legacy visual corpus never changes the current Tier-1 count or substitutes a legacy face for one of the Nine Who Hold.
+Higgsfield may produce camera/performance previs only for the **14 cutscenes whose identities are currently resolved**. Control ownership, camera law, music law and playable-vs-cinematic boundaries remain in `PresentationProductionCatalog`.
 
-## La Liberación authority
+The five unresolved final-act slots are excluded. A good-looking generated ending is still invented canon.
 
-Five source-ready spaces may receive visual references: weather deck, main interior, lower crew deck, cargo/workshop and Jake's cabin. Exterior generation remains blocked because hull class, exact dimensions, mast/sail plan, colors and figurehead are not locked. Current quest law also removes old map-marker/highlight UI from the cabin/map-table interpretation.
+## What Higgsfield is not for in this tranche
 
-## Fauna authority
+The following source work remains valuable but is deliberately outside the provider catalog:
 
-The fauna catalog indexes 19 individually described legendary animals/creatures plus five Highmoore MVP fauna identities. **19 are provider-ready.**
+- major character look sheets;
+- current Tier-1 physical looks;
+- legacy/deep-dive boss visual sheets;
+- dungeon environment kits;
+- regions / Highmoore landmarks;
+- La Liberación interior/exterior modeling;
+- fauna and flora;
+- State Treasure appearance;
+- general 3D modeling.
 
-Important fail-closed cases:
-
-- `Final Wolf` stays blocked because its appearance depends on the wolves killed in the individual save;
-- Highmoore grouse, hare, fox and Fell Wolf stay blocked because the higher-authority source does not choose exact species/coat variants;
-- Highmoore red deer is ready only as an ordinary species/ecology reference;
-- `Deep One` is ready only for a partial glimpse/shadow composition; its complete anatomy, size and limb count must remain unseen;
-- Phase-4 scale targets are not permission to synthesize unnamed species.
+Those areas are tracked in native source-readiness catalogs such as `CharacterVisualProductionCatalog`, `Tier1BossVisualReadinessCatalog`, `BossVisualProductionCatalog`, `ShipVisualProductionCatalog`, `FaunaVisualProductionCatalog`, `FloraVisualProductionCatalog` and `ThreeDAssetReadinessCatalog`. They do not need to be routed through Higgsfield.
 
 ## Explicit no-generation boundaries
 
@@ -83,21 +75,26 @@ Do not generate simply to close counts:
 - 20 unauthored minor-dungeon identities;
 - unresolved named Region 06 dungeon slot;
 - 5 unresolved final-act cutscene identities;
-- Elowen's missing visual facts;
-- current Phase-11 Ethan/Draven visuals until rewritten/restored;
-- all nine current Tier-1 full character looks until their physical authority is written;
-- La Liberación exterior silhouette;
-- save-dependent/underspecified fauna;
-- any unresolved main-story trigger/actor/outcome.
+- current Phase-11 Ethan/Draven story-conflicted visual material;
+- any unresolved main-story trigger, actor, mission sequence or outcome.
 
 Turn/Standing identity gap remains **275**.
 
 ## Provider state
 
-Connected Higgsfield preflight on 2026-08-30 remains: Free plan, 10 credits, Unlimited false. Two Seedance 2.0 Mini test submissions were rejected before job creation with `Requires basic plan or higher`; zero credits were consumed. Connected discovery returned no usable 3D-generation action. No purchase or upgrade is authorized.
+Connected Higgsfield preflight on 2026-08-30 remains:
+
+- Free plan;
+- 10 credits;
+- Unlimited false;
+- two Seedance 2.0 Mini test submissions rejected before job creation with `Requires basic plan or higher`;
+- zero credits consumed by those attempts;
+- no purchase or plan upgrade authorised.
+
+Therefore the 37 briefs are prepared, but no paid/plan-gated job is started automatically.
 
 ## Promotion law
 
-`RequirementOnly` → `PrevisGenerated`/`CandidateAssetGenerated` → `ImportedForReview` → `RuntimeAccepted`.
+`RequirementOnly` → `PrevisGenerated` → `ImportedForReview` → `RuntimeAccepted`.
 
-No image/video becomes a UE asset by existing, and no source path becomes runtime acceptance without UE evidence.
+A generated video can never skip directly to an Unreal or Alpha acceptance state.
