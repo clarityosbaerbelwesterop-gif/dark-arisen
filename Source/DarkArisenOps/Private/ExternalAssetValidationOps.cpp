@@ -67,7 +67,8 @@ int32 ValidateExternalAssetProductionCommand(const FParsedArgs& Args)
         TEXT("Source/DarkArisen/Tests/FaunaVisualProductionSpec.cpp"),
         TEXT("Docs/PRE_RUNNER_ASSET_PRODUCTION_PLAN.md"),
         TEXT("Docs/HIGGSFIELD_GAME_ASSET_PIPELINE.md"),
-        TEXT("Docs/HIGGSFIELD_ASSET_PRODUCTION_MATRIX.md")})
+        TEXT("Docs/HIGGSFIELD_ASSET_PRODUCTION_MATRIX.md"),
+        TEXT("Docs/NON_AI_SLOP_STANDARD.md")})
     {
         RequireFile(Root, Relative, Errors);
     }
@@ -91,7 +92,14 @@ int32 ValidateExternalAssetProductionCommand(const FParsedArgs& Args)
         TEXT("AllowsProviderToCreateCanon() { return false; }"),
         TEXT("AllowsGeneratedMediaToCountAsImportedAsset() { return false; }"),
         TEXT("AllowsGeneratedMediaToCountAsRuntimeAccepted() { return false; }"),
-        TEXT("AllowsAutomaticProviderPurchaseOrUpgrade() { return false; }")}, Errors);
+        TEXT("AllowsAutomaticProviderPurchaseOrUpgrade() { return false; }"),
+        TEXT("AllowsGenericFillerPrompt() { return false; }"),
+        TEXT("AllowsProviderToResolveDesignGap() { return false; }"),
+        TEXT("AllowsUngroundedDecorativeCompletion() { return false; }"),
+        TEXT("AllowsUnreviewedProviderDefaultToBecomeIdentity() { return false; }"),
+        TEXT("RequiresSourceSpecificity() { return true; }"),
+        TEXT("RequiresFunctionalLogicReview() { return true; }"),
+        TEXT("RequiresRestraintAndRepetitionReview() { return true; }")}, Errors);
 
     RequireFragments(Root, TEXT("Source/DarkArisen/Production/ExternalAssetProductionCatalog.cpp"), {
         TEXT("FAnimationProductionCatalog::BuildNamedBibleRequirements"),
@@ -219,7 +227,30 @@ int32 ValidateExternalAssetProductionCommand(const FParsedArgs& Args)
         TEXT("Player-history-dependent Final Wolf stays provider-blocked"),
         TEXT("No provider job id is fabricated"),
         TEXT("No Unreal asset path is fabricated"),
-        TEXT("External asset pipeline cannot buy or upgrade providers automatically")}, Errors);
+        TEXT("External asset pipeline cannot buy or upgrade providers automatically"),
+        TEXT("Generic filler prompts are forbidden"),
+        TEXT("Providers cannot resolve design gaps"),
+        TEXT("Ungrounded decorative completion is forbidden"),
+        TEXT("Unreviewed provider defaults cannot become identity"),
+        TEXT("Every provider brief requires source specificity"),
+        TEXT("Every important candidate requires functional-logic review"),
+        TEXT("Every important candidate requires restraint and repetition review")}, Errors);
+
+    RequireFragments(Root, TEXT("Docs/NON_AI_SLOP_STANDARD.md"), {
+        TEXT("## 2. The specificity test"),
+        TEXT("## 3. Functional world rule"),
+        TEXT("## 4. Restraint and negative space"),
+        TEXT("## 5. Material honesty"),
+        TEXT("## 6. Silhouette before detail"),
+        TEXT("## 9. Level and dungeon anti-slop rule"),
+        TEXT("## 10. Animation anti-slop rule"),
+        TEXT("## 11. Cinematic anti-slop rule"),
+        TEXT("## 12. Audio anti-slop rule"),
+        TEXT("## 13. External-AI prompt rule"),
+        TEXT("## 14. Review passes"),
+        TEXT("## 15. Automatic rejection list"),
+        TEXT("Provider output is rejected if it introduces canon"),
+        TEXT("More adjectives are not specificity")}, Errors);
 
     RequireFragments(Root, TEXT("Docs/PRE_RUNNER_ASSET_PRODUCTION_PLAN.md"), {
         TEXT("RequirementOnly"),
