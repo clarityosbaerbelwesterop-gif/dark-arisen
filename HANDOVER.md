@@ -3,15 +3,21 @@
 **Updated:** 2026-08-30  
 **Integrated baseline:** `develop` at `04a34e37f4f0c2f982cf28b942e11e120d103d29` after PR #17  
 **Current source tranche:** `feature/pre-runner-asset-production` / Draft PR #18 → `develop`  
-**Runtime state:** UE 5.5 Windows/Linux compile, Unreal Automation, runtime, performance, packaging and playthrough gates remain deferred/unverified while matching self-hosted runners are offline/queued. A queued job with no assigned runner is not passed.
+**Current tranche purpose:** close every source-backed pre-main-quest production family, then stop at the first genuine main-story authority gap.  
+**Runtime state:** UE 5.5 Windows/Linux compile, Unreal Automation, runtime, performance, packaging and playthrough gates remain unverified while matching self-hosted runners are offline/queued. A queued job with no assigned runner is not passed.
 
 ## Operator direction
 
-Take the **Rockstar path**, not the shortest path. Continue building actual authored game production without manufacturing content to close counts. Work until the next genuine authoring blocker: a design fact is absent, a provider action would require new spending/plan change, or an editor/runner fact cannot be produced from source.
+Take the **Rockstar path**, not the shortest path. Build deliberate authored content and production authority; never manufacture content to close a number.
 
-Executable project implementation remains native C++. Required repository/config/build formats remain in their native formats. Missing canon is represented as `DESIGN-GAP`, never generated filler.
+Current external-tool split:
 
-The current production direction adds Higgsfield as a bounded external asset/previsualisation provider and keeps AI Voice Generator for the later voice stage. Neither provider is design authority. External media is not a UE production asset merely because generation succeeded.
+- **Game Studios / Kimi K3:** bounded production/review assistance only; never canon authority.
+- **Higgsfield:** animation, body/performance and cinematic/cutscene previs only.
+- **AI Voice Generator:** later voice stage after dialogue/casting/pronunciation/subtitle/cost/rights locks.
+- **Unreal Engine 5.5:** later integration, runtime, testing and packaging authority.
+
+Executable project implementation remains native C++. Missing canon is represented as `DESIGN-GAP`, never generated filler.
 
 ## Integrated history
 
@@ -21,166 +27,231 @@ The current production direction adds Higgsfield as a bounded external asset/pre
 - CI/governance repair tranche integrated before later authored-content work.
 - PR #15: authored dungeon/world/population/fauna production, all 17 Thread owners, fail-closed mission gaps, Tier-1 boss constraints, Animation + Presentation source boundary. Merge commit `d9f268ddf4dee30160d4f50e520fbba241d50adf`.
 - PR #17: world travel, treasures and encounter integration. Merge commit `04a34e37f4f0c2f982cf28b942e11e120d103d29`.
-- Detailed boundaries: `Docs/M3_M4_SOURCE_COMPLETION.md`, `Docs/M5_M6_SOURCE_COMPLETION.md`, `Docs/M7_M8_SOURCE_PLAN.md`, `Docs/ANIMATION_PRESENTATION_SOURCE_COMPLETION.md`, `Docs/WORLD_REWARDS_ENCOUNTERS_SOURCE_COMPLETION.md`.
 
-## PR #17 integrated state
+Detailed prior boundaries remain in:
 
-### Treasure / physical evidence
-
-- Five treasure classes remain Coin / Material / Document / Map / Object.
-- Approximate corpus mix remains 15 / 30 / 20 / 15 / 20 percent without using those percentages to fabricate missing items.
-- All nine state treasures are source-grounded documents bound to exact castles:
-  1. The Conquest Archives, 1651 — La Ciudadela
-  2. The Labor Ledgers — Fuerte Esperanza
-  3. The 1846 Patrol Reports — Fuerte San Rafael
-  4. The Bribe Ledgers — Castillo Dorado
-  5. Vega's Eleven Years — Puesto del Norte
-  6. The Master Ledger — Coventry House
-  7. Sterling's Correspondence — The Sterling Bastion
-  8. The Four Thousand Contracts — Ashcroft Hall
-  9. Thorne's Dispatches — Fort Resolute
-- Sterling's taken-versus-voluntary-handover distinction remains explicit.
-- Approximately forty community-owned artifacts remain a sell / keep / return corpus. Missing individual identities are not fabricated.
-- Sixteen buried-hoard chains remain locked as 12 archipelago + 4 Highmoore; unnamed chains remain gaps.
-- `UTreasureStateComponent` persists one-time sell/keep/return decisions. Returned counted artifacts expose the authored +5 network-strength delta for the real network owner to apply.
-- The cumulative return count is not player-facing; only the required hidden return-bias evidence is exposed for Harbour That Was First.
-- Random loot tables, rarity colours and visible treasure/return counters remain prohibited.
-
-### Siege / reward integration
-
-- `UCastleSiegeComponent::RecordStateTreasureRecovered` accepts only an authored state treasure at its authored castle.
-- Arbitrary IDs and wrong-castle recovery fail closed.
-- Canonical persistence blocks stable-ID/source-ID alias duplication.
-- This does not prove physical document meshes/materials, castle placement or acquisition presentation exists.
-
-### Travel / world reachability
-
-- `FAuthoredTravelProductionCatalog` records six source-backed travel modes: physical archipelago sailing, feared-water guide/trust sailing, Crystal Caves first passage, Crystal Caves repeat passage, Highmoore horse-only stable relocation and within-settlement walking.
-- Crystal Caves first passage remains 90–120 real minutes; repeat passage 4–6 real minutes; both remain physical traversal.
-- No water instant travel, map-click movement, compass, mini-map or player dot.
-- Pairwise port-route floors and actual streaming/world links remain explicit gaps rather than invented values.
-
-### Highmoore world production
-
-- Twelve current source-grounded anchors: Arion, Belos, Ashby Under Moor, Lynnwater, Halford Cross, Stonecroft, The Mere Villages, Coldbeck, Dunford, Wynne's Cross, Halford Cross Abbey and The Drover's Rest.
-- At least six castles remain visible from the emergence shelf; switchback remains 8–10 minutes on foot; Highmoore remains roughly 25 minutes end-to-end at a canter.
-- No coordinates, generic lesser-House castles, question-mark markers or fake runtime paths are invented.
+- `Docs/M3_M4_SOURCE_COMPLETION.md`
+- `Docs/M5_M6_SOURCE_COMPLETION.md`
+- `Docs/M7_M8_SOURCE_PLAN.md`
+- `Docs/ANIMATION_PRESENTATION_SOURCE_COMPLETION.md`
+- `Docs/WORLD_REWARDS_ENCOUNTERS_SOURCE_COMPLETION.md`
 
 ## Existing authored-content state
 
 ### Dungeons
 
-- Global structure remains exactly 61 sites: 41 named + 20 Minor/Tier-A slots.
-- Forty named site identities are grounded in current source. One Region-06 named/Tier-E identity remains unresolved rather than invented.
-- Twenty Minor/Tier-A regional slots are allocated but not individually named/authored where canon is absent.
-- Crystal Caves remain separate as the category-of-one passage contract and the only >90-minute dungeon carve-out.
-- Tier B+ Return law, no-child-remains law, marker/discovery rules, Secret Site access/resolution and the four no-boss carve-outs remain source-owned.
-- Real dungeon `.umap`, geometry, art, navmesh, lighting, creatures, encounters, animation, VFX/audio and playtest evidence remain open.
+- Global structure: exactly **61 sites = 41 named + 20 Minor/Tier-A**.
+- **40 named identities** are currently grounded.
+- **1 named Region-06 identity** remains unresolved rather than invented.
+- **20 Minor/Tier-A identities** remain allocated slots without invented names/content.
+- Crystal Caves remain separate as the category-of-one passage contract and sole >90-minute carve-out.
+- Tier B+ Return, no-child-remains, discovery/marker laws, Secret Site access/resolution and the four no-boss carve-outs remain source-owned.
+- Real dungeon `.umap`, geometry, final art, navmesh, lighting, enemy/creature placement, final animation/VFX/audio and runtime playtest evidence remain open.
 
-### Quests / missions
+### Quests / missions before the main story
 
-- All 17 named Threads have source/runtime coverage owners.
-- Exactly 132 Turns are required; only three individual Turn identities are sufficiently grounded for production source.
-- Exactly 147 Standing variants are required; only `Rexa.Standing.Salvage.SanTelmoBell` is individually complete.
-- Deliberate authoring gap remains **129 Turns + 146 Standing variants = 275 identities**.
-- Neutral gap slots carry no invented title, NPC, location, dialogue, reward, premise or outcome.
-- Assassin Network, Liberation connections, Highmoore Reconstruction, Crew/Archipelago/Named-Dead/Light-Elves Thread state owners preserve their currently authored boundaries and explicit sub-gaps.
+- Named Threads: **17/17** source/runtime owners.
+- Turns: **132 required / 3 individually grounded / 129 deliberate identity gaps**.
+- Standing variants: **147 required / 1 individually grounded / 146 deliberate identity gaps**.
+- Total deliberate Turn + Standing identity gap: **275**.
+- Neutral gap slots contain no invented title, NPC, location, dialogue, reward, premise or outcome.
+- Assassin Network, Liberation connections, Highmoore Reconstruction, Crew/Archipelago/Named-Dead/Light-Elves Thread owners preserve their authored boundaries and internal sub-gaps.
 
 ### Tier-1 bosses
 
-- Nine Who Hold remain Herrera, Reyes, Cruz, de Silva, Vega, Blackwood, Sterling, Ashcroft and Thorne.
-- Non-combat resolution routes are limited to source-backed IDs.
-- Vega still has no clean spare route.
-- Final arenas, AI tuning, character/weapon assets, animation, audio and runtime proof remain open.
+Authoritative Nine Who Hold:
 
-### Population / fauna
+1. Herrera
+2. Reyes
+3. Cruz
+4. de Silva
+5. Vega
+6. Blackwood
+7. Sterling
+8. Ashcroft
+9. Thorne
 
-- Eight production-region identities remain source-registered with no fake final map packages.
-- Highmoore keeps its separate population register and ecology authority.
-- Existing fauna/flora scale locks and named ecological anchors remain authoritative.
-- Random authored population/wildlife generation and generic spawn substitution remain prohibited.
+- Gameplay identities and source-backed kill/spare/avoid special cases are preserved.
+- Vega has no clean spare route.
+- Current Phase-7 sources do **not** provide nine complete physical look sheets; all nine full looks remain explicit art-authority gaps.
+- Older deep-dive boss material stays in its own categories and may not replace this current register.
+- Ethan/Draven old final-boss visual/story material is current-story conflicted and blocked until Phase-11 authority is resolved.
 
-### Animation / presentation
+### World / travel / rewards
 
-- Eleven named animation requirements remain source-grounded.
-- Exact weapon timing/readability, six-frame deflection, non-cancellable recovery, wound layers, horse/carry/traversal requirements and Crystal Katana clean-set exception remain authoritative.
-- Exactly 19 cutscene slots, 22 protected playable moments, 5 inserts and 6 slow pushes remain the presentation boundary.
-- Final-act cutscenes #15–#19 remain unresolved because no authoritative source identity has closed them.
-- External video/reference generation does not satisfy imported animation, AnimGraph/Montage, AnimNotify, Sequencer or runtime requirements.
+- Eight production-region identities are source-registered.
+- Twelve Highmoore named anchors are source-grounded without invented coordinates.
+- Physical travel remains authoritative; no water fast travel, map-click movement, minimap, compass or player dot.
+- Crystal Caves first passage remains 90–120 real minutes; repeat passage 4–6 real minutes; both physical.
+- Nine State Treasures are exact authored documents bound to exact castles.
+- State Treasure sell/keep/return and hidden return-bias behavior remain source-owned.
+- State Treasure unique cover/binding/paper/wear appearance is not automatically authored by having a document identity.
 
-### Voice
+### Population / fauna / flora
 
-- Existing AI Voice Generator outputs are auditions only.
-- Shipping voice remains late-stage and requires dialogue lock, casting role, pronunciation record, subtitle text and explicit cost/rights acceptance before production can be called commercially cleared.
+- Highmoore keeps separate population/ecology authority.
+- No random authored population/wildlife generation or generic spawn substitution.
+- Fauna source register: 24 records; 3D readiness = 16 candidate-ready / 3 reference-only / 5 blocked.
+- Flora source register: 9 records; 3D readiness = 7 candidate-ready / 1 reference-only / 1 blocked.
+- Variable/hidden identities remain variable/hidden: Final Wolf player-history dependence, Deep One incomplete anatomy, Memory Stag/Threshold Fox variability, Infinite Branch unstable geometry.
+- Ethan's Grove stays current-story blocked where legacy/current story authority conflicts.
+
+### La Liberación
+
+- Six visual/source records are tracked.
+- Five deck/interior spaces are candidate-geometry-ready as source packages.
+- Exterior remains blocked because current authority does not lock final hull class, overall dimensions, mast/sail plan, colors or figurehead.
+- Interior readiness does not prove a final walkable ship asset exists.
+
+## Cross-family 3D source readiness
+
+Native authority: `Source/DarkArisen/Production/ThreeDAssetReadinessCatalog.h/.cpp`.
+
+Current finite register:
+
+- **140 records total**
+- **105 CandidateGeometryReady**
+- **14 ReferenceOnly**
+- **21 Blocked**
+
+Family count:
+
+- 9 major characters
+- 21 legacy/deep-dive boss visual records
+- 9 current Tier-1 boss identities
+- 6 La Liberación records
+- 24 fauna records
+- 9 flora records
+- 10 reward/prop records
+- 40 grounded named-dungeon modular-kit records
+- 12 Highmoore anchor-kit records
+
+This is modeling readiness only. No generated 3D candidate, imported UE mesh, skeleton, collision, LOD, material setup or runtime acceptance is claimed.
+
+## Animation / presentation
+
+### Animation
+
+- 11 named animation requirements + 12 system animation/performance requirements = **23** source-grounded requirements.
+- Weapon startup/recovery values where authored, readable attack tells, exact six-frame deflection, committed recovery, wound layers, horse/carry/traversal ownership and Crystal Katana clean-set exception remain authoritative.
+- Actual final AnimSequences/Montages/Notifies/retarget/runtime evidence remains open.
+
+### Presentation
+
+- Exactly **19 cutscene slots**.
+- **14 identities resolved**.
+- **5 final-act slots #15–#19 unresolved**.
+- Exactly **22 protected playable moments**, **5 inserts**, **6 slow pushes**.
+- No reactive music; no unauthorized slow motion; protected gameplay cannot be converted into spectacle.
+
+## Higgsfield — current approved route
+
+Higgsfield is no longer a general visual/look-development queue.
+
+The provider-facing `FExternalAssetProductionCatalog` contains exactly **37 RequirementOnly briefs**:
+
+- 11 named animation requirements;
+- 12 system animation/performance requirements;
+- 14 resolved cinematic identities.
+
+Higgsfield currently excludes:
+
+- character/boss look generation;
+- dungeon/world/Highmoore look generation;
+- La Liberación look generation;
+- fauna/flora;
+- props/treasures;
+- general 3D/GLB generation;
+- dialogue;
+- missing main-story content.
+
+Connected provider preflight remains:
+
+- Free plan;
+- 10 credits;
+- Unlimited false;
+- two Seedance 2.0 Mini test jobs rejected before creation with `Requires basic plan or higher`;
+- zero credits consumed;
+- no purchase or plan upgrade authorised.
+
+A generated Higgsfield video would still be reference only, not an AnimMontage, AnimNotify, retargeted animation, Sequencer asset or runtime evidence.
 
 ## Game Studios / Kimi K3
 
-- `CLAUDE.md` now exists and records the adapted `Donchitos/Claude-Code-Game-Studios` methodology.
-- Installed methodology files include `.claude/agents/*`, `.claude/skills/team-level/SKILL.md` and `.github/workflows/game-studios-kimi.yml`.
-- The upstream Game Studios repository is methodology, not Dark Arisen canon.
-- `DarkArisenOps studio-kimi` targets NVIDIA NIM model `moonshotai/kimi-k3`; `NVIDIA_API_KEY` stays in process/GitHub secret environment and is never read back or committed.
-- Kimi output is review material only and cannot create canon, auto-merge or fill the 275 mission identities.
+- `CLAUDE.md` records the adapted `Donchitos/Claude-Code-Game-Studios` methodology.
+- `.claude/agents/*`, `.claude/skills/team-level/SKILL.md` and `.github/workflows/game-studios-kimi.yml` are present.
+- Kimi targets NVIDIA NIM `moonshotai/kimi-k3` through the native `DarkArisenOps` boundary.
+- `NVIDIA_API_KEY` remains environment/GitHub Secret only and is never read back or committed.
+- Kimi output is review/proposal material only; it cannot create canon, fill the 275 mission gaps, create missing main quests or auto-merge.
 
-## Current PR #18 — pre-runner asset production
+## PR #18 source closure before main quests
 
-Plan: `Docs/PRE_RUNNER_ASSET_PRODUCTION_PLAN.md`.
+Primary documents:
 
-### Provider preflight already performed
+- `Docs/PRE_RUNNER_ASSET_PRODUCTION_PLAN.md`
+- `Docs/PRE_MAIN_QUEST_READINESS.md`
+- `Docs/MAIN_QUEST_AUTHORITY_GAP.md`
+- `Docs/HIGGSFIELD_ASSET_PRODUCTION_MATRIX.md`
+- `Docs/HIGGSFIELD_GAME_ASSET_PIPELINE.md`
+- `Docs/THREED_ASSET_READINESS_MATRIX.md`
+- `Docs/NON_AI_SLOP_STANDARD.md`
 
-Higgsfield read-only account/model preflight found:
+Native closure authority:
 
-- workspace plan: free;
-- available balance at preflight: 10 credits;
-- free-trial unlimited generations: unavailable;
-- Seedance 2.0 Mini 4-second / 480p reference-video estimate: 4 credits;
-- two attempted 4-second / 480p animation-previs jobs were rejected **before job creation** with `Requires basic plan or higher`;
-- therefore no Higgsfield generation job was created and no credits were consumed in that attempt.
+- `FPreMainQuestReadinessCatalog` tracks 17 pre-main production families.
+- It locks the finite remaining source gaps rather than pretending they are completed.
+- `FExternalAssetProductionCatalog` now enforces the motion/cinematic-only Higgsfield route.
+- tranche-specific Automation specs and `DarkArisenOps` static validation have been authored but **not executed** without a matching UE runner.
 
-No upgrade, subscription, credit purchase or provider-plan change is authorised or attempted.
+## Main-story STOP boundary
 
-### Higgsfield capability boundary
+`main story structure.md` is current Phase-11 structural authority, but explicitly says it is a **structure/scaffold**, not the complete plot/mission list.
 
-Useful pre-runner outputs include:
+Implementation stops before main quests because four current authority problems remain:
 
-- concept/reference images;
-- motion/camera/facial-performance reference video;
-- 3D GLB candidate meshes where an eligible model is available;
-- auto-rig/canned motion candidate output where an eligible model supports it;
-- video analysis and review reference.
+1. Chapter summaries do not define complete mission IDs, exact triggers, participants, routes/actions, completion outcomes and persistence consequences.
+2. Phase-11 says Chapter 1 ends with Ethan dead, while older Ethan/Draven documents describe the superseded captured/betrayal/final-boss branch. `Docs/DesignAuthority.md` requires a rewrite or explicit restoration before using that legacy material.
+3. Chapters 8 and 10 route detailed endgame plot to `bosses/crimson_armada.md`, but repository search does not provide a current matching authoritative final-act source under that identity.
+4. Cutscene slots #15–#19 remain unresolved for the same final-act gap.
 
-Higgsfield does **not** replace:
+Do not reconstruct the main story from legacy boss files or use Kimi/Higgsfield to invent the missing final act.
 
-- Unreal import/reimport and asset settings;
-- skeleton compatibility/retarget review;
-- AnimGraph or Montage construction;
-- AnimNotify gameplay ownership;
-- Sequencer integration;
-- collision/navmesh;
-- gameplay AI;
-- real level placement/streaming;
-- save/load validation;
-- 60-fps evidence;
-- packaging or start-to-credits testing.
+Exact operator/design questions are documented in `Docs/MAIN_QUEST_AUTHORITY_GAP.md`.
 
-External output must therefore carry explicit provenance and evidence state rather than being counted immediately as production-complete content.
+## Voice / audio
 
-## PR #18 work order
+- Existing AI Voice Generator outputs are auditions only.
+- Shipping voice remains late-stage and requires dialogue lock, casting role, pronunciation record, subtitle text and explicit cost/rights acceptance.
+- Music remains non-reactive by locked law.
+- Do not purchase/licence/generate shipping audio under unclear cost or rights.
 
-1. Reconcile stale governance/checklist statements to PR #17 merge `04a34e37...` and active PR #18.
-2. Add native C++ external-asset production/provenance authority with fail-closed evidence states.
-3. Add Higgsfield production documentation and source-backed animation/presentation/world/prop briefs.
-4. Preserve provider plan/cost/rights block without buying anything.
-5. Re-scan quest source at the end and stop at the exact authorship boundary rather than inventing missing Turns/Standing variants.
-6. Keep UE runtime gates open until a real runner/editor provides evidence.
+## Runtime / Alpha path after story authority is closed
+
+Later required evidence still includes:
+
+1. actual UE 5.5 Windows/Linux compile;
+2. Unreal Automation on the exact commit;
+3. real `.umap`/`.uasset` production/import integration;
+4. animation retarget/Montage/Notify/AnimGraph integration;
+5. Sequencer integration;
+6. AI/navmesh/collision/save-load runtime validation;
+7. measured 60-fps evidence;
+8. content-identical Windows + Linux Shipping Alpha ZIPs from the same accepted commit;
+9. checksums/private source archive;
+10. complete start-to-credits native runs;
+11. private Arcware-style full-game exploration/playthrough;
+12. defect/quality improvement tranche;
+13. explicit operator Alpha acceptance.
 
 ## Never claim without evidence
 
 - UE compilation passed;
 - Unreal Automation passed;
-- an external image/video/GLB is already an accepted UE asset;
-- a binary map/animation/audio/cinematic exists merely because a source brief exists;
+- a source-ready record is a generated asset;
+- an external video is an accepted game animation/cinematic;
+- a `.umap`/`.uasset` exists merely because source direction exists;
 - 60 fps passed;
+- Shipping packages exist;
 - start-to-credits passed;
-- voice/music/provider usage is commercially cleared;
-- Windows/Linux packages are Alpha-ready;
+- voice/music/provider use is commercially cleared;
 - the Alpha is accepted.
