@@ -3,17 +3,7 @@
 #include "Production/ExternalAssetProductionCatalog.h"
 
 #include "Animation/AnimationProductionCatalog.h"
-#include "ContentScale/AuthoredDungeonCatalog.h"
-#include "ContentScale/AuthoredDungeonProductionProfile.h"
-#include "ContentScale/AuthoredRewardCatalog.h"
 #include "Presentation/PresentationProductionCatalog.h"
-#include "Production/BossVisualProductionCatalog.h"
-#include "Production/CharacterVisualProductionCatalog.h"
-#include "Production/FaunaVisualProductionCatalog.h"
-#include "Production/FloraVisualProductionCatalog.h"
-#include "Production/ShipVisualProductionCatalog.h"
-#include "World/AuthoredWorldRegionRegistry.h"
-#include "World/HighmooreWorldProductionCatalog.h"
 
 namespace
 {
@@ -48,11 +38,6 @@ EExternalAssetMediaKind AnimationMediaKind(const EAnimationProductionFamily Fami
         ? EExternalAssetMediaKind::FacialPerformanceReference
         : EExternalAssetMediaKind::MotionPrevisVideo;
 }
-
-const TCHAR* BoolRead(const bool bValue)
-{
-    return bValue ? TEXT("yes") : TEXT("no");
-}
 }
 
 TArray<FExternalAssetProductionBrief> FExternalAssetProductionCatalog::BuildHiggsfieldBriefs()
@@ -71,7 +56,7 @@ TArray<FExternalAssetProductionBrief> FExternalAssetProductionCatalog::BuildHigg
                 Requirement.GoverningSource,
                 AnimationMediaKind(Requirement.Family),
                 FString::Printf(
-                    TEXT("Non-shipping motion/performance reference only. Preserve this authored acceptance read literally: %s Do not add moves, beats, dialogue, camera language or timing that contradicts the cited source."),
+                    TEXT("Non-shipping motion/performance reference only. Preserve the authored acceptance read literally: %s Do not add moves, beats, dialogue, camera language or timing that contradicts the cited source. This output is not an AnimMontage, AnimNotify, retargeted clip or runtime animation."),
                     *Requirement.AcceptanceRead)));
         }
     };
@@ -93,205 +78,9 @@ TArray<FExternalAssetProductionBrief> FExternalAssetProductionCatalog::BuildHigg
             Cutscene.GoverningSource,
             EExternalAssetMediaKind::CinematicPrevisVideo,
             FString::Printf(
-                TEXT("Camera/performance previs only. Camera rule: %s Music rule: %s Control ownership remains authoritative in PresentationProductionCatalog. Do not turn protected playable material into a cinematic or invent dialogue."),
+                TEXT("Camera/performance previs only. Camera rule: %s Music rule: %s Control ownership remains authoritative in PresentationProductionCatalog. Do not turn protected playable material into a cinematic, invent dialogue, create a missing final-act identity or treat the video as a Sequencer asset."),
                 *Cutscene.CameraRule,
                 *Cutscene.MusicRule)));
-    }
-
-    for (const FAuthoredDungeonProductionProfile& Profile : FAuthoredDungeonProductionProfiles::BuildAllKnownProfiles())
-    {
-        FAuthoredDungeonCatalogEntry Dungeon;
-        if (!FAuthoredDungeonCatalog::TryGetKnownSite(Profile.StableId, Dungeon))
-        {
-            continue;
-        }
-
-        const FString ImageRead = Profile.bImageWithheld
-            ? TEXT("The unforgettable image is withheld/unresolved; do not invent it.")
-            : FString::Printf(TEXT("Unforgettable image: %s"), *Profile.UnforgettableImage);
-        const FString BossRead = Profile.bBossWithheldOrUnresolved
-            ? TEXT("The boss/bottom identity is withheld or unresolved; do not invent it.")
-            : FString::Printf(TEXT("Boss/bottom: %s"), *Profile.BossOrBottomDetail);
-        const FString RewardRead = Profile.bRewardWithheldOrUnresolved
-            ? TEXT("The reward is withheld or unresolved; do not invent it.")
-            : FString::Printf(TEXT("Reward/evidence: %s"), *Profile.RewardDetail);
-
-        Result.Add(HiggsfieldBrief(
-            BriefId(TEXT("external.higgsfield.dungeon"), Profile.StableId),
-            Profile.StableId,
-            Dungeon.DisplayName,
-            Profile.GoverningSource,
-            EExternalAssetMediaKind::ConceptReferenceImage,
-            FString::Printf(
-                TEXT("Grounded named-dungeon production reference only. Access/discovery: %s Puzzle language/detail: %s Primary hazard: %s %s %s %s No extra rooms, bosses, characters, lore, rewards, coordinates, UI markers, child remains or ambient dungeon music may be invented."),
-                *Profile.AccessAndDiscovery,
-                *Profile.PuzzleLanguageDetail,
-                *Profile.HazardDetail,
-                *ImageRead,
-                *BossRead,
-                *RewardRead)));
-    }
-
-    for (const FAuthoredWorldRegionDefinition& Region : FAuthoredWorldRegionRegistry::BuildAll())
-    {
-        Result.Add(HiggsfieldBrief(
-            BriefId(TEXT("external.higgsfield.region"), Region.StableId),
-            Region.StableId,
-            Region.DisplayName,
-            Region.GoverningSource,
-            EExternalAssetMediaKind::ConceptReferenceImage,
-            FString::Printf(
-                TEXT("Source-backed regional environment reference only. Registry coverage: settlements=%s, dungeons=%s, war=%s, naval=%s, houses=%s. Read the cited governing source for visual identity. Do not invent coordinates, unnamed settlements, landmarks, travel links, quest markers, minimap language or runtime map placement."),
-                BoolRead(Region.bHasSettlements),
-                BoolRead(Region.bHasDungeonContent),
-                BoolRead(Region.bHasWarContent),
-                BoolRead(Region.bHasNavalContent),
-                BoolRead(Region.bHasHouseContent))));
-    }
-
-    for (const FHighmooreWorldProductionAnchor& Anchor : FHighmooreWorldProductionCatalog::BuildNamedAnchors())
-    {
-        Result.Add(HiggsfieldBrief(
-            BriefId(TEXT("external.higgsfield.world"), Anchor.StableId),
-            Anchor.StableId,
-            Anchor.DisplayName,
-            Anchor.GoverningSource,
-            EExternalAssetMediaKind::ConceptReferenceImage,
-            FString::Printf(
-                TEXT("Environment/landmark reference exploration only; no coordinates or runtime placement. Preserve the authored production read literally: %s"),
-                *Anchor.ProductionRead)));
-    }
-
-    for (const FCharacterVisualProductionBrief& Character : FCharacterVisualProductionCatalog::BuildMajorCharacterBriefs())
-    {
-        if (!Character.bProviderReferenceReady)
-        {
-            continue;
-        }
-
-        Result.Add(HiggsfieldBrief(
-            BriefId(TEXT("external.higgsfield.character"), Character.StableId),
-            Character.StableId,
-            Character.DisplayName,
-            Character.GoverningSource,
-            EExternalAssetMediaKind::ConceptReferenceImage,
-            FString::Printf(
-                TEXT("Source-grounded character reference only. Physical facts: %s Wardrobe/objects: %s Performance read: %s Explicit unknowns: %s Unknowns must remain unknown and no provider output becomes canonical without review."),
-                *Character.PhysicalFacts,
-                *Character.WardrobeAndObjects,
-                *Character.PerformanceRead,
-                *Character.ExplicitUnknowns)));
-    }
-
-    for (const FBossVisualProductionBrief& Boss : FBossVisualProductionCatalog::BuildDeepDiveBossBriefs())
-    {
-        if (!Boss.bProviderReferenceReady)
-        {
-            continue;
-        }
-
-        Result.Add(HiggsfieldBrief(
-            BriefId(TEXT("external.higgsfield.boss-visual"), Boss.StableId),
-            Boss.StableId,
-            Boss.DisplayName,
-            Boss.GoverningSource,
-            EExternalAssetMediaKind::ConceptReferenceImage,
-            FString::Printf(
-                TEXT("Source-grounded boss/creature visual reference only; this does not select gameplay boss authority. Visual facts: %s Equipment/silhouette: %s Arena visual read: %s Performance read: %s Explicit unknowns: %s Do not infer missing canon or alter the authoritative Tier-1/dungeon/secret boss categories."),
-                *Boss.VisualFacts,
-                *Boss.EquipmentOrSilhouette,
-                *Boss.ArenaVisualRead,
-                *Boss.PerformanceRead,
-                *Boss.ExplicitUnknowns)));
-    }
-
-    for (const FShipVisualProductionBrief& Ship : FShipVisualProductionCatalog::BuildLaLiberacionBriefs())
-    {
-        if (!Ship.bProviderReferenceReady)
-        {
-            continue;
-        }
-
-        Result.Add(HiggsfieldBrief(
-            BriefId(TEXT("external.higgsfield.ship"), Ship.StableId),
-            Ship.StableId,
-            Ship.DisplayName,
-            Ship.GoverningSource,
-            EExternalAssetMediaKind::ConceptReferenceImage,
-            FString::Printf(
-                TEXT("La Liberacion source-backed deck/interior reference only. Authored visual facts: %s Functional objects/zones: %s Anti-invention boundary: %s The final exterior silhouette remains blocked and no provider image may select hull class, dimensions, mast/sail plan, colors or figurehead canon."),
-                *Ship.AuthoredVisualFacts,
-                *Ship.FunctionalObjects,
-                *Ship.AntiInventionBoundary)));
-    }
-
-    for (const FFaunaVisualProductionBrief& Fauna : FFaunaVisualProductionCatalog::BuildAllBriefs())
-    {
-        if (!Fauna.bProviderReferenceReady)
-        {
-            continue;
-        }
-
-        Result.Add(HiggsfieldBrief(
-            BriefId(TEXT("external.higgsfield.fauna"), Fauna.StableId),
-            Fauna.StableId,
-            Fauna.DisplayName,
-            Fauna.GoverningSource,
-            EExternalAssetMediaKind::ConceptReferenceImage,
-            FString::Printf(
-                TEXT("Source-grounded fauna/ecology reference only. Visual facts: %s Behavior/motion: %s Environment: %s Anti-invention boundary: %s Do not turn natural animals into fantasy monsters, resolve deliberately ambiguous anatomy, or synthesize unnamed species merely to meet Phase-4 scale targets."),
-                *Fauna.AuthoredVisualFacts,
-                *Fauna.BehaviorAndMotionRead,
-                *Fauna.EnvironmentRead,
-                *Fauna.AntiInventionBoundary)));
-    }
-
-    for (const FFloraVisualProductionBrief& Flora : FFloraVisualProductionCatalog::BuildBriefs())
-    {
-        if (!Flora.bProviderReferenceReady)
-        {
-            continue;
-        }
-
-        Result.Add(HiggsfieldBrief(
-            BriefId(TEXT("external.higgsfield.flora"), Flora.StableId),
-            Flora.StableId,
-            Flora.DisplayName,
-            Flora.GoverningSource,
-            EExternalAssetMediaKind::ConceptReferenceImage,
-            FString::Printf(
-                TEXT("Source-grounded flora/environment reference only. Visual facts: %s Behavior/phenomenon: %s Environment: %s Anti-invention boundary: %s Do not turn metaphorical or runtime phenomena into fixed mesh detail, invent broad Phase-4 filler species, or freeze deliberately unstable Region-06 geometry into canon."),
-                *Flora.AuthoredVisualFacts,
-                *Flora.BehaviorOrPhenomenonRead,
-                *Flora.EnvironmentRead,
-                *Flora.AntiInventionBoundary)));
-    }
-
-    for (const FAuthoredRewardBinding& Treasure : FAuthoredRewardCatalog::BuildStateTreasureSlots())
-    {
-        Result.Add(HiggsfieldBrief(
-            BriefId(TEXT("external.higgsfield.prop"), Treasure.StableId),
-            Treasure.StableId,
-            Treasure.DisplayName,
-            Treasure.GoverningSource,
-            EExternalAssetMediaKind::ConceptReferenceImage,
-            FString::Printf(
-                TEXT("Physical evidence/prop reference exploration only. Preserve authored origin %s and outcome: %s"),
-                *Treasure.OriginStableId.ToString(),
-                *Treasure.AuthoredOutcome)));
-    }
-
-    for (const FAuthoredRewardBinding& Reward : FAuthoredRewardCatalog::BuildNamedUniqueRewards())
-    {
-        Result.Add(HiggsfieldBrief(
-            BriefId(TEXT("external.higgsfield.prop"), Reward.StableId),
-            Reward.StableId,
-            Reward.DisplayName,
-            Reward.GoverningSource,
-            EExternalAssetMediaKind::ConceptReferenceImage,
-            FString::Printf(
-                TEXT("Unique-item visual reference only. Preserve the authored physical/gameplay identity: %s"),
-                *Reward.AuthoredOutcome)));
     }
 
     return Result;
@@ -301,33 +90,18 @@ TArray<FExternalAssetProductionDesignGap> FExternalAssetProductionCatalog::Build
 {
     return {
         {
-            TEXT("design-gap.external-assets.approved-character-visual-references"),
-            TEXT("Source-backed character briefs can drive reference generation, but no generated face/costume becomes canonical until it is reviewed and explicitly approved. Elowen and canon-conflicted Ethan/Draven remain provider-blocked."),
-            TEXT("Docs/DesignAuthority.md; Production/CharacterVisualProductionCatalog")
-        },
-        {
-            TEXT("design-gap.external-assets.boss-final-act-authority"),
-            TEXT("Legacy Ethan/Draven boss visuals are excluded because DesignAuthority requires a Phase 11 rewrite or explicit restoration of the older branch. Other deep-dive boss visuals remain reference-only and do not override the authoritative category registers."),
-            TEXT("Docs/DesignAuthority.md; Docs/M7_TIER1_BOSS_REGISTER.md; Production/BossVisualProductionCatalog")
-        },
-        {
-            TEXT("design-gap.external-assets.fauna-variable-identity"),
-            TEXT("Fauna provider briefs include only individually grounded visual records. Player-history-dependent Final Wolf and insufficiently specified Highmoore species variants remain blocked; Phase-4 species totals never authorize synthetic filler."),
-            TEXT("Production/FaunaVisualProductionCatalog; highmoore fauna.md; docs/design/fauna/legendary_creatures.md")
-        },
-        {
-            TEXT("design-gap.external-assets.flora-variable-identity"),
-            TEXT("Flora provider briefs include only individually grounded visual records. Ethan's Grove remains blocked behind current Phase-11 story authority; broad Phase-4 flora totals do not authorize synthetic plant species or fixed interpretations of unstable Region-06 phenomena."),
-            TEXT("Production/FloraVisualProductionCatalog; Docs/DesignAuthority.md")
-        },
-        {
-            TEXT("design-gap.external-assets.provider-3d-path"),
-            TEXT("The connected Higgsfield model discovery currently exposes image/video production but did not return a usable 3D mesh model. Do not claim GLB/rigged-mesh generation until a supported provider action/model is actually available."),
+            TEXT("design-gap.external-assets.higgsfield-plan-access"),
+            TEXT("The connected Higgsfield workspace is Free with 10 credits and no Unlimited access. Two Seedance 2.0 Mini submissions were rejected before job creation with 'Requires basic plan or higher'. No upgrade or purchase is authorised."),
             TEXT("Docs/PRE_RUNNER_ASSET_PRODUCTION_PLAN.md; connected-provider preflight 2026-08-30")
         },
         {
+            TEXT("design-gap.external-assets.final-act-presentation"),
+            TEXT("Five final-act cutscene identities remain unresolved by current presentation authority and are excluded from Higgsfield. A provider cannot invent their story beats merely to reach nineteen."),
+            TEXT("Presentation/PresentationProductionCatalog; Docs/DesignAuthority.md")
+        },
+        {
             TEXT("design-gap.external-assets.unreal-import"),
-            TEXT("No external generation may be counted as a production asset until an actual Unreal import exists and skeleton/material/collision/retarget/Sequencer settings are reviewed as applicable."),
+            TEXT("No Higgsfield motion/cinematic previs may be counted as a production asset until actual Unreal animation/Sequencer import or recreation exists and ownership/timing/settings are reviewed."),
             TEXT("Docs/PRE_RUNNER_ASSET_PRODUCTION_PLAN.md; Docs/ALPHA_DELIVERY_CHECKLIST.md")
         },
         {
@@ -351,44 +125,37 @@ bool FExternalAssetProductionCatalog::Validate(TArray<FString>& OutErrors)
     if (Briefs.Num() != RequiredHiggsfieldBriefCount)
     {
         OutErrors.Add(FString::Printf(
-            TEXT("External Higgsfield brief catalog requires exactly %d source-derived briefs; found %d."),
+            TEXT("Higgsfield previs catalog requires %d briefs; found %d."),
             RequiredHiggsfieldBriefCount,
             Briefs.Num()));
     }
 
-    int32 AnimationCount = 0;
-    int32 PresentationCount = 0;
-    int32 DungeonCount = 0;
-    int32 RegionCount = 0;
-    int32 HighmooreWorldCount = 0;
-    int32 CharacterCount = 0;
-    int32 BossVisualCount = 0;
-    int32 ShipVisualCount = 0;
-    int32 FaunaVisualCount = 0;
-    int32 FloraVisualCount = 0;
-    int32 PropCount = 0;
-    TSet<FName> SeenBriefIds;
+    TSet<FName> StableIds;
+    int32 MotionOrPerformance = 0;
+    int32 Cinematic = 0;
 
     for (const FExternalAssetProductionBrief& Brief : Briefs)
     {
-        if (Brief.StableId.IsNone()
-            || Brief.SourceRequirementId.IsNone()
-            || Brief.DisplayName.IsEmpty()
-            || Brief.GoverningSource.IsEmpty()
-            || Brief.ProductionPurpose.IsEmpty())
+        if (Brief.StableId.IsNone() || Brief.SourceRequirementId.IsNone())
         {
-            OutErrors.Add(TEXT("Every external asset brief requires stable/source identity, display name, source and production purpose."));
+            OutErrors.Add(TEXT("External previs brief has an empty stable/source requirement id."));
+            continue;
         }
 
-        if (SeenBriefIds.Contains(Brief.StableId))
+        if (StableIds.Contains(Brief.StableId))
         {
-            OutErrors.Add(FString::Printf(TEXT("Duplicate external asset brief id: %s"), *Brief.StableId.ToString()));
+            OutErrors.Add(FString::Printf(TEXT("Duplicate external previs stable id: %s"), *Brief.StableId.ToString()));
         }
-        SeenBriefIds.Add(Brief.StableId);
+        StableIds.Add(Brief.StableId);
+
+        if (Brief.GoverningSource.IsEmpty() || Brief.ProductionPurpose.IsEmpty())
+        {
+            OutErrors.Add(FString::Printf(TEXT("External previs brief %s lacks source/purpose."), *Brief.StableId.ToString()));
+        }
 
         if (Brief.Provider != EExternalAssetProvider::Higgsfield)
         {
-            OutErrors.Add(FString::Printf(TEXT("Higgsfield brief %s changed provider."), *Brief.StableId.ToString()));
+            OutErrors.Add(FString::Printf(TEXT("Higgsfield previs catalog contains non-Higgsfield provider: %s"), *Brief.StableId.ToString()));
         }
 
         if (Brief.EvidenceState != EExternalAssetEvidenceState::RequirementOnly
@@ -398,118 +165,48 @@ bool FExternalAssetProductionCatalog::Validate(TArray<FString>& OutErrors)
             || Brief.bProviderCostApproved
             || Brief.bShippingRightsCleared)
         {
-            OutErrors.Add(FString::Printf(
-                TEXT("Brief %s falsely claims generation/import/rights evidence. Current source catalog must stay RequirementOnly until real evidence is recorded."),
-                *Brief.StableId.ToString()));
+            OutErrors.Add(FString::Printf(TEXT("External previs brief %s fabricates evidence/cost/rights state."), *Brief.StableId.ToString()));
         }
-
-        const FString Id = Brief.StableId.ToString();
-        if (Id.StartsWith(TEXT("external.higgsfield.animation."))) ++AnimationCount;
-        else if (Id.StartsWith(TEXT("external.higgsfield.presentation."))) ++PresentationCount;
-        else if (Id.StartsWith(TEXT("external.higgsfield.dungeon."))) ++DungeonCount;
-        else if (Id.StartsWith(TEXT("external.higgsfield.region."))) ++RegionCount;
-        else if (Id.StartsWith(TEXT("external.higgsfield.world."))) ++HighmooreWorldCount;
-        else if (Id.StartsWith(TEXT("external.higgsfield.character."))) ++CharacterCount;
-        else if (Id.StartsWith(TEXT("external.higgsfield.boss-visual."))) ++BossVisualCount;
-        else if (Id.StartsWith(TEXT("external.higgsfield.ship."))) ++ShipVisualCount;
-        else if (Id.StartsWith(TEXT("external.higgsfield.fauna."))) ++FaunaVisualCount;
-        else if (Id.StartsWith(TEXT("external.higgsfield.flora."))) ++FloraVisualCount;
-        else if (Id.StartsWith(TEXT("external.higgsfield.prop."))) ++PropCount;
-        else OutErrors.Add(FString::Printf(TEXT("Unknown external brief family: %s"), *Id));
 
         const FString SourceId = Brief.SourceRequirementId.ToString();
         if (SourceId.StartsWith(TEXT("turn-gap."))
             || SourceId.StartsWith(TEXT("standing-gap."))
-            || SourceId.Contains(TEXT("minor-slot"))
-            || SourceId == TEXT("character.elowen-arion")
-            || SourceId == TEXT("character.ethan-harlow")
-            || SourceId == TEXT("character.draven-voss")
-            || SourceId == TEXT("boss-visual.ethan-harlow")
-            || SourceId == TEXT("boss-visual.draven-voss")
-            || SourceId == TEXT("ship-visual.la-liberacion.exterior")
-            || SourceId == TEXT("fauna.legendary.final-wolf")
-            || SourceId == TEXT("fauna.highmoore.grouse")
-            || SourceId == TEXT("fauna.highmoore.hare")
-            || SourceId == TEXT("fauna.highmoore.fox")
-            || SourceId == TEXT("fauna.highmoore.fell-wolf")
-            || SourceId == TEXT("flora.story.ethans-grove"))
+            || SourceId.Contains(TEXT("minor-slot")))
         {
-            OutErrors.Add(FString::Printf(TEXT("Unauthored or authority-blocked identity leaked into provider briefs: %s"), *SourceId));
+            OutErrors.Add(FString::Printf(TEXT("Unauthored content leaked into Higgsfield previs: %s"), *SourceId));
+        }
+
+        switch (Brief.MediaKind)
+        {
+        case EExternalAssetMediaKind::MotionPrevisVideo:
+        case EExternalAssetMediaKind::FacialPerformanceReference:
+            ++MotionOrPerformance;
+            break;
+        case EExternalAssetMediaKind::CinematicPrevisVideo:
+            ++Cinematic;
+            break;
+        default:
+            OutErrors.Add(FString::Printf(
+                TEXT("Higgsfield is motion/presentation-only; disallowed media kind on %s."),
+                *Brief.StableId.ToString()));
+            break;
         }
     }
 
-    if (AnimationCount != NamedAnimationBriefCount + SystemAnimationBriefCount)
+    if (MotionOrPerformance != NamedAnimationBriefCount + SystemAnimationBriefCount)
     {
-        OutErrors.Add(TEXT("External animation brief coverage drifted from AnimationProductionCatalog."));
-    }
-    if (PresentationCount != ResolvedPresentationBriefCount)
-    {
-        OutErrors.Add(TEXT("External presentation brief coverage must include only the fourteen resolved cutscene identities."));
-    }
-    if (DungeonCount != GroundedDungeonBriefCount
-        || GroundedDungeonBriefCount != FAuthoredDungeonProductionProfiles::BuildAllKnownProfiles().Num())
-    {
-        OutErrors.Add(TEXT("External dungeon-look coverage must track exactly the forty grounded named production profiles."));
-    }
-    if (RegionCount != WorldRegionBriefCount
-        || WorldRegionBriefCount != FAuthoredWorldRegionRegistry::BuildAll().Num())
-    {
-        OutErrors.Add(TEXT("External region-look coverage must track exactly the eight authored world-region identities."));
-    }
-    if (HighmooreWorldCount != HighmooreWorldBriefCount)
-    {
-        OutErrors.Add(TEXT("External Highmoore world brief coverage drifted from the twelve source-backed anchors."));
-    }
-    if (CharacterCount != ProviderReadyCharacterBriefCount
-        || ProviderReadyCharacterBriefCount != FCharacterVisualProductionCatalog::ProviderReadyCharacterCount)
-    {
-        OutErrors.Add(TEXT("External character-reference coverage must include exactly current-authority provider-ready character briefs."));
-    }
-    if (BossVisualCount != ProviderReadyBossVisualBriefCount
-        || ProviderReadyBossVisualBriefCount != FBossVisualProductionCatalog::ProviderReadyBossBriefCount)
-    {
-        OutErrors.Add(TEXT("External boss-reference coverage must include exactly current-authority provider-ready deep-dive visuals and exclude legacy Ethan/Draven."));
-    }
-    if (ShipVisualCount != ProviderReadyShipVisualBriefCount
-        || ProviderReadyShipVisualBriefCount != FShipVisualProductionCatalog::ProviderReadyBriefCount)
-    {
-        OutErrors.Add(TEXT("External ship-reference coverage must include exactly the five source-ready La Liberacion deck/interior briefs and exclude unresolved exterior silhouette canon."));
-    }
-    if (FaunaVisualCount != ProviderReadyFaunaVisualBriefCount
-        || ProviderReadyFaunaVisualBriefCount != FFaunaVisualProductionCatalog::ProviderReadyBriefCount)
-    {
-        OutErrors.Add(TEXT("External fauna-reference coverage must include exactly the individually grounded provider-ready fauna briefs and exclude variable/underspecified identities."));
-    }
-    if (FloraVisualCount != ProviderReadyFloraVisualBriefCount
-        || ProviderReadyFloraVisualBriefCount != FFloraVisualProductionCatalog::ProviderReadyBriefCount)
-    {
-        OutErrors.Add(TEXT("External flora-reference coverage must include exactly the individually grounded provider-ready flora briefs and exclude story-conflicted identities."));
-    }
-    if (PropCount != StateTreasureBriefCount + UniqueRewardBriefCount)
-    {
-        OutErrors.Add(TEXT("External prop brief coverage must remain nine State Treasures plus the currently grounded unique reward."));
+        OutErrors.Add(FString::Printf(
+            TEXT("Expected %d animation/performance briefs; found %d."),
+            NamedAnimationBriefCount + SystemAnimationBriefCount,
+            MotionOrPerformance));
     }
 
-    if (UnresolvedPresentationIdentityCount != FPresentationProductionCatalog::RequiredCutsceneCount - FPresentationProductionCatalog::ResolvedCutsceneIdentityCount)
+    if (Cinematic != ResolvedPresentationBriefCount)
     {
-        OutErrors.Add(TEXT("External provider boundary drifted from the five unresolved final-act cutscene identities."));
-    }
-    if (UnauthoredMinorDungeonIdentityCount != FAuthoredDungeonCatalog::RequiredMinorSiteCount)
-    {
-        OutErrors.Add(TEXT("External provider boundary drifted from the twenty unauthored minor-dungeon identities."));
-    }
-
-    if (AllowsProviderToCreateCanon()
-        || AllowsGeneratedMediaToCountAsImportedAsset()
-        || AllowsGeneratedMediaToCountAsRuntimeAccepted()
-        || AllowsAutomaticProviderPurchaseOrUpgrade())
-    {
-        OutErrors.Add(TEXT("External provider authority may not create canon, self-promote media or purchase provider access."));
-    }
-
-    if (BuildDesignGaps().Num() != 8)
-    {
-        OutErrors.Add(TEXT("External asset production must retain character/final-act-boss/fauna/flora/3D/import/runtime/rights design gaps."));
+        OutErrors.Add(FString::Printf(
+            TEXT("Expected %d resolved cinematic briefs; found %d."),
+            ResolvedPresentationBriefCount,
+            Cinematic));
     }
 
     return OutErrors.IsEmpty();
