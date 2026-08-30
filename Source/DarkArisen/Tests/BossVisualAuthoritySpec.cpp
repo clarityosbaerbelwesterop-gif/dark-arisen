@@ -28,8 +28,17 @@ bool FDarkArisenBossVisualAuthoritySpec::RunTest(const FString& Parameters)
         FBossVisualAuthorityPolicy::IsProviderEligible(TEXT("boss-visual.ethan-harlow")));
     TestFalse(TEXT("Legacy Draven boss visual is provider blocked"),
         FBossVisualAuthorityPolicy::IsProviderEligible(TEXT("boss-visual.draven-voss")));
-    TestTrue(TEXT("Uncontested Ashen Wyrm visual reference remains eligible"),
+    TestTrue(TEXT("Indexed uncontested Ashen Wyrm visual reference remains eligible"),
         FBossVisualAuthorityPolicy::IsProviderEligible(TEXT("boss-visual.ashen-wyrm")));
+    TestFalse(TEXT("Unknown boss visual identity fails closed"),
+        FBossVisualAuthorityPolicy::IsProviderEligible(TEXT("boss-visual.not-authored")));
+
+    const FBossVisualAuthorityDecision Unknown =
+        FBossVisualAuthorityPolicy::Evaluate(TEXT("boss-visual.not-authored"));
+    TestEqual(TEXT("Unknown boss visual identity keeps explicit unknown authority state"),
+        Unknown.State, EBossVisualAuthorityState::UnknownIdentity);
+    TestFalse(TEXT("Unknown boss visual identity cannot enter reference production"),
+        Unknown.bProviderEligible);
 
     return true;
 }
