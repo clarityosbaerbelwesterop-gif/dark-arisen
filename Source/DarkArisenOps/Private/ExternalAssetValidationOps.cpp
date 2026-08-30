@@ -167,9 +167,18 @@ int32 ValidateExternalAssetProductionCommand(const FParsedArgs& Args)
         TEXT("ProviderEligibleVisualIdentityCount = 19")}, Errors);
 
     RequireFragments(Root, TEXT("Source/DarkArisen/Production/BossVisualAuthorityPolicy.cpp"), {
+        TEXT("IsKnownDeepDiveVisualId"),
+        TEXT("UnknownIdentity"),
+        TEXT("boss-visual.not-authored"),
         TEXT("boss-visual.ethan-harlow"),
         TEXT("boss-visual.draven-voss"),
         TEXT("CurrentStoryConflict")}, Errors);
+
+    RequireFragments(Root, TEXT("Source/DarkArisen/Tests/BossVisualAuthoritySpec.cpp"), {
+        TEXT("Unknown boss visual identity fails closed"),
+        TEXT("Unknown boss visual identity keeps explicit unknown authority state"),
+        TEXT("Legacy Ethan boss visual is provider blocked"),
+        TEXT("Legacy Draven boss visual is provider blocked")}, Errors);
 
     RequireFragments(Root, TEXT("Source/DarkArisen/Production/Tier1BossVisualReadinessCatalog.h"), {
         TEXT("RequiredTier1BossCount = 9"),
