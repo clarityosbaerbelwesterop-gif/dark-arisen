@@ -109,6 +109,24 @@ bool FBossVisualAuthorityPolicy::Validate(TArray<FString>& OutErrors)
         }
     }
 
+    int32 ActualEligibleCount = 0;
+    for (const FBossVisualProductionBrief& Brief : IndexedBriefs)
+    {
+        const FBossVisualAuthorityDecision Decision = Evaluate(Brief.StableId);
+        if (Decision.bProviderEligible)
+        {
+            ++ActualEligibleCount;
+        }
+    }
+
+    if (ActualEligibleCount != ProviderEligibleVisualIdentityCount)
+    {
+        OutErrors.Add(FString::Printf(
+            TEXT("Boss visual provider-eligible identity count must remain %d until authority changes; found %d."),
+            ProviderEligibleVisualIdentityCount,
+            ActualEligibleCount));
+    }
+
     const FBossVisualAuthorityDecision NonConflict = Evaluate(TEXT("boss-visual.ashen-wyrm"));
     if (NonConflict.State != EBossVisualAuthorityState::UncontestedLegacyReference
         || !NonConflict.bProviderEligible)
@@ -122,11 +140,6 @@ bool FBossVisualAuthorityPolicy::Validate(TArray<FString>& OutErrors)
         || Unknown.Reason.IsEmpty())
     {
         OutErrors.Add(TEXT("Unknown boss visual identities must fail closed and remain ineligible for art/reference production."));
-    }
-
-    if (ProviderEligibleVisualIdentityCount != 19)
-    {
-        OutErrors.Add(TEXT("Boss visual provider-eligible identity count must remain nineteen until authority changes."));
     }
 
     return OutErrors.IsEmpty();
