@@ -6,6 +6,7 @@
 #include "Production/ExternalAssetProductionCatalog.h"
 #include "Production/FaunaVisualProductionCatalog.h"
 #include "Production/FloraVisualProductionCatalog.h"
+#include "Production/ProgressionContentReadinessCatalog.h"
 #include "Production/ShipVisualProductionCatalog.h"
 #include "Production/ThreeDAssetReadinessCatalog.h"
 #include "Production/Tier1BossVisualReadinessCatalog.h"
@@ -140,6 +141,26 @@ TArray<FPreMainQuestReadinessRecord> FPreMainQuestReadinessCatalog::BuildRecords
             TEXT("Nine State Treasure identities/origins and the current named unique reward are authored. Unique State Treasure appearance remains reference-only in the 3D layer where physical sheets are missing.")),
 
         Record(
+            TEXT("pre-main.progression"),
+            TEXT("Finite BODY / CRAFT / Mark content"),
+            TEXT("skill tree.md; progression overview.md; ProgressionContentReadinessCatalog"),
+            ProgressionFiniteRecordCount,
+            ProgressionGroundedRecordCount,
+            0,
+            ProgressionExplicitGapCount,
+            TEXT("Progression participates in the closure gate. The eighty explicit gaps are 49 unnamed CRAFT nodes, 3 unresolved dungeon Draught placements, 16 unplaced Deep-Water Pearls, 6 unresolved posture-source selections and 6 unidentified one-off Mark acts. The twenty-three teacher identities are fully named.")),
+
+        Record(
+            TEXT("pre-main.buried-hoards"),
+            TEXT("Buried-hoard chain identities"),
+            TEXT("treasure system.md Section 6"),
+            RequiredBuriedHoardChainCount,
+            GroundedBuriedHoardChainCount,
+            0,
+            BuriedHoardChainIdentityGaps,
+            TEXT("The source locks twelve Archipelago chains plus four Highmoore chains, each three-to-five steps, but does not individually author the sixteen chain identities. One chain is constrained to terminate in nothing at The First House, which does not provide the missing full chain identity.")),
+
+        Record(
             TEXT("pre-main.characters"),
             TEXT("Major character full-geometry readiness"),
             TEXT("CharacterVisualProductionCatalog; Docs/DesignAuthority.md"),
@@ -251,8 +272,6 @@ bool FPreMainQuestReadinessCatalog::Validate(TArray<FString>& OutErrors)
 {
     OutErrors.Reset();
 
-    // The closure register is an aggregate gate. Validate the source/readiness catalogs it summarizes
-    // so a child catalog cannot drift while the top-level hard-coded accounting still appears closed.
     TArray<FString> SubErrors;
 
     if (!FCharacterVisualProductionCatalog::Validate(SubErrors))
@@ -295,6 +314,12 @@ bool FPreMainQuestReadinessCatalog::Validate(TArray<FString>& OutErrors)
     {
         AppendSubcatalogErrors(TEXT("ExternalAssetProductionCatalog"), SubErrors, OutErrors);
     }
+    SubErrors.Reset();
+
+    if (!FProgressionContentReadinessCatalog::Validate(SubErrors))
+    {
+        AppendSubcatalogErrors(TEXT("ProgressionContentReadinessCatalog"), SubErrors, OutErrors);
+    }
 
     if (FCharacterVisualProductionCatalog::BuildMajorCharacterBriefs().Num() != MajorCharacterRecordCount)
     {
@@ -329,6 +354,25 @@ bool FPreMainQuestReadinessCatalog::Validate(TArray<FString>& OutErrors)
     if (FExternalAssetProductionCatalog::BuildHiggsfieldBriefs().Num() != HiggsfieldPrevisBriefCount)
     {
         OutErrors.Add(TEXT("Higgsfield motion/cinematic brief count drifted from ExternalAssetProductionCatalog."));
+    }
+
+    int32 ProgressionRegistered = 0;
+    int32 ProgressionGrounded = 0;
+    int32 ProgressionGaps = 0;
+    for (const FProgressionContentReadinessRecord& Entry : FProgressionContentReadinessCatalog::BuildRecords())
+    {
+        ProgressionRegistered += Entry.RequiredCount;
+        ProgressionGrounded += Entry.GroundedCount;
+        ProgressionGaps += Entry.ExplicitGapCount;
+    }
+
+    if (ProgressionRegistered != ProgressionFiniteRecordCount
+        || ProgressionGrounded != ProgressionGroundedRecordCount
+        || ProgressionGaps != ProgressionExplicitGapCount)
+    {
+        OutErrors.Add(FString::Printf(
+            TEXT("Progression aggregate drifted: registered=%d grounded=%d gaps=%d."),
+            ProgressionRegistered, ProgressionGrounded, ProgressionGaps));
     }
 
     const TArray<FPreMainQuestReadinessRecord> Records = BuildRecords();
@@ -380,6 +424,16 @@ bool FPreMainQuestReadinessCatalog::Validate(TArray<FString>& OutErrors)
     if (DungeonIdentityGaps != 21)
     {
         OutErrors.Add(TEXT("Dungeon identity gaps must remain 20 minor + one named Region-06 identity = 21."));
+    }
+
+    if (ProgressionExplicitGapCount != 80)
+    {
+        OutErrors.Add(TEXT("Finite progression content currently has exactly eighty explicit authoring/placement gaps."));
+    }
+
+    if (BuriedHoardChainIdentityGaps != RequiredBuriedHoardChainCount)
+    {
+        OutErrors.Add(TEXT("All sixteen buried-hoard chain identities remain deliberately unauthored."));
     }
 
     if (ThreeDGeometryReady + ThreeDReferenceOnly + ThreeDBlocked != ThreeDRecordCount)
