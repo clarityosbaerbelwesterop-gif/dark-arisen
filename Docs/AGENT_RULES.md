@@ -66,30 +66,46 @@ Naming a prohibited concept in order to lock it false can be valid enforcement. 
 - **Never put a secret in output.** Not in a file, command output, screenshot, issue or PR comment. Registration tokens and API keys are secrets. GitHub Actions secrets cannot be read back by design — do not attempt to, and do not build workarounds.
 - **Never merge, close, or force-push without explicit instruction for that specific action.** Approval given for an earlier PR/tranche is not standing approval for a later one.
 - Shipping voice generation stays blocked until dialogue lock, casting role, pronunciation/subtitle lock and verified cost/commercial-rights acceptance.
-- External image/video/3D generation must perform plan/cost/rights preflight and remain non-shipping evidence until real import/review/runtime acceptance exists.
+- External provider generation must perform plan/cost/rights preflight and remain non-shipping evidence until real import/review/runtime acceptance exists.
 
 ## 7. External AI, asset providers and the non-AI-slop gate
 
-- `CLAUDE.md` configures the adapted Game Studios methodology and is now present in the repository. Do not repeat the historical claim that it is absent.
+- `CLAUDE.md` configures the adapted Game Studios methodology and is present in the repository.
 - `Docs/NON_AI_SLOP_STANDARD.md` is mandatory for authored content, provider briefs and external-media review. It is a rejection gate, not optional art-direction prose.
 - Before accepting an important proposal/candidate, apply its ordered review passes: canon, function, silhouette/composition, physical credibility, restraint, repetition and runtime role.
 - A mood-only/style-adjective-only prompt is rejected before provider submission. Every provider brief needs real governing sources, source-specific anchors, explicit unknowns and a declared production purpose.
 - Game Studios profiles and Kimi K3 are production methodology/review tools, never canon authority.
 - Kimi output cannot auto-merge, create missing authored missions/content, resolve a `DESIGN-GAP`, or silently add decorative completion.
-- Higgsfield output is concept/previs/candidate media unless the asset has actually been imported into Unreal and reviewed against the relevant source contract.
-- Higgsfield/provider output that fills a withheld fact or design gap is rejected even when visually strong.
-- Generic pirate/Souls/fantasy filler, provider-default faces, ungrounded fantasy decoration, meaningless clutter and physically weightless animation are rejection reasons, not polish notes.
-- A generated video is not an AnimMontage, AnimNotify, retargeted animation or Sequencer asset.
-- A generated GLB is not a reviewed UE mesh, skeleton, physics/collision setup or level placement.
-- A voice audition is not a shipping/commercially-cleared voice asset.
 
-## 8. Working in parallel
+### Current Higgsfield scope
+
+Higgsfield is currently approved only for:
+
+- animation/motion reference;
+- body/facial performance reference for already-authored beats;
+- cinematic/cutscene previs for resolved presentation identities.
+
+The current Higgsfield queue is exactly 23 animation/performance briefs plus 14 resolved cinematic briefs. It does **not** include character looks, boss looks, dungeons, worlds, Highmoore anchors, ships, fauna, flora, props, general 3D/GLBs, dialogue or missing story.
+
+A generated video is not an AnimSequence, AnimMontage, AnimNotify, retargeted animation, Sequencer asset or runtime evidence. Provider output that fills a withheld fact or design gap is rejected even when visually strong. Current internal character/boss/ship/fauna/flora/3D readiness catalogs remain production-planning authorities, not Higgsfield job queues.
+
+The tested Higgsfield Seedance path is currently plan-gated before job creation; no provider upgrade may be performed automatically.
+
+### Voice
+
+A voice audition is not a shipping/commercially-cleared voice asset. AI Voice Generator stays a separate late-stage lane after dialogue/casting/pronunciation/subtitle/cost/rights locks.
+
+## 8. Main-story boundary
+
+After the pre-main production families are reconciled, `Docs/MAIN_QUEST_AUTHORITY_GAP.md` is the stop boundary. Do not infer complete main missions from `main story structure.md` chapter summaries. Do not restore the legacy Ethan/Draven final-boss branch unless current design authority explicitly resolves or restores it.
+
+## 9. Working in parallel
 
 - One agent owns a disjoint set of files. Shared files — `DesignLaws.h`, test specs, validators, workflows, checklists, `HANDOVER.md`, `README.md` — are integrated by the orchestrator afterwards, never edited by parallel agents.
 - If your task would require touching a shared file, report what should change and let the orchestrator apply it.
 - Expect to be interrupted by session limits. Write files as you complete them rather than holding everything until a final report, so partial work survives.
 
-## 9. Reporting
+## 10. Reporting
 
 - Quote concrete file paths/lines when evidence is available. A claim without a location is not checkable and should be treated as unverified.
 - Distinguish what you executed from what you read. If you ran a validator, say so and give its output. If you only read the code/spec, say that instead.
