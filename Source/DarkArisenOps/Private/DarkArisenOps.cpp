@@ -19,6 +19,7 @@ void PrintUsage()
     UE_LOG(LogTemp, Display, TEXT("  validate-presentation --root=<repo>"));
     UE_LOG(LogTemp, Display, TEXT("  validate-audio-voice --root=<repo>"));
     UE_LOG(LogTemp, Display, TEXT("  validate-alpha-content --root=<repo>"));
+    UE_LOG(LogTemp, Display, TEXT("  validate-pre-runner-production --root=<repo>"));
     UE_LOG(LogTemp, Display, TEXT("  runner-check --root=<repo> --engine=<UE5.5> [--min-disk-gb=120]"));
     UE_LOG(LogTemp, Display, TEXT("  build --root=<repo> --engine=<UE5.5> [--automation]"));
     UE_LOG(LogTemp, Display, TEXT("  package-alpha --revision=<40sha> [--output=<dir>]"));
@@ -53,6 +54,7 @@ INT32_MAIN_INT32_ARGC_TCHAR_ARGV()
         else if (Command == TEXT("validate-presentation")) Result = DarkArisenOps::ValidatePresentationContentCommand(Args);
         else if (Command == TEXT("validate-audio-voice")) Result = DarkArisenOps::ValidateAudioVoiceContentCommand(Args);
         else if (Command == TEXT("validate-alpha-content")) Result = DarkArisenOps::ValidateAlphaContentCommand(Args);
+        else if (Command == TEXT("validate-pre-runner-production")) Result = DarkArisenOps::ValidateExternalAssetProductionCommand(Args);
         else if (Command == TEXT("runner-check")) Result = DarkArisenOps::RunnerCheckCommand(Args);
         else if (Command == TEXT("build")) Result = DarkArisenOps::BuildCommand(Args);
         else if (Command == TEXT("package-alpha")) Result = DarkArisenOps::PackageAlphaCommand(Args);
