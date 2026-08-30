@@ -19,20 +19,13 @@ bool FDarkArisenExternalAssetProductionSpec::RunTest(const FString& Parameters)
 
     const TArray<FExternalAssetProductionBrief> Briefs =
         FExternalAssetProductionCatalog::BuildHiggsfieldBriefs();
-    TestEqual(TEXT("Exactly the finite source-derived Higgsfield brief set exists"),
+    TestEqual(TEXT("Exactly the finite source-derived Higgsfield previs set exists"),
         Briefs.Num(), FExternalAssetProductionCatalog::RequiredHiggsfieldBriefCount);
+    TestEqual(TEXT("Higgsfield is exactly 23 animation/performance + 14 resolved cinematic briefs"),
+        Briefs.Num(), 37);
 
     int32 MotionOrPerformance = 0;
     int32 Cinematic = 0;
-    int32 Concepts = 0;
-    int32 DungeonLooks = 0;
-    int32 RegionLooks = 0;
-    int32 HighmooreAnchors = 0;
-    int32 CharacterLooks = 0;
-    int32 BossLooks = 0;
-    int32 ShipLooks = 0;
-    int32 FaunaLooks = 0;
-    int32 Props = 0;
 
     for (const FExternalAssetProductionBrief& Brief : Briefs)
     {
@@ -46,29 +39,19 @@ bool FDarkArisenExternalAssetProductionSpec::RunTest(const FString& Parameters)
 
         const FString Id = Brief.StableId.ToString();
         const FString SourceId = Brief.SourceRequirementId.ToString();
-        TestFalse(TEXT("No unauthored Turn slot is sent to the provider"), SourceId.StartsWith(TEXT("turn-gap.")));
-        TestFalse(TEXT("No unauthored Standing slot is sent to the provider"), SourceId.StartsWith(TEXT("standing-gap.")));
-        TestFalse(TEXT("No unauthored minor-dungeon slot is sent to the provider"), SourceId.Contains(TEXT("minor-slot")));
-        TestFalse(TEXT("Elowen remains provider-blocked until physical visual authority exists"), SourceId == TEXT("character.elowen-arion"));
-        TestFalse(TEXT("Legacy Ethan character visual stays provider-blocked"), SourceId == TEXT("character.ethan-harlow"));
-        TestFalse(TEXT("Legacy Draven character visual stays provider-blocked"), SourceId == TEXT("character.draven-voss"));
-        TestFalse(TEXT("Legacy Ethan boss visual stays provider-blocked"), SourceId == TEXT("boss-visual.ethan-harlow"));
-        TestFalse(TEXT("Legacy Draven boss visual stays provider-blocked"), SourceId == TEXT("boss-visual.draven-voss"));
-        TestFalse(TEXT("Unresolved La Liberacion exterior silhouette stays provider-blocked"), SourceId == TEXT("ship-visual.la-liberacion.exterior"));
-        TestFalse(TEXT("Player-history-dependent Final Wolf stays provider-blocked"), SourceId == TEXT("fauna.legendary.final-wolf"));
-        TestFalse(TEXT("Unspecified Highmoore grouse variant stays provider-blocked"), SourceId == TEXT("fauna.highmoore.grouse"));
-        TestFalse(TEXT("Unspecified Highmoore hare variant stays provider-blocked"), SourceId == TEXT("fauna.highmoore.hare"));
-        TestFalse(TEXT("Unspecified Highmoore fox variant stays provider-blocked"), SourceId == TEXT("fauna.highmoore.fox"));
-        TestFalse(TEXT("Unspecified Highmoore Fell Wolf variant stays provider-blocked"), SourceId == TEXT("fauna.highmoore.fell-wolf"));
+        TestFalse(TEXT("No unauthored Turn slot is sent to Higgsfield"), SourceId.StartsWith(TEXT("turn-gap.")));
+        TestFalse(TEXT("No unauthored Standing slot is sent to Higgsfield"), SourceId.StartsWith(TEXT("standing-gap.")));
+        TestFalse(TEXT("No unauthored minor-dungeon slot is sent to Higgsfield"), SourceId.Contains(TEXT("minor-slot")));
 
-        if (Id.StartsWith(TEXT("external.higgsfield.dungeon."))) ++DungeonLooks;
-        else if (Id.StartsWith(TEXT("external.higgsfield.region."))) ++RegionLooks;
-        else if (Id.StartsWith(TEXT("external.higgsfield.world."))) ++HighmooreAnchors;
-        else if (Id.StartsWith(TEXT("external.higgsfield.character."))) ++CharacterLooks;
-        else if (Id.StartsWith(TEXT("external.higgsfield.boss-visual."))) ++BossLooks;
-        else if (Id.StartsWith(TEXT("external.higgsfield.ship."))) ++ShipLooks;
-        else if (Id.StartsWith(TEXT("external.higgsfield.fauna."))) ++FaunaLooks;
-        else if (Id.StartsWith(TEXT("external.higgsfield.prop."))) ++Props;
+        TestFalse(TEXT("No dungeon look-development brief is sent to Higgsfield"), Id.StartsWith(TEXT("external.higgsfield.dungeon.")));
+        TestFalse(TEXT("No region look-development brief is sent to Higgsfield"), Id.StartsWith(TEXT("external.higgsfield.region.")));
+        TestFalse(TEXT("No world-anchor look-development brief is sent to Higgsfield"), Id.StartsWith(TEXT("external.higgsfield.world.")));
+        TestFalse(TEXT("No character-look brief is sent to Higgsfield"), Id.StartsWith(TEXT("external.higgsfield.character.")));
+        TestFalse(TEXT("No boss-look brief is sent to Higgsfield"), Id.StartsWith(TEXT("external.higgsfield.boss-visual.")));
+        TestFalse(TEXT("No ship-look brief is sent to Higgsfield"), Id.StartsWith(TEXT("external.higgsfield.ship.")));
+        TestFalse(TEXT("No fauna-look brief is sent to Higgsfield"), Id.StartsWith(TEXT("external.higgsfield.fauna.")));
+        TestFalse(TEXT("No flora-look brief is sent to Higgsfield"), Id.StartsWith(TEXT("external.higgsfield.flora.")));
+        TestFalse(TEXT("No prop-look brief is sent to Higgsfield"), Id.StartsWith(TEXT("external.higgsfield.prop.")));
 
         switch (Brief.MediaKind)
         {
@@ -79,10 +62,8 @@ bool FDarkArisenExternalAssetProductionSpec::RunTest(const FString& Parameters)
         case EExternalAssetMediaKind::CinematicPrevisVideo:
             ++Cinematic;
             break;
-        case EExternalAssetMediaKind::ConceptReferenceImage:
-            ++Concepts;
-            break;
         default:
+            AddError(FString::Printf(TEXT("Disallowed Higgsfield media kind for %s"), *Id));
             break;
         }
     }
@@ -93,41 +74,12 @@ bool FDarkArisenExternalAssetProductionSpec::RunTest(const FString& Parameters)
             + FExternalAssetProductionCatalog::SystemAnimationBriefCount);
     TestEqual(TEXT("Fourteen cinematic-previs briefs derive only from resolved cutscene identities"),
         Cinematic, FExternalAssetProductionCatalog::ResolvedPresentationBriefCount);
-    TestEqual(TEXT("Forty grounded named dungeons have source-backed visual briefs"),
-        DungeonLooks, FExternalAssetProductionCatalog::GroundedDungeonBriefCount);
-    TestEqual(TEXT("Eight world regions have source-backed visual briefs"),
-        RegionLooks, FExternalAssetProductionCatalog::WorldRegionBriefCount);
-    TestEqual(TEXT("Twelve Highmoore anchors remain individually briefed"),
-        HighmooreAnchors, FExternalAssetProductionCatalog::HighmooreWorldBriefCount);
-    TestEqual(TEXT("Six current-authority major characters have bounded visual-reference briefs"),
-        CharacterLooks, FExternalAssetProductionCatalog::ProviderReadyCharacterBriefCount);
-    TestEqual(TEXT("Nineteen non-conflicted deep-dive boss visuals have bounded visual-reference briefs"),
-        BossLooks, FExternalAssetProductionCatalog::ProviderReadyBossVisualBriefCount);
-    TestEqual(TEXT("Five source-ready La Liberacion deck/interior visuals have bounded reference briefs"),
-        ShipLooks, FExternalAssetProductionCatalog::ProviderReadyShipVisualBriefCount);
-    TestEqual(TEXT("Nineteen individually grounded fauna visuals have bounded visual-reference briefs"),
-        FaunaLooks, FExternalAssetProductionCatalog::ProviderReadyFaunaVisualBriefCount);
-    TestEqual(TEXT("Nine State Treasures plus the grounded unique reward remain individually briefed"),
-        Props,
-        FExternalAssetProductionCatalog::StateTreasureBriefCount
-            + FExternalAssetProductionCatalog::UniqueRewardBriefCount);
-    TestEqual(TEXT("Concept-reference coverage includes all current provider-ready visual families"),
-        Concepts,
-        FExternalAssetProductionCatalog::GroundedDungeonBriefCount
-            + FExternalAssetProductionCatalog::WorldRegionBriefCount
-            + FExternalAssetProductionCatalog::HighmooreWorldBriefCount
-            + FExternalAssetProductionCatalog::ProviderReadyCharacterBriefCount
-            + FExternalAssetProductionCatalog::ProviderReadyBossVisualBriefCount
-            + FExternalAssetProductionCatalog::ProviderReadyShipVisualBriefCount
-            + FExternalAssetProductionCatalog::ProviderReadyFaunaVisualBriefCount
-            + FExternalAssetProductionCatalog::StateTreasureBriefCount
-            + FExternalAssetProductionCatalog::UniqueRewardBriefCount);
 
-    TestEqual(TEXT("Five unresolved final-act cutscenes remain outside provider production"),
+    TestEqual(TEXT("Five unresolved final-act cutscenes remain outside Higgsfield production"),
         FExternalAssetProductionCatalog::UnresolvedPresentationIdentityCount, 5);
-    TestEqual(TEXT("Twenty minor-dungeon identities remain outside provider production"),
+    TestEqual(TEXT("Twenty minor-dungeon identities remain deliberately unauthored"),
         FExternalAssetProductionCatalog::UnauthoredMinorDungeonIdentityCount, 20);
-    TestEqual(TEXT("Two hundred seventy-five Turn/Standing identities remain outside provider production"),
+    TestEqual(TEXT("Two hundred seventy-five Turn/Standing identities remain deliberately unauthored"),
         FExternalAssetProductionCatalog::DeliberateTurnStandingIdentityGapCount, 275);
 
     TestFalse(TEXT("External providers can never create canon"),
@@ -138,6 +90,12 @@ bool FDarkArisenExternalAssetProductionSpec::RunTest(const FString& Parameters)
         FExternalAssetProductionCatalog::AllowsGeneratedMediaToCountAsRuntimeAccepted());
     TestFalse(TEXT("External asset pipeline cannot buy or upgrade providers automatically"),
         FExternalAssetProductionCatalog::AllowsAutomaticProviderPurchaseOrUpgrade());
+    TestFalse(TEXT("Higgsfield cannot own static visual production"),
+        FExternalAssetProductionCatalog::AllowsHiggsfieldStaticVisualProduction());
+    TestFalse(TEXT("Higgsfield cannot choose character/world looks"),
+        FExternalAssetProductionCatalog::AllowsHiggsfieldCharacterOrWorldLookProduction());
+    TestFalse(TEXT("Higgsfield cannot claim 3D production without a verified action"),
+        FExternalAssetProductionCatalog::AllowsHiggsfieldThreeDProductionWithoutVerifiedAction());
 
     TestFalse(TEXT("Generic filler prompts are forbidden"),
         FExternalAssetProductionCatalog::AllowsGenericFillerPrompt());
