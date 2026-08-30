@@ -212,12 +212,12 @@ TArray<FBossVisualProductionDesignGap> FBossVisualProductionCatalog::BuildDesign
     return {
         {
             TEXT("design-gap.boss-visual.approved-reference-set"),
-            TEXT("Provider-ready deep-dive boss specs still have no approved Higgsfield/reference output merely because briefs exist."),
-            TEXT("docs/design/bosses/*; Docs/HIGGSFIELD_GAME_ASSET_PIPELINE.md")
+            TEXT("Reference-ready deep-dive boss specs still have no approved art/modeling reference merely because source briefs exist."),
+            TEXT("docs/design/bosses/*; Docs/THREED_ASSET_READINESS_MATRIX.md")
         },
         {
             TEXT("design-gap.boss-visual.phase11-ethan-draven"),
-            TEXT("Ethan and Draven legacy character/boss material conflicts with current Phase 11 and is provider-blocked until rewritten against the current story or explicitly restored."),
+            TEXT("Ethan and Draven legacy character/boss material conflicts with current Phase 11 and is reference-blocked until rewritten against the current story or explicitly restored."),
             TEXT("Docs/DesignAuthority.md")
         },
         {
@@ -264,13 +264,13 @@ bool FBossVisualProductionCatalog::Validate(TArray<FString>& OutErrors)
 
         if (BossBrief.bApprovedReferenceExists || !BossBrief.ApprovedReferencePath.IsEmpty())
         {
-            OutErrors.Add(FString::Printf(TEXT("Boss visual %s falsely claims an approved provider reference."), *BossBrief.StableId.ToString()));
+            OutErrors.Add(FString::Printf(TEXT("Boss visual %s falsely claims an approved external reference."), *BossBrief.StableId.ToString()));
         }
     }
 
     if (Ready != ProviderReadyBossBriefCount || Blocked != AuthorityBlockedBossBriefCount)
     {
-        OutErrors.Add(TEXT("Boss provider-ready/blocked split drifted from current DesignAuthority."));
+        OutErrors.Add(TEXT("Boss reference-ready/blocked split drifted from current DesignAuthority."));
     }
     if (BuildDesignGaps().Num() != 3)
     {
