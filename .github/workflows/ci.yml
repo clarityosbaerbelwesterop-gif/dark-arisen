@@ -56,6 +56,9 @@ jobs:
       - name: Reconcile Alpha content readiness
         shell: cmd
         run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" validate-alpha-content "--root=%GITHUB_WORKSPACE%"'
+      - name: Validate pre-main production closure
+        shell: cmd
+        run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" validate-pre-runner-production "--root=%GITHUB_WORKSPACE%"'
       - name: Compile Development and Shipping
         if: github.event_name == 'push'
         shell: cmd
@@ -106,6 +109,9 @@ jobs:
       - name: Reconcile Alpha content readiness
         shell: bash
         run: '"$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" validate-alpha-content "--root=$GITHUB_WORKSPACE"'
+      - name: Validate pre-main production closure
+        shell: bash
+        run: '"$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" validate-pre-runner-production "--root=$GITHUB_WORKSPACE"'
       - name: Compile Development and Shipping
         if: github.event_name == 'push'
         shell: bash
