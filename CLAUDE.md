@@ -9,11 +9,14 @@ Before proposing or writing anything, read in this order:
 1. `Docs/AGENT_RULES.md`
 2. `SECURITY.md`
 3. `Docs/DesignAuthority.md`
-4. `HANDOVER.md`
-5. task-specific design sources named by the active plan/PR
-6. `Docs/CONTENT_ALPHA_PRODUCTION_PLAN.md` for the current authored-content tranche
+4. `Docs/NON_AI_SLOP_STANDARD.md`
+5. `HANDOVER.md`
+6. task-specific design sources named by the active plan/PR
+7. `Docs/CONTENT_ALPHA_PRODUCTION_PLAN.md` and the active tranche plan where applicable
 
 Current operator direction outranks older project documents. Locked design laws may not be changed without explicit operator approval.
+
+The Non-AI-Slop Standard is a production rejection gate, not an optional style guide. A technically valid prompt, asset brief, level, animation, cinematic or external-media candidate must still be rejected when it is generic, decorative, physically weightless, culturally interchangeable, over-signalled or filled with provider defaults instead of source-backed Dark Arisen intent.
 
 ## Native C++ rule
 
@@ -48,6 +51,8 @@ Use the following studio roles for authored-content production:
 
 A role may elaborate **implementation detail** inside a locked design boundary, but may not invent missing canon merely to fill a count. If the governing source does not settle a narrative identity, number, mechanic, site, dialogue line or outcome, write a `DESIGN-GAP` and escalate it.
 
+A role may not use visual polish as a substitute for authored design. Before accepting an important content/asset proposal, apply the review order in `Docs/NON_AI_SLOP_STANDARD.md`: canon, function, silhouette/composition, physical credibility, restraint, repetition and runtime role.
+
 ### Content workflow
 
 For every content family:
@@ -55,10 +60,11 @@ For every content family:
 1. Re-fetch/re-read the current branch and governing documents.
 2. Build a source-backed catalog of what is actually authored.
 3. Record contradictions and gaps before implementation.
-4. Write native C++ authority/integration code.
-5. Add native Unreal Automation tests and `DarkArisenOps` source validation.
-6. Keep runtime/UE evidence open until actually observed.
-7. Commit each coherent family separately.
+4. Apply `Docs/NON_AI_SLOP_STANDARD.md` before provider submission or production acceptance.
+5. Write native C++ authority/integration code.
+6. Add native Unreal Automation tests and `DarkArisenOps` source validation.
+7. Keep runtime/UE evidence open until actually observed.
+8. Commit each coherent family separately.
 
 ## NVIDIA Kimi K3 assistant
 
@@ -68,9 +74,20 @@ Dark Arisen uses NVIDIA NIM model `moonshotai/kimi-k3` as a **bounded studio ass
 - Never read back, print, serialize or commit the key.
 - NVIDIA/Kimi output is proposal material, not canon and not an automatic code/content write.
 - Every Kimi job must include its governing-source list and ask the model to emit unresolved gaps instead of filling them.
+- Every Kimi job that proposes content, visuals, levels, animation, cinematics or audio must also apply `Docs/NON_AI_SLOP_STANDARD.md` and explicitly reject generic filler/provider-default completion.
 - No AI proposal may auto-merge.
 - Provider calls are performed only by native `DarkArisenOps` C++ tooling.
 - If the approved self-hosted runner is offline, jobs remain unexecuted; do not substitute an unapproved paid runner.
+
+## Higgsfield / external visual production
+
+Higgsfield is a bounded upstream concept/previs/candidate-media provider, never design authority.
+
+- Send only source-backed provider briefs whose unknowns remain explicit.
+- A mood-only or style-adjective-only prompt is rejected before submission.
+- Generated output that fills a withheld fact or `DESIGN-GAP` is rejected even when visually strong.
+- Generated images/videos do not become canon, `.uasset`, AnimMontage, AnimNotify, Sequencer, mesh/skeleton or runtime evidence by generation alone.
+- Provider cost/plan/rights preflight remains mandatory; no purchase, subscription change or credit spend is self-authorized.
 
 ## Voice production
 
