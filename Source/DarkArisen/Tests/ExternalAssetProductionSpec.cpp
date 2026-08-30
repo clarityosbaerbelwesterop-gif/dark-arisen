@@ -105,7 +105,7 @@ bool FDarkArisenExternalAssetProductionSpec::RunTest(const FString& Parameters)
         BossLooks, FExternalAssetProductionCatalog::ProviderReadyBossVisualBriefCount);
     TestEqual(TEXT("Five source-ready La Liberacion deck/interior visuals have bounded reference briefs"),
         ShipLooks, FExternalAssetProductionCatalog::ProviderReadyShipVisualBriefCount);
-    TestEqual(TEXT("Nineteen individually grounded fauna visuals have bounded reference briefs"),
+    TestEqual(TEXT("Nineteen individually grounded fauna visuals have bounded visual-reference briefs"),
         FaunaLooks, FExternalAssetProductionCatalog::ProviderReadyFaunaVisualBriefCount);
     TestEqual(TEXT("Nine State Treasures plus the grounded unique reward remain individually briefed"),
         Props,
@@ -138,6 +138,21 @@ bool FDarkArisenExternalAssetProductionSpec::RunTest(const FString& Parameters)
         FExternalAssetProductionCatalog::AllowsGeneratedMediaToCountAsRuntimeAccepted());
     TestFalse(TEXT("External asset pipeline cannot buy or upgrade providers automatically"),
         FExternalAssetProductionCatalog::AllowsAutomaticProviderPurchaseOrUpgrade());
+
+    TestFalse(TEXT("Generic filler prompts are forbidden"),
+        FExternalAssetProductionCatalog::AllowsGenericFillerPrompt());
+    TestFalse(TEXT("Providers cannot resolve design gaps"),
+        FExternalAssetProductionCatalog::AllowsProviderToResolveDesignGap());
+    TestFalse(TEXT("Ungrounded decorative completion is forbidden"),
+        FExternalAssetProductionCatalog::AllowsUngroundedDecorativeCompletion());
+    TestFalse(TEXT("Unreviewed provider defaults cannot become identity"),
+        FExternalAssetProductionCatalog::AllowsUnreviewedProviderDefaultToBecomeIdentity());
+    TestTrue(TEXT("Every provider brief requires source specificity"),
+        FExternalAssetProductionCatalog::RequiresSourceSpecificity());
+    TestTrue(TEXT("Every important candidate requires functional-logic review"),
+        FExternalAssetProductionCatalog::RequiresFunctionalLogicReview());
+    TestTrue(TEXT("Every important candidate requires restraint and repetition review"),
+        FExternalAssetProductionCatalog::RequiresRestraintAndRepetitionReview());
 
     return true;
 }
