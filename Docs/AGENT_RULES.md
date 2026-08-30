@@ -48,7 +48,7 @@ The design bible is the authority. Where it does not lock a value, the value is 
 
 ## 5. Machine-enforced prohibitions
 
-These are checked by `Source/DarkArisenOps/Private/ValidationOps.cpp` and by `static_assert` in `Source/DarkArisen/DesignLaws.h`. Violating one fails the build, so this is not a matter of taste:
+These are checked by `Source/DarkArisenOps/Private/ValidationOps.cpp` / tranche-specific native validators and by `static_assert` in `Source/DarkArisen/DesignLaws.h`. Violating one fails the relevant source/build gate, so this is not a matter of taste:
 
 - **No language other than C++** in `Source/` and `Tools/`. `Docs/NATIVE_CPP_POLICY.md` bans `.py`, `.ps1`, `.sh`, `.bash`, `.js`, `.ts`, `.cmd`, `.bat` there. C# is permitted only for `.Target.cs` / `.Build.cs` metadata.
 - **No GitHub-hosted runners.** Workflows must contain `self-hosted`; `ubuntu-latest`, `windows-latest` and `macos-latest` are rejected.
@@ -62,18 +62,23 @@ Naming a prohibited concept in order to lock it false can be valid enforcement. 
 
 `SECURITY.md` is the authority and it reserves these to the owner:
 
-- **Never start a billable resource or change a provider plan.** No GPU, VM, domain, paid voice/asset generation, subscription upgrade, credit purchase, quota increase or removal of the idle watcher without explicit operator approval. Existing free credits are not authorisation to upgrade a provider account.
+- **Never start a billable resource or change a provider plan.** No GPU, VM, domain, paid voice/asset generation, subscription upgrade, credit purchase, quota increase or removal of the idle watcher without explicit operator approval. Existing free credits are not authorisation to upgrade a provider account or spend credits on generation.
 - **Never put a secret in output.** Not in a file, command output, screenshot, issue or PR comment. Registration tokens and API keys are secrets. GitHub Actions secrets cannot be read back by design — do not attempt to, and do not build workarounds.
 - **Never merge, close, or force-push without explicit instruction for that specific action.** Approval given for an earlier PR/tranche is not standing approval for a later one.
 - Shipping voice generation stays blocked until dialogue lock, casting role, pronunciation/subtitle lock and verified cost/commercial-rights acceptance.
 - External image/video/3D generation must perform plan/cost/rights preflight and remain non-shipping evidence until real import/review/runtime acceptance exists.
 
-## 7. External AI and asset providers
+## 7. External AI, asset providers and the non-AI-slop gate
 
 - `CLAUDE.md` configures the adapted Game Studios methodology and is now present in the repository. Do not repeat the historical claim that it is absent.
+- `Docs/NON_AI_SLOP_STANDARD.md` is mandatory for authored content, provider briefs and external-media review. It is a rejection gate, not optional art-direction prose.
+- Before accepting an important proposal/candidate, apply its ordered review passes: canon, function, silhouette/composition, physical credibility, restraint, repetition and runtime role.
+- A mood-only/style-adjective-only prompt is rejected before provider submission. Every provider brief needs real governing sources, source-specific anchors, explicit unknowns and a declared production purpose.
 - Game Studios profiles and Kimi K3 are production methodology/review tools, never canon authority.
-- Kimi output cannot auto-merge or create missing authored missions/content.
+- Kimi output cannot auto-merge, create missing authored missions/content, resolve a `DESIGN-GAP`, or silently add decorative completion.
 - Higgsfield output is concept/previs/candidate media unless the asset has actually been imported into Unreal and reviewed against the relevant source contract.
+- Higgsfield/provider output that fills a withheld fact or design gap is rejected even when visually strong.
+- Generic pirate/Souls/fantasy filler, provider-default faces, ungrounded fantasy decoration, meaningless clutter and physically weightless animation are rejection reasons, not polish notes.
 - A generated video is not an AnimMontage, AnimNotify, retargeted animation or Sequencer asset.
 - A generated GLB is not a reviewed UE mesh, skeleton, physics/collision setup or level placement.
 - A voice audition is not a shipping/commercially-cleared voice asset.
