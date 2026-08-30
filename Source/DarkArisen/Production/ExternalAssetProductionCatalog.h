@@ -39,7 +39,7 @@ struct FExternalAssetProductionBrief
     FString DisplayName;
     FString GoverningSource;
     EExternalAssetProvider Provider = EExternalAssetProvider::Higgsfield;
-    EExternalAssetMediaKind MediaKind = EExternalAssetMediaKind::ConceptReferenceImage;
+    EExternalAssetMediaKind MediaKind = EExternalAssetMediaKind::MotionPrevisVideo;
     EExternalAssetEvidenceState EvidenceState = EExternalAssetEvidenceState::RequirementOnly;
     FString ProductionPurpose;
     FString ProviderJobId;
@@ -56,40 +56,27 @@ struct FExternalAssetProductionDesignGap
     FString GoverningSource;
 };
 
+/**
+ * Provider-facing previs catalog.
+ *
+ * Operator direction limits Higgsfield to motion/performance/cinematic previs. Character looks,
+ * boss looks, dungeon/world looks, fauna/flora, ships, props and 3D source-readiness remain in
+ * their native Dark Arisen production catalogs and are not submitted to Higgsfield by this owner.
+ */
 class DARKARISEN_API FExternalAssetProductionCatalog
 {
 public:
     static constexpr int32 NamedAnimationBriefCount = 11;
     static constexpr int32 SystemAnimationBriefCount = 12;
     static constexpr int32 ResolvedPresentationBriefCount = 14;
-    static constexpr int32 GroundedDungeonBriefCount = 40;
-    static constexpr int32 WorldRegionBriefCount = 8;
-    static constexpr int32 HighmooreWorldBriefCount = 12;
-    static constexpr int32 ProviderReadyCharacterBriefCount = 6;
-    static constexpr int32 ProviderReadyBossVisualBriefCount = 19;
-    static constexpr int32 ProviderReadyShipVisualBriefCount = 5;
-    static constexpr int32 ProviderReadyFaunaVisualBriefCount = 19;
-    static constexpr int32 ProviderReadyFloraVisualBriefCount = 8;
-    static constexpr int32 StateTreasureBriefCount = 9;
-    static constexpr int32 UniqueRewardBriefCount = 1;
-    static constexpr int32 UnresolvedPresentationIdentityCount = 5;
-    static constexpr int32 UnauthoredMinorDungeonIdentityCount = 20;
-    static constexpr int32 DeliberateTurnStandingIdentityGapCount = 275;
-
     static constexpr int32 RequiredHiggsfieldBriefCount =
         NamedAnimationBriefCount
         + SystemAnimationBriefCount
-        + ResolvedPresentationBriefCount
-        + GroundedDungeonBriefCount
-        + WorldRegionBriefCount
-        + HighmooreWorldBriefCount
-        + ProviderReadyCharacterBriefCount
-        + ProviderReadyBossVisualBriefCount
-        + ProviderReadyShipVisualBriefCount
-        + ProviderReadyFaunaVisualBriefCount
-        + ProviderReadyFloraVisualBriefCount
-        + StateTreasureBriefCount
-        + UniqueRewardBriefCount;
+        + ResolvedPresentationBriefCount;
+
+    static constexpr int32 UnresolvedPresentationIdentityCount = 5;
+    static constexpr int32 UnauthoredMinorDungeonIdentityCount = 20;
+    static constexpr int32 DeliberateTurnStandingIdentityGapCount = 275;
 
     static TArray<FExternalAssetProductionBrief> BuildHiggsfieldBriefs();
     static TArray<FExternalAssetProductionDesignGap> BuildDesignGaps();
@@ -100,6 +87,11 @@ public:
     static bool AllowsGeneratedMediaToCountAsImportedAsset() { return false; }
     static bool AllowsGeneratedMediaToCountAsRuntimeAccepted() { return false; }
     static bool AllowsAutomaticProviderPurchaseOrUpgrade() { return false; }
+
+    /** Higgsfield is deliberately a motion/presentation-previs lane, not a look-development owner. */
+    static bool AllowsHiggsfieldStaticVisualProduction() { return false; }
+    static bool AllowsHiggsfieldCharacterOrWorldLookProduction() { return false; }
+    static bool AllowsHiggsfieldThreeDProductionWithoutVerifiedAction() { return false; }
 
     /** Mandatory NON_AI_SLOP production boundaries. */
     static bool AllowsGenericFillerPrompt() { return false; }
