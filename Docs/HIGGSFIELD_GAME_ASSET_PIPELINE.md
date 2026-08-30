@@ -1,4 +1,4 @@
-# Higgsfield game-asset production lane
+# Higgsfield animation / cinematic production lane
 
 **Status:** source/provenance pipeline only; no provider output is a UE asset by default.  
 **Provider state checked:** 2026-08-30.  
@@ -6,31 +6,39 @@
 
 ## Purpose
 
-Higgsfield is the upstream visual and motion-production assistant for Dark Arisen. It may help turn already-authored design into reference media and candidate assets. It is not design authority and it does not replace Unreal Engine as the eventual integration/runtime/package authority.
+Higgsfield is the upstream **motion, performance and cinematic-previsualisation assistant** for Dark Arisen. It is deliberately not the project's general look-development or 3D-production owner.
 
-The target production uses are:
+Current approved production uses are:
 
-- character look/reference exploration from approved character sources;
-- region, settlement and landmark reference images;
-- named dungeon visual-language and unforgettable-image reference work;
-- physical prop/treasure reference work;
-- combat, wound, traversal, interaction and mounted motion previs;
-- facial/performance reference for already-authored beats;
-- cinematic/cutscene previs for resolved PresentationProductionCatalog identities;
-- candidate 3D/rig/motion output only if the connected provider later exposes a concrete supported model/action and its cost/rights preflight passes.
+- combat and weapon-motion previs;
+- wound, traversal, carry and interaction motion reference;
+- mounted/horse gait and rider-body reference where the animation authority already defines the requirement;
+- facial/body-performance reference for already-authored beats;
+- cinematic/cutscene previs for resolved `PresentationProductionCatalog` identities.
 
-## Current connected capability boundary
+Current non-uses in this tranche:
 
-Connected model discovery currently returned useful image and video families, including Nano Banana Pro, FLUX.2 Max, Soul, Seedream, Seedance, WAN and Hunyuan. A 3D-model search did not return a usable connected 3D generation model/action.
+- canonical character faces/costumes;
+- boss faces/body sheets;
+- dungeon/world/settlement look generation;
+- ship look generation;
+- flora/fauna look generation;
+- prop/treasure look generation;
+- general 3D/GLB production;
+- dialogue writing;
+- missing main-story content.
 
-Therefore the repository must not currently claim:
+Those families remain in the native Dark Arisen source/readiness catalogs and later 3D/art pipeline.
 
-- that Higgsfield has generated a GLB for this project;
-- that a provider mesh is rigged;
-- that a provider motion clip is importable;
-- that a generated reference already has an Unreal skeleton, collision, materials or LODs.
+## Current finite provider scope
 
-If a supported 3D action appears later, it must enter the same evidence chain as every other external output.
+Exactly **37** source-derived Higgsfield briefs are permitted today:
+
+- 11 named animation requirements;
+- 12 system animation/performance requirements;
+- 14 resolved cutscene identities.
+
+The five unresolved final-act cutscenes are excluded.
 
 ## Evidence chain
 
@@ -39,99 +47,99 @@ If a supported 3D action appears later, it must enter the same evidence chain as
    - No provider media exists.
 
 2. `PrevisGenerated`
-   - An external reference image/video exists.
-   - It is still non-shipping reference material.
+   - An external motion/performance/cinematic reference exists.
+   - It remains non-shipping reference material.
 
-3. `CandidateAssetGenerated`
-   - A real candidate mesh/audio/motion artifact exists.
-   - It has not yet passed Unreal import review.
+3. `ImportedForReview`
+   - Real UE animation/Sequencer work based on the reference exists.
+   - Required skeleton/retarget/Montage/Notify/Sequencer ownership has been inspected.
 
-4. `ImportedForReview`
-   - The candidate has actually been imported into the UE project.
-   - Required material/skeleton/collision/retarget/Sequencer settings have been inspected.
-
-5. `RuntimeAccepted`
-   - The exact imported asset has passed the relevant UE 5.5 runtime/automation/performance acceptance on the exact commit.
+4. `RuntimeAccepted`
+   - The exact integrated result has passed the relevant UE 5.5 runtime/automation/performance acceptance on the exact commit.
 
 No provider may jump evidence states.
 
 ## Animation lane
 
-Higgsfield motion/video is valuable for pose language, silhouette, weight, rhythm, physical intent and performance reference. It cannot by itself prove Dark Arisen animation timing.
+Higgsfield video may communicate pose language, silhouette, weight, rhythm, contact intent and body performance. It cannot override Dark Arisen's timing law.
 
-The UE-side production must still own:
+UE-side production still owns:
 
-- AnimMontage structure;
+- AnimSequence/AnimMontage construction;
 - AnimNotify contact timing;
-- root motion/locomotion integration;
+- root motion and locomotion integration;
 - skeleton and retarget mapping;
 - animation graph transitions;
-- exact 8-frame minimum attack tell;
-- exact 6-frame deflection window;
+- exact authored weapon startup/recovery values;
+- minimum readable attack tells where locked;
+- exact six-frame deflection window;
 - non-cancellable attack recovery;
 - wound-layer gameplay state;
 - horse gait-state ownership;
-- Crystal Katana wound-animation exception.
+- carry/interaction ownership;
+- Crystal Katana clean-set exception.
 
-A good Higgsfield clip can be the motion target. It is not the timing authority.
+A visually excellent provider clip is rejected if it erases weight, commitment, readability or source timing.
 
 ## Cinematic lane
 
-Only the fourteen resolved cutscene identities may receive cutscene previs today. The five unresolved final-act cutscene slots remain blocked.
+Only the fourteen resolved cutscene identities may receive cinematic previs today.
 
 Previs must preserve:
 
 - camera rules from `PresentationProductionCatalog`;
-- control ownership;
+- player-control ownership;
+- nineteen-total cutscene boundary without inventing missing identities;
+- twenty-two protected playable moments remaining playable;
 - no reactive music;
 - no unauthorized slow motion;
-- protected playable moments remaining playable;
 - authored duration where the source provides one;
-- no invented dialogue or emotional reaction shot.
+- no invented dialogue;
+- no extra reaction shots inserted simply to increase drama.
 
-Sequencer integration is separate Unreal work.
+Sequencer integration is later Unreal work.
 
-## Dungeon/world lane
+## NON_AI_SLOP review
 
-Provider briefs may be built for:
+Every generated motion/cinematic candidate is reviewed against `Docs/NON_AI_SLOP_STANDARD.md`.
 
-- the forty currently grounded named dungeon production profiles;
-- the eight authored world-region identities;
-- the twelve currently grounded Highmoore world anchors;
-- source-backed props and State Treasures.
+Reject by default:
 
-They may not be built for:
+- floaty or centre-of-mass-free motion;
+- sliding feet;
+- generic mocap gestures repeated across characters;
+- over-performed idle/head/breath motion;
+- camera orbits and drone moves with no narrative reason;
+- speed ramps used as excitement punctuation;
+- constant shallow depth of field;
+- unnecessary cuts;
+- spectacle that converts a protected gameplay beat into a movie.
 
-- twenty unauthored minor-dungeon identities;
-- the unresolved additional named Region 06 slot;
-- invented coordinates;
-- invented settlement/landmark identities;
-- quest-marker/minimap presentation;
-- generic fantasy filler substituted for missing authored design.
+Provider output is reference, not authority.
 
-Dungeon briefs preserve the source Access/Discovery, Puzzle, Hazard, Unforgettable Image, Boss/Bottom and Reward reads. A withheld element stays withheld.
-
-## Character lane
-
-Character generation begins only after the relevant character/NPC source has been read and converted into a source-backed visual brief. A provider prompt may not invent a canonical face, age, clothing, scars, body type, ethnicity, equipment or costume detail merely because an image model needs specificity.
-
-If the source does not define a visual fact, it remains omitted or is explicitly marked as a design gap. Consistency work should then use an approved reference image once one exists.
-
-## Cost, privacy and rights
+## Cost / plan boundary
 
 - No provider upgrade or credit purchase is automatic.
 - No billable generation is started without explicit operator approval.
 - Existing free credits do not bypass a plan restriction.
-- Provider job IDs and stable output references may be recorded; secrets, signed upload URLs and credentials may not.
-- Preview generation does not prove commercial/shipping rights.
-- Rights/cost clearance is a separate recorded gate before shipping use.
+- Two test submissions already proved that the useful Seedance path currently requires a higher plan before job creation.
+- No purchase or upgrade was performed.
+- No credits were consumed by those rejected submissions.
+
+Therefore production remains at `RequirementOnly` until a permitted provider path exists or the operator separately approves the required provider cost/change.
+
+## Relationship to 3D / visual production
+
+The repository still contains detailed source-readiness catalogs for characters, bosses, ships, dungeons, Highmoore, fauna, flora and props. They are intentional and useful. They are **not** Higgsfield submission queues.
+
+`ThreeDAssetReadinessCatalog` separates what is ready for a future modeler/3D pipeline from what remains reference-only or blocked. Current connected provider discovery does not prove a usable 3D action, and the operator has not assigned Higgsfield that responsibility.
 
 ## Relationship to Game Studios / Kimi
 
-Game Studios/Kimi may review a source-derived brief for omissions, contradictions and production clarity. It may not rewrite canon or fill a missing identity. The correct output for missing information is `DESIGN-GAP`, not an invented solution.
+Game Studios/Kimi may review motion/cinematic briefs for omissions, contradictions and production clarity. It may not create missing canon or expand Higgsfield into visual families that are outside the current operator-approved scope.
 
-## Relationship to Unreal and the later Alpha
+## Relationship to the later Alpha
 
-The current production objective is to complete as much authored source/asset/previs work as possible before bringing the UE runner/editor path online. Later, Unreal remains necessary for actual integration, gameplay ownership, levels, AI/navmesh, animation graphs, Sequencer, save/load, runtime validation, performance and the Windows/Linux Shipping Alpha packages.
+The current objective is to exhaust authored source/content/asset-readiness work before depending on UE runner/editor availability. Later, Unreal is still required for actual integration, gameplay ownership, levels, AI/navmesh, animation graphs, Sequencer, save/load, runtime validation, performance and Windows/Linux Shipping Alpha packages.
 
-After those two same-commit Alpha packages exist, the planned private Arcware-style browser playthrough is the acceptance/quality loop: complete and explore the game end-to-end, record issues, then perform a focused improvement tranche. The streaming playthrough does not replace native Windows/Linux acceptance evidence.
+After both same-commit Alpha packages exist, the planned private Arcware-style complete playthrough/exploration becomes the quality loop. That playthrough evaluates the real game; it does not replace native build/runtime evidence.
