@@ -50,8 +50,9 @@ bool UMainStoryDirectorComponent::HasValidStoryState() const
         return false;
     }
 
+    // Facts may only appear after their owning mission has resolved.
     if (CurrentMissionIndex < 3 && StoryFacts.Contains(TEXT("Story.EthanAbducted"))) return false;
-    if (CurrentMissionIndex < 24 && StoryFacts.Contains(TEXT("Story.EthanRecovered"))) return false;
+    if (CurrentMissionIndex < 25 && StoryFacts.Contains(TEXT("Story.EthanRecovered"))) return false;
     if (CurrentMissionIndex < 34 && StoryFacts.Contains(TEXT("Story.MainComplete"))) return false;
     return true;
 }
