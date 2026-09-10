@@ -45,6 +45,38 @@ bool FDarkArisenMainStoryCatalogSpec::RunTest(const FString& Parameters)
         UMainStoryMissionCatalog::TryGetMission(TEXT("Main.C01.03.TheTaking"), Taking));
     TestTrue(TEXT("The Taking persists Ethan's abduction"),
         Taking.PersistenceFlags.Contains(TEXT("Story.EthanAbducted")));
+    TestTrue(TEXT("Marc dies in current opening canon"),
+        Taking.PersistenceFlags.Contains(TEXT("Story.MarcDead")));
+    TestTrue(TEXT("Denise dies in current opening canon"),
+        Taking.PersistenceFlags.Contains(TEXT("Story.DeniseDead")));
+
+    FMainStoryMissionDefinition Landfall;
+    TestTrue(TEXT("Undertow landfall mission exists"),
+        UMainStoryMissionCatalog::TryGetMission(TEXT("Main.C01.04.Undertow"), Landfall));
+    TestEqual(TEXT("Jake physically strands at Driftwood Beach in Moran"), Landfall.RouteId,
+        FName(TEXT("Route.Moran.OpenWater.OuterReef.DriftwoodBeach.DriftwoodCamp")));
+    TestTrue(TEXT("Driftwood Beach arrival persists"),
+        Landfall.PersistenceFlags.Contains(TEXT("World.DriftwoodBeachReached")));
+
+    FMainStoryMissionDefinition CrewRoute;
+    TestTrue(TEXT("Moran crew route exists"),
+        UMainStoryMissionCatalog::TryGetMission(TEXT("Main.C02.01.NoCoinNoFlag"), CrewRoute));
+    TestEqual(TEXT("Organic onboarding crosses Mira, mangroves, Koa and Galleon Cove"), CrewRoute.RouteId,
+        FName(TEXT("Route.Moran.DriftwoodCamp.MirasCove.MangroveShallows.KoasTradingPost.GalleonCove")));
+
+    FMainStoryMissionDefinition ShipTake;
+    TestTrue(TEXT("La Liberacion acquisition exists"),
+        UMainStoryMissionCatalog::TryGetMission(TEXT("Main.C02.02.AShipToTake"), ShipTake));
+    TestTrue(TEXT("La Liberacion is acquired through Galleon Cove"),
+        ShipTake.RouteId.ToString().Contains(TEXT("GalleonCove")));
+
+    FMainStoryMissionDefinition FirstWake;
+    TestTrue(TEXT("First voyage exists"),
+        UMainStoryMissionCatalog::TryGetMission(TEXT("Main.C02.03.FirstWake"), FirstWake));
+    TestEqual(TEXT("First authored voyage leaves Moran for Rexa Harbor"), FirstWake.RouteId,
+        FName(TEXT("Route.Moran.GalleonCove.OpenSea.RexaHarbor")));
+    TestTrue(TEXT("Rexa world entry persists"),
+        FirstWake.PersistenceFlags.Contains(TEXT("World.RexaEntered")));
 
     FMainStoryMissionDefinition Brothers;
     TestTrue(TEXT("The Chapter-8 physical rescue exists"),
@@ -97,6 +129,10 @@ bool FDarkArisenMainStoryDirectorSpec::RunTest(const FString& Parameters)
         Director->IsStoryFactSet(TEXT("Story.EthanAbducted")));
     TestTrue(TEXT("Ethan was physically recovered before the finale"),
         Director->IsStoryFactSet(TEXT("Story.EthanRecovered")));
+    TestTrue(TEXT("Jake entered Moran through Driftwood Beach"),
+        Director->IsStoryFactSet(TEXT("World.DriftwoodBeachReached")));
+    TestTrue(TEXT("Jake reached Rexa by the first La Liberacion voyage"),
+        Director->IsStoryFactSet(TEXT("World.RexaEntered")));
     TestTrue(TEXT("Completed story has no next mission"), Director->GetCurrentMissionId().IsNone());
     return true;
 }
