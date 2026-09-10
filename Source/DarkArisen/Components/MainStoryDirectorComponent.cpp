@@ -50,10 +50,14 @@ bool UMainStoryDirectorComponent::HasValidStoryState() const
         return false;
     }
 
-    // Facts may only appear after their owning mission has resolved.
-    if (CurrentMissionIndex < 3 && StoryFacts.Contains(TEXT("Story.EthanAbducted"))) return false;
-    if (CurrentMissionIndex < 25 && StoryFacts.Contains(TEXT("Story.EthanRecovered"))) return false;
-    if (CurrentMissionIndex < 34 && StoryFacts.Contains(TEXT("Story.MainComplete"))) return false;
+    const bool bEthanAbducted = StoryFacts.Contains(TEXT("Story.EthanAbducted"));
+    const bool bEthanRecovered = StoryFacts.Contains(TEXT("Story.EthanRecovered"));
+    const bool bMainComplete = StoryFacts.Contains(TEXT("Story.MainComplete"));
+
+    // Milestone facts must exist iff the ordered critical path has passed their owning mission.
+    if ((CurrentMissionIndex >= 3) != bEthanAbducted) return false;
+    if ((CurrentMissionIndex >= 25) != bEthanRecovered) return false;
+    if ((CurrentMissionIndex >= 34) != bMainComplete) return false;
     return true;
 }
 
