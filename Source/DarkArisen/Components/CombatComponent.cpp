@@ -3,6 +3,7 @@
 #include "Components/CombatComponent.h"
 
 #include "Components/HealthComponent.h"
+#include "Combat/DamagePipeline.h"
 #include "Components/StaminaComponent.h"
 #include "CoreLoopTuning.h"
 #include "DesignLaws.h"
@@ -47,6 +48,7 @@ void UCombatComponent::TickComponent(
     FActorComponentTickFunction* ThisTickFunction)
 {
     Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+    InvulnerabilityRemaining = FMath::Max(0.0f, InvulnerabilityRemaining - DeltaTime);
     if (DeflectionWindowRemaining > 0.0f)
     {
         DeflectionWindowRemaining = FMath::Max(0.0f, DeflectionWindowRemaining - DeltaTime);
@@ -144,6 +146,7 @@ bool UCombatComponent::PerformDodge(const FVector& Direction)
 {
     if (Direction.ContainsNaN()) return false;
     const bool bBackstep = Direction.IsNearlyZero();
+    InvulnerabilityRemaining = DarkArisen::CoreLoopTuning::FramesToSeconds(8);
     return BeginCommittedAction(
         bBackstep ? ECombatState::Backstepping : ECombatState::Dodging,
         bBackstep ? BackstepStaminaCost : DodgeStaminaCost,
@@ -180,42 +183,21 @@ void UCombatComponent::SetNonHostile()
 bool UCombatComponent::ResolveHitAgainst(AActor* Target, const ECombatHitKind HitKind)
 {
     AActor* Owner = GetOwner();
-    if (!IsValid(Owner) || !IsValid(Target) || Target == Owner ||
-        !IsCombatTargetable()) return false;
-
-    UHealthComponent* TargetHealth = Target->FindComponentByClass<UHealthComponent>();
-    UCombatComponent* TargetCombat = Target->FindComponentByClass<UCombatComponent>();
-    if (!TargetHealth || !TargetCombat || TargetHealth->IsDead() ||
-        !TargetCombat->IsCombatTargetable()) return false;
-
+    if (!IsValid(Owner) || !IsValid(Target) || !IsCombatTargetable()) return false;
     const FCombatHitProfile Profile = GetHitProfile(HitKind);
-    if (TargetCombat->IsDeflectionWindowOpen() && HitKind != ECombatHitKind::Critical)
-    {
-        AddPostureDamage(Profile.DeflectedPostureDamage);
-        if (UHealthComponent* DefenderHealth = Target->FindComponentByClass<UHealthComponent>())
-            DefenderHealth->RecoverRally(ERallyRecoveryAction::ParryStrike);
-        return true;
-    }
+    FDamageContext Context; Context.Source=Owner; Context.Target=Target;
+    Context.WeaponId=FName(*UEnum::GetValueAsString(CurrentMelee));
+    Context.BaseDamage=Profile.HealthDamage; Context.PostureDamage=Profile.PostureDamage;
+    Context.HitLocation=Target->GetActorLocation(); Context.bCritical=HitKind==ECombatHitKind::Critical;
+    Context.AttackType=static_cast<EAttackType>(static_cast<uint8>(HitKind));
+    FDamageResult Result; if(!UDamagePipeline::ResolveDamage(Context,Result)) return false;
+    if(Result.bDeflected){AddPostureDamage(Profile.DeflectedPostureDamage);return true;}
+    if(CachedHealth&&!Result.bInvulnerable){ERallyRecoveryAction A=ERallyRecoveryAction::LightHit;if(HitKind==ECombatHitKind::Heavy)A=ERallyRecoveryAction::HeavyHit;else if(HitKind==ECombatHitKind::ParryStrike)A=ERallyRecoveryAction::ParryStrike;else if(HitKind==ECombatHitKind::Critical)A=ERallyRecoveryAction::Critical;CachedHealth->RecoverRally(A);}return true;
+}
 
-    TargetHealth->ApplyDamageWithRally(
-        Profile.HealthDamage,
-        Owner,
-        ERallyDamageClass::StandardEnemy);
-    TargetCombat->AddPostureDamage(Profile.PostureDamage);
-
-    if (CachedHealth)
-    {
-        ERallyRecoveryAction RecoveryAction = ERallyRecoveryAction::LightHit;
-        switch (HitKind)
-        {
-        case ECombatHitKind::Heavy: RecoveryAction = ERallyRecoveryAction::HeavyHit; break;
-        case ECombatHitKind::ParryStrike: RecoveryAction = ERallyRecoveryAction::ParryStrike; break;
-        case ECombatHitKind::Critical: RecoveryAction = ERallyRecoveryAction::Critical; break;
-        default: break;
-        }
-        CachedHealth->RecoverRally(RecoveryAction);
-    }
-    return true;
+float UCombatComponent::GetResistance(EAttackType AttackType) const
+{
+    return AttackType == EAttackType::Environmental ? 0.0f : PhysicalResistance;
 }
 
 bool UCombatComponent::ResolveCriticalHit(AActor* Target)

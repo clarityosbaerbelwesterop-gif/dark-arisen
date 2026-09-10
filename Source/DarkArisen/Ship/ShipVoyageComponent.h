@@ -103,6 +103,21 @@ public:
     UFUNCTION(BlueprintCallable, Category="Ship|Helm")
     void SetJakeAtHelm(bool bAtHelm);
 
+    UFUNCTION(BlueprintCallable, Category="Ship|Ownership")
+    bool SetOwnedAndUnlocked(bool bOwned);
+    UFUNCTION(BlueprintPure, Category="Ship|Ownership")
+    bool IsOwnedAndUnlocked() const { return bOwnedAndUnlocked; }
+    UFUNCTION(BlueprintCallable, Category="Ship|Access")
+    bool Embark(AActor* Character);
+    UFUNCTION(BlueprintCallable, Category="Ship|Access")
+    bool Disembark(AActor* Character);
+    UFUNCTION(BlueprintCallable, Category="Ship|Helm")
+    bool SetThrottle(float NewThrottle);
+    UFUNCTION(BlueprintCallable, Category="Ship|Damage")
+    void ApplyHullDamage(float Damage);
+    UFUNCTION(BlueprintPure, Category="Ship|Damage")
+    float GetHullIntegrity() const { return HullIntegrity; }
+
     UFUNCTION(BlueprintCallable, Category="Ship|Helm")
     void SetHelmCommandDegrees(float NewHeadingDegrees);
 
@@ -165,6 +180,15 @@ private:
     void BuildCanonicalCrew();
 
     UPROPERTY(SaveGame)
+    bool bOwnedAndUnlocked = false;
+    UPROPERTY(SaveGame)
+    float Throttle = 0.0f;
+    UPROPERTY(SaveGame)
+    float HullIntegrity = 1000.0f;
+    UPROPERTY()
+    TSet<TObjectPtr<AActor>> EmbarkedCharacters;
+
+    UPROPERTY(SaveGame)
     float HeadingDegrees = 0.0f;
 
     UPROPERTY(SaveGame)
@@ -180,7 +204,7 @@ private:
     float WindStrengthMetresPerSecond = 6.0f;
 
     UPROPERTY(SaveGame)
-    bool bJakeAtHelm = true;
+    bool bJakeAtHelm = false;
 
     UPROPERTY(SaveGame)
     bool bJakeInGreatCabin = false;

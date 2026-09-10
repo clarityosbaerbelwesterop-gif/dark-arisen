@@ -1,0 +1,11 @@
+#include "AI/BoardingEnemyComponent.h"
+#include "Components/HealthComponent.h"
+#include "GameFramework/Actor.h"
+UBoardingEnemyComponent::UBoardingEnemyComponent(){PrimaryComponentTick.bCanEverTick=true;}
+void UBoardingEnemyComponent::BeginPlay(){Super::BeginPlay();if(auto*H=GetOwner()->FindComponentByClass<UHealthComponent>())H->OnDied.AddDynamic(this,&UBoardingEnemyComponent::HandleOwnerDeath);}
+void UBoardingEnemyComponent::TickComponent(float D,ELevelTick T,FActorComponentTickFunction*F){Super::TickComponent(D,T,F);if(State==EBoardingEnemyState::Dead)return;StateTime+=D;if(!IsValid(CombatTarget)){if(State!=EBoardingEnemyState::Idle&&State!=EBoardingEnemyState::Search)Transition(EBoardingEnemyState::Search);else if(State==EBoardingEnemyState::Search&&StateTime>=LoseTargetSeconds)Transition(EBoardingEnemyState::Idle);return;}const float Range=FVector::Dist(GetOwner()->GetActorLocation(),CombatTarget->GetActorLocation());if(State==EBoardingEnemyState::Detect)Transition(EBoardingEnemyState::Approach);else if(State==EBoardingEnemyState::Approach&&Range<=AttackRange)Transition(EBoardingEnemyState::Combat);else if(State==EBoardingEnemyState::Combat)Transition(Range<=AttackRange?EBoardingEnemyState::Attack:EBoardingEnemyState::Approach);else if(State==EBoardingEnemyState::Reposition&&StateTime>=.45f)Transition(EBoardingEnemyState::Combat);else if(State==EBoardingEnemyState::Recover&&StateTime>=RecoverySeconds)Transition(EBoardingEnemyState::Reposition);}
+void UBoardingEnemyComponent::ReportTargetSeen(AActor*T){if(State==EBoardingEnemyState::Dead||!IsValid(T)||T==GetOwner())return;CombatTarget=T;Transition(EBoardingEnemyState::Detect);}
+void UBoardingEnemyComponent::ReportTargetLost(){CombatTarget=nullptr;if(State!=EBoardingEnemyState::Dead)Transition(EBoardingEnemyState::Search);}
+void UBoardingEnemyComponent::ReportAttackResolved(){if(State==EBoardingEnemyState::Attack)Transition(EBoardingEnemyState::Recover);}
+void UBoardingEnemyComponent::HandleOwnerDeath(AActor*){CombatTarget=nullptr;Transition(EBoardingEnemyState::Dead);SetComponentTickEnabled(false);}
+void UBoardingEnemyComponent::Transition(EBoardingEnemyState N){if(State==N)return;auto O=State;State=N;StateTime=0;OnStateChanged.Broadcast(O,N);}
