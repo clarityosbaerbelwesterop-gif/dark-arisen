@@ -6,7 +6,9 @@
 #include "GameFramework/GameModeBase.h"
 #include "GreyboxGameMode.generated.h"
 
-/** Creates the M0 test room entirely in C++, so no placeholder binary map is required. */
+class UMainStoryDirectorComponent;
+
+/** Creates the native test/preview room and owns the finite critical-path director. */
 UCLASS()
 class DARKARISEN_API AGreyboxGameMode : public AGameModeBase
 {
@@ -19,7 +21,9 @@ public:
     virtual void HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) override;
     virtual void StartPlay() override;
 
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Story")
+    TObjectPtr<UMainStoryDirectorComponent> MainStoryDirectorComponent;
+
 private:
     void BuildGreybox();
 };
-
