@@ -3,6 +3,7 @@
 #include "GreyboxGameMode.h"
 
 #include "Components/DirectionalLightComponent.h"
+#include "Components/MainStoryDirectorComponent.h"
 #include "Components/SkyLightComponent.h"
 #include "DarkArisen.h"
 #include "DuelingEnemyCharacter.h"
@@ -16,6 +17,7 @@
 #include "Interaction/PhysicalJournalActor.h"
 #include "Interaction/PhysicalDoorActor.h"
 #include "Interaction/PhysicalPickupActor.h"
+#include "Missions/MainStoryMissionCatalog.h"
 #include "PostureOnlyHUD.h"
 
 namespace
@@ -46,6 +48,8 @@ AGreyboxGameMode::AGreyboxGameMode()
 {
     DefaultPawnClass = AJakeCharacter::StaticClass();
     HUDClass = APostureOnlyHUD::StaticClass();
+    MainStoryDirectorComponent =
+        CreateDefaultSubobject<UMainStoryDirectorComponent>(TEXT("MainStoryDirectorComponent"));
 }
 
 void AGreyboxGameMode::InitGame(
@@ -65,12 +69,20 @@ void AGreyboxGameMode::HandleStartingNewPlayer_Implementation(APlayerController*
             NewPlayer,
             FTransform(FRotator::ZeroRotator, FVector(0.0f, 0.0f, 120.0f)));
     }
+
+    AJakeCharacter* Jake = NewPlayer ? Cast<AJakeCharacter>(NewPlayer->GetPawn()) : nullptr;
+    if (!Jake || !Jake->QuestJournalComponent ||
+        !UMainStoryMissionCatalog::RegisterAuthoredMissions(Jake->QuestJournalComponent))
+    {
+        UE_LOG(LogDarkArisen, Error, TEXT("Current main-story mission catalog failed closed."));
+    }
 }
 
 void AGreyboxGameMode::StartPlay()
 {
     Super::StartPlay();
-    UE_LOG(LogDarkArisen, Display, TEXT("M0 greybox ready at the locked 60 fps target."));
+    UE_LOG(LogDarkArisen, Display,
+        TEXT("Native preview ready: 60 fps gameplay target with finite current story authority."));
 }
 
 void AGreyboxGameMode::BuildGreybox()
@@ -79,7 +91,7 @@ void AGreyboxGameMode::BuildGreybox()
     UStaticMesh* CubeMesh = LoadObject<UStaticMesh>(nullptr, TEXT("/Engine/BasicShapes/Cube.Cube"));
     if (!World || !CubeMesh)
     {
-        UE_LOG(LogDarkArisen, Error, TEXT("Unable to construct the M0 greybox."));
+        UE_LOG(LogDarkArisen, Error, TEXT("Unable to construct the native preview room."));
         return;
     }
 

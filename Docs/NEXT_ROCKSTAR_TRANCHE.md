@@ -1,50 +1,76 @@
-# Next Rockstar-path production tranche
+# Rockstar-path production tranche history and next boundary
 
-**Date:** 2026-08-29  
-**Base:** `develop` at `d9f268ddf4dee30160d4f50e520fbba241d50adf`  
-**Branch:** `feature/world-rewards-encounters-production`  
-**Purpose:** continue authored game production after the Animation + Presentation source merge without treating unavailable UE runtime evidence as passed.
+**Integrated baseline:** PR #17 → `develop` at `04a34e37f4f0c2f982cf28b942e11e120d103d29`.  
+**Current active source tranche:** `feature/pre-runner-asset-production` / Draft PR #18.  
+**Current plan:** `Docs/PRE_RUNNER_ASSET_PRODUCTION_PLAN.md`.  
+**Pre-main closure:** `Docs/PRE_MAIN_QUEST_READINESS.md`.  
+**Next authoring boundary:** `Docs/MAIN_QUEST_AUTHORITY_GAP.md`.
 
-## Operator direction
+## What PR #17 already integrated at source level
 
-Continue immediately on the Rockstar path. Do not optimise for the shortest route to an Alpha label. Preserve authored specificity, physical-world readability, finite content, restrained presentation, native-C++ ownership and fail-closed design gaps. Review the tranche at the end and merge it when coherent; runtime/editor gates remain open until they actually execute.
+- exact authored State Treasure identities and castle binding;
+- hidden sell / keep / return persistence without a visible tally;
+- physical travel-law authority including Crystal Caves timing and horse-only stable relocation;
+- source-grounded Highmoore anchors/scale laws;
+- stronger reward/world/Alpha reconciliation gates.
 
-## Production line
+It did **not** create or prove final Unreal maps, animation, audio, AI, navigation, performance, packaging or playthrough evidence.
 
-1. **World reachability and region integration**
-   - strengthen source-backed region entry/exit/traversal contracts so major M2-M6 systems are reachable through authored world routes rather than existing only as isolated components;
-   - encode settlement/landmark placement requirements where governing sources give real identities;
-   - never claim a `.umap`, navmesh, foliage, lighting, crowd, creature or streaming cell exists until reviewed Unreal asset evidence exists.
+## What PR #18 now closes before main quests
 
-2. **Treasures, rewards and physical evidence**
-   - reconcile finite named treasures, letters, state treasures, unique weapons/items and authored take/leave objects into one source-backed authority;
-   - keep ownership, location, consequence and acquisition physical where written;
-   - prohibit generic loot substitution and invented filler rewards.
+PR #18 reconciles the finite source/readiness layers that can be completed without inventing the campaign:
 
-3. **Mission/main-story integration**
-   - continue only source-backed identities and state ownership;
-   - preserve the 275 unauthored Turn/Standing identities as deliberate gaps;
-   - bind authored content to existing journal, war, settlement, ship, social, progression and world-clock authorities instead of parallel systems.
+1. governance and Non-AI-Slop production rejection rules;
+2. external-media evidence states without pretending generation equals UE acceptance;
+3. Higgsfield narrowed to exactly 37 animation/performance/cinematic previs briefs;
+4. character, current Tier-1 boss, legacy/deep-dive visual, La Liberación, fauna and flora source-readiness kept as internal production authorities rather than Higgsfield queues;
+5. cross-family 3D source-readiness reconciled at 140 records = 105 candidate-ready / 14 reference-only / 21 blocked;
+6. dungeon/world/Highmoore/reward source readiness kept finite without invented placement or assets;
+7. exact side-content identity gaps preserved: 129 Turns + 146 Standing = 275, plus 20 minor dungeons and one named Region-06 dungeon identity;
+8. current Tier-1 gameplay authority preserved as the Nine Who Hold while nine full physical look sheets remain explicit art gaps;
+9. animation requirements locked at 23 source-grounded requirements;
+10. presentation remains 19 slots / 14 resolved / 5 unresolved final-act identities;
+11. main-story source re-read and exact stop reasons recorded instead of inventing Chapter missions.
 
-4. **Encounter integration**
-   - strengthen boss/dungeon/world encounter dependencies where source is concrete;
-   - preserve special cases rather than flattening them into one generic boss or arena path;
-   - keep final arenas/AI assets/animation/runtime evidence open until actual Unreal production exists.
+## Higgsfield rule
 
-5. **World population/ecology quality**
-   - extend source-backed placement/readability contracts for Highmoore and archipelago settlements/ecology where the design corpus is explicit;
-   - no random authored population, wildlife, generic spawn substitution or procedural mission filler.
+Higgsfield is used for:
 
-## Non-negotiable evidence boundary
+- animation/motion reference;
+- body/facial performance reference for already-authored beats;
+- cinematic/cutscene previs for already-resolved presentation identities.
 
-This tranche may add native source contracts, integration code, tests, validators and documentation. It may **not** claim:
+It is not the current character/boss/world/dungeon/ship/fauna/flora/prop/general-3D provider.
 
-- UE 5.5 compilation passed;
-- Unreal Automation passed;
-- a production `.umap`/`.uasset` exists merely because a C++ path/contract exists;
-- 60 fps passed;
-- Windows/Linux Shipping candidates exist;
-- start-to-credits passed;
-- Alpha acceptance passed.
+Provider preflight remains plan-blocked for the tested Seedance path. No upgrade or purchase has been authorised or performed.
 
-The required self-hosted UE 5.5 runners are still offline/queued. Queued is not passed.
+## Next Rockstar-path tranche — after operator story decisions
+
+The next meaningful content tranche is **not** more generic side content. It is the current main-story rewrite/closure.
+
+Before implementation, design authority must answer the questions in `Docs/MAIN_QUEST_AUTHORITY_GAP.md`, especially:
+
+- confirm the Phase-11 Ethan-dead-from-Chapter-1 structure or explicitly restore another branch;
+- define what replaces legacy Ethan-captured/Ethan-boss beats if Phase 11 remains current;
+- define the current Crimson Armada / Draven Chapter-8 and Chapter-10 final act;
+- publish the finite Chapter 1-10 main-mission identities with trigger, participants, physical route/actions, completion/outcome, persistence and presentation ownership;
+- resolve final-act cutscene slots #15-#19 from those missions.
+
+Only then should a new main-story implementation tranche begin.
+
+## Later runner / Alpha path
+
+Runner/editor availability remains a later evidence gate, not a reason to invent missing content now. Once authored campaign/content authority is complete:
+
+1. actual UE 5.5 import/integration and compilation;
+2. Unreal Automation and runtime fixes;
+3. production maps/assets/animation/Sequencer/AI/navmesh/save-load integration;
+4. measured 60-fps evidence;
+5. content-identical Windows + Linux Shipping Alpha ZIPs from one accepted commit;
+6. full native start-to-credits runs;
+7. private Arcware-style complete exploration/playthrough;
+8. dedicated improvement tranche from observed game quality.
+
+## Evidence boundary
+
+Source-readiness is not an asset. A generated motion/cinematic preview is not a UE animation or Sequencer asset. A source-ready 3D record is not a mesh. Runtime acceptance requires real exact-commit UE evidence.
