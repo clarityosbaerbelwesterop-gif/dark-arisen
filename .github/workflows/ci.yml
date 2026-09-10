@@ -1,4 +1,4 @@
-name: M0-M8 Native C++ CI
+name: UE 5.8 Native C++ CI and Preview
 
 on:
   push:
@@ -6,117 +6,125 @@ on:
   pull_request:
     branches: [develop, main]
     types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: dark-arisen-ci-${{ github.ref }}
+  group: dark-arisen-ue58-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   verify-windows:
-    name: Windows UE 5.5 native C++ compile, tests, laws
+    name: Windows UE 5.8 compile, tests, preview
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
-    runs-on: [self-hosted, Windows, X64, ue5.5, dark-arisen]
-    timeout-minutes: 120
+    runs-on: [self-hosted, Windows, X64, ue5.8, dark-arisen]
+    timeout-minutes: 180
     steps:
       - uses: actions/checkout@v4
         with: {fetch-depth: 1, lfs: true}
-      - name: Build native C++ operations owner
+
+      - name: Verify UE 5.8 runner and project association
+        shell: powershell
+        run: |
+          if (-not $env:UE58_ROOT) { throw 'UE58_ROOT is required' }
+          $v = Get-Content "$env:UE58_ROOT\Engine\Build\Build.version" | ConvertFrom-Json
+          if ($v.MajorVersion -ne 5 -or $v.MinorVersion -ne 8) { throw "Expected UE 5.8, found $($v.MajorVersion).$($v.MinorVersion).$($v.PatchVersion)" }
+          $p = Get-Content "$env:GITHUB_WORKSPACE\DarkArisen.uproject" | ConvertFrom-Json
+          if ($p.EngineAssociation -ne '5.8') { throw "Project is not associated with UE 5.8" }
+
+      - name: Build native operations owner
         shell: cmd
-        run: 'call "%UE55_ROOT%\Engine\Build\BatchFiles\Build.bat" DarkArisenOps Win64 Development "-Project=%GITHUB_WORKSPACE%\DarkArisen.uproject" -WaitMutex -WarningsAsErrors'
-      - name: Verify private Windows UE 5.5 runner
+        run: 'call "%UE58_ROOT%\Engine\Build\BatchFiles\Build.bat" DarkArisenOps Win64 Development "-Project=%GITHUB_WORKSPACE%\DarkArisen.uproject" -WaitMutex -WarningsAsErrors'
+
+      - name: Validate authored content contracts
         shell: cmd
-        run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" runner-check "--root=%GITHUB_WORKSPACE%" "--engine=%UE55_ROOT%"'
-      - name: Validate repository contracts
+        run: |
+          "%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" validate-dungeons "--root=%GITHUB_WORKSPACE%"
+          "%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" validate-rewards "--root=%GITHUB_WORKSPACE%"
+          "%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" validate-missions "--root=%GITHUB_WORKSPACE%"
+          "%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" validate-bosses "--root=%GITHUB_WORKSPACE%"
+          "%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" validate-world "--root=%GITHUB_WORKSPACE%"
+          "%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" validate-presentation "--root=%GITHUB_WORKSPACE%"
+          "%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" validate-audio-voice "--root=%GITHUB_WORKSPACE%"
+
+      - name: Compile Editor and game targets
         shell: cmd
-        run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" validate "--root=%GITHUB_WORKSPACE%"'
-      - name: Validate authored dungeons
+        run: |
+          call "%UE58_ROOT%\Engine\Build\BatchFiles\Build.bat" DarkArisenEditor Win64 Development "-Project=%GITHUB_WORKSPACE%\DarkArisen.uproject" -WaitMutex -WarningsAsErrors
+          call "%UE58_ROOT%\Engine\Build\BatchFiles\Build.bat" DarkArisen Win64 Development "-Project=%GITHUB_WORKSPACE%\DarkArisen.uproject" -WaitMutex -WarningsAsErrors
+          call "%UE58_ROOT%\Engine\Build\BatchFiles\Build.bat" DarkArisen Win64 Shipping "-Project=%GITHUB_WORKSPACE%\DarkArisen.uproject" -WaitMutex -WarningsAsErrors
+
+      - name: Run Unreal automation tests
         shell: cmd
-        run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" validate-dungeons "--root=%GITHUB_WORKSPACE%"'
-      - name: Validate authored rewards and treasures
+        run: '"%UE58_ROOT%\Engine\Binaries\Win64\UnrealEditor-Cmd.exe" "%GITHUB_WORKSPACE%\DarkArisen.uproject" -NullRHI -Unattended -NoPause -NoSplash -NoP4 -ExecCmds="Automation RunTests DarkArisen.; Quit" -TestExit="Automation Test Queue Empty" -log'
+
+      - name: Package first Windows preview
+        if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
         shell: cmd
-        run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" validate-rewards "--root=%GITHUB_WORKSPACE%"'
-      - name: Validate authored missions
-        shell: cmd
-        run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" validate-missions "--root=%GITHUB_WORKSPACE%"'
-      - name: Validate Tier-1 bosses
-        shell: cmd
-        run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" validate-bosses "--root=%GITHUB_WORKSPACE%"'
-      - name: Validate authored world production
-        shell: cmd
-        run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" validate-world "--root=%GITHUB_WORKSPACE%"'
-      - name: Validate presentation and animation production
-        shell: cmd
-        run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" validate-presentation "--root=%GITHUB_WORKSPACE%"'
-      - name: Validate audio and voice production
-        shell: cmd
-        run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" validate-audio-voice "--root=%GITHUB_WORKSPACE%"'
-      - name: Reconcile Alpha content readiness
-        shell: cmd
-        run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" validate-alpha-content "--root=%GITHUB_WORKSPACE%"'
-      - name: Validate pre-main production closure
-        shell: cmd
-        run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" validate-pre-runner-production "--root=%GITHUB_WORKSPACE%"'
-      - name: Compile Development and Shipping
-        if: github.event_name == 'push'
-        shell: cmd
-        run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" build "--root=%GITHUB_WORKSPACE%" "--engine=%UE55_ROOT%"'
-      - name: Compile and run Unreal automation tests
-        if: github.event_name == 'pull_request'
-        shell: cmd
-        run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" build "--root=%GITHUB_WORKSPACE%" "--engine=%UE55_ROOT%" --automation'
+        run: 'call "%UE58_ROOT%\Engine\Build\BatchFiles\RunUAT.bat" BuildCookRun -project="%GITHUB_WORKSPACE%\DarkArisen.uproject" -noP4 -platform=Win64 -clientconfig=Shipping -build -cook -stage -pak -archive -archivedirectory="%GITHUB_WORKSPACE%\Artifacts\Windows" -utf8output'
+
+      - name: Upload Windows preview
+        if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
+        uses: actions/upload-artifact@v4
+        with:
+          name: DarkArisen-UE58-Windows-Preview-${{ github.sha }}
+          path: Artifacts/Windows
+          if-no-files-found: error
 
   verify-linux:
-    name: Linux UE 5.5 native C++ compile, tests, laws
+    name: Linux UE 5.8 compile, tests, preview
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
-    runs-on: [self-hosted, Linux, X64, ue5.5, dark-arisen]
-    timeout-minutes: 120
+    runs-on: [self-hosted, Linux, X64, ue5.8, dark-arisen]
+    timeout-minutes: 180
     steps:
       - uses: actions/checkout@v4
         with: {fetch-depth: 1, lfs: true}
-      - name: Build native C++ operations owner
+
+      - name: Verify UE 5.8 runner and project association
         shell: bash
-        run: '"$UE55_ROOT/Engine/Build/BatchFiles/Linux/Build.sh" DarkArisenOps Linux Development "-Project=$GITHUB_WORKSPACE/DarkArisen.uproject" -WaitMutex -WarningsAsErrors'
-      - name: Verify private Linux UE 5.5 runner
+        run: |
+          test -n "$UE58_ROOT"
+          grep -q '"MajorVersion"[[:space:]]*:[[:space:]]*5' "$UE58_ROOT/Engine/Build/Build.version"
+          grep -q '"MinorVersion"[[:space:]]*:[[:space:]]*8' "$UE58_ROOT/Engine/Build/Build.version"
+          grep -q '"EngineAssociation"[[:space:]]*:[[:space:]]*"5.8"' "$GITHUB_WORKSPACE/DarkArisen.uproject"
+
+      - name: Build native operations owner
         shell: bash
-        run: '"$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" runner-check "--root=$GITHUB_WORKSPACE" "--engine=$UE55_ROOT"'
-      - name: Validate repository contracts
+        run: '"$UE58_ROOT/Engine/Build/BatchFiles/Linux/Build.sh" DarkArisenOps Linux Development "-Project=$GITHUB_WORKSPACE/DarkArisen.uproject" -WaitMutex -WarningsAsErrors'
+
+      - name: Validate authored content contracts
         shell: bash
-        run: '"$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" validate "--root=$GITHUB_WORKSPACE"'
-      - name: Validate authored dungeons
+        run: |
+          "$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" validate-dungeons "--root=$GITHUB_WORKSPACE"
+          "$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" validate-rewards "--root=$GITHUB_WORKSPACE"
+          "$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" validate-missions "--root=$GITHUB_WORKSPACE"
+          "$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" validate-bosses "--root=$GITHUB_WORKSPACE"
+          "$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" validate-world "--root=$GITHUB_WORKSPACE"
+          "$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" validate-presentation "--root=$GITHUB_WORKSPACE"
+          "$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" validate-audio-voice "--root=$GITHUB_WORKSPACE"
+
+      - name: Compile Editor and game targets
         shell: bash
-        run: '"$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" validate-dungeons "--root=$GITHUB_WORKSPACE"'
-      - name: Validate authored rewards and treasures
+        run: |
+          "$UE58_ROOT/Engine/Build/BatchFiles/Linux/Build.sh" DarkArisenEditor Linux Development "-Project=$GITHUB_WORKSPACE/DarkArisen.uproject" -WaitMutex -WarningsAsErrors
+          "$UE58_ROOT/Engine/Build/BatchFiles/Linux/Build.sh" DarkArisen Linux Development "-Project=$GITHUB_WORKSPACE/DarkArisen.uproject" -WaitMutex -WarningsAsErrors
+          "$UE58_ROOT/Engine/Build/BatchFiles/Linux/Build.sh" DarkArisen Linux Shipping "-Project=$GITHUB_WORKSPACE/DarkArisen.uproject" -WaitMutex -WarningsAsErrors
+
+      - name: Run Unreal automation tests
         shell: bash
-        run: '"$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" validate-rewards "--root=$GITHUB_WORKSPACE"'
-      - name: Validate authored missions
+        run: '"$UE58_ROOT/Engine/Binaries/Linux/UnrealEditor-Cmd" "$GITHUB_WORKSPACE/DarkArisen.uproject" -NullRHI -Unattended -NoPause -NoSplash -NoP4 -ExecCmds="Automation RunTests DarkArisen.; Quit" -TestExit="Automation Test Queue Empty" -log'
+
+      - name: Package first Linux preview
+        if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
         shell: bash
-        run: '"$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" validate-missions "--root=$GITHUB_WORKSPACE"'
-      - name: Validate Tier-1 bosses
-        shell: bash
-        run: '"$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" validate-bosses "--root=$GITHUB_WORKSPACE"'
-      - name: Validate authored world production
-        shell: bash
-        run: '"$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" validate-world "--root=$GITHUB_WORKSPACE"'
-      - name: Validate presentation and animation production
-        shell: bash
-        run: '"$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" validate-presentation "--root=$GITHUB_WORKSPACE"'
-      - name: Validate audio and voice production
-        shell: bash
-        run: '"$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" validate-audio-voice "--root=$GITHUB_WORKSPACE"'
-      - name: Reconcile Alpha content readiness
-        shell: bash
-        run: '"$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" validate-alpha-content "--root=$GITHUB_WORKSPACE"'
-      - name: Validate pre-main production closure
-        shell: bash
-        run: '"$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" validate-pre-runner-production "--root=$GITHUB_WORKSPACE"'
-      - name: Compile Development and Shipping
-        if: github.event_name == 'push'
-        shell: bash
-        run: '"$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" build "--root=$GITHUB_WORKSPACE" "--engine=$UE55_ROOT"'
-      - name: Compile and run Unreal automation tests
-        if: github.event_name == 'pull_request'
-        shell: bash
-        run: '"$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" build "--root=$GITHUB_WORKSPACE" "--engine=$UE55_ROOT" --automation'
+        run: '"$UE58_ROOT/Engine/Build/BatchFiles/RunUAT.sh" BuildCookRun -project="$GITHUB_WORKSPACE/DarkArisen.uproject" -noP4 -platform=Linux -clientconfig=Shipping -build -cook -stage -pak -archive -archivedirectory="$GITHUB_WORKSPACE/Artifacts/Linux" -utf8output'
+
+      - name: Upload Linux preview
+        if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
+        uses: actions/upload-artifact@v4
+        with:
+          name: DarkArisen-UE58-Linux-Preview-${{ github.sha }}
+          path: Artifacts/Linux
+          if-no-files-found: error
