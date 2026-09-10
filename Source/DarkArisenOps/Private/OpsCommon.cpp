@@ -84,7 +84,7 @@ FString EngineRoot(const FParsedArgs& Args)
     {
         return NormalizeFullPath(Explicit);
     }
-    const FString Env = FPlatformMisc::GetEnvironmentVariable(TEXT("UE55_ROOT"));
+    const FString Env = FPlatformMisc::GetEnvironmentVariable(TEXT("UE_ROOT"));
     return Env.IsEmpty() ? FString() : NormalizeFullPath(Env);
 }
 

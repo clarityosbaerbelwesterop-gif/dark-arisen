@@ -11,11 +11,11 @@ void PrintUsage()
     UE_LOG(LogTemp, Display, TEXT("DarkArisenOps — native C++ project operations"));
     UE_LOG(LogTemp, Display, TEXT("Commands:"));
     UE_LOG(LogTemp, Display, TEXT("  validate --root=<repo>"));
-    UE_LOG(LogTemp, Display, TEXT("  runner-check --root=<repo> --engine=<UE5.5> [--min-disk-gb=120]"));
-    UE_LOG(LogTemp, Display, TEXT("  build --root=<repo> --engine=<UE5.5> [--automation]"));
+    UE_LOG(LogTemp, Display, TEXT("  runner-check --root=<repo> --engine=<UE5.8> [--min-disk-gb=120]"));
+    UE_LOG(LogTemp, Display, TEXT("  build --root=<repo> --engine=<UE5.8> [--automation]"));
     UE_LOG(LogTemp, Display, TEXT("  package-alpha --revision=<40sha> [--output=<dir>]"));
     UE_LOG(LogTemp, Display, TEXT("  promote-alpha --evidence=<json> --windows=<zip> --linux=<zip> --output=<dir>"));
-    UE_LOG(LogTemp, Display, TEXT("  bootstrap-streaming [--infra=<dir>] [--force-rebuild]"));
+    UE_LOG(LogTemp, Display, TEXT("  bootstrap-streaming --revision=<reviewed-40sha> [--infra=<dir>] [--force-rebuild]"));
     UE_LOG(LogTemp, Display, TEXT("  stream-signalling | stream-turn | stream-launch | stream-deploy"));
     UE_LOG(LogTemp, Display, TEXT("  stream-install-services | stream-idle-shutdown | stream-provider-shutdown"));
     UE_LOG(LogTemp, Display, TEXT("  tailnet-join | install-grid-driver | collect-host-evidence"));

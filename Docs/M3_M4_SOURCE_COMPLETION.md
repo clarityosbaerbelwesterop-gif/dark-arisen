@@ -1,8 +1,8 @@
 # M3 / M4 source completion record
 
-**Date:** 2026-08-28  
-**PR:** #7 — `feature/m2-runtime-completion` → `develop`  
-**Scope:** source completion only; UE 5.5 compile/runtime/playtest acceptance remains deferred under the current operator direction.
+**Date:** 2026-08-28
+**PR:** #7 — `feature/m2-runtime-completion` → `develop`
+**Scope:** source completion only; UE 5.8 compile/runtime/playtest acceptance remains deferred under the current operator direction.
 
 This record exists to prevent two opposite errors: treating source work as if nothing was completed, or treating unexecuted Unreal/runtime gates as if they passed. The M3/M4 engineering contracts below are complete enough to integrate into `develop`; authored final assets and runtime evidence remain later acceptance work.
 
@@ -92,14 +92,14 @@ This record exists to prevent two opposite errors: treating source work as if no
 
 The following are deliberately **not** marked passed:
 
-- UE 5.5 Windows/Linux compilation and Unreal automation execution on the configured self-hosted runners.
+- UE 5.8 Windows/Linux compilation and Unreal automation execution on the configured self-hosted runners.
 - Final authored La Liberación hull/interior geometry, continuous player traversal from keel to maintop, buoyancy/roll/pitch/heel, water/weather coupling, final animation/audio and measured sea-passage playtest.
 - Final authored production Data Asset containing all 68 canon-approved node definitions and all teaching-scene content.
 - Final economy vendors/holdings/army content, safe-house presentation, social animation/dialogue presentation and save/load persistence proof.
 - Performance, packaging, Pixel Streaming, iPad and Alpha acceptance.
 
-At the time of this record, GitHub reports both UE 5.5 self-hosted PR jobs queued rather than executed. A separate local clone attempt from the active workspace also could not reach GitHub because outbound DNS/network access was unavailable. Neither condition is represented as a successful runtime test.
+At the time of this record, GitHub reports both UE 5.8 self-hosted PR jobs queued rather than executed. A separate local clone attempt from the active workspace also could not reach GitHub because outbound DNS/network access was unavailable. Neither condition is represented as a successful runtime test.
 
 ## Merge ruling
 
-Under the operator's explicit 2026-08-28 direction, unavailable UE 5.5 runtime/runner gates do not block M3/M4 **source integration**. PR #7 may therefore be merged to `develop` after final diff/metadata review, while every deferred runtime gate above remains open and visible.
+Under the operator's explicit 2026-08-28 direction, unavailable UE 5.8 runtime/runner gates do not block M3/M4 **source integration**. PR #7 may therefore be merged to `develop` after final diff/metadata review, while every deferred runtime gate above remains open and visible.

@@ -1,6 +1,6 @@
 # GPU backend decision — M0 remote play
 
-**Decision date:** 2026-08-26  
+**Decision date:** 2026-08-26
 **State:** Architecture selected; no account resource has been created, started, reserved, or purchased.
 
 ## Recommendation
@@ -58,7 +58,7 @@ Dark Arisen does not deploy or fork those defaults. The replacement template use
 
 SkyPilot is a useful open-source optimizer/orchestrator across existing clouds and clusters, not a source of free GPU capacity. Its official README states that it is BYOC and launches resources inside the user's cloud accounts, VPCs, and clusters; its GPU example requires GPU-instance access. GPU Compass compares prices and availability, and the SkyPilot team explicitly says it does not sell compute.
 
-SkyPilot is also built around Linux/SSH/AI workload images by default. It does not replace the reviewed Windows Server 2022, WDDM/NVENC, persistent EBS, private-tailnet, and provider-stop requirements for UE 5.5 Pixel Streaming. It may later be used read-only to compare eligible offerings, but it must not receive cloud credentials, provision a cluster, upload the private repository, or open ports without a separate security review and Flo's cost approval.
+SkyPilot is also built around Linux/SSH/AI workload images by default. It does not replace the reviewed Windows Server 2022, WDDM/NVENC, persistent EBS, private-tailnet, and provider-stop requirements for UE 5.8 Pixel Streaming. It may later be used read-only to compare eligible offerings, but it must not receive cloud credentials, provision a cluster, upload the private repository, or open ports without a separate security review and Flo's cost approval.
 
 - https://github.com/skypilot-org/skypilot
 - https://skypilot.ai/blog/gpu-compass
@@ -101,7 +101,7 @@ Before provisioning, the exact calculator export becomes the approval artifact. 
 | Option | Result | Reason |
 |---|---|---|
 | A concrete Epic-provided GPU entitlement | Preferred if it actually exists in Flo's account | Epic Pixel Streaming itself is software/reference infrastructure, not proof of a free GPU allocation. A dashboard or instance link is required. |
-| SkyPilot over 20+ clouds | Rejected as the M0 runtime | BYOC orchestration, not free compute; default Linux/SSH workload assumptions do not satisfy the Windows UE 5.5 path. |
+| SkyPilot over 20+ clouds | Rejected as the M0 runtime | BYOC orchestration, not free compute; default Linux/SSH workload assumptions do not satisfy the Windows UE 5.8 path. |
 | Azure `NVadsA10_v5`, Germany West Central/West Europe | Valid fallback | Windows/GRID support is strong, but the affordable sizes expose only fractions of an A10: 4, 8, or 12 GB. A full 24 GB A10 starts at `NV36ads_A10_v5`, which is substantially oversized for M0. |
 | AWS `g5.2xlarge`, Frankfurt | Safe fallback | Full 24 GB A10G and NVENC; older and generally less attractive than G6/L4 for this single-stream target. |
 | Paperspace A4000, Amsterdam | Rejected for a new account | DigitalOcean states that new Paperspace users cannot create Windows templates after 2024-07-01. Linux remains possible but diverges from the approved Windows build/deploy path. |

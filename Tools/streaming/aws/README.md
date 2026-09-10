@@ -38,7 +38,7 @@ CloudFormation creation, change-set execution, quota increases, Marketplace acce
 4. Produce an AWS Pricing Calculator export. After Flo approves it, create a CloudFormation change set from `private-single-player.yaml`; inspect it before executing.
 5. Wait for Systems Manager to report the instance online. Run `join-private-tailnet.ps1 -ValidateOnly`, then run it once with the exact SecureString parameter ARN. Revoke the one-off Tailscale key and delete its SSM parameter immediately after the node joins.
 6. Run `install-nvidia-grid-driver.ps1 -ValidateOnly`, review the NVIDIA GRID EULA, then install the exact reviewed driver. After restart, collect `nvidia-smi` evidence.
-7. Install UE 5.5, Git, Python, NSSM, AWS CLI v2, the `AWS.Tools.SimpleSystemsManagement` and `AWS.Tools.S3` PowerShell modules, and the private GitHub runner on `D:\DarkArisen`; do not place the repository or saves on instance-store NVMe.
+7. Install UE 5.8, Git, Python, NSSM, AWS CLI v2, the `AWS.Tools.SimpleSystemsManagement` and `AWS.Tools.S3` PowerShell modules, and the private GitHub runner on `D:\DarkArisen`; do not place the repository or saves on instance-store NVMe.
 8. Configure unique milestone TURN credentials as machine-scoped values, then run `install-services.ps1 -PrivateTailnet` with the AWS shutdown adapter.
 9. Package/deploy the M0 build and execute every gate in `M0_CHECKLIST.md` from Flo's Tailscale-authenticated iPad.
 

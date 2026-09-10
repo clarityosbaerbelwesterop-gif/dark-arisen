@@ -134,9 +134,9 @@ void ValidateProjectContract(const FString& Root, TArray<FString>& Errors)
     TSharedPtr<FJsonObject> Project;
     if (LoadJsonObject(FPaths::Combine(Root, TEXT("DarkArisen.uproject")), Project))
     {
-        if (Project->GetStringField(TEXT("EngineAssociation")) != TEXT("5.5"))
+        if (Project->GetStringField(TEXT("EngineAssociation")) != TEXT("5.8"))
         {
-            Errors.Add(TEXT("DarkArisen.uproject must remain pinned to UE 5.5"));
+            Errors.Add(TEXT("DarkArisen.uproject must remain pinned to UE 5.8"));
         }
         bool bFoundRuntime = false;
         for (const TSharedPtr<FJsonValue>& Value : Project->GetArrayField(TEXT("Modules")))

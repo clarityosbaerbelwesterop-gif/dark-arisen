@@ -39,7 +39,7 @@ FString RunUat(const FString& Engine)
 #endif
 }
 
-bool CheckEngine55(const FString& Engine, FString* OutVersion = nullptr)
+bool CheckEngine58(const FString& Engine, FString* OutVersion = nullptr)
 {
     TSharedPtr<FJsonObject> Version;
     if (!LoadJsonObject(FPaths::Combine(Engine, TEXT("Engine/Build/Build.version")), Version))
@@ -53,14 +53,14 @@ bool CheckEngine55(const FString& Engine, FString* OutVersion = nullptr)
     {
         *OutVersion = FString::Printf(TEXT("%d.%d.%d"), Major, Minor, Patch);
     }
-    return Major == 5 && Minor == 5;
+    return Major == 5 && Minor == 8;
 }
 
-bool CheckProject55(const FString& Root)
+bool CheckProject58(const FString& Root)
 {
     TSharedPtr<FJsonObject> Project;
     return LoadJsonObject(FPaths::Combine(Root, TEXT("DarkArisen.uproject")), Project)
-        && Project->GetStringField(TEXT("EngineAssociation")) == TEXT("5.5");
+        && Project->GetStringField(TEXT("EngineAssociation")) == TEXT("5.8");
 }
 
 bool BuildTarget(const FString& Root, const FString& Engine, const FString& Target, const FString& Configuration)
@@ -311,7 +311,7 @@ bool ValidateCandidateZip(const FString& Path, const FString& ExpectedPlatform, 
         && Manifest->GetStringField(TEXT("configuration")) == TEXT("Shipping")
         && Manifest->GetStringField(TEXT("candidate_commit")).Equals(ExpectedCommit, ESearchCase::IgnoreCase)
         && Manifest->GetBoolField(TEXT("pixel_streaming"))
-        && Manifest->GetStringField(TEXT("engine_version")).StartsWith(TEXT("5.5."));
+        && Manifest->GetStringField(TEXT("engine_version")).StartsWith(TEXT("5.8."));
 }
 }
 
@@ -321,7 +321,7 @@ int32 RunnerCheckCommand(const FParsedArgs& Args)
     const FString Engine = EngineRoot(Args);
     if (Engine.IsEmpty())
     {
-        UE_LOG(LogTemp, Error, TEXT("UE55_ROOT or --engine is required."));
+        UE_LOG(LogTemp, Error, TEXT("UE_ROOT or --engine is required."));
         return 1;
     }
 #if PLATFORM_WINDOWS
@@ -351,9 +351,9 @@ int32 RunnerCheckCommand(const FParsedArgs& Args)
             return 1;
         }
     }
-    if (!CheckEngine55(Engine) || !CheckProject55(Root))
+    if (!CheckEngine58(Engine) || !CheckProject58(Root))
     {
-        UE_LOG(LogTemp, Error, TEXT("Runner/project is not pinned to Unreal Engine 5.5."));
+        UE_LOG(LogTemp, Error, TEXT("Runner/project is not pinned to Unreal Engine 5.8."));
         return 1;
     }
     if (!RunProcess(TEXT("git"), {TEXT("lfs"), TEXT("version")}))
@@ -365,7 +365,7 @@ int32 RunnerCheckCommand(const FParsedArgs& Args)
     FString ClangVersion;
     if (!RunProcess(TEXT("clang"), {TEXT("--version")}, &ClangVersion) || !ClangVersion.Contains(TEXT("version 18")))
     {
-        UE_LOG(LogTemp, Error, TEXT("UE 5.5 Linux runner requires clang 18.x."));
+        UE_LOG(LogTemp, Error, TEXT("UE 5.8 Linux runner requires clang 18.x."));
         return 1;
     }
     const TArray<FString> LinuxCommands = {TEXT("zip"), TEXT("unzip"), TEXT("sha256sum")};
@@ -391,7 +391,7 @@ int32 RunnerCheckCommand(const FParsedArgs& Args)
         UE_LOG(LogTemp, Error, TEXT("Runner free disk is below %lld GB."), MinimumGb);
         return 1;
     }
-    UE_LOG(LogTemp, Display, TEXT("Runner preflight passed: %s x64, UE 5.5, Git LFS, native C++ ops, %lld GB free."), *PlatformName(), FreeBytes / 1024ll / 1024ll / 1024ll);
+    UE_LOG(LogTemp, Display, TEXT("Runner preflight passed: %s x64, UE 5.8, Git LFS, native C++ ops, %lld GB free."), *PlatformName(), FreeBytes / 1024ll / 1024ll / 1024ll);
     return 0;
 }
 
@@ -433,7 +433,7 @@ int32 PackageAlphaCommand(const FParsedArgs& Args)
         return 1;
     }
     FString EngineVersion;
-    if (!CheckEngine55(Engine, &EngineVersion))
+    if (!CheckEngine58(Engine, &EngineVersion))
     {
         return 1;
     }

@@ -100,10 +100,15 @@ int32 BootstrapStreaming(const FParsedArgs& Args)
     }
     InfrastructureRoot = NormalizeFullPath(InfrastructureRoot);
     const FString Repository = TEXT("https://github.com/EpicGames/PixelStreamingInfrastructure.git");
-    const FString PinnedCommit = TEXT("c3e3abea6590a19e1c0ab4d2954efd6a1d949db3");
+    const FString PinnedCommit = Args.Get(TEXT("revision"), Env(TEXT("PIXEL_STREAMING_INFRA_REVISION"))).ToLower();
+    if (!IsHex(PinnedCommit, 40))
+    {
+        UE_LOG(LogTemp, Error, TEXT("A reviewed 40-character UE5.8 Pixel Streaming Infrastructure commit is required via --revision or PIXEL_STREAMING_INFRA_REVISION."));
+        return 2;
+    }
     if (!IFileManager::Get().DirectoryExists(*InfrastructureRoot))
     {
-        if (!RunProcess(TEXT("git"), {TEXT("clone"), TEXT("--branch"), TEXT("UE5.5"), TEXT("--single-branch"), Repository, InfrastructureRoot}))
+        if (!RunProcess(TEXT("git"), {TEXT("clone"), TEXT("--branch"), TEXT("UE5.8"), TEXT("--single-branch"), Repository, InfrastructureRoot}))
         {
             return 1;
         }
@@ -147,7 +152,7 @@ int32 BootstrapStreaming(const FParsedArgs& Args)
             return 1;
         }
     }
-    UE_LOG(LogTemp, Display, TEXT("Pixel Streaming Infrastructure UE5.5 pinned and built with Epic's stock frontend."));
+    UE_LOG(LogTemp, Display, TEXT("Pixel Streaming Infrastructure UE5.8 pinned and built with Epic's stock frontend."));
     return 0;
 #endif
 }
@@ -487,7 +492,7 @@ int32 DeployStream(const FParsedArgs& Args)
     const FString Revision = Args.Get(TEXT("revision"), TEXT("manual"));
     if (Engine.IsEmpty() || !IsSafeRevision(Revision))
     {
-        UE_LOG(LogTemp, Error, TEXT("UE55_ROOT/--engine and a safe --revision are required."));
+        UE_LOG(LogTemp, Error, TEXT("UE_ROOT/--engine and a safe --revision are required."));
         return 2;
     }
     const FString DeploymentRoot = NormalizeFullPath(Args.Get(TEXT("deployment-root"), TEXT("C:/DarkArisen/Deployments")));

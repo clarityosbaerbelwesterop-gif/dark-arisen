@@ -16,9 +16,9 @@ concurrency:
 
 jobs:
   verify-windows:
-    name: Windows UE 5.5 native C++ compile, tests, laws
+    name: Windows UE 5.8 native C++ compile, tests, laws
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
-    runs-on: [self-hosted, Windows, X64, ue5.5, dark-arisen]
+    runs-on: [self-hosted, Windows, X64, ue5.8, dark-arisen]
     timeout-minutes: 120
     steps:
       - name: Check out source and LFS content
@@ -29,30 +29,29 @@ jobs:
 
       - name: Build native C++ operations owner
         shell: cmd
-        run: call "%UE55_ROOT%\Engine\Build\BatchFiles\Build.bat" DarkArisenOps Win64 Development "-Project=%GITHUB_WORKSPACE%\DarkArisen.uproject" -WaitMutex -WarningsAsErrors
+        run: call "%UE_ROOT%\Engine\Build\BatchFiles\Build.bat" DarkArisenOps Win64 Development "-Project=%GITHUB_WORKSPACE%\DarkArisen.uproject" -WaitMutex -WarningsAsErrors
 
-      - name: Verify private Windows UE 5.5 runner
+      - name: Verify private Windows UE 5.8 runner
         shell: cmd
-        run: "%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" runner-check "--root=%GITHUB_WORKSPACE%" "--engine=%UE55_ROOT%"
+        run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" runner-check "--root=%GITHUB_WORKSPACE%" "--engine=%UE_ROOT%"'
 
       - name: Validate M0-M8 repository contract in native C++
         shell: cmd
-        run: "%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" validate "--root=%GITHUB_WORKSPACE%"
+        run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" validate "--root=%GITHUB_WORKSPACE%"'
 
-      - name: Compile Development and Shipping
+      - name: Compile Editor, Development and Shipping; run automation
+        shell: cmd
+        run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" build "--root=%GITHUB_WORKSPACE%" "--engine=%UE_ROOT%" --automation'
+
+      - name: Package exact Win64 Shipping candidate
         if: github.event_name == 'push'
         shell: cmd
-        run: "%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" build "--root=%GITHUB_WORKSPACE%" "--engine=%UE55_ROOT%"
-
-      - name: Compile and run Unreal automation tests
-        if: github.event_name == 'pull_request'
-        shell: cmd
-        run: "%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" build "--root=%GITHUB_WORKSPACE%" "--engine=%UE55_ROOT%" --automation
+        run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" package-alpha "--root=%GITHUB_WORKSPACE%" "--engine=%UE_ROOT%" "--revision=%GITHUB_SHA%"'
 
   verify-linux:
-    name: Linux UE 5.5 native C++ compile, tests, laws
+    name: Linux UE 5.8 native C++ compile, tests, laws
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
-    runs-on: [self-hosted, Linux, X64, ue5.5, dark-arisen]
+    runs-on: [self-hosted, Linux, X64, ue5.8, dark-arisen]
     timeout-minutes: 120
     steps:
       - name: Check out source and LFS content
@@ -63,22 +62,21 @@ jobs:
 
       - name: Build native C++ operations owner
         shell: bash
-        run: '"$UE55_ROOT/Engine/Build/BatchFiles/Linux/Build.sh" DarkArisenOps Linux Development "-Project=$GITHUB_WORKSPACE/DarkArisen.uproject" -WaitMutex -WarningsAsErrors'
+        run: '"$UE_ROOT/Engine/Build/BatchFiles/Linux/Build.sh" DarkArisenOps Linux Development "-Project=$GITHUB_WORKSPACE/DarkArisen.uproject" -WaitMutex -WarningsAsErrors'
 
-      - name: Verify private Linux UE 5.5 runner
+      - name: Verify private Linux UE 5.8 runner
         shell: bash
-        run: '"$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" runner-check "--root=$GITHUB_WORKSPACE" "--engine=$UE55_ROOT"'
+        run: '"$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" runner-check "--root=$GITHUB_WORKSPACE" "--engine=$UE_ROOT"'
 
       - name: Validate M0-M8 repository contract in native C++
         shell: bash
         run: '"$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" validate "--root=$GITHUB_WORKSPACE"'
 
-      - name: Compile Development and Shipping
+      - name: Compile Editor, Development and Shipping; run automation
+        shell: bash
+        run: '"$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" build "--root=$GITHUB_WORKSPACE" "--engine=$UE_ROOT" --automation'
+
+      - name: Package exact Linux Shipping candidate
         if: github.event_name == 'push'
         shell: bash
-        run: '"$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" build "--root=$GITHUB_WORKSPACE" "--engine=$UE55_ROOT"'
-
-      - name: Compile and run Unreal automation tests
-        if: github.event_name == 'pull_request'
-        shell: bash
-        run: '"$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" build "--root=$GITHUB_WORKSPACE" "--engine=$UE55_ROOT" --automation'
+        run: '"$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" package-alpha "--root=$GITHUB_WORKSPACE" "--engine=$UE_ROOT" "--revision=$GITHUB_SHA"'

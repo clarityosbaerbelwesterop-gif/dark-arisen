@@ -4,13 +4,13 @@ Milestone 0 is complete only when every required item below has reproducible evi
 
 ## Repository foundation
 
-- [x] Unreal Engine association is pinned to 5.5.
+- [x] Unreal Engine association is pinned to 5.8.
 - [x] Runtime module, editor/game targets, configuration, and Git LFS rules exist.
 - [x] The greybox room and Jake pawn are created without an unreviewable placeholder map asset.
 - [x] Baseline HP is 200 and stamina is 120.
 - [x] The twelve laws are represented in `DesignLaws.h`; detectable prohibitions have CI checks.
 - [x] Server-side frame-time windows report p50, p95, maximum, and the percentage over the 16.6 ms budget.
-- [x] CI targets private self-hosted UE 5.5 Windows x64 and Linux x86_64 runners and consumes no GitHub-hosted runner minutes.
+- [x] CI targets private self-hosted UE 5.8 Windows x64 and Linux x86_64 runners and consumes no GitHub-hosted runner minutes.
 - [x] Both runner preflights fail closed on wrong OS/architecture, wrong engine/toolchain, missing packaging dependencies, or insufficient disk.
 
 ## Pixel Streaming implementation
@@ -29,7 +29,7 @@ Milestone 0 is complete only when every required item below has reproducible evi
 
 | Gate | Required evidence | Status |
 |---|---|---|
-| 1. Development + Shipping compile | Windows and Linux UE 5.5 CI logs, zero errors and zero warnings | Not run — Windows main run #22 is queued without a matching runner; no verified Linux runner is attached |
+| 1. Development + Shipping compile | Windows and Linux UE 5.8 CI logs, zero errors and zero warnings | Not run — Windows main run #22 is queued without a matching runner; no verified Linux runner is attached |
 | 2. Automated tests | Python checks and Unreal `DarkArisen.*` automation report | Python: passed locally 2026-08-27 (25 tests + M0/M1/M2 validators + audit); Unreal: not run |
 | 3. In-engine smoke test | Greybox movement, camera, jump, sprint, death, Rache gate and frame telemetry recording | Not run |
 | 4. iPad input | Safari video showing left-stick movement, right-drag look, and paired DualSense input | Not run |
