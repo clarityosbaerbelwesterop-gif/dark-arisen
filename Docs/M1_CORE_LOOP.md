@@ -1,7 +1,7 @@
 # M1 core-loop implementation record
 
-**Status:** active source implementation; not yet a vertical slice, Alpha, or Beta  
-**Engine:** Unreal Engine 5.5  
+**Status:** active source implementation; not yet a vertical slice, Alpha, or Beta
+**Engine:** Unreal Engine 5.8
 **Authority:** `Docs/DesignAuthority.md`, current engineering handoff, `animation system.md`, `camera system.md`, `interaction system.md`, `docs/design/mechanics/combat_feel.md`, and `docs/design/physics/movement_physics.md`
 
 ## Delivered in this tranche
@@ -42,7 +42,7 @@ The later locked rules supersede contradictory Phase 3/6 draft clauses:
 
 - authored animation Blueprint, locomotion/pose assets and action montages assigned to the native bridge and contact notify;
 - authored hand/door/pickup animation assets and in-engine persistence/presentation tests;
-- Windows UE 5.5 Development/Shipping compile, Unreal automation execution, controller/touch smoke testing, and measured 60 fps evidence.
+- Windows UE 5.8 Development/Shipping compile, Unreal automation execution, controller/touch smoke testing, and measured 60 fps evidence.
 
 No runtime gate may be inferred from static checks. This tranche is intentionally kept inside the existing private draft PR and must not be merged on its own.
 

@@ -6,7 +6,7 @@
 
 ## 0. WHO YOU ARE AND WHAT THIS IS
 
-You are the lead engineer on **Dark Arisen**, a single-player, third-person action-RPG built in **Unreal Engine 5.5** with **C++** as the primary language. Target: **Windows PC (Epic Games Store + Steam)** and **PlayStation 5**. No Xbox, no Switch, no mobile.
+You are the lead engineer on **Dark Arisen**, a single-player, third-person action-RPG built in **Unreal Engine 5.8** with **C++** as the primary language. Target: **Windows PC (Epic Games Store + Steam)** and **PlayStation 5**. No Xbox, no Switch, no mobile.
 
 The design bible is **complete: 63 documents, roughly 400,000 words**, covering world, characters, combat, physics, economy, quests, camera, animation, and technical targets. **You do not write design. You implement it.** When the bible and your instinct disagree, the bible wins. When the bible is silent, ask before inventing.
 
@@ -100,7 +100,7 @@ Work top to bottom. **Do not start a milestone before the previous one's tests p
 
 ### ☐ M0 — FOUNDATION *(target: 2 weeks)*
 
-- ☐ UE 5.5 project created, C++ module, no Blueprint-only gameplay logic
+- ☐ UE 5.8 project created, C++ module, no Blueprint-only gameplay logic
 - ☐ Git + LFS configured; `.gitignore` and `.gitattributes` correct for UE
 - ☐ CI: compile check on every push (Windows), automation tests on PR
 - ☐ **Pixel Streaming stood up** — see `pixel_streaming_setup.md`. **Flo must be able to play the build from an iPad browser before M1 starts.**
@@ -244,7 +244,7 @@ Every milestone: a short written update in Flo's language of choice, containing 
 
 **Flo works from an iPad.** He has no local editor, no dev machine, and no way to run a UE build. Until Pixel Streaming is live, **he cannot see, feel, or judge anything you build** — which means a hundred and fifty hours of design decisions about camera holds, deflection windows, and whether a line about to break sounds quieter are being made blind.
 
-`https://github.com/EpicGames/PixelStreamingInfrastructure` — use the **UE 5.5 branch.** Full setup in `pixel_streaming_setup.md`.
+`https://github.com/EpicGames/PixelStreamingInfrastructure` — use the **UE 5.8 branch.** Full setup in `pixel_streaming_setup.md`.
 
 **This is the highest-leverage two weeks in the project. Do it first.**
 

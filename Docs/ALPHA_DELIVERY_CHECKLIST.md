@@ -1,16 +1,16 @@
 # Dark Arisen Alpha delivery checklist
 
-**Active source branch:** `feature/m5-m6-source-completion` / PR #8  
-**Merged source history:** PR #4 → `develop`; PR #5 → `main`; PR #7 → `develop` on 2026-08-28. None of these source merges proves the still-missing runtime or Alpha gates.  
-**Engine:** Unreal Engine 5.5  
-**Current runtime direction:** Flo directed on 2026-08-28 that unavailable UE 5.5 runtime/runner gates should not block further source work. They remain mandatory later acceptance gates and are not treated as passed.  
-**Artifact definition:** the first Alpha is the complete private UE 5.5 game plus two separately verified, content-identical Shipping artifacts: `DarkArisen-Alpha-Windows-Arcware.zip` and `DarkArisen-Alpha-Linux-x86_64.zip`. The exact source archive accompanies them. A scaffold, greybox, vertical slice, streaming configuration or untested candidate is not an Alpha. Native PS5 work is deferred to Beta and is not an Alpha deliverable.
+**Active source branch:** `feature/m5-m6-source-completion` / PR #8
+**Merged source history:** PR #4 → `develop`; PR #5 → `main`; PR #7 → `develop` on 2026-08-28. None of these source merges proves the still-missing runtime or Alpha gates.
+**Engine:** Unreal Engine 5.8
+**Current runtime direction:** Flo directed on 2026-08-28 that unavailable UE 5.8 runtime/runner gates should not block further source work. They remain mandatory later acceptance gates and are not treated as passed.
+**Artifact definition:** the first Alpha is the complete private UE 5.8 game plus two separately verified, content-identical Shipping artifacts: `DarkArisen-Alpha-Windows-Arcware.zip` and `DarkArisen-Alpha-Linux-x86_64.zip`. The exact source archive accompanies them. A scaffold, greybox, vertical slice, streaming configuration or untested candidate is not an Alpha. Native PS5 work is deferred to Beta and is not an Alpha deliverable.
 
 This file is the progress index. Detailed acceptance criteria remain authoritative in `M0_CHECKLIST.md` and `Docs/Handoff/ENGINEERING_HANDOFF.md`. **A checkbox is marked only when its required source and runtime evidence both exist.** Source-only work is recorded as prose under the relevant milestone and must not be read as milestone acceptance. M3/M4 source closure is recorded in `Docs/M3_M4_SOURCE_COMPLETION.md`; M5/M6 source closure is recorded in `Docs/M5_M6_SOURCE_COMPLETION.md`.
 
 ## Non-negotiable delivery gates
 
-- [ ] Windows and Linux Development/Shipping builds compile in UE 5.5 with zero game-module warnings.
+- [ ] Windows and Linux Development/Shipping builds compile in UE 5.8 with zero game-module warnings.
 - [ ] Python and Unreal automation suites pass on the exact delivery commit.
 - [ ] Frame-time evidence meets the 60 fps floor in every milestone benchmark.
 - [ ] The design-law audit passes and the combat HUD still contains posture only.
@@ -22,10 +22,10 @@ This file is the progress index. Detailed acceptance criteria remain authoritati
 
 ## M0 — Foundation
 
-- [x] UE 5.5 C++ project, targets, configs, Git LFS and native greybox exist.
+- [x] UE 5.8 C++ project, targets, configs, Git LFS and native greybox exist.
 - [x] Design laws, deterministic validators, frame telemetry and private runner workflow exist.
 - [x] Private one-player Pixel Streaming deployment path and idle deallocation are implemented in source.
-- [ ] Windows and Linux UE 5.5 compile, Unreal tests and in-engine smoke evidence.
+- [ ] Windows and Linux UE 5.8 compile, Unreal tests and in-engine smoke evidence.
 - [ ] Flo/operator-selected GPU host with any cost explicitly approved outside the repository.
 - [ ] Flo/operator-created private iPad link plus NVENC, TURN, latency and shutdown evidence.
 
@@ -163,7 +163,7 @@ This file is the progress index. Detailed acceptance criteria remain authoritati
 - [ ] Linux x86_64 platform integration, controller configuration, saves and parity with Windows.
 - [ ] Accessibility, remapping, subtitle sizing and permitted difficulty settings.
 - [ ] Full regression, performance, save migration, privacy and content-completeness passes.
-- [ ] Private UE 5.5 source-project ZIP and checksum delivered to Flo.
+- [ ] Private UE 5.8 source-project ZIP and checksum delivered to Flo.
 - [ ] Private Windows Shipping candidate and checksum produced from the exact accepted commit; it contains no secrets, server credentials or public-link configuration.
 - [ ] Private Linux x86_64 Shipping candidate and checksum produced from the same commit and complete content manifest.
 - [ ] Complete native Windows and Linux start-to-credits playthroughs pass against the recorded candidate hashes.
@@ -178,8 +178,8 @@ This file is the progress index. Detailed acceptance criteria remain authoritati
 
 ## Current blockers outside source authoring
 
-- Matching private Windows/Linux UE 5.5 self-hosted jobs remain the compile/runtime path. Per Flo's current direction their unavailability does not stop source integration, but it still blocks runtime acceptance.
-- The active workspace has no licensed UE 5.5 installation or Windows environment; local UE compile/playtest evidence cannot be created here.
+- Matching private Windows/Linux UE 5.8 self-hosted jobs remain the compile/runtime path. Per Flo's current direction their unavailability does not stop source integration, but it still blocks runtime acceptance.
+- The active workspace has no licensed UE 5.8 installation or Windows environment; local UE compile/playtest evidence cannot be created here.
 - Flo will handle any GPU/private browser link. No paid host/runtime evidence is implied by PR #8.
 - The AI Voice Generator is expected to be free, but no generation may begin before dialogue lock plus zero-cost and commercial-rights verification.
 - The repository contains no canonical credits list or approved end-credits music cue yet. The cue, rights and any cost remain an explicit approval gate.

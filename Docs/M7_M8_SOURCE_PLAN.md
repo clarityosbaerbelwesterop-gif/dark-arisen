@@ -1,8 +1,8 @@
 # M7 / M8 source implementation plan
 
-**Branch:** `feature/m7-m8-source-completion`  
-**Base:** PR #8 merge `e54d39af4534f026cc36525e19df9c9d20980abf`  
-**Scope:** M7 Content Scale-Out + M8 Alpha platform/release source contracts. UE 5.5 authored-runtime, packaging and operator acceptance remain evidence gates, not source claims.
+**Branch:** `feature/m7-m8-source-completion`
+**Base:** PR #8 merge `e54d39af4534f026cc36525e19df9c9d20980abf`
+**Scope:** M7 Content Scale-Out + M8 Alpha platform/release source contracts. UE 5.8 authored-runtime, packaging and operator acceptance remain evidence gates, not source claims.
 
 ## Governance / authority
 
@@ -84,7 +84,7 @@ All executable Dark Arisen project logic is native C++.
   - secrets/private host configuration in candidate manifests,
   - missing credits music licence/approval,
   - exact-hash Alpha acceptance gating.
-- CI builds `DarkArisenOps` first, runs its validator/preflight, then compiles and executes native Unreal Automation on self-hosted UE 5.5 runners. Existing design/security gates are not disabled to force a merge.
+- CI builds `DarkArisenOps` first, runs its validator/preflight, then compiles and executes native Unreal Automation on self-hosted UE 5.8 runners. Existing design/security gates are not disabled to force a merge.
 
 ### F. Documentation / handoff
 
@@ -94,4 +94,4 @@ All executable Dark Arisen project logic is native C++.
 
 ## Merge policy for PR #9
 
-PR #9 may be merged only after source diff audit and all available non-deferred validation gates pass. UE 5.5 runtime/packaging/performance/playthrough gates that cannot execute remain explicitly open and may not be re-labelled as passed. No branch protection, check, design-law or security gate may be weakened to force the merge.
+PR #9 may be merged only after source diff audit and all available non-deferred validation gates pass. UE 5.8 runtime/packaging/performance/playthrough gates that cannot execute remain explicitly open and may not be re-labelled as passed. No branch protection, check, design-law or security gate may be weakened to force the merge.

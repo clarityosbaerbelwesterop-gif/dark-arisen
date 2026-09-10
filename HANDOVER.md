@@ -1,22 +1,22 @@
 # Engineering handover
 
-**Updated:** 2026-08-28  
-**Integrated baseline:** PR #7 merged to `develop` at `adfb49d8c6ef43d45701af496664d7155985d727`  
-**Active source work:** M5 Colonial War + M6 Highmoore source completion  
-**Active PR:** #8 — `feature/m5-m6-source-completion` → `develop`  
-**Runtime state:** UE 5.5 compile/runtime/playtest gates remain deferred under the current operator direction, not waived and not marked passed.  
+**Updated:** 2026-08-28
+**Integrated baseline:** PR #7 merged to `develop` at `adfb49d8c6ef43d45701af496664d7155985d727`
+**Active source work:** M5 Colonial War + M6 Highmoore source completion
+**Active PR:** #8 — `feature/m5-m6-source-completion` → `develop`
+**Runtime state:** UE 5.8 compile/runtime/playtest gates remain deferred under the current operator direction, not waived and not marked passed.
 **Boundary records:** `Docs/M3_M4_SOURCE_COMPLETION.md`, `Docs/M5_M6_SOURCE_COMPLETION.md`
 
 ## Current operator direction
 
-Flo directed on 2026-08-28 that unavailable UE 5.5 runtime/self-hosted-runner gates must not block source production. Source work may therefore advance while runtime evidence remains open. A source merge is integration only: no document, checkbox, PR or report may translate that deferral into a claim that UE compile, runtime, performance, packaging or Alpha acceptance passed.
+Flo directed on 2026-08-28 that unavailable UE 5.8 runtime/self-hosted-runner gates must not block source production. Source work may therefore advance while runtime evidence remains open. A source merge is integration only: no document, checkbox, PR or report may translate that deferral into a claim that UE compile, runtime, performance, packaging or Alpha acceptance passed.
 
 ## Integrated baseline before PR #8
 
 - M0/M1 project, interaction/combat, design-law audit, Pixel Streaming source path and platform contracts exist.
 - M2 Rexa source foundations exist, including markerless quest/journal state, Isabel Cruz, heat/Cenote state, exact forty-person Las Raíces roster, protected children and canonical world-clock integration. Authored M2 levels/navigation/animation/two-hour runtime evidence remain open.
 - M3 ship source closure and M4 systems source closure are integrated through PR #7. Their exact boundary and deferred runtime work are in `Docs/M3_M4_SOURCE_COMPLETION.md`.
-- Alpha remains Windows x64 + Linux x86_64 UE 5.5 Shipping from one accepted source commit; native PS5 remains Beta-only with authorised Sony tooling.
+- Alpha remains Windows x64 + Linux x86_64 UE 5.8 Shipping from one accepted source commit; native PS5 remains Beta-only with authorised Sony tooling.
 
 ## M5 source completion in PR #8
 
@@ -117,7 +117,7 @@ Flo directed on 2026-08-28 that unavailable UE 5.5 runtime/self-hosted-runner ga
 
 ## Deferred UE/runtime acceptance
 
-- Windows/Linux UE 5.5 compilation and Unreal Automation execution on matching self-hosted runners.
+- Windows/Linux UE 5.8 compilation and Unreal Automation execution on matching self-hosted runners.
 - M2 authored Rexa levels/navigation/animation and two-hour evidence.
 - M3 authored full ship geometry, ocean/physics/animation/audio and measured sea-passage playtest.
 - M4 production 68-node canon Data Asset, all teaching scenes and final persistence/social/economy presentation.

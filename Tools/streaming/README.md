@@ -4,9 +4,9 @@ This directory now contains only configuration, provider templates and operation
 
 ## Locked architecture
 
-- Unreal Engine 5.5 application, 1920×1080 at 60 fps, rendered offscreen through NVENC.
-- Epic `PixelStreamingInfrastructure` `UE5.5` pinned to `c3e3abea6590a19e1c0ab4d2954efd6a1d949db3`.
-- Epic's stock UE 5.5 frontend is used; Dark Arisen has no TypeScript/JavaScript frontend overlay.
+- Unreal Engine 5.8 application, 1920×1080 at 60 fps, rendered offscreen through NVENC.
+- Epic `PixelStreamingInfrastructure` from the `UE5.8` branch, pinned at deployment to a reviewed 40-character commit supplied through `PIXEL_STREAMING_INFRA_REVISION`; the repository does not invent or silently advance a vendor revision.
+- Epic's stock UE 5.8 frontend is used; Dark Arisen has no TypeScript/JavaScript frontend overlay.
 - Signalling uses local 8888/8080/8889, one player and no REST API.
 - Windows Firewall blocks direct remote TCP access to 8080/8888/8889.
 - Strict-private AWS Alpha uses Tailscale Serve on HTTPS 443; Funnel is reset/disabled.
@@ -18,11 +18,11 @@ This directory now contains only configuration, provider templates and operation
 
 Windows:
 
-`%UE55_ROOT%\Engine\Build\BatchFiles\Build.bat DarkArisenOps Win64 Development -Project=<repo>\DarkArisen.uproject -WaitMutex -WarningsAsErrors`
+`%UE_ROOT%\Engine\Build\BatchFiles\Build.bat DarkArisenOps Win64 Development -Project=<repo>\DarkArisen.uproject -WaitMutex -WarningsAsErrors`
 
 Linux:
 
-`$UE55_ROOT/Engine/Build/BatchFiles/Linux/Build.sh DarkArisenOps Linux Development -Project=<repo>/DarkArisen.uproject -WaitMutex -WarningsAsErrors`
+`$UE_ROOT/Engine/Build/BatchFiles/Linux/Build.sh DarkArisenOps Linux Development -Project=<repo>/DarkArisen.uproject -WaitMutex -WarningsAsErrors`
 
 The resulting executable is `Binaries/Win64/DarkArisenOps.exe` or `Binaries/Linux/DarkArisenOps`.
 
@@ -33,11 +33,11 @@ The resulting executable is `Binaries/Win64/DarkArisenOps.exe` or `Binaries/Linu
 3. Apply the one-user tailnet policy.
 4. Join the host with `DarkArisenOps tailnet-join --auth-key-parameter-arn=<exact-SSM-ARN> --region=<region>` and revoke/delete the one-off key immediately afterward.
 5. Install the exact reviewed GRID package with `DarkArisenOps install-grid-driver --s3-key=<exact-key> --sha256=<64-hex> --accept-eula`.
-6. Install UE 5.5, Git, NSSM and AWS CLI v2 on retained storage. Python and PowerShell modules are no longer project runtime dependencies.
-7. Set `PIXEL_STREAMING_INFRA_ROOT`, `UE55_ROOT`, unique TURN secrets and provider identity.
-8. Run `DarkArisenOps bootstrap-streaming`.
+6. Install UE 5.8, Git, NSSM and AWS CLI v2 on retained storage. Python and PowerShell modules are no longer project runtime dependencies.
+7. Set `PIXEL_STREAMING_INFRA_ROOT`, `PIXEL_STREAMING_INFRA_REVISION` to a reviewed 40-character commit from Epic's `UE5.8` branch, `UE_ROOT`, unique TURN secrets and provider identity.
+8. Run `DarkArisenOps bootstrap-streaming`; it fails closed if no exact vendor revision is supplied.
 9. Run `DarkArisenOps stream-install-services --private-tailnet --provider=aws --nssm=<path> --infra=<path>`.
-10. Register the private self-hosted GitHub runner with `Windows`, `X64`, `ue5.5`, `dark-arisen`, `dark-arisen-streaming`.
+10. Register the private self-hosted GitHub runner with `Windows`, `X64`, `ue5.8`, `dark-arisen`, `dark-arisen-streaming`.
 11. Dispatch `Deploy Native C++ Pixel Streaming`.
 12. Capture evidence with `DarkArisenOps collect-host-evidence`.
 

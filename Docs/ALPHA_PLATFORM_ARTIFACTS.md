@@ -1,16 +1,16 @@
 # Alpha platform artifact contract
 
-**Status:** delivery contract; no platform artifact exists yet  
-**Engine:** Unreal Engine 5.5  
+**Status:** delivery contract; no platform artifact exists yet
+**Engine:** Unreal Engine 5.8
 **Privacy:** private single-reviewer delivery only
 
 The complete Alpha has exactly two playable target builds, generated from the same accepted commit after every M0–M8 source, runtime, content and performance gate is green. A private source-project archive accompanies them for reproducibility but is not a third playable platform.
 
 | Artifact | Required contents | Acceptance path |
 |---|---|---|
-| `DarkArisen-Alpha-Windows-Arcware.zip` | Complete Win64 Shipping game, every approved M0–M8 asset and Pixel Streaming 2, with no credential or public URL | UE 5.5 compile/automation, native Windows start-to-credits playthrough, 60 fps evidence, private Arcware/browser test and checksum |
-| `DarkArisen-Alpha-Linux-x86_64.zip` | Complete Linux x86_64 Shipping game with the same missions, regions, dungeons, bosses, dialogue, cutscenes, credits and outcomes as Windows | UE 5.5 compile/automation, native Linux start-to-credits playthrough, 60 fps evidence and checksum |
-| `DarkArisen-Alpha-UE55-Source.zip` | Exact accepted private UE 5.5 project, source and authorised content; no caches, credentials, provider secrets or generated packages | Clean-machine project generation, both target compiles, content-manifest reconciliation and checksum |
+| `DarkArisen-Alpha-Windows-Arcware.zip` | Complete Win64 Shipping game, every approved M0–M8 asset and Pixel Streaming 2, with no credential or public URL | UE 5.8 compile/automation, native Windows start-to-credits playthrough, 60 fps evidence, private Arcware/browser test and checksum |
+| `DarkArisen-Alpha-Linux-x86_64.zip` | Complete Linux x86_64 Shipping game with the same missions, regions, dungeons, bosses, dialogue, cutscenes, credits and outcomes as Windows | UE 5.8 compile/automation, native Linux start-to-credits playthrough, 60 fps evidence and checksum |
+| `DarkArisen-Alpha-UE58-Source.zip` | Exact accepted private UE 5.8 project, source and authorised content; no caches, credentials, provider secrets or generated packages | Clean-machine project generation, both target compiles, content-manifest reconciliation and checksum |
 
 Pixel Streaming transports an already packaged application; it does not compile or complete the game. Epic supports Pixel Streaming applications on Windows and Linux, but the Windows ZIP remains the current Arcware-oriented browser-test artifact. No claim is made that Arcware accepts the Linux ZIP unless Flo's chosen private Arcware project verifies that separately.
 
@@ -47,9 +47,9 @@ Promotion does not rebuild, edit or recompress either candidate. A source scaffo
 
 ## Current external blockers
 
-- Matching private Windows x64 and Linux x86_64 self-hosted runners with licensed UE 5.5 installations are required for compile, automation and packaging evidence.
+- Matching private Windows x64 and Linux x86_64 self-hosted runners with licensed UE 5.8 installations are required for compile, automation and packaging evidence.
 - Flo's private Arcware account/project is required later for the Windows browser and access-denial test; repository automation will not create a public link or start a paid host.
-- The current Codex Linux workspace has neither a licensed UE 5.5 installation nor a matching Windows environment, so it can author and validate source but cannot truthfully emit either packaged candidate here.
+- The current Codex Linux workspace has neither a licensed UE 5.8 installation nor a matching Windows environment, so it can author and validate source but cannot truthfully emit either packaged candidate here.
 
 These blockers do not prevent authorised source work. PR #4/#5 source integration did not turn any missing platform evidence green.
 

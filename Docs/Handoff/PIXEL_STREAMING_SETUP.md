@@ -4,7 +4,7 @@
 **Phase:** Handoff — Document 2 of 2
 **Owner:** the engineering agent (GPT 5.6 Sol / Claude Code)
 **Related:** PROMPT_FOR_GPT5_SOL.md §8, technical_targets.md
-**Repo:** `https://github.com/EpicGames/PixelStreamingInfrastructure` — **UE 5.5 branch**
+**Repo:** `https://github.com/EpicGames/PixelStreamingInfrastructure` — **UE 5.8 branch**
 
 ---
 
@@ -37,7 +37,7 @@ Unreal's Pixel Streaming renders the game on a server GPU and streams the frames
 | vCPU | 8+ |
 | RAM | 32GB |
 | Disk | 500GB NVMe (UE builds are large) |
-| OS | **Windows Server 2022** (Linux works but adds friction with 5.5) |
+| OS | **Windows Server 2022** (Linux works but adds friction with 5.8) |
 | Bandwidth | 50 Mbps up per concurrent stream |
 
 **Providers, in order of preference:** Azure NV-series (best Windows GPU support) · AWS G5 · Paperspace · a colocated box if cost matters more than convenience.
@@ -52,7 +52,7 @@ Unreal's Pixel Streaming renders the game on a server GPU and streams the frames
 
 ### ☐ 4.1 — Plugin and launch config
 
-- ☐ Enable **Pixel Streaming** and **Pixel Streaming Players** plugins in the UE 5.5 project
+- ☐ Enable **Pixel Streaming** and **Pixel Streaming Players** plugins in the UE 5.8 project
 - ☐ Add a `Tools/streaming/launch-stream.ps1` that starts the packaged build with:
   - `-PixelStreamingURL=ws://localhost:8888`
   - `-RenderOffscreen -Unattended -NoTextureStreaming`
@@ -61,7 +61,7 @@ Unreal's Pixel Streaming renders the game on a server GPU and streams the frames
 
 ### ☐ 4.2 — Signalling server
 
-- ☐ Clone `PixelStreamingInfrastructure`, **UE 5.5 branch**
+- ☐ Clone `PixelStreamingInfrastructure`, **UE 5.8 branch**
 - ☐ `SignallingWebServer` running as a Windows service (auto-restart on crash)
 - ☐ HTTPS with a real certificate — **iOS Safari will refuse microphone/gamepad APIs over plain HTTP**
 

@@ -1,8 +1,8 @@
 # M5 / M6 source integration plan
 
-**Branch:** `feature/m5-m6-source-completion`  
-**Base:** `develop` at `adfb49d8c6ef43d45701af496664d7155985d727`  
-**Runtime direction:** UE 5.5 compile/runtime/playtest gates remain deferred under the current operator direction. They are not waived and must not be marked passed by source-only work.
+**Branch:** `feature/m5-m6-source-completion`
+**Base:** `develop` at `adfb49d8c6ef43d45701af496664d7155985d727`
+**Runtime direction:** UE 5.8 compile/runtime/playtest gates remain deferred under the current operator direction. They are not waived and must not be marked passed by source-only work.
 
 ## Canon authority
 
@@ -43,4 +43,4 @@ PR #8 will add deterministic M5/M6 source validators, negative regression tests 
 
 ## Explicitly deferred
 
-Final authored levels, navmeshes, animation, audio, crowds, castles, armies, battle-scale performance, Crystal Caves geometry, Guardian assets, horse animation/physics, Princess staging, persistence playtests, package builds and measured runtime acceptance remain separate UE 5.5 evidence gates.
+Final authored levels, navmeshes, animation, audio, crowds, castles, armies, battle-scale performance, Crystal Caves geometry, Guardian assets, horse animation/physics, Princess staging, persistence playtests, package builds and measured runtime acceptance remain separate UE 5.8 evidence gates.

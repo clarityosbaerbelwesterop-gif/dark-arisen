@@ -32,13 +32,13 @@ No gameplay, validator, deployment or streaming behavior may be implemented in t
 
 ## Pixel Streaming frontend
 
-Dark Arisen does not maintain a custom TypeScript frontend overlay. The UE 5.5-pinned Epic Pixel Streaming Infrastructure stock frontend is built and served. This avoids reintroducing a second application-language stack while retaining the vendor-supported player implementation.
+Dark Arisen does not maintain a custom TypeScript frontend overlay. The UE 5.8-pinned Epic Pixel Streaming Infrastructure stock frontend is built and served. This avoids reintroducing a second application-language stack while retaining the vendor-supported player implementation.
 
 ## Safety gates retained in C++
 
 `DarkArisenOps` keeps the existing fail-closed gates for:
 
-- UE 5.5 association and runner architecture,
+- UE 5.8 association and runner architecture,
 - Git LFS and free-disk preflight,
 - M0-M6 design/source invariants and M7/M8 source-plan invariants,
 - exact clean commit packaging,

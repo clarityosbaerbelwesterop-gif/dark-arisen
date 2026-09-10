@@ -1,7 +1,7 @@
 # M2 vertical-slice implementation record
 
-**Status:** native quest/environment/boss state plus authored Rexa mission, notebook and forty-person roster source; not a vertical slice, Alpha, or Beta  
-**Engine:** Unreal Engine 5.5  
+**Status:** native quest/environment/boss state plus authored Rexa mission, notebook and forty-person roster source; not a vertical slice, Alpha, or Beta
+**Engine:** Unreal Engine 5.8
 **Authority:** current engineering handoff, `quest activation.md`, `quest design philosophy.md`, `mission types.md`, `dungeon design philosophy.md`, `regional dungeon catalog.md`, `colonial war bosses.md`, and `Docs/DesignAuthority.md`
 
 ## Delivered in this source tranche
@@ -66,6 +66,6 @@ The current handoff and later Phase 11 laws supersede conflicting older Rexa dra
 - In-engine proof that the Cenote contains no marker, ambient music or explanatory log and that all required beats persist; source state alone is insufficient.
 - Authored heat/cistern trigger volumes, Fuerte San Rafael geometry, route logic, combat animations, three-phase dialogue, cabinet/list/report rewards and controller-tested balance.
 - In-engine proof that killed, spared and fort-surrender avoidance routes each persist and drive their authored quest/world consequences; source state alone is insufficient.
-- Windows UE 5.5 compilation, Unreal automation, complete two-hour play evidence and measured 60 fps.
+- Windows UE 5.8 compilation, Unreal automation, complete two-hour play evidence and measured 60 fps.
 
 No runtime, authored content or presentation gate may be inferred from this source foundation.

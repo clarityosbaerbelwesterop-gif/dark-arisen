@@ -1,8 +1,8 @@
 # M5 / M6 source completion record
 
-**PR:** #8 — `feature/m5-m6-source-completion` → `develop`  
-**Base:** PR #7 merge `adfb49d8c6ef43d45701af496664d7155985d727`  
-**Status:** source tranche implemented; UE 5.5 runtime/compile/playtest acceptance remains deferred and unclaimed.
+**PR:** #8 — `feature/m5-m6-source-completion` → `develop`
+**Base:** PR #7 merge `adfb49d8c6ef43d45701af496664d7155985d727`
+**Status:** source tranche implemented; UE 5.8 runtime/compile/playtest acceptance remains deferred and unclaimed.
 
 ## M5 — Colonial War
 
@@ -50,9 +50,9 @@ Implemented source contracts:
 
 ## Explicitly not claimed complete by source alone
 
-- UE 5.5 Windows/Linux compile and Unreal Automation execution on matching self-hosted runners.
+- UE 5.8 Windows/Linux compile and Unreal Automation execution on matching self-hosted runners.
 - M5 authored colony/holding/castle levels, physical siege doors, naval bombardment, crowds, army AI, camps, battle scenes, retaliation missions and full campaign runtime simulation.
 - M6 authored Crystal Caves geometry/minecart/puzzles, Guardian model/AI/animation/audio, Katana weapon assets, horse locomotion/physics, Highmoore world/settlements, Princess staging/dialogue/cinematics/audio and measured ride/return playtests.
 - Save/load persistence evidence, performance, packaging, Pixel Streaming and Alpha acceptance.
 
-This document records source closure only. Runtime checkboxes remain open until the corresponding UE 5.5 evidence exists.
+This document records source closure only. Runtime checkboxes remain open until the corresponding UE 5.8 evidence exists.

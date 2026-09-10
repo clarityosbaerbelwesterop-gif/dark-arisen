@@ -1,6 +1,6 @@
 # Design authority and conflict register
 
-**Reviewed:** 2026-08-26  
+**Reviewed:** 2026-08-26
 **Scope:** 185 repository documents (184 Markdown/text sources plus the OOXML file `Dark Arisen GDD v1.2`) and the two current engineering handoff documents supplied by Flo.
 
 ## Canon order
@@ -20,7 +20,7 @@ No source is deleted. A legacy source remains useful for names, tone, imagery, a
 
 | Area | Canonical decision | Primary authority |
 |---|---|---|
-| Engine | Unreal Engine 5.5 for M0; evaluate upgrades only as a separate compatibility milestone | Current engineering handoff and Pixel Streaming setup |
+| Engine | Unreal Engine 5.8 for M0; evaluate upgrades only as a separate compatibility milestone | Current engineering handoff and Pixel Streaming setup |
 | Shipping platforms | Alpha packages target Windows and Linux PC; native PlayStation 5 begins in Beta with authorised Sony tools; no Xbox, Switch, or mobile build target | Flo's current written direction and engineering handoff |
 | Performance | 60 fps is the hard floor; six-frame deflection window | `technical targets.md`, `animation system.md` |
 | Combat HUD | Posture is the only permitted combat HUD element | Current engineering handoff, `technical targets.md` |
@@ -47,7 +47,7 @@ The April 2026 GDD is internally coherent as the original six-region pirate conc
 | GDD v1.2 concept | Current canon |
 |---|---|
 | PS5, Xbox Series X/S, and PC | PC and PS5 only |
-| UE 5.4+ and multiple 30 fps modes | UE 5.5 M0 pin and 60 fps on every supported platform |
+| UE 5.4+ and multiple 30 fps modes | UE 5.8 M0 pin and 60 fps on every supported platform |
 | Health, stamina, Rache, ammo, boss bars, and minimap HUD | Posture-only combat HUD; no minimap or compass |
 | Dynamic combat score | Music never reacts |
 | Rache lasts about eight seconds | Rache lasts at most five real seconds at 30% time scale |
@@ -77,7 +77,7 @@ The April 2026 GDD is internally coherent as the original six-region pirate conc
 
 ## M0 decisions derived from the review
 
-- M0 stays on UE 5.5 because the approved handoff and Pixel Streaming Infrastructure revision are matched to that engine version.
+- M0 stays on UE 5.8 because the approved handoff and Pixel Streaming Infrastructure revision are matched to that engine version.
 - Baseline HP, stamina, and posture remain 200/120/100.
 - The combat-feel deep dive supplies provisional M1 stamina tuning: 20/sec regeneration, one-second normal delay, three-second exhaustion delay, light 15, heavy 30, dodge 25, parry 10, and sprint 10/sec.
 - The old GDD's HUD, music, checkpoint, romance, platform, and Chapter 9 behavior must not leak into code.
