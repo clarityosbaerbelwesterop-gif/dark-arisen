@@ -8,6 +8,7 @@
 
 class UStaminaComponent;
 class UHealthComponent;
+enum class EAttackType : uint8;
 
 UENUM(BlueprintType)
 enum class EWeaponSlot : uint8
@@ -149,6 +150,11 @@ public:
 
     UFUNCTION(BlueprintPure, Category = "Combat|Parry")
     bool IsDeflectionWindowOpen() const { return DeflectionWindowRemaining > 0.0f; }
+    UFUNCTION(BlueprintPure, Category = "Combat|Defense")
+    bool IsInvulnerable() const { return InvulnerabilityRemaining > 0.0f; }
+    UFUNCTION(BlueprintPure, Category = "Combat|Defense")
+    float GetArmorFraction() const { return ArmorFraction; }
+    float GetResistance(EAttackType AttackType) const;
     UFUNCTION(BlueprintPure, Category = "Combat|State")
     bool IsActionCommitted() const { return ActionCommitmentRemaining > 0.0f; }
     UFUNCTION(BlueprintPure, Category = "Combat|State")
@@ -218,6 +224,10 @@ public:
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat|Hit", meta = (ClampMin = "0.0"))
     float MeleeTraceStartCentimetres = 70.0f;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat|Defense", meta = (ClampMin = "0.0", ClampMax = "0.9"))
+    float ArmorFraction = 0.0f;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat|Defense", meta = (ClampMin = "0.0", ClampMax = "0.9"))
+    float PhysicalResistance = 0.0f;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat|Hit", meta = (ClampMin = "0.0"))
     float MeleeTraceEndCentimetres = 220.0f;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat|Hit", meta = (ClampMin = "1.0"))
@@ -240,6 +250,7 @@ private:
     UPROPERTY()
     TObjectPtr<UHealthComponent> CachedHealth;
     float DeflectionWindowRemaining = 0.0f;
+    float InvulnerabilityRemaining = 0.0f;
     float RacheRealSecondsRemaining = 0.0f;
     float PostureRegenDelayRemaining = 0.0f;
     float PendingHitDelayRemaining = 0.0f;

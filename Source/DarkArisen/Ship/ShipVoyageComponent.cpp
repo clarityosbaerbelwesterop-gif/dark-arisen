@@ -4,6 +4,9 @@
 
 #include "GameFramework/Actor.h"
 #include "Math/UnrealMathUtility.h"
+#include "Story/MainStorySubsystem.h"
+#include "Engine/GameInstance.h"
+#include "Engine/World.h"
 
 UShipVoyageComponent::UShipVoyageComponent()
 {
@@ -47,7 +50,7 @@ void UShipVoyageComponent::TickComponent(float DeltaTime, ELevelTick TickType,
     RecalculatePointOfSail();
 
     const float WindDrive = FMath::Max(0.0f, WindStrengthMetresPerSecond) * GetSailEfficiency();
-    const float DesiredSpeed = FMath::Min(ProvisionalMaximumSpeedMetresPerSecond, WindDrive) * HandlingFactor;
+    const float DesiredSpeed = FMath::Min(ProvisionalMaximumSpeedMetresPerSecond, WindDrive) * HandlingFactor * Throttle;
     ForwardSpeedMetresPerSecond = FMath::FInterpTo(
         ForwardSpeedMetresPerSecond,
         DesiredSpeed,
@@ -68,9 +71,41 @@ void UShipVoyageComponent::TickComponent(float DeltaTime, ELevelTick TickType,
     }
 }
 
+bool UShipVoyageComponent::SetOwnedAndUnlocked(bool bOwned)
+{
+    if (!bOwned) return false;
+    bOwnedAndUnlocked = true;
+    if (GetWorld() && GetWorld()->GetGameInstance())
+        GetWorld()->GetGameInstance()->GetSubsystem<UMainStorySubsystem>()->SetWorldFact(TEXT("Ship.LaLiberacionOwned"));
+    return true;
+}
+
+bool UShipVoyageComponent::Embark(AActor* Character)
+{
+    if (!bOwnedAndUnlocked || !IsValid(Character)) return false;
+    EmbarkedCharacters.Add(Character); return true;
+}
+
+bool UShipVoyageComponent::Disembark(AActor* Character)
+{
+    if (!IsValid(Character) || bJakeAtHelm) return false;
+    return EmbarkedCharacters.Remove(Character) > 0;
+}
+
+bool UShipVoyageComponent::SetThrottle(float NewThrottle)
+{
+    if (!bOwnedAndUnlocked || !bJakeAtHelm || !FMath::IsFinite(NewThrottle)) return false;
+    Throttle = FMath::Clamp(NewThrottle, 0.0f, 1.0f); return true;
+}
+
+void UShipVoyageComponent::ApplyHullDamage(float Damage)
+{
+    if (Damage > 0.0f) HullIntegrity = FMath::Max(0.0f, HullIntegrity - Damage);
+}
+
 void UShipVoyageComponent::SetJakeAtHelm(bool bAtHelm)
 {
-    bJakeAtHelm = bAtHelm;
+    bJakeAtHelm = bAtHelm && bOwnedAndUnlocked;
 }
 
 void UShipVoyageComponent::SetHelmCommandDegrees(float NewHeadingDegrees)
