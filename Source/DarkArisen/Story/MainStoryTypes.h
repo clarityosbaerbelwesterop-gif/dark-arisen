@@ -43,3 +43,14 @@ struct FCrewRelationshipState
     UPROPERTY(SaveGame, BlueprintReadWrite) bool bRecruited = false;
     UPROPERTY(SaveGame, BlueprintReadWrite) bool bAboard = false;
 };
+
+/** Map-independent state for the authored Chapter 1/2 physical route. */
+USTRUCT(BlueprintType)
+struct FOpeningProgressState
+{
+    GENERATED_BODY()
+    UPROPERTY(SaveGame, BlueprintReadOnly) uint8 Location = 0;
+    UPROPERTY(SaveGame, BlueprintReadOnly) uint8 RaidState = 0;
+    UPROPERTY(SaveGame, BlueprintReadOnly) uint8 RecoveryState = 0;
+    UPROPERTY(SaveGame, BlueprintReadOnly) TSet<FName> FamilyInteractions;
+};

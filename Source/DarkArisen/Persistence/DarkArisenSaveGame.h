@@ -24,4 +24,5 @@ public:
     UPROPERTY(SaveGame) TMap<FName,FName> QuestOutcomes;
     UPROPERTY(SaveGame) FName CheckpointId;
     UPROPERTY(SaveGame) FName SpawnId;
+    UPROPERTY(SaveGame) FOpeningProgressState OpeningProgress;
 };
