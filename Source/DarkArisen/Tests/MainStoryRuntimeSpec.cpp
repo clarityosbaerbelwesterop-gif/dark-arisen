@@ -29,4 +29,13 @@ bool FMainStoryPersistenceSpec::RunTest(const FString&)
  Snapshot->StoryFacts.Add(TEXT("Story.EthanRecovered"));Snapshot->StoryFacts.Remove(TEXT("Story.EthanAbducted"));TestFalse(TEXT("Recovered without abducted rejected"),S->ValidateState(Snapshot,E));Snapshot=DuplicateObject<UDarkArisenSaveGame>(S->GetState(),S);Snapshot->StoryFacts.Append({TEXT("Story.DravenKilled"),TEXT("Story.DravenCaptured")});TestFalse(TEXT("Conflicting Draven outcomes rejected"),S->ValidateState(Snapshot,E));
  TestTrue(TEXT("Boss state persists"),S->MarkBossDefeated(TEXT("boss.herrera")));TestTrue(TEXT("Boss state recorded"),S->GetState()->DefeatedBosses.Contains(TEXT("boss.herrera")));return true;
 }
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOpeningPersistenceSpec,"DarkArisen.Alpha.Persistence.OpeningRoute",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FOpeningPersistenceSpec::RunTest(const FString&)
+{
+ auto*S=NewObject<UMainStorySubsystem>();S->NewGame();FOpeningProgressState P;P.Location=8;P.RaidState=7;P.RecoveryState=5;P.FamilyInteractions.Append({TEXT("character.marc"),TEXT("character.denise"),TEXT("character.ethan")});
+ TestTrue(TEXT("Valid opening route state is accepted"),S->SetOpeningProgress(P));UDarkArisenSaveGame* Snapshot=DuplicateObject<UDarkArisenSaveGame>(S->GetState(),S);
+ TestEqual(TEXT("Opening location survives save snapshot"),Snapshot->OpeningProgress.Location,static_cast<uint8>(8));TestEqual(TEXT("Family interactions survive save snapshot"),Snapshot->OpeningProgress.FamilyInteractions.Num(),3);
+ P.Location=12;TestFalse(TEXT("Out-of-range opening state fails closed"),S->SetOpeningProgress(P));return true;
+}
 #endif

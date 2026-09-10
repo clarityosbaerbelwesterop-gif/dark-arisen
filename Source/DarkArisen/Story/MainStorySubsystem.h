@@ -24,6 +24,7 @@ public:
     UFUNCTION(BlueprintCallable) bool RecruitCrew(FName CharacterId,FName Role);
     UFUNCTION(BlueprintCallable) bool MarkBossDefeated(FName BossId);
     UFUNCTION(BlueprintCallable) bool SetCheckpoint(FName CheckpointId,FName SpawnId);
+    bool SetOpeningProgress(const FOpeningProgressState& Progress);
     UFUNCTION(BlueprintPure) bool HasStoryFact(FName Fact) const;
     UFUNCTION(BlueprintPure) bool HasWorldFact(FName Fact) const;
     UFUNCTION(BlueprintPure) EMainMissionState GetMissionState(FName MissionId) const;

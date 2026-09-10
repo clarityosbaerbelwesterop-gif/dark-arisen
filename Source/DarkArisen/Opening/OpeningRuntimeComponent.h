@@ -45,5 +45,7 @@ private:
     UPROPERTY(SaveGame) EWaterRecoveryState RecoveryState=EWaterRecoveryState::Dry;
     UPROPERTY(SaveGame) TSet<FName> FamilyInteractions;
     bool AdvanceLocation(EOpeningLocation Expected,EOpeningLocation Next,FName Fact=NAME_None);
+    void RestoreProgress();
+    bool CommitProgress();
     class UMainStorySubsystem* Story() const;
 };

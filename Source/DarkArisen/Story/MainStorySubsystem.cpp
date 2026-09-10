@@ -61,6 +61,13 @@ bool UMainStorySubsystem::SetWorldFact(FName Fact,bool Enabled){if(!State||Fact.
 bool UMainStorySubsystem::RecruitCrew(FName Id,FName Role){if(!State||Id.IsNone())return false;auto* C=State->Crew.FindByPredicate([Id](const auto& E){return E.CharacterId==Id;});if(!C){FCrewRelationshipState N;N.CharacterId=Id;State->Crew.Add(N);C=&State->Crew.Last();}C->bRecruited=true;C->bAboard=State->WorldFacts.Contains(TEXT("Ship.LaLiberacionOwned"));C->Trust=FMath::Max(C->Trust,10);State->QuestOutcomes.Add(FName(*(TEXT("CrewRole.")+Id.ToString())),Role);return true;}
 bool UMainStorySubsystem::MarkBossDefeated(FName Id){static const TSet<FName> Valid={TEXT("boss.herrera"),TEXT("boss.reyes"),TEXT("boss.cruz"),TEXT("boss.de_silva"),TEXT("boss.vega"),TEXT("boss.blackwood"),TEXT("boss.sterling"),TEXT("boss.ashcroft"),TEXT("boss.thorne")};if(!State||!Valid.Contains(Id))return false;State->DefeatedBosses.Add(Id);return true;}
 bool UMainStorySubsystem::SetCheckpoint(FName C,FName Spawn){if(!State||C.IsNone()||Spawn.IsNone())return false;State->CheckpointId=C;State->SpawnId=Spawn;return true;}
+bool UMainStorySubsystem::SetOpeningProgress(const FOpeningProgressState& Progress)
+{
+    // Enum ordinals are serialized deliberately so this authority does not depend on a world component.
+    if(!State||Progress.Location>11||Progress.RaidState>7||Progress.RecoveryState>5)return false;
+    State->OpeningProgress=Progress;
+    return true;
+}
 bool UMainStorySubsystem::HasStoryFact(FName F)const{return State&&State->StoryFacts.Contains(F);} bool UMainStorySubsystem::HasWorldFact(FName F)const{return State&&State->WorldFacts.Contains(F);}
 bool UMainStorySubsystem::Validate(TArray<FString>& E)const{return ValidateState(State,E);}
 bool UMainStorySubsystem::ValidateState(const UDarkArisenSaveGame* S,TArray<FString>& E)const
@@ -69,5 +76,6 @@ bool UMainStorySubsystem::ValidateState(const UDarkArisenSaveGame* S,TArray<FStr
     auto SF=[S](FName F){return S->StoryFacts.Contains(F);};auto WF=[S](FName F){return S->WorldFacts.Contains(F);};
     if(SF(Facts::EthanRecovered)&&!SF(Facts::EthanAbducted))E.Add(TEXT("Ethan cannot be recovered before abduction."));if(SF(Facts::DravenKilled)&&SF(Facts::DravenCaptured))E.Add(TEXT("Draven outcomes are mutually exclusive."));if(WF(TEXT("Ship.LaLiberacionOwned"))&&S->CurrentChapter<2)E.Add(TEXT("La Liberacion cannot be owned before chapter 2."));auto CandidateMission=[S](FName Id){const auto* R=S->MissionStates.FindByPredicate([Id](const auto& V){return V.MissionId==Id;});return R?R->State:EMainMissionState::Locked;};
     bool FoundIncomplete=false;for(const auto& R:S->MissionStates){if(R.State==EMainMissionState::Completed){if(FoundIncomplete)E.Add(TEXT("Completed mission appears after an incomplete predecessor."));}else if(R.State!=EMainMissionState::Failed)FoundIncomplete=true;}
+    if(S->OpeningProgress.Location>11||S->OpeningProgress.RaidState>7||S->OpeningProgress.RecoveryState>5)E.Add(TEXT("Opening route state is invalid."));
     if(SF(Facts::MainComplete)&&CandidateMission(TEXT("Main.C10.05.TheWakeAfter"))!=EMainMissionState::Completed)E.Add(TEXT("Main completion requires the finale."));return E.IsEmpty();
 }
