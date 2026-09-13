@@ -1,0 +1,19 @@
+{
+  "asset":"SM_DriftwoodTerrain_Alpha",
+  "units":"centimeters",
+  "forward":"+X inland",
+  "anchors":{
+    "WaterEntry":[-6200,0,-140],
+    "OuterReef.SafeGap":[-5000,-700,-80],
+    "OuterReef.WreckCue":[-4200,850,-40],
+    "Shallows":[-2400,0,-10],
+    "Spawn.Moran.DriftwoodBeach.Recovery":[-900,80,55],
+    "Harlow.Wreckage":[-400,-420,65],
+    "BrokenMast":[600,480,85],
+    "Journal.FamilyDebris":[250,-220,70],
+    "CampSmokeSightline":[1700,250,220],
+    "Route.DriftwoodCamp":[3600,500,250]
+  },
+  "navigation":"diegetic_only",
+  "forbid":["minimap","compass","waypoint_beam"]
+}
