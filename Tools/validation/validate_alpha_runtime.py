@@ -20,6 +20,15 @@ for relative in required_files:
 all_runtime='\n'.join(p.read_text(encoding='utf-8',errors='ignore') for p in source.rglob('*') if p.suffix in {'.h','.cpp'} and 'Tests' not in p.parts)
 for fact in ('Story.MarcDead','Story.DeniseDead','Story.EthanAbducted','Story.EthanRecovered','World.DriftwoodBeachReached','World.MoranOpeningRouteKnown','Ship.LaLiberacionOwned','World.RexaEntered','Story.MainComplete'):
     if fact not in all_runtime: errors.append(f'missing runtime fact: {fact}')
+opening=(source/'Opening/OpeningRuntimeComponent.cpp').read_text(encoding='utf-8')
+for required in ('BeginBoardingEncounter','SignalDravenBoarded','SignalTakingStarted','SignalCrewRecruitmentAvailable','SignalLaLiberacionHelmSecured','SignalLaLiberacionHarborCleared','RestoreAtCheckpoint'):
+    if required not in opening: errors.append(f'missing real opening gate: {required}')
+if 'NewLocation==EOpeningLocation::MirasCove)S->RecruitCrew' in opening:
+    errors.append('location-only Mira auto-recruitment returned')
+if 'RaidState=EOpeningRaidState::Taking' in opening.split('SignalFirstBoarderDefeated',1)[-1].split('SignalDravenBoarded',1)[0]:
+    errors.append('first boarder defeat still advances directly to Taking')
+if 'RequiredBoarders<2' not in opening:
+    errors.append('boarding runtime no longer rejects the single-boarder shortcut')
 if errors:
     print('\n'.join(f'ERROR: {e}' for e in errors));sys.exit(1)
 print('Alpha runtime static verification passed (34 missions; canonical facts; native story/opening/combat/ship/test sources).')

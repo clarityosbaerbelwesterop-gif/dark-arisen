@@ -66,6 +66,9 @@ public:
     UFUNCTION(BlueprintCallable, Category = "Health")
     void ApplyHeal(float Amount, EHealType HealType, float Duration = 0.0f);
 
+    UFUNCTION(BlueprintCallable, Category = "Health")
+    void ResetForRespawn(float HealthFraction = 1.0f);
+
     UFUNCTION(BlueprintCallable, Category = "Health|Rally")
     float RecoverRally(ERallyRecoveryAction RecoveryAction);
 

@@ -21,7 +21,14 @@ public:
     UFUNCTION(BlueprintCallable) bool CompleteMission(FName MissionId);
     UFUNCTION(BlueprintCallable) bool FailMission(FName MissionId);
     UFUNCTION(BlueprintCallable) bool SetWorldFact(FName Fact,bool bEnabled=true);
+    UFUNCTION(BlueprintCallable) bool MeetCrew(FName CharacterId);
+    UFUNCTION(BlueprintCallable) bool SetCrewAvailable(FName CharacterId,FName Role);
     UFUNCTION(BlueprintCallable) bool RecruitCrew(FName CharacterId,FName Role);
+    UFUNCTION(BlueprintCallable) bool SetCrewAboard(FName CharacterId,bool bAboard=true);
+    UFUNCTION(BlueprintPure) bool IsCrewMet(FName CharacterId) const;
+    UFUNCTION(BlueprintPure) bool IsCrewAvailable(FName CharacterId) const;
+    UFUNCTION(BlueprintPure) bool IsCrewRecruited(FName CharacterId) const;
+    UFUNCTION(BlueprintPure) bool AreOpeningCrewRecruited() const;
     UFUNCTION(BlueprintCallable) bool MarkBossDefeated(FName BossId);
     UFUNCTION(BlueprintCallable) bool SetCheckpoint(FName CheckpointId,FName SpawnId);
     bool SetOpeningProgress(const FOpeningProgressState& Progress);

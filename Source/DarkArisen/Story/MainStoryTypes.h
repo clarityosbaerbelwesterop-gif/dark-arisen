@@ -39,7 +39,10 @@ struct FCrewRelationshipState
 {
     GENERATED_BODY()
     UPROPERTY(SaveGame, BlueprintReadWrite) FName CharacterId;
+    UPROPERTY(SaveGame, BlueprintReadWrite) FName Role;
     UPROPERTY(SaveGame, BlueprintReadWrite) int32 Trust = 0;
+    UPROPERTY(SaveGame, BlueprintReadWrite) bool bMet = false;
+    UPROPERTY(SaveGame, BlueprintReadWrite) bool bAvailable = false;
     UPROPERTY(SaveGame, BlueprintReadWrite) bool bRecruited = false;
     UPROPERTY(SaveGame, BlueprintReadWrite) bool bAboard = false;
 };
@@ -53,4 +56,11 @@ struct FOpeningProgressState
     UPROPERTY(SaveGame, BlueprintReadOnly) uint8 RaidState = 0;
     UPROPERTY(SaveGame, BlueprintReadOnly) uint8 RecoveryState = 0;
     UPROPERTY(SaveGame, BlueprintReadOnly) TSet<FName> FamilyInteractions;
+    UPROPERTY(SaveGame, BlueprintReadOnly) FName BoardingEncounterId;
+    UPROPERTY(SaveGame, BlueprintReadOnly) int32 BoardersRequired = 0;
+    UPROPERTY(SaveGame, BlueprintReadOnly) int32 BoardersDefeated = 0;
+    UPROPERTY(SaveGame, BlueprintReadOnly) bool bDravenBoarded = false;
+    UPROPERTY(SaveGame, BlueprintReadOnly) bool bLaLiberacionBoarded = false;
+    UPROPERTY(SaveGame, BlueprintReadOnly) bool bLaLiberacionHelmSecured = false;
+    UPROPERTY(SaveGame, BlueprintReadOnly) bool bLaLiberacionClearedHarbor = false;
 };

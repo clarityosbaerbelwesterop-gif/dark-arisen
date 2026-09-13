@@ -35,6 +35,9 @@ public:
     UFUNCTION(BlueprintCallable, Category = "Water|Breath")
     void SetBreathTier(EWaterBreathTier NewTier);
 
+    UFUNCTION(BlueprintCallable, Category = "Water|Breath")
+    void ResetForRespawn();
+
     UFUNCTION(BlueprintPure, Category = "Water|Breath")
     float GetRemainingBreathFraction() const;
 

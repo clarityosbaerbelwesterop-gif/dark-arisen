@@ -133,6 +133,29 @@ float AJakeCharacter::TakeDamage(
     return AppliedDamage;
 }
 
+bool AJakeCharacter::RestoreAtCheckpoint(const FTransform& SpawnTransform)
+{
+    APlayerController* PlayerController = Cast<APlayerController>(GetController());
+    if (!HealthComponent || !StaminaComponent || !CombatComponent || !CameraStateComponent ||
+        !WaterBreathComponent || !GetCharacterMovement()) return false;
+
+    StopSprint();
+    LockOnComponent->ReleaseTarget();
+    InteractionComponent->CancelActiveInteraction();
+    GetCharacterMovement()->StopMovementImmediately();
+    if (!SetActorTransform(SpawnTransform, false, nullptr, ETeleportType::TeleportPhysics)) return false;
+
+    HealthComponent->ResetForRespawn();
+    StaminaComponent->ResetForRespawn();
+    CombatComponent->ResetAfterRespawn();
+    WaterBreathComponent->ResetForRespawn();
+    CameraStateComponent->ReleaseToFree();
+    GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+    ApplyWoundLocomotion();
+    if (PlayerController) EnableInput(PlayerController);
+    return true;
+}
+
 void AJakeCharacter::MoveForward(const float Value)
 {
     if (!Controller || FMath::IsNearlyZero(Value) || HealthComponent->IsDead() ||

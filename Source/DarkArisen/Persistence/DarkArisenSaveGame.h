@@ -9,7 +9,7 @@ class DARKARISEN_API UDarkArisenSaveGame : public USaveGame
 {
     GENERATED_BODY()
 public:
-    static constexpr int32 CurrentVersion = 1;
+    static constexpr int32 CurrentVersion = 2;
     UPROPERTY(SaveGame) int32 SaveVersion = CurrentVersion;
     UPROPERTY(SaveGame) FName CurrentMission;
     UPROPERTY(SaveGame) int32 CurrentChapter = 1;

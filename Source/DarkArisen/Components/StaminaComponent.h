@@ -40,6 +40,9 @@ public:
     UFUNCTION(BlueprintCallable, Category = "Stamina")
     void SetRegenMultiplier(float Multiplier);
 
+    UFUNCTION(BlueprintCallable, Category = "Stamina")
+    void ResetForRespawn(float StaminaFraction = 1.0f);
+
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Stamina|Stats", meta = (ClampMin = "1.0"))
     float MaxStamina = 120.0f;
 

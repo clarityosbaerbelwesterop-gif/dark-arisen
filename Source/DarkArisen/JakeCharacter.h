@@ -36,6 +36,10 @@ public:
     virtual float TakeDamage(float DamageAmount, const FDamageEvent& DamageEvent,
         AController* EventInstigator, AActor* DamageCauser) override;
 
+    /** Restores a dead Jake at a resolved authored checkpoint anchor. */
+    UFUNCTION(BlueprintCallable, Category = "Jake|Persistence")
+    bool RestoreAtCheckpoint(const FTransform& SpawnTransform);
+
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Jake|Components")
     TObjectPtr<UHealthComponent> HealthComponent;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Jake|Components")

@@ -93,6 +93,15 @@ void UStaminaComponent::SetSprinting(const bool bSprintActive)
     bSprinting = bSprintActive && CurrentStamina > 0.0f;
 }
 
+void UStaminaComponent::ResetForRespawn(const float StaminaFraction)
+{
+    bSprinting = false;
+    RegenLockTimer = 0.0f;
+    bDepletionBroadcast = false;
+    CurrentStamina = MaxStamina * FMath::Clamp(StaminaFraction, 0.0f, 1.0f);
+    OnStaminaChanged.Broadcast(CurrentStamina, MaxStamina);
+}
+
 void UStaminaComponent::SetRegenMultiplier(const float Multiplier)
 {
     RegenMultiplier = FMath::Max(0.0f, Multiplier);
