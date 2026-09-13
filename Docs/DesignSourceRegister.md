@@ -3,6 +3,11 @@
 **Review date:** 2026-08-26  
 **Coverage:** 185 repository documents plus two current handoff documents. Every repository text source was fetched in full; the extensionless GDD was decoded as OOXML/DOCX, read as 263 content blocks, rendered to 39 pages, and visually reviewed page by page.
 
+
+## September 2026 authority overlay
+
+The 2026-09-13 live direction supersedes conflicting historical story/platform clauses in this inventory. `Docs/MAIN_STORY_AUTHORITY_2026_09.md` and `Docs/MORAN_OPENING_WORLD_AUTHORITY_2026_09.md` are current implementation authorities. The old Ethan character/boss specifications and Draven material that depends on willing-Ethan / real-Ethan-boss canon are **LEGACY / SUPERSEDED**.
+
 ## Coverage summary
 
 | Group | Files | Characters reviewed |
@@ -34,7 +39,7 @@
 ### docs/characters
 
 - `docs/characters/docs/characters/docs/characters/draven_voss.md` — CAPTAIN DRAVEN VOSS — Charakter-Bibel — **legacy path/canon review required**
-- `docs/characters/docs/characters/ethan_harlow.md` — ETHAN HARLOW — Charakter-Bibel — **legacy path/canon review required**
+- `docs/characters/docs/characters/ethan_harlow.md` — ETHAN HARLOW — Charakter-Bibel — **LEGACY / SUPERSEDED by September 2026 story authority**
 - `docs/characters/jake_harlow.md` — JAKE HARLOW — Charakter-Bibel
 
 ### docs/design
@@ -77,7 +82,7 @@
 - `docs/design/bosses/don_mateo_salazar.md` — BOSS SPEC — Don Mateo Salazar "El Carnicero" (The Butcher)
 - `docs/design/bosses/draven_voss.md` — BOSS SPEC — Captain Draven Voss "The Black Tide"
 - `docs/design/bosses/el_medico.md` — BOSS SPEC — El Médico "The Kind Doctor"
-- `docs/design/bosses/ethan_harlow.md` — BOSS SPEC — Ethan Harlow
+- `docs/design/bosses/ethan_harlow.md` — BOSS SPEC — Ethan Harlow — **LEGACY / SUPERSEDED; real Ethan is not a boss**
 - `docs/design/bosses/halvard_grimm.md` — BOSS SPEC — Admiral Halvard Grimm "The Last Imperial"
 - `docs/design/bosses/havfrue_modor.md` — BOSS SPEC — Havfrue Modor "The Sea-Mother"
 - `docs/design/bosses/high_priest_silvano.md` — BOSS SPEC — High Priest Silvano "The Tide-Speaker"
