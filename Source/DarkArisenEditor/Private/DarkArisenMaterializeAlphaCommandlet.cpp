@@ -6,6 +6,7 @@
 #include "AssetRegistry/AssetRegistryModule.h"
 #include "AssetToolsModule.h"
 #include "Animation/AnimationAsset.h"
+#include "Animation/AnimSequence.h"
 #include "Animation/Skeleton.h"
 #include "Components/BoxComponent.h"
 #include "Dom/JsonObject.h"
@@ -70,21 +71,24 @@ bool ReadJson(const FString& Relative, TSharedPtr<FJsonObject>& Out)
     return FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(Text), Out) && Out.IsValid();
 }
 
-FVector ReadAnchor(const FString& Relative, const FString& Key, const FVector& Fallback = FVector::ZeroVector)
+bool TryReadRequiredAnchor(const FString& Relative, const FString& Key, FVector& OutLocation)
 {
     TSharedPtr<FJsonObject> Root;
-    if (!ReadJson(Relative, Root)) return Fallback;
+    if (!ReadJson(Relative, Root)) return false;
     const TSharedPtr<FJsonObject>* Anchors = nullptr;
-    if (!Root->TryGetObjectField(TEXT("anchors"), Anchors) || !Anchors || !Anchors->IsValid()) return Fallback;
+    if (!Root->TryGetObjectField(TEXT("anchors"), Anchors) || !Anchors || !Anchors->IsValid())
+    { UE_LOG(LogTemp, Error, TEXT("Materializer: required anchors missing in %s"), *Relative); return false; }
     const TArray<TSharedPtr<FJsonValue>>* Values = nullptr;
-    if (!(*Anchors)->TryGetArrayField(Key, Values) || !Values || Values->Num() < 3) return Fallback;
-    return FVector((*Values)[0]->AsNumber(), (*Values)[1]->AsNumber(), (*Values)[2]->AsNumber());
+    if (!(*Anchors)->TryGetArrayField(Key, Values) || !Values || Values->Num() != 3)
+    { UE_LOG(LogTemp, Error, TEXT("Materializer: required anchor %s missing/invalid in %s"), *Key, *Relative); return false; }
+    for (const TSharedPtr<FJsonValue>& Value : *Values) if (!Value.IsValid() || Value->Type != EJson::Number) return false;
+    OutLocation = FVector((*Values)[0]->AsNumber(), (*Values)[1]->AsNumber(), (*Values)[2]->AsNumber());
+    if (OutLocation.ContainsNaN()) return false;
+    return true;
 }
 
 FName StableName(const FString& Prefix, const FString& Suffix)
-{
-    return FName(*(Prefix + Suffix));
-}
+{ const FString NameString = Prefix + Suffix; return FName(*NameString); }
 
 TArray<UObject*> ImportSource(IAssetTools& AssetTools, const FString& Relative, const FString& Destination)
 {
@@ -153,14 +157,12 @@ bool ImportCharacter(IAssetTools& AssetTools, const FString& MeshSource, const F
     {
         for (UObject* Object : ImportSource(AssetTools, TEXT("ContentSource/Animations/") + Pack, AnimPath))
         {
-            if (UAnimationAsset* Animation = Cast<UAnimationAsset>(Object))
-            {
-                Animation->SetSkeleton(Out.Skeleton);
-                Animation->MarkPackageDirty();
-                Out.Animations.AddUnique(Animation);
-            }
+            if (UAnimSequence* Sequence = Cast<UAnimSequence>(Object))
+            { USkeleton* Imported=Sequence->GetSkeleton(); if(!Imported||Imported->GetReferenceSkeleton().GetNum()<=0||Out.Skeleton->GetReferenceSkeleton().GetNum()<=0||Imported->GetReferenceSkeleton().GetBoneName(0)!=Out.Skeleton->GetReferenceSkeleton().GetBoneName(0)||Sequence->GetPlayLength()<=KINDA_SMALL_NUMBER) return false; Sequence->SetSkeleton(Out.Skeleton); Sequence->MarkPackageDirty(); Out.Animations.AddUnique(Sequence); }
         }
     }
+    if (Out.Skeleton->GetReferenceSkeleton().FindBoneIndex(TEXT("root")) == INDEX_NONE) return false;
+    TSet<FString> ImportedNames; for(const UAnimationAsset* Animation:Out.Animations){const FString N=Animation->GetName().Replace(TEXT("_"),TEXT("")).ToLower();if(ImportedNames.Contains(N))return false;ImportedNames.Add(N);}
     if (Out.Animations.Num() != Required.Num())
     {
         UE_LOG(LogTemp, Error, TEXT("%s clip count mismatch: expected %d, imported %d"), *MeshName, Required.Num(), Out.Animations.Num());
@@ -182,7 +184,8 @@ bool ImportCharacter(IAssetTools& AssetTools, const FString& MeshSource, const F
 UWorld* OpenOrCreateWorld(const FString& PackageName)
 {
     const FString AssetName = FPackageName::GetShortName(PackageName);
-    if (UWorld* Existing = LoadObject<UWorld>(nullptr, *(PackageName + TEXT(".") + AssetName))) return Existing;
+    const FString ObjectPath = PackageName + TEXT(".") + AssetName;
+    if (UWorld* Existing = LoadObject<UWorld>(nullptr, *ObjectPath)) return Existing;
     UPackage* Package = CreatePackage(*PackageName);
     UWorldFactory* Factory = NewObject<UWorldFactory>();
     Factory->WorldType = EWorldType::Game;
@@ -233,11 +236,10 @@ bool SaveWorld(UWorld* World)
 
 bool PrepareGameplayWorld(UWorld* World, const FString& Layout, const FString& StartAnchor)
 {
-    if (!World) return false;
+    if (!World) return false; FVector StartLocation;
+    if (!TryReadRequiredAnchor(Layout, StartAnchor, StartLocation)) return false;
     World->GetWorldSettings()->DefaultGameMode = AAlphaGameplayGameMode::StaticClass();
-    EnsureActor<ADarkArisenWorldDirector>(World, TEXT("DarkArisenWorldDirector"), FVector::ZeroVector);
-    EnsureActor<APlayerStart>(World, TEXT("PlayerStart"), ReadAnchor(Layout, StartAnchor));
-    return true;
+    return EnsureActor<ADarkArisenWorldDirector>(World, TEXT("DarkArisenWorldDirector"), FVector::ZeroVector) && EnsureActor<APlayerStart>(World, TEXT("PlayerStart"), StartLocation);
 }
 
 bool BuildStartup()
@@ -250,57 +252,23 @@ bool BuildStartup()
 
 bool BuildHarlow()
 {
-    const FString Layout = TEXT("ContentSource/Ships/Harlow/HarlowShip_GameplayLayout.json");
-    UWorld* World = OpenOrCreateWorld(TEXT("/Game/Alpha/Maps/L_HarlowOpening"));
-    if (!PrepareGameplayWorld(World, Layout, TEXT("Spawn.Jake.HarlowOpening"))) return false;
-    if (!PlaceMesh(World, TEXT("/Game/Alpha/Ships/Harlow/SM_HarlowMerchantShip_Alpha.SM_HarlowMerchantShip_Alpha"), TEXT("HarlowMerchantShip"), FVector::ZeroVector)) return false;
-    if (!PlaceMesh(World, TEXT("/Game/Alpha/Ships/Harlow/SM_HarlowShip_WalkableCollision_Alpha.SM_HarlowShip_WalkableCollision_Alpha"), TEXT("HarlowWalkableCollision"), FVector::ZeroVector, false)) return false;
-    if (!PlaceMesh(World, TEXT("/Game/Alpha/Ships/Draven/SM_DravenRaidSilhouette_Alpha.SM_DravenRaidSilhouette_Alpha"), TEXT("DravenRaidSilhouette"), ReadAnchor(Layout, TEXT("Draven.Arrival")) + FVector(9000,0,0))) return false;
-
-    struct FFamilySpec { const TCHAR* Id; const TCHAR* Anchor; const TCHAR* Label; };
-    const FFamilySpec Family[] = {
-        {TEXT("character.marc"), TEXT("Character.Marc"), TEXT("Marc")},
-        {TEXT("character.denise"), TEXT("Character.Denise"), TEXT("Denise")},
-        {TEXT("character.ethan"), TEXT("Character.Ethan"), TEXT("Ethan")}};
-    for (const FFamilySpec& Spec : Family)
-    {
-        AOpeningFamilyInteractableActor* Actor = EnsureActor<AOpeningFamilyInteractableActor>(World,
-            StableName(TEXT("Family_"), Spec.Label), ReadAnchor(Layout, Spec.Anchor));
-        if (!Actor) return false;
-        Actor->CharacterId = FName(Spec.Id);
-        Actor->CharacterName = FText::FromString(Spec.Label);
-        Actor->DialogueId = FName(*FString::Printf(TEXT("Opening.Harlow.%s"), Spec.Label));
-    }
-
-    AOpeningBoardingEncounterActor* Encounter = EnsureActor<AOpeningBoardingEncounterActor>(World,
-        TEXT("OpeningBoardingEncounter"), ReadAnchor(Layout, TEXT("Family.Gathering")));
-    if (!Encounter) return false;
-    Encounter->EncounterId = TEXT("Encounter.HarlowRaid.MainDeck");
-    Encounter->RequiredBoarders = 3;
-    Encounter->SpawnTransforms = {
-        FTransform(ReadAnchor(Layout, TEXT("Boarding.Port.A"))),
-        FTransform(ReadAnchor(Layout, TEXT("Boarding.Port.B"))),
-        FTransform(ReadAnchor(Layout, TEXT("Boarding.Starboard.A")))};
-    return SaveWorld(World);
+ const FString Layout=TEXT("ContentSource/Ships/Harlow/HarlowShip_GameplayLayout.json"); UWorld* World=OpenOrCreateWorld(TEXT("/Game/Alpha/Maps/L_HarlowOpening")); if(!PrepareGameplayWorld(World,Layout,TEXT("Spawn.Jake.HarlowOpening"))) return false;
+ FVector Draven,FamilyGathering,PortA,PortB,StarboardA,Cargo,Helm,Overboard;
+ if(!TryReadRequiredAnchor(Layout,TEXT("Draven.Arrival"),Draven)||!TryReadRequiredAnchor(Layout,TEXT("Family.Gathering"),FamilyGathering)||!TryReadRequiredAnchor(Layout,TEXT("Boarding.Port.A"),PortA)||!TryReadRequiredAnchor(Layout,TEXT("Boarding.Port.B"),PortB)||!TryReadRequiredAnchor(Layout,TEXT("Boarding.Starboard.A"),StarboardA)||!TryReadRequiredAnchor(Layout,TEXT("Interaction.Cargo.Manifest"),Cargo)||!TryReadRequiredAnchor(Layout,TEXT("Helm"),Helm)||!TryReadRequiredAnchor(Layout,TEXT("Overboard"),Overboard)) return false;
+ if(!PlaceMesh(World,TEXT("/Game/Alpha/Ships/Harlow/SM_HarlowMerchantShip_Alpha.SM_HarlowMerchantShip_Alpha"),TEXT("HarlowMerchantShip"),FVector::ZeroVector)||!PlaceMesh(World,TEXT("/Game/Alpha/Ships/Harlow/SM_HarlowShip_WalkableCollision_Alpha.SM_HarlowShip_WalkableCollision_Alpha"),TEXT("HarlowWalkableCollision"),FVector::ZeroVector,false)||!PlaceMesh(World,TEXT("/Game/Alpha/Ships/Draven/SM_DravenRaidSilhouette_Alpha.SM_DravenRaidSilhouette_Alpha"),TEXT("DravenRaidSilhouette"),Draven+FVector(9000,0,0))) return false;
+ struct FFamilySpec{const TCHAR* Id;const TCHAR* Anchor;const TCHAR* Label;}; const FFamilySpec Family[]={{TEXT("character.marc"),TEXT("Character.Marc"),TEXT("Marc")},{TEXT("character.denise"),TEXT("Character.Denise"),TEXT("Denise")},{TEXT("character.ethan"),TEXT("Character.Ethan"),TEXT("Ethan")}};
+ for(const FFamilySpec& Spec:Family){FVector Loc;if(!TryReadRequiredAnchor(Layout,Spec.Anchor,Loc)) return false;const FString NameString=FString::Printf(TEXT("Family_%s"),Spec.Label);const FName Name(*NameString);auto* Actor=EnsureActor<AOpeningFamilyInteractableActor>(World,Name,Loc);if(!Actor)return false;Actor->CharacterId=FName(Spec.Id);Actor->CharacterName=FText::FromString(Spec.Label);const FString Dialogue=FString::Printf(TEXT("Opening.Harlow.%s"),Spec.Label);Actor->DialogueId=FName(*Dialogue);}
+ auto* Encounter=EnsureActor<AOpeningBoardingEncounterActor>(World,TEXT("OpeningBoardingEncounter"),FamilyGathering);if(!Encounter)return false;Encounter->EncounterId=TEXT("Encounter.HarlowRaid.MainDeck");Encounter->RequiredBoarders=3;Encounter->SpawnTransforms={FTransform(PortA),FTransform(PortB),FTransform(StarboardA)};
+ if(!EnsureActor<AActor>(World,TEXT("OpeningCargoAnchor"),Cargo)||!EnsureActor<AActor>(World,TEXT("OpeningHelmAnchor"),Helm)||!EnsureActor<AActor>(World,TEXT("OpeningOverboardAnchor"),Overboard)) return false; return SaveWorld(World);
 }
 
 bool BuildDriftwood()
 {
-    const FString Layout = TEXT("ContentSource/World/Moran/DriftwoodBeach/DriftwoodBeach_GameplayLayout.json");
-    UWorld* World = OpenOrCreateWorld(TEXT("/Game/Alpha/Maps/L_DriftwoodBeach"));
-    if (!PrepareGameplayWorld(World, Layout, TEXT("Spawn.Moran.DriftwoodBeach.Recovery"))) return false;
-    if (!PlaceMesh(World, TEXT("/Game/Alpha/World/Moran/DriftwoodBeach/SM_DriftwoodTerrain_Alpha.SM_DriftwoodTerrain_Alpha"), TEXT("DriftwoodTerrain"), FVector::ZeroVector)) return false;
-    if (!PlaceMesh(World, TEXT("/Game/Alpha/World/Moran/DriftwoodBeach/SM_HarlowWreckage_Alpha.SM_HarlowWreckage_Alpha"), TEXT("HarlowWreckage"), ReadAnchor(Layout, TEXT("Harlow.Wreckage")))) return false;
-    if (!PlaceMesh(World, TEXT("/Game/Alpha/World/Moran/OuterReef/SM_OuterReef_Alpha.SM_OuterReef_Alpha"), TEXT("OuterReef"), FVector::ZeroVector)) return false;
-
-    AOpeningWaterCurrentVolume* Entry = EnsureActor<AOpeningWaterCurrentVolume>(World, TEXT("WaterEntryCurrent"), ReadAnchor(Layout, TEXT("WaterEntry")));
-    AOpeningWaterCurrentVolume* Reef = EnsureActor<AOpeningWaterCurrentVolume>(World, TEXT("OuterReefCurrent"), ReadAnchor(Layout, TEXT("OuterReef.SafeGap")));
-    AOpeningWaterCurrentVolume* Shallows = EnsureActor<AOpeningWaterCurrentVolume>(World, TEXT("ShallowsExit"), ReadAnchor(Layout, TEXT("Shallows")));
-    if (!Entry || !Reef || !Shallows) return false;
-    Entry->bSignalsWaterEntry = true; Entry->CurrentAcceleration = FVector(130,20,0); Entry->Volume->SetBoxExtent(FVector(1800,1400,500));
-    Reef->bSignalsOuterReef = true; Reef->CurrentAcceleration = FVector(80,-35,0); Reef->Volume->SetBoxExtent(FVector(1400,1000,450));
-    Shallows->bShallowExit = true; Shallows->CurrentAcceleration = FVector(45,0,0); Shallows->Volume->SetBoxExtent(FVector(900,800,250));
-    return SaveWorld(World);
+ const FString Layout=TEXT("ContentSource/World/Moran/DriftwoodBeach/DriftwoodBeach_GameplayLayout.json"); UWorld* World=OpenOrCreateWorld(TEXT("/Game/Alpha/Maps/L_DriftwoodBeach")); if(!PrepareGameplayWorld(World,Layout,TEXT("Spawn.Moran.DriftwoodBeach.Recovery")))return false;
+ FVector Wreckage,Water,ReefGap,Shallows;if(!TryReadRequiredAnchor(Layout,TEXT("Harlow.Wreckage"),Wreckage)||!TryReadRequiredAnchor(Layout,TEXT("WaterEntry"),Water)||!TryReadRequiredAnchor(Layout,TEXT("OuterReef.SafeGap"),ReefGap)||!TryReadRequiredAnchor(Layout,TEXT("Shallows"),Shallows))return false;
+ if(!PlaceMesh(World,TEXT("/Game/Alpha/World/Moran/DriftwoodBeach/SM_DriftwoodTerrain_Alpha.SM_DriftwoodTerrain_Alpha"),TEXT("DriftwoodTerrain"),FVector::ZeroVector)||!PlaceMesh(World,TEXT("/Game/Alpha/World/Moran/DriftwoodBeach/SM_HarlowWreckage_Alpha.SM_HarlowWreckage_Alpha"),TEXT("HarlowWreckage"),Wreckage)||!PlaceMesh(World,TEXT("/Game/Alpha/World/Moran/OuterReef/SM_OuterReef_Alpha.SM_OuterReef_Alpha"),TEXT("OuterReef"),FVector::ZeroVector))return false;
+ auto* Entry=EnsureActor<AOpeningWaterCurrentVolume>(World,TEXT("WaterEntryCurrent"),Water);auto* Reef=EnsureActor<AOpeningWaterCurrentVolume>(World,TEXT("OuterReefCurrent"),ReefGap);auto* Shallow=EnsureActor<AOpeningWaterCurrentVolume>(World,TEXT("ShallowsExit"),Shallows);if(!Entry||!Reef||!Shallow)return false;
+ Entry->bSignalsWaterEntry=true;Entry->CurrentAcceleration=FVector(130,20,0);Entry->Volume->SetBoxExtent(FVector(1800,1400,500));Reef->bSignalsOuterReef=true;Reef->CurrentAcceleration=FVector(80,-35,0);Reef->Volume->SetBoxExtent(FVector(1400,1000,450));Shallow->bShallowExit=true;Shallow->CurrentAcceleration=FVector(45,0,0);Shallow->Volume->SetBoxExtent(FVector(900,800,250));return SaveWorld(World);
 }
 
 UWorld* BuildSimpleMap(const FString& MapName, const FString& MeshObjectPath, const FString& Layout, const FString& StartAnchor)
@@ -313,43 +281,13 @@ UWorld* BuildSimpleMap(const FString& MapName, const FString& MeshObjectPath, co
 
 bool BuildMoranAndRexa()
 {
-    UWorld* Camp = BuildSimpleMap(TEXT("L_DriftwoodCamp"), TEXT("/Game/Alpha/World/Moran/DriftwoodCamp/SM_DriftwoodCamp_Alpha.SM_DriftwoodCamp_Alpha"), TEXT("ContentSource/World/Moran/DriftwoodCamp/DriftwoodCamp_Layout.json"), TEXT("Arrival"));
-    if (!Camp || !SaveWorld(Camp)) return false;
-
-    const FString MiraLayout = TEXT("ContentSource/World/Moran/MirasCove/MirasCove_Layout.json");
-    UWorld* Mira = BuildSimpleMap(TEXT("L_MirasCove"), TEXT("/Game/Alpha/World/Moran/MirasCove/SM_MirasCove_Alpha.SM_MirasCove_Alpha"), MiraLayout, TEXT("Arrival"));
-    AOpeningCrewRecruitmentActor* MiraActor = Mira ? EnsureActor<AOpeningCrewRecruitmentActor>(Mira, TEXT("Crew_Mira"), ReadAnchor(MiraLayout, TEXT("Mira"))) : nullptr;
-    if (!MiraActor) return false; MiraActor->CrewId = TEXT("crew.mira"); MiraActor->DisplayName = FText::FromString(TEXT("Mira")); if (!SaveWorld(Mira)) return false;
-
-    const FString MangroveLayout = TEXT("ContentSource/World/Moran/Mangroves/Mangroves_Layout.json");
-    UWorld* Mangrove = BuildSimpleMap(TEXT("L_MangroveShallows"), TEXT("/Game/Alpha/World/Moran/Mangroves/SM_MangrovesRoute_Alpha.SM_MangrovesRoute_Alpha"), MangroveLayout, TEXT("Entry"));
-    AOpeningCrewRecruitmentActor* Tom = Mangrove ? EnsureActor<AOpeningCrewRecruitmentActor>(Mangrove, TEXT("Crew_BigTom"), ReadAnchor(MangroveLayout, TEXT("BigTom"))) : nullptr;
-    if (!Tom) return false; Tom->CrewId = TEXT("crew.big_tom"); Tom->DisplayName = FText::FromString(TEXT("Big Tom")); if (!SaveWorld(Mangrove)) return false;
-
-    UWorld* Koa = BuildSimpleMap(TEXT("L_KoaTradingPost"), TEXT("/Game/Alpha/World/Moran/Koa/SM_KoaTradingPost_Alpha.SM_KoaTradingPost_Alpha"), TEXT("ContentSource/World/Moran/Koa/KoaTradingPost_Layout.json"), TEXT("Arrival"));
-    if (!Koa || !SaveWorld(Koa)) return false;
-
-    const FString CoveLayout = TEXT("ContentSource/World/Moran/GalleonCove/GalleonCove_Layout.json");
-    UWorld* Cove = BuildSimpleMap(TEXT("L_GalleonCove"), TEXT("/Game/Alpha/World/Moran/GalleonCove/SM_GalleonCove_Alpha.SM_GalleonCove_Alpha"), CoveLayout, TEXT("Approach"));
-    AOpeningCrewRecruitmentActor* Esteban = Cove ? EnsureActor<AOpeningCrewRecruitmentActor>(Cove, TEXT("Crew_Esteban"), ReadAnchor(CoveLayout, TEXT("Esteban"))) : nullptr;
-    if (!Esteban) return false; Esteban->CrewId = TEXT("crew.esteban"); Esteban->DisplayName = FText::FromString(TEXT("Esteban"));
-    ALaLiberacionShip* Ship = EnsureActor<ALaLiberacionShip>(Cove, TEXT("LaLiberacion"), ReadAnchor(CoveLayout, TEXT("ImpoundBerth")));
-    if (!Ship || !PlaceMesh(Cove, TEXT("/Game/Alpha/Ships/LaLiberacion/SM_LaLiberacion_Alpha.SM_LaLiberacion_Alpha"), TEXT("LaLiberacionVisual"), Ship->GetActorLocation())) return false;
-    if (!EnsureActor<ALaLiberacionHelmInteractableActor>(Cove, TEXT("LaLiberacionHelm"), ReadAnchor(CoveLayout, TEXT("Helm")))) return false;
-    if (!SaveWorld(Cove)) return false;
-
-    UWorld* Wake = OpenOrCreateWorld(TEXT("/Game/Alpha/Maps/L_OpenSea_FirstWake"));
-    if (!PrepareGameplayWorld(Wake, TEXT("ContentSource/World/OpenSea/FirstWake_Route.json"), TEXT("Start"))) return false;
-    ALaLiberacionShip* WakeShip = EnsureActor<ALaLiberacionShip>(Wake, TEXT("LaLiberacion"), FVector::ZeroVector);
-    if (!WakeShip || !PlaceMesh(Wake, TEXT("/Game/Alpha/Ships/LaLiberacion/SM_LaLiberacion_Alpha.SM_LaLiberacion_Alpha"), TEXT("LaLiberacionVisual"), FVector::ZeroVector) || !SaveWorld(Wake)) return false;
-
-    const FString RexaLayout = TEXT("ContentSource/World/Rexa/Harbor/RexaHarbor_Layout.json");
-    UWorld* Rexa = BuildSimpleMap(TEXT("L_RexaHarbor"), TEXT("/Game/Alpha/World/Rexa/Harbor/SM_RexaHarborArrival_Alpha.SM_RexaHarborArrival_Alpha"), RexaLayout, TEXT("DockEntry"));
-    if (!Rexa) return false;
-    EnsureActor<ARexaSettlementDirector>(Rexa, TEXT("RexaSettlementDirector"), ReadAnchor(RexaLayout, TEXT("HarborMarket")));
-    ARexaSettlementAnchor* Dock = EnsureActor<ARexaSettlementAnchor>(Rexa, TEXT("RexaAnchor_DockEntry"), ReadAnchor(RexaLayout, TEXT("DockEntry")));
-    if (!Dock || !Dock->InitializeAuthoredAnchor(TEXT("Rexa.Harbor"), TEXT("Rexa.Anchor.DockEntry"), false, false)) return false;
-    return SaveWorld(Rexa);
+ UWorld* Camp=BuildSimpleMap(TEXT("L_DriftwoodCamp"),TEXT("/Game/Alpha/World/Moran/DriftwoodCamp/SM_DriftwoodCamp_Alpha.SM_DriftwoodCamp_Alpha"),TEXT("ContentSource/World/Moran/DriftwoodCamp/DriftwoodCamp_Layout.json"),TEXT("Arrival"));if(!Camp||!SaveWorld(Camp))return false;
+ const FString ML=TEXT("ContentSource/World/Moran/MirasCove/MirasCove_Layout.json");UWorld* Mira=BuildSimpleMap(TEXT("L_MirasCove"),TEXT("/Game/Alpha/World/Moran/MirasCove/SM_MirasCove_Alpha.SM_MirasCove_Alpha"),ML,TEXT("Arrival"));FVector MLoc;if(!Mira||!TryReadRequiredAnchor(ML,TEXT("Mira"),MLoc))return false;auto* MA=EnsureActor<AOpeningCrewRecruitmentActor>(Mira,TEXT("Crew_Mira"),MLoc);if(!MA)return false;MA->CrewId=TEXT("crew.mira");MA->DisplayName=FText::FromString(TEXT("Mira"));if(!SaveWorld(Mira))return false;
+ const FString TL=TEXT("ContentSource/World/Moran/Mangroves/Mangroves_Layout.json");UWorld* Mang=BuildSimpleMap(TEXT("L_MangroveShallows"),TEXT("/Game/Alpha/World/Moran/Mangroves/SM_MangrovesRoute_Alpha.SM_MangrovesRoute_Alpha"),TL,TEXT("Entry"));FVector TLoc;if(!Mang||!TryReadRequiredAnchor(TL,TEXT("BigTom"),TLoc))return false;auto* Tom=EnsureActor<AOpeningCrewRecruitmentActor>(Mang,TEXT("Crew_BigTom"),TLoc);if(!Tom)return false;Tom->CrewId=TEXT("crew.big_tom");Tom->DisplayName=FText::FromString(TEXT("Big Tom"));if(!SaveWorld(Mang))return false;
+ UWorld* Koa=BuildSimpleMap(TEXT("L_KoaTradingPost"),TEXT("/Game/Alpha/World/Moran/Koa/SM_KoaTradingPost_Alpha.SM_KoaTradingPost_Alpha"),TEXT("ContentSource/World/Moran/Koa/KoaTradingPost_Layout.json"),TEXT("Arrival"));if(!Koa||!SaveWorld(Koa))return false;
+ const FString CL=TEXT("ContentSource/World/Moran/GalleonCove/GalleonCove_Layout.json");UWorld* Cove=BuildSimpleMap(TEXT("L_GalleonCove"),TEXT("/Game/Alpha/World/Moran/GalleonCove/SM_GalleonCove_Alpha.SM_GalleonCove_Alpha"),CL,TEXT("Approach"));FVector ELoc,Berth,Helm,Exit;if(!Cove||!TryReadRequiredAnchor(CL,TEXT("Esteban"),ELoc)||!TryReadRequiredAnchor(CL,TEXT("ImpoundBerth"),Berth)||!TryReadRequiredAnchor(CL,TEXT("Helm"),Helm)||!TryReadRequiredAnchor(CL,TEXT("HarborExit"),Exit))return false;auto* Est=EnsureActor<AOpeningCrewRecruitmentActor>(Cove,TEXT("Crew_Esteban"),ELoc);if(!Est)return false;Est->CrewId=TEXT("crew.esteban");Est->DisplayName=FText::FromString(TEXT("Esteban"));auto* Ship=EnsureActor<ALaLiberacionShip>(Cove,TEXT("LaLiberacion"),Berth);if(!Ship||!PlaceMesh(Cove,TEXT("/Game/Alpha/Ships/LaLiberacion/SM_LaLiberacion_Alpha.SM_LaLiberacion_Alpha"),TEXT("LaLiberacionVisual"),Ship->GetActorLocation())||!EnsureActor<ALaLiberacionHelmInteractableActor>(Cove,TEXT("LaLiberacionHelm"),Helm)||!EnsureActor<AActor>(Cove,TEXT("GalleonHarborExit"),Exit)||!SaveWorld(Cove))return false;
+ const FString WL=TEXT("ContentSource/World/OpenSea/FirstWake_Route.json");UWorld* Wake=OpenOrCreateWorld(TEXT("/Game/Alpha/Maps/L_OpenSea_FirstWake"));if(!PrepareGameplayWorld(Wake,WL,TEXT("GalleonCove.HarborExit")))return false;FVector RexaApproach;if(!TryReadRequiredAnchor(WL,TEXT("RexaHarbor.Approach"),RexaApproach))return false;auto* WS=EnsureActor<ALaLiberacionShip>(Wake,TEXT("LaLiberacion"),FVector::ZeroVector);if(!WS||!PlaceMesh(Wake,TEXT("/Game/Alpha/Ships/LaLiberacion/SM_LaLiberacion_Alpha.SM_LaLiberacion_Alpha"),TEXT("LaLiberacionVisual"),FVector::ZeroVector)||!EnsureActor<AActor>(Wake,TEXT("RexaApproach"),RexaApproach)||!SaveWorld(Wake))return false;
+ const FString RL=TEXT("ContentSource/World/Rexa/Harbor/RexaHarbor_Layout.json");UWorld* Rexa=BuildSimpleMap(TEXT("L_RexaHarbor"),TEXT("/Game/Alpha/World/Rexa/Harbor/SM_RexaHarborArrival_Alpha.SM_RexaHarborArrival_Alpha"),RL,TEXT("DockEntry"));FVector Market,DockLoc,Arrival;if(!Rexa||!TryReadRequiredAnchor(RL,TEXT("HarborMarket"),Market)||!TryReadRequiredAnchor(RL,TEXT("DockEntry"),DockLoc)||!TryReadRequiredAnchor(RL,TEXT("ArrivalTrigger"),Arrival)||!EnsureActor<ARexaSettlementDirector>(Rexa,TEXT("RexaSettlementDirector"),Market))return false;auto* Dock=EnsureActor<ARexaSettlementAnchor>(Rexa,TEXT("RexaAnchor_DockEntry"),DockLoc);if(!Dock||!Dock->InitializeAuthoredAnchor(TEXT("Rexa.Harbor"),TEXT("Rexa.Anchor.DockEntry"),false,false)||!EnsureActor<AActor>(Rexa,TEXT("RexaArrivalTrigger"),Arrival))return false;return SaveWorld(Rexa);
 }
 
 bool ValidateAsset(const FString& ObjectPath, UClass* Class)
