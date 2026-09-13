@@ -6,13 +6,12 @@
 #include "AssetRegistry/AssetRegistryModule.h"
 #include "AssetToolsModule.h"
 #include "Animation/AnimationAsset.h"
-#include "Animation/AnimSequence.h"
 #include "Animation/Skeleton.h"
 #include "Components/BoxComponent.h"
 #include "Dom/JsonObject.h"
+#include "Engine/SkeletalMesh.h"
 #include "Engine/StaticMesh.h"
 #include "Engine/StaticMeshActor.h"
-#include "Engine/SkeletalMesh.h"
 #include "Engine/World.h"
 #include "EngineUtils.h"
 #include "Factories/WorldFactory.h"
@@ -40,14 +39,14 @@
 
 namespace DarkArisenAlphaMaterialize
 {
-struct FImportedCharacter
+struct FCharacterAssets
 {
     USkeletalMesh* Mesh = nullptr;
     USkeleton* Skeleton = nullptr;
     TArray<UAnimationAsset*> Animations;
 };
 
-static const TArray<FString> JakeClips = {
+static const TArray<FString> JakeRequired = {
     TEXT("Idle"), TEXT("Walk"), TEXT("Run"), TEXT("Sprint"), TEXT("TurnLeft"), TEXT("TurnRight"), TEXT("Stop"),
     TEXT("CombatIdle"), TEXT("CombatForward"), TEXT("CombatBack"), TEXT("CombatStrafeLeft"), TEXT("CombatStrafeRight"),
     TEXT("LightAttack1"), TEXT("LightAttack2"), TEXT("HeavyAttack"), TEXT("Deflect"), TEXT("DodgeForward"),
@@ -55,7 +54,7 @@ static const TArray<FString> JakeClips = {
     TEXT("Swim"), TEXT("StrugglingSwim"), TEXT("WaterExit"), TEXT("BeachCrawl"), TEXT("BeachRecover"),
     TEXT("InteractReach"), TEXT("Pickup"), TEXT("HelmIdle")};
 
-static const TArray<FString> BoarderClips = {
+static const TArray<FString> BoarderRequired = {
     TEXT("Idle"), TEXT("Walk"), TEXT("Run"), TEXT("CombatIdle"), TEXT("LightAttack1"), TEXT("LightAttack2"),
     TEXT("HeavyAttack"), TEXT("HitReactionFront"), TEXT("Stagger"), TEXT("Death")};
 
@@ -65,38 +64,34 @@ bool ReadJson(const FString& Relative, TSharedPtr<FJsonObject>& Out)
     const FString Path = FPaths::Combine(FPaths::ProjectDir(), Relative);
     if (!FFileHelper::LoadFileToString(Text, *Path))
     {
-        UE_LOG(LogTemp, Error, TEXT("Materializer: cannot read %s"), *Path);
+        UE_LOG(LogTemp, Error, TEXT("Materializer cannot read %s"), *Path);
         return false;
     }
     return FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(Text), Out) && Out.IsValid();
 }
 
-FVector Anchor(const FString& Relative, const FString& Name, const FVector& Fallback = FVector::ZeroVector)
+FVector ReadAnchor(const FString& Relative, const FString& Key, const FVector& Fallback = FVector::ZeroVector)
 {
     TSharedPtr<FJsonObject> Root;
     if (!ReadJson(Relative, Root)) return Fallback;
     const TSharedPtr<FJsonObject>* Anchors = nullptr;
     if (!Root->TryGetObjectField(TEXT("anchors"), Anchors) || !Anchors || !Anchors->IsValid()) return Fallback;
     const TArray<TSharedPtr<FJsonValue>>* Values = nullptr;
-    if (!(*Anchors)->TryGetArrayField(Name, Values) || !Values || Values->Num() < 3) return Fallback;
+    if (!(*Anchors)->TryGetArrayField(Key, Values) || !Values || Values->Num() < 3) return Fallback;
     return FVector((*Values)[0]->AsNumber(), (*Values)[1]->AsNumber(), (*Values)[2]->AsNumber());
 }
 
-bool RenameAsset(UObject* Asset, const FString& PackagePath, const FString& Name, IAssetTools& AssetTools)
+FName StableName(const FString& Prefix, const FString& Suffix)
 {
-    if (!Asset) return false;
-    if (Asset->GetName() == Name && Asset->GetOutermost()->GetName().StartsWith(PackagePath)) return true;
-    TArray<FAssetRenameData> Renames;
-    Renames.Emplace(TWeakObjectPtr<UObject>(Asset), PackagePath, Name);
-    return AssetTools.RenameAssets(Renames);
+    return FName(*(Prefix + Suffix));
 }
 
-TArray<UObject*> ImportFile(const FString& Relative, const FString& Destination, IAssetTools& AssetTools)
+TArray<UObject*> ImportSource(IAssetTools& AssetTools, const FString& Relative, const FString& Destination)
 {
     const FString Source = FPaths::Combine(FPaths::ProjectDir(), Relative);
     if (!IFileManager::Get().FileExists(*Source))
     {
-        UE_LOG(LogTemp, Error, TEXT("Materializer: source missing: %s"), *Source);
+        UE_LOG(LogTemp, Error, TEXT("Materializer source missing: %s"), *Source);
         return {};
     }
     UAssetImportTask* Task = NewObject<UAssetImportTask>();
@@ -109,51 +104,54 @@ TArray<UObject*> ImportFile(const FString& Relative, const FString& Destination,
     Task->bAsync = false;
     TArray<UAssetImportTask*> Tasks{Task};
     AssetTools.ImportAssetTasks(Tasks);
-    TArray<UObject*> Result;
-    for (UObject* Object : Task->GetObjects()) if (Object) Result.Add(Object);
-    if (Result.IsEmpty()) UE_LOG(LogTemp, Error, TEXT("Materializer: import produced no objects: %s"), *Source);
-    return Result;
+    return Task->GetObjects();
 }
 
-template<typename T> T* FirstOf(const TArray<UObject*>& Objects)
+template<typename T>
+T* FirstTyped(const TArray<UObject*>& Objects)
 {
-    for (UObject* Object : Objects) if (T* Typed = Cast<T>(Object)) return Typed;
+    for (UObject* Object : Objects)
+    {
+        if (T* Typed = Cast<T>(Object)) return Typed;
+    }
     return nullptr;
 }
 
-bool ImportStatic(const FString& Relative, const FString& Destination, IAssetTools& AssetTools)
+bool RenameAsset(IAssetTools& AssetTools, UObject* Asset, const FString& PackagePath, const FString& Name)
 {
-    TArray<UObject*> Objects = ImportFile(Relative, Destination, AssetTools);
-    UStaticMesh* Mesh = FirstOf<UStaticMesh>(Objects);
-    if (!Mesh) return false;
-    return RenameAsset(Mesh, Destination, FPaths::GetBaseFilename(Relative), AssetTools);
+    if (!Asset) return false;
+    if (Asset->GetName() == Name && Asset->GetOutermost()->GetName().StartsWith(PackagePath)) return true;
+    TArray<FAssetRenameData> Items;
+    Items.Emplace(TWeakObjectPtr<UObject>(Asset), PackagePath, Name);
+    return AssetTools.RenameAssets(Items);
 }
 
-bool HasClip(const TArray<UAnimationAsset*>& Animations, const FString& Required)
+bool ImportStatic(IAssetTools& AssetTools, const FString& Relative, const FString& Destination)
 {
-    for (const UAnimationAsset* Animation : Animations)
-    {
-        const FString Name = Animation->GetName().Replace(TEXT("_"), TEXT(""));
-        const FString Need = Required.Replace(TEXT("_"), TEXT(""));
-        if (Name.Equals(Need, ESearchCase::IgnoreCase) || Name.EndsWith(Need, ESearchCase::IgnoreCase)) return true;
-    }
-    return false;
+    UStaticMesh* Mesh = FirstTyped<UStaticMesh>(ImportSource(AssetTools, Relative, Destination));
+    return Mesh && RenameAsset(AssetTools, Mesh, Destination, FPaths::GetBaseFilename(Relative));
 }
 
-bool ImportCharacter(const FString& MeshSource, const TArray<FString>& Packs, const FString& Destination,
-    const FString& MeshName, const TArray<FString>& RequiredClips, IAssetTools& AssetTools, FImportedCharacter& Out)
+bool ClipNameMatches(const UAnimationAsset* Asset, const FString& Required)
 {
-    TArray<UObject*> MeshObjects = ImportFile(MeshSource, Destination, AssetTools);
-    Out.Mesh = FirstOf<USkeletalMesh>(MeshObjects);
-    if (!Out.Mesh || !RenameAsset(Out.Mesh, Destination, MeshName, AssetTools)) return false;
+    if (!Asset) return false;
+    FString Actual = Asset->GetName().Replace(TEXT("_"), TEXT(""));
+    FString Need = Required.Replace(TEXT("_"), TEXT(""));
+    return Actual.Equals(Need, ESearchCase::IgnoreCase) || Actual.EndsWith(Need, ESearchCase::IgnoreCase);
+}
+
+bool ImportCharacter(IAssetTools& AssetTools, const FString& MeshSource, const FString& Destination,
+    const FString& MeshName, const TArray<FString>& Packs, const TArray<FString>& Required, FCharacterAssets& Out)
+{
+    Out.Mesh = FirstTyped<USkeletalMesh>(ImportSource(AssetTools, MeshSource, Destination));
+    if (!Out.Mesh || !RenameAsset(AssetTools, Out.Mesh, Destination, MeshName)) return false;
     Out.Skeleton = Out.Mesh->GetSkeleton();
-    if (!Out.Skeleton || !RenameAsset(Out.Skeleton, Destination, MeshName + TEXT("_Skeleton"), AssetTools)) return false;
+    if (!Out.Skeleton || !RenameAsset(AssetTools, Out.Skeleton, Destination, MeshName + TEXT("_Skeleton"))) return false;
 
-    const FString AnimDestination = Destination + TEXT("/Animations");
+    const FString AnimPath = Destination + TEXT("/Animations");
     for (const FString& Pack : Packs)
     {
-        TArray<UObject*> PackObjects = ImportFile(TEXT("ContentSource/Animations/") + Pack, AnimDestination, AssetTools);
-        for (UObject* Object : PackObjects)
+        for (UObject* Object : ImportSource(AssetTools, TEXT("ContentSource/Animations/") + Pack, AnimPath))
         {
             if (UAnimationAsset* Animation = Cast<UAnimationAsset>(Object))
             {
@@ -163,27 +161,28 @@ bool ImportCharacter(const FString& MeshSource, const TArray<FString>& Packs, co
             }
         }
     }
-    if (Out.Animations.Num() != RequiredClips.Num())
+    if (Out.Animations.Num() != Required.Num())
     {
-        UE_LOG(LogTemp, Error, TEXT("Materializer: %s expected %d clips, imported %d"), *MeshName, RequiredClips.Num(), Out.Animations.Num());
+        UE_LOG(LogTemp, Error, TEXT("%s clip count mismatch: expected %d, imported %d"), *MeshName, Required.Num(), Out.Animations.Num());
         return false;
     }
-    for (const FString& Required : RequiredClips)
+    for (const FString& Clip : Required)
     {
-        if (!HasClip(Out.Animations, Required))
+        bool bFound = false;
+        for (const UAnimationAsset* Animation : Out.Animations) bFound |= ClipNameMatches(Animation, Clip);
+        if (!bFound)
         {
-            UE_LOG(LogTemp, Error, TEXT("Materializer: %s missing clip %s"), *MeshName, *Required);
+            UE_LOG(LogTemp, Error, TEXT("%s missing required animation %s"), *MeshName, *Clip);
             return false;
         }
     }
     return true;
 }
 
-UWorld* CreateOrLoadWorld(const FString& PackageName)
+UWorld* OpenOrCreateWorld(const FString& PackageName)
 {
     const FString AssetName = FPackageName::GetShortName(PackageName);
-    const FString ObjectPath = PackageName + TEXT(".") + AssetName;
-    if (UWorld* Existing = LoadObject<UWorld>(nullptr, *ObjectPath)) return Existing;
+    if (UWorld* Existing = LoadObject<UWorld>(nullptr, *(PackageName + TEXT(".") + AssetName))) return Existing;
     UPackage* Package = CreatePackage(*PackageName);
     UWorldFactory* Factory = NewObject<UWorldFactory>();
     Factory->WorldType = EWorldType::Game;
@@ -196,7 +195,8 @@ UWorld* CreateOrLoadWorld(const FString& PackageName)
     return World;
 }
 
-template<typename T> T* EnsureActor(UWorld* World, const FName Name, const FVector& Location)
+template<typename T>
+T* EnsureActor(UWorld* World, const FName Name, const FVector& Location)
 {
     for (TActorIterator<T> It(World); It; ++It)
     {
@@ -206,17 +206,16 @@ template<typename T> T* EnsureActor(UWorld* World, const FName Name, const FVect
             return *It;
         }
     }
-    FActorSpawnParameters Params;
-    Params.Name = Name;
-    Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-    return World->SpawnActor<T>(T::StaticClass(), Location, FRotator::ZeroRotator, Params);
+    FActorSpawnParameters Spawn;
+    Spawn.Name = Name;
+    Spawn.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+    return World->SpawnActor<T>(T::StaticClass(), Location, FRotator::ZeroRotator, Spawn);
 }
 
-bool PlaceMesh(UWorld* World, const FString& ObjectPath, const FName ActorName, const FVector& Location, bool bVisible = true)
+bool PlaceMesh(UWorld* World, const FString& ObjectPath, const FName Name, const FVector& Location, bool bVisible = true)
 {
     UStaticMesh* Mesh = LoadObject<UStaticMesh>(nullptr, *ObjectPath);
-    if (!Mesh) return false;
-    AStaticMeshActor* Actor = EnsureActor<AStaticMeshActor>(World, ActorName, Location);
+    AStaticMeshActor* Actor = Mesh ? EnsureActor<AStaticMeshActor>(World, Name, Location) : nullptr;
     if (!Actor) return false;
     Actor->GetStaticMeshComponent()->SetStaticMesh(Mesh);
     Actor->GetStaticMeshComponent()->SetVisibility(bVisible);
@@ -232,9 +231,18 @@ bool SaveWorld(UWorld* World)
     return UEditorLoadingAndSavingUtils::SavePackages(Packages, false);
 }
 
+bool PrepareGameplayWorld(UWorld* World, const FString& Layout, const FString& StartAnchor)
+{
+    if (!World) return false;
+    World->GetWorldSettings()->DefaultGameMode = AAlphaGameplayGameMode::StaticClass();
+    EnsureActor<ADarkArisenWorldDirector>(World, TEXT("DarkArisenWorldDirector"), FVector::ZeroVector);
+    EnsureActor<APlayerStart>(World, TEXT("PlayerStart"), ReadAnchor(Layout, StartAnchor));
+    return true;
+}
+
 bool BuildStartup()
 {
-    UWorld* World = CreateOrLoadWorld(TEXT("/Game/Alpha/Maps/L_AlphaStartup"));
+    UWorld* World = OpenOrCreateWorld(TEXT("/Game/Alpha/Maps/L_AlphaStartup"));
     if (!World) return false;
     World->GetWorldSettings()->DefaultGameMode = AAlphaStartupGameMode::StaticClass();
     return SaveWorld(World);
@@ -243,120 +251,113 @@ bool BuildStartup()
 bool BuildHarlow()
 {
     const FString Layout = TEXT("ContentSource/Ships/Harlow/HarlowShip_GameplayLayout.json");
-    UWorld* World = CreateOrLoadWorld(TEXT("/Game/Alpha/Maps/L_HarlowOpening"));
-    if (!World) return false;
-    World->GetWorldSettings()->DefaultGameMode = AAlphaGameplayGameMode::StaticClass();
+    UWorld* World = OpenOrCreateWorld(TEXT("/Game/Alpha/Maps/L_HarlowOpening"));
+    if (!PrepareGameplayWorld(World, Layout, TEXT("Spawn.Jake.HarlowOpening"))) return false;
     if (!PlaceMesh(World, TEXT("/Game/Alpha/Ships/Harlow/SM_HarlowMerchantShip_Alpha.SM_HarlowMerchantShip_Alpha"), TEXT("HarlowMerchantShip"), FVector::ZeroVector)) return false;
     if (!PlaceMesh(World, TEXT("/Game/Alpha/Ships/Harlow/SM_HarlowShip_WalkableCollision_Alpha.SM_HarlowShip_WalkableCollision_Alpha"), TEXT("HarlowWalkableCollision"), FVector::ZeroVector, false)) return false;
-    PlaceMesh(World, TEXT("/Game/Alpha/Ships/Draven/SM_DravenRaidSilhouette_Alpha.SM_DravenRaidSilhouette_Alpha"), TEXT("DravenRaidSilhouette"), Anchor(Layout, TEXT("Draven.Arrival")) + FVector(9000,0,0));
-    EnsureActor<ADarkArisenWorldDirector>(World, TEXT("DarkArisenWorldDirector"), FVector::ZeroVector);
-    EnsureActor<APlayerStart>(World, TEXT("PlayerStart_Harlow"), Anchor(Layout, TEXT("Spawn.Jake.HarlowOpening")));
+    if (!PlaceMesh(World, TEXT("/Game/Alpha/Ships/Draven/SM_DravenRaidSilhouette_Alpha.SM_DravenRaidSilhouette_Alpha"), TEXT("DravenRaidSilhouette"), ReadAnchor(Layout, TEXT("Draven.Arrival")) + FVector(9000,0,0))) return false;
 
-    struct FFamily { const TCHAR* Name; const TCHAR* AnchorId; const TCHAR* CharacterId; const TCHAR* Display; };
-    const FFamily Family[] = {
-        {TEXT("Marc"), TEXT("Character.Marc"), TEXT("character.marc"), TEXT("Marc")},
-        {TEXT("Denise"), TEXT("Character.Denise"), TEXT("character.denise"), TEXT("Denise")},
-        {TEXT("Ethan"), TEXT("Character.Ethan"), TEXT("character.ethan"), TEXT("Ethan")}};
-    for (const FFamily& Entry : Family)
+    struct FFamilySpec { const TCHAR* Id; const TCHAR* Anchor; const TCHAR* Label; };
+    const FFamilySpec Family[] = {
+        {TEXT("character.marc"), TEXT("Character.Marc"), TEXT("Marc")},
+        {TEXT("character.denise"), TEXT("Character.Denise"), TEXT("Denise")},
+        {TEXT("character.ethan"), TEXT("Character.Ethan"), TEXT("Ethan")}};
+    for (const FFamilySpec& Spec : Family)
     {
-        AOpeningFamilyInteractableActor* Actor = EnsureActor<AOpeningFamilyInteractableActor>(World, *FString(TEXT("Family_")) + Entry.Name, Anchor(Layout, Entry.AnchorId));
+        AOpeningFamilyInteractableActor* Actor = EnsureActor<AOpeningFamilyInteractableActor>(World,
+            StableName(TEXT("Family_"), Spec.Label), ReadAnchor(Layout, Spec.Anchor));
         if (!Actor) return false;
-        Actor->CharacterId = Entry.CharacterId;
-        Actor->CharacterName = FText::FromString(Entry.Display);
-        Actor->DialogueId = *FString::Printf(TEXT("Opening.Harlow.%s"), Entry.Name);
+        Actor->CharacterId = FName(Spec.Id);
+        Actor->CharacterName = FText::FromString(Spec.Label);
+        Actor->DialogueId = FName(*FString::Printf(TEXT("Opening.Harlow.%s"), Spec.Label));
     }
 
-    AOpeningBoardingEncounterActor* Encounter = EnsureActor<AOpeningBoardingEncounterActor>(World, TEXT("OpeningBoardingEncounter"), Anchor(Layout, TEXT("Family.Gathering")));
+    AOpeningBoardingEncounterActor* Encounter = EnsureActor<AOpeningBoardingEncounterActor>(World,
+        TEXT("OpeningBoardingEncounter"), ReadAnchor(Layout, TEXT("Family.Gathering")));
     if (!Encounter) return false;
     Encounter->EncounterId = TEXT("Encounter.HarlowRaid.MainDeck");
     Encounter->RequiredBoarders = 3;
     Encounter->SpawnTransforms = {
-        FTransform(Anchor(Layout, TEXT("Boarding.Port.A"))),
-        FTransform(Anchor(Layout, TEXT("Boarding.Port.B"))),
-        FTransform(Anchor(Layout, TEXT("Boarding.Starboard.A")))};
+        FTransform(ReadAnchor(Layout, TEXT("Boarding.Port.A"))),
+        FTransform(ReadAnchor(Layout, TEXT("Boarding.Port.B"))),
+        FTransform(ReadAnchor(Layout, TEXT("Boarding.Starboard.A")))};
     return SaveWorld(World);
 }
 
 bool BuildDriftwood()
 {
     const FString Layout = TEXT("ContentSource/World/Moran/DriftwoodBeach/DriftwoodBeach_GameplayLayout.json");
-    UWorld* World = CreateOrLoadWorld(TEXT("/Game/Alpha/Maps/L_DriftwoodBeach"));
-    if (!World) return false;
-    World->GetWorldSettings()->DefaultGameMode = AAlphaGameplayGameMode::StaticClass();
+    UWorld* World = OpenOrCreateWorld(TEXT("/Game/Alpha/Maps/L_DriftwoodBeach"));
+    if (!PrepareGameplayWorld(World, Layout, TEXT("Spawn.Moran.DriftwoodBeach.Recovery"))) return false;
     if (!PlaceMesh(World, TEXT("/Game/Alpha/World/Moran/DriftwoodBeach/SM_DriftwoodTerrain_Alpha.SM_DriftwoodTerrain_Alpha"), TEXT("DriftwoodTerrain"), FVector::ZeroVector)) return false;
-    PlaceMesh(World, TEXT("/Game/Alpha/World/Moran/DriftwoodBeach/SM_HarlowWreckage_Alpha.SM_HarlowWreckage_Alpha"), TEXT("HarlowWreckage"), Anchor(Layout, TEXT("Harlow.Wreckage")));
-    PlaceMesh(World, TEXT("/Game/Alpha/World/Moran/OuterReef/SM_OuterReef_Alpha.SM_OuterReef_Alpha"), TEXT("OuterReef"), FVector::ZeroVector);
-    EnsureActor<ADarkArisenWorldDirector>(World, TEXT("DarkArisenWorldDirector"), FVector::ZeroVector);
-    EnsureActor<APlayerStart>(World, TEXT("PlayerStart_Driftwood"), Anchor(Layout, TEXT("Spawn.Moran.DriftwoodBeach.Recovery")));
+    if (!PlaceMesh(World, TEXT("/Game/Alpha/World/Moran/DriftwoodBeach/SM_HarlowWreckage_Alpha.SM_HarlowWreckage_Alpha"), TEXT("HarlowWreckage"), ReadAnchor(Layout, TEXT("Harlow.Wreckage")))) return false;
+    if (!PlaceMesh(World, TEXT("/Game/Alpha/World/Moran/OuterReef/SM_OuterReef_Alpha.SM_OuterReef_Alpha"), TEXT("OuterReef"), FVector::ZeroVector)) return false;
 
-    AOpeningWaterCurrentVolume* Water = EnsureActor<AOpeningWaterCurrentVolume>(World, TEXT("WaterEntryCurrent"), Anchor(Layout, TEXT("WaterEntry")));
-    AOpeningWaterCurrentVolume* Reef = EnsureActor<AOpeningWaterCurrentVolume>(World, TEXT("OuterReefCurrent"), Anchor(Layout, TEXT("OuterReef.SafeGap")));
-    AOpeningWaterCurrentVolume* Shallows = EnsureActor<AOpeningWaterCurrentVolume>(World, TEXT("ShallowsExit"), Anchor(Layout, TEXT("Shallows")));
-    if (!Water || !Reef || !Shallows) return false;
-    Water->bSignalsWaterEntry = true; Water->CurrentAcceleration = FVector(130.f, 20.f, 0.f); Water->Volume->SetBoxExtent(FVector(1800,1400,500));
-    Reef->bSignalsOuterReef = true; Reef->CurrentAcceleration = FVector(80.f,-35.f,0.f); Reef->Volume->SetBoxExtent(FVector(1400,1000,450));
-    Shallows->bShallowExit = true; Shallows->CurrentAcceleration = FVector(45.f,0.f,0.f); Shallows->Volume->SetBoxExtent(FVector(900,800,250));
+    AOpeningWaterCurrentVolume* Entry = EnsureActor<AOpeningWaterCurrentVolume>(World, TEXT("WaterEntryCurrent"), ReadAnchor(Layout, TEXT("WaterEntry")));
+    AOpeningWaterCurrentVolume* Reef = EnsureActor<AOpeningWaterCurrentVolume>(World, TEXT("OuterReefCurrent"), ReadAnchor(Layout, TEXT("OuterReef.SafeGap")));
+    AOpeningWaterCurrentVolume* Shallows = EnsureActor<AOpeningWaterCurrentVolume>(World, TEXT("ShallowsExit"), ReadAnchor(Layout, TEXT("Shallows")));
+    if (!Entry || !Reef || !Shallows) return false;
+    Entry->bSignalsWaterEntry = true; Entry->CurrentAcceleration = FVector(130,20,0); Entry->Volume->SetBoxExtent(FVector(1800,1400,500));
+    Reef->bSignalsOuterReef = true; Reef->CurrentAcceleration = FVector(80,-35,0); Reef->Volume->SetBoxExtent(FVector(1400,1000,450));
+    Shallows->bShallowExit = true; Shallows->CurrentAcceleration = FVector(45,0,0); Shallows->Volume->SetBoxExtent(FVector(900,800,250));
     return SaveWorld(World);
 }
 
-bool BuildLocationMap(const FString& MapName, const FString& MeshPath, const FString& Layout, const FString& StartAnchor)
+UWorld* BuildSimpleMap(const FString& MapName, const FString& MeshObjectPath, const FString& Layout, const FString& StartAnchor)
 {
-    UWorld* World = CreateOrLoadWorld(TEXT("/Game/Alpha/Maps/") + MapName);
-    if (!World) return false;
-    World->GetWorldSettings()->DefaultGameMode = AAlphaGameplayGameMode::StaticClass();
-    if (!MeshPath.IsEmpty() && !PlaceMesh(World, MeshPath, *FString(TEXT("Geo_")) + MapName, FVector::ZeroVector)) return false;
-    EnsureActor<ADarkArisenWorldDirector>(World, TEXT("DarkArisenWorldDirector"), FVector::ZeroVector);
-    EnsureActor<APlayerStart>(World, *FString(TEXT("PlayerStart_")) + MapName, Anchor(Layout, StartAnchor));
-    return true;
+    UWorld* World = OpenOrCreateWorld(TEXT("/Game/Alpha/Maps/") + MapName);
+    if (!PrepareGameplayWorld(World, Layout, StartAnchor)) return nullptr;
+    if (!MeshObjectPath.IsEmpty() && !PlaceMesh(World, MeshObjectPath, StableName(TEXT("Geo_"), MapName), FVector::ZeroVector)) return nullptr;
+    return World;
 }
 
 bool BuildMoranAndRexa()
 {
-    UWorld* Camp = CreateOrLoadWorld(TEXT("/Game/Alpha/Maps/L_DriftwoodCamp"));
-    if (!Camp || !BuildLocationMap(TEXT("L_DriftwoodCamp"), TEXT("/Game/Alpha/World/Moran/DriftwoodCamp/SM_DriftwoodCamp_Alpha.SM_DriftwoodCamp_Alpha"), TEXT("ContentSource/World/Moran/DriftwoodCamp/DriftwoodCamp_Layout.json"), TEXT("Arrival")) || !SaveWorld(Camp)) return false;
+    UWorld* Camp = BuildSimpleMap(TEXT("L_DriftwoodCamp"), TEXT("/Game/Alpha/World/Moran/DriftwoodCamp/SM_DriftwoodCamp_Alpha.SM_DriftwoodCamp_Alpha"), TEXT("ContentSource/World/Moran/DriftwoodCamp/DriftwoodCamp_Layout.json"), TEXT("Arrival"));
+    if (!Camp || !SaveWorld(Camp)) return false;
 
-    UWorld* Mira = CreateOrLoadWorld(TEXT("/Game/Alpha/Maps/L_MirasCove"));
-    if (!Mira || !BuildLocationMap(TEXT("L_MirasCove"), TEXT("/Game/Alpha/World/Moran/MirasCove/SM_MirasCove_Alpha.SM_MirasCove_Alpha"), TEXT("ContentSource/World/Moran/MirasCove/MirasCove_Layout.json"), TEXT("Arrival"))) return false;
-    AOpeningCrewRecruitmentActor* MiraActor = EnsureActor<AOpeningCrewRecruitmentActor>(Mira, TEXT("Crew_Mira"), Anchor(TEXT("ContentSource/World/Moran/MirasCove/MirasCove_Layout.json"), TEXT("Mira")));
+    const FString MiraLayout = TEXT("ContentSource/World/Moran/MirasCove/MirasCove_Layout.json");
+    UWorld* Mira = BuildSimpleMap(TEXT("L_MirasCove"), TEXT("/Game/Alpha/World/Moran/MirasCove/SM_MirasCove_Alpha.SM_MirasCove_Alpha"), MiraLayout, TEXT("Arrival"));
+    AOpeningCrewRecruitmentActor* MiraActor = Mira ? EnsureActor<AOpeningCrewRecruitmentActor>(Mira, TEXT("Crew_Mira"), ReadAnchor(MiraLayout, TEXT("Mira"))) : nullptr;
     if (!MiraActor) return false; MiraActor->CrewId = TEXT("crew.mira"); MiraActor->DisplayName = FText::FromString(TEXT("Mira")); if (!SaveWorld(Mira)) return false;
 
-    UWorld* Mangrove = CreateOrLoadWorld(TEXT("/Game/Alpha/Maps/L_MangroveShallows"));
-    if (!Mangrove || !BuildLocationMap(TEXT("L_MangroveShallows"), TEXT("/Game/Alpha/World/Moran/Mangroves/SM_MangrovesRoute_Alpha.SM_MangrovesRoute_Alpha"), TEXT("ContentSource/World/Moran/Mangroves/Mangroves_Layout.json"), TEXT("Entry"))) return false;
-    AOpeningCrewRecruitmentActor* Tom = EnsureActor<AOpeningCrewRecruitmentActor>(Mangrove, TEXT("Crew_BigTom"), Anchor(TEXT("ContentSource/World/Moran/Mangroves/Mangroves_Layout.json"), TEXT("BigTom")));
+    const FString MangroveLayout = TEXT("ContentSource/World/Moran/Mangroves/Mangroves_Layout.json");
+    UWorld* Mangrove = BuildSimpleMap(TEXT("L_MangroveShallows"), TEXT("/Game/Alpha/World/Moran/Mangroves/SM_MangrovesRoute_Alpha.SM_MangrovesRoute_Alpha"), MangroveLayout, TEXT("Entry"));
+    AOpeningCrewRecruitmentActor* Tom = Mangrove ? EnsureActor<AOpeningCrewRecruitmentActor>(Mangrove, TEXT("Crew_BigTom"), ReadAnchor(MangroveLayout, TEXT("BigTom"))) : nullptr;
     if (!Tom) return false; Tom->CrewId = TEXT("crew.big_tom"); Tom->DisplayName = FText::FromString(TEXT("Big Tom")); if (!SaveWorld(Mangrove)) return false;
 
-    UWorld* Koa = CreateOrLoadWorld(TEXT("/Game/Alpha/Maps/L_KoaTradingPost"));
-    if (!Koa || !BuildLocationMap(TEXT("L_KoaTradingPost"), TEXT("/Game/Alpha/World/Moran/Koa/SM_KoaTradingPost_Alpha.SM_KoaTradingPost_Alpha"), TEXT("ContentSource/World/Moran/Koa/KoaTradingPost_Layout.json"), TEXT("Arrival")) || !SaveWorld(Koa)) return false;
+    UWorld* Koa = BuildSimpleMap(TEXT("L_KoaTradingPost"), TEXT("/Game/Alpha/World/Moran/Koa/SM_KoaTradingPost_Alpha.SM_KoaTradingPost_Alpha"), TEXT("ContentSource/World/Moran/Koa/KoaTradingPost_Layout.json"), TEXT("Arrival"));
+    if (!Koa || !SaveWorld(Koa)) return false;
 
-    UWorld* Cove = CreateOrLoadWorld(TEXT("/Game/Alpha/Maps/L_GalleonCove"));
-    if (!Cove || !BuildLocationMap(TEXT("L_GalleonCove"), TEXT("/Game/Alpha/World/Moran/GalleonCove/SM_GalleonCove_Alpha.SM_GalleonCove_Alpha"), TEXT("ContentSource/World/Moran/GalleonCove/GalleonCove_Layout.json"), TEXT("Approach"))) return false;
-    AOpeningCrewRecruitmentActor* Esteban = EnsureActor<AOpeningCrewRecruitmentActor>(Cove, TEXT("Crew_Esteban"), Anchor(TEXT("ContentSource/World/Moran/GalleonCove/GalleonCove_Layout.json"), TEXT("Esteban")));
+    const FString CoveLayout = TEXT("ContentSource/World/Moran/GalleonCove/GalleonCove_Layout.json");
+    UWorld* Cove = BuildSimpleMap(TEXT("L_GalleonCove"), TEXT("/Game/Alpha/World/Moran/GalleonCove/SM_GalleonCove_Alpha.SM_GalleonCove_Alpha"), CoveLayout, TEXT("Approach"));
+    AOpeningCrewRecruitmentActor* Esteban = Cove ? EnsureActor<AOpeningCrewRecruitmentActor>(Cove, TEXT("Crew_Esteban"), ReadAnchor(CoveLayout, TEXT("Esteban"))) : nullptr;
     if (!Esteban) return false; Esteban->CrewId = TEXT("crew.esteban"); Esteban->DisplayName = FText::FromString(TEXT("Esteban"));
-    ALaLiberacionShip* Ship = EnsureActor<ALaLiberacionShip>(Cove, TEXT("LaLiberacion"), Anchor(TEXT("ContentSource/World/Moran/GalleonCove/GalleonCove_Layout.json"), TEXT("ImpoundBerth")));
+    ALaLiberacionShip* Ship = EnsureActor<ALaLiberacionShip>(Cove, TEXT("LaLiberacion"), ReadAnchor(CoveLayout, TEXT("ImpoundBerth")));
     if (!Ship || !PlaceMesh(Cove, TEXT("/Game/Alpha/Ships/LaLiberacion/SM_LaLiberacion_Alpha.SM_LaLiberacion_Alpha"), TEXT("LaLiberacionVisual"), Ship->GetActorLocation())) return false;
-    EnsureActor<ALaLiberacionHelmInteractableActor>(Cove, TEXT("LaLiberacionHelm"), Anchor(TEXT("ContentSource/World/Moran/GalleonCove/GalleonCove_Layout.json"), TEXT("Helm")));
+    if (!EnsureActor<ALaLiberacionHelmInteractableActor>(Cove, TEXT("LaLiberacionHelm"), ReadAnchor(CoveLayout, TEXT("Helm")))) return false;
     if (!SaveWorld(Cove)) return false;
 
-    UWorld* Wake = CreateOrLoadWorld(TEXT("/Game/Alpha/Maps/L_OpenSea_FirstWake"));
-    if (!Wake) return false; Wake->GetWorldSettings()->DefaultGameMode = AAlphaGameplayGameMode::StaticClass();
-    EnsureActor<ADarkArisenWorldDirector>(Wake, TEXT("DarkArisenWorldDirector"), FVector::ZeroVector);
+    UWorld* Wake = OpenOrCreateWorld(TEXT("/Game/Alpha/Maps/L_OpenSea_FirstWake"));
+    if (!PrepareGameplayWorld(Wake, TEXT("ContentSource/World/OpenSea/FirstWake_Route.json"), TEXT("Start"))) return false;
     ALaLiberacionShip* WakeShip = EnsureActor<ALaLiberacionShip>(Wake, TEXT("LaLiberacion"), FVector::ZeroVector);
     if (!WakeShip || !PlaceMesh(Wake, TEXT("/Game/Alpha/Ships/LaLiberacion/SM_LaLiberacion_Alpha.SM_LaLiberacion_Alpha"), TEXT("LaLiberacionVisual"), FVector::ZeroVector) || !SaveWorld(Wake)) return false;
 
-    UWorld* Rexa = CreateOrLoadWorld(TEXT("/Game/Alpha/Maps/L_RexaHarbor"));
-    if (!Rexa || !BuildLocationMap(TEXT("L_RexaHarbor"), TEXT("/Game/Alpha/World/Rexa/Harbor/SM_RexaHarborArrival_Alpha.SM_RexaHarborArrival_Alpha"), TEXT("ContentSource/World/Rexa/Harbor/RexaHarbor_Layout.json"), TEXT("DockEntry"))) return false;
-    EnsureActor<ARexaSettlementDirector>(Rexa, TEXT("RexaSettlementDirector"), Anchor(TEXT("ContentSource/World/Rexa/Harbor/RexaHarbor_Layout.json"), TEXT("HarborMarket")));
-    ARexaSettlementAnchor* Dock = EnsureActor<ARexaSettlementAnchor>(Rexa, TEXT("RexaAnchor_DockEntry"), Anchor(TEXT("ContentSource/World/Rexa/Harbor/RexaHarbor_Layout.json"), TEXT("DockEntry")));
-    if (Dock) Dock->InitializeAuthoredAnchor(TEXT("Rexa.Harbor"), TEXT("Rexa.Anchor.DockEntry"), false, false);
+    const FString RexaLayout = TEXT("ContentSource/World/Rexa/Harbor/RexaHarbor_Layout.json");
+    UWorld* Rexa = BuildSimpleMap(TEXT("L_RexaHarbor"), TEXT("/Game/Alpha/World/Rexa/Harbor/SM_RexaHarborArrival_Alpha.SM_RexaHarborArrival_Alpha"), RexaLayout, TEXT("DockEntry"));
+    if (!Rexa) return false;
+    EnsureActor<ARexaSettlementDirector>(Rexa, TEXT("RexaSettlementDirector"), ReadAnchor(RexaLayout, TEXT("HarborMarket")));
+    ARexaSettlementAnchor* Dock = EnsureActor<ARexaSettlementAnchor>(Rexa, TEXT("RexaAnchor_DockEntry"), ReadAnchor(RexaLayout, TEXT("DockEntry")));
+    if (!Dock || !Dock->InitializeAuthoredAnchor(TEXT("Rexa.Harbor"), TEXT("Rexa.Anchor.DockEntry"), false, false)) return false;
     return SaveWorld(Rexa);
 }
 
-bool ValidateObject(const FString& ObjectPath, UClass* RequiredClass)
+bool ValidateAsset(const FString& ObjectPath, UClass* Class)
 {
     UObject* Object = LoadObject<UObject>(nullptr, *ObjectPath);
-    if (!Object || !Object->IsA(RequiredClass))
+    if (!Object || !Object->IsA(Class))
     {
-        UE_LOG(LogTemp, Error, TEXT("Materializer: required asset missing or wrong class: %s"), *ObjectPath);
+        UE_LOG(LogTemp, Error, TEXT("Required materialised asset missing/wrong class: %s"), *ObjectPath);
         return false;
     }
     return true;
@@ -379,7 +380,7 @@ int32 UDarkArisenMaterializeAlphaCommandlet::Main(const FString& Params)
     const FEngineVersion Version = FEngineVersion::Current();
     if (Version.GetMajor() != 5 || Version.GetMinor() != 8)
     {
-        UE_LOG(LogTemp, Error, TEXT("DarkArisen materialisation requires Unreal Engine 5.8; got %s"), *Version.ToString());
+        UE_LOG(LogTemp, Error, TEXT("DarkArisen materialisation requires UE 5.8; got %s"), *Version.ToString());
         return 10;
     }
 
@@ -398,21 +399,19 @@ int32 UDarkArisenMaterializeAlphaCommandlet::Main(const FString& Params)
         {TEXT("ContentSource/World/Moran/GalleonCove/SM_GalleonCove_Alpha.gltf"), TEXT("/Game/Alpha/World/Moran/GalleonCove")},
         {TEXT("ContentSource/Ships/LaLiberacion/SM_LaLiberacion_Alpha.gltf"), TEXT("/Game/Alpha/Ships/LaLiberacion")},
         {TEXT("ContentSource/World/Rexa/Harbor/SM_RexaHarborArrival_Alpha.gltf"), TEXT("/Game/Alpha/World/Rexa/Harbor")}};
-    for (const TPair<FString,FString>& Spec : StaticSources) if (!ImportStatic(Spec.Key, Spec.Value, AssetTools)) return 20;
+    for (const auto& Spec : StaticSources) if (!ImportStatic(AssetTools, Spec.Key, Spec.Value)) return 20;
 
-    FImportedCharacter Jake;
-    if (!ImportCharacter(TEXT("ContentSource/Characters/Jake/SK_Jake_Alpha.gltf"),
-        {TEXT("AN_Jake_Locomotion_Alpha.gltf"),TEXT("AN_Jake_CombatMotion_Alpha.gltf"),TEXT("AN_Jake_AttacksDefense_Alpha.gltf"),TEXT("AN_Jake_Reactions_Alpha.gltf"),TEXT("AN_Jake_WaterInteraction_Alpha.gltf")},
-        TEXT("/Game/Alpha/Characters/Jake"), TEXT("SK_Jake_Alpha"), JakeClips, AssetTools, Jake)) return 30;
-    FImportedCharacter Boarder;
-    if (!ImportCharacter(TEXT("ContentSource/Characters/Boarders/SK_Boarder_Alpha.gltf"),
-        {TEXT("AN_Boarder_Locomotion_Alpha.gltf"),TEXT("AN_Boarder_Actions_Alpha.gltf")},
-        TEXT("/Game/Alpha/Characters/Boarders"), TEXT("SK_Boarder_Alpha"), BoarderClips, AssetTools, Boarder)) return 31;
+    FCharacterAssets Jake;
+    if (!ImportCharacter(AssetTools, TEXT("ContentSource/Characters/Jake/SK_Jake_Alpha.gltf"), TEXT("/Game/Alpha/Characters/Jake"), TEXT("SK_Jake_Alpha"),
+        {TEXT("AN_Jake_Locomotion_Alpha.gltf"),TEXT("AN_Jake_CombatMotion_Alpha.gltf"),TEXT("AN_Jake_AttacksDefense_Alpha.gltf"),TEXT("AN_Jake_Reactions_Alpha.gltf"),TEXT("AN_Jake_WaterInteraction_Alpha.gltf")}, JakeRequired, Jake)) return 30;
+    FCharacterAssets Boarder;
+    if (!ImportCharacter(AssetTools, TEXT("ContentSource/Characters/Boarders/SK_Boarder_Alpha.gltf"), TEXT("/Game/Alpha/Characters/Boarders"), TEXT("SK_Boarder_Alpha"),
+        {TEXT("AN_Boarder_Locomotion_Alpha.gltf"),TEXT("AN_Boarder_Actions_Alpha.gltf")}, BoarderRequired, Boarder)) return 31;
 
     if (!BuildStartup() || !BuildHarlow() || !BuildDriftwood() || !BuildMoranAndRexa()) return 40;
-    UEditorLoadingAndSavingUtils::SaveDirtyPackages(true, true);
+    if (!UEditorLoadingAndSavingUtils::SaveDirtyPackages(true, true)) return 41;
 
-    const TArray<TPair<FString,UClass*>> Required = {
+    const TArray<TPair<FString,UClass*>> RequiredAssets = {
         {TEXT("/Game/Alpha/Maps/L_AlphaStartup.L_AlphaStartup"), UWorld::StaticClass()},
         {TEXT("/Game/Alpha/Maps/L_HarlowOpening.L_HarlowOpening"), UWorld::StaticClass()},
         {TEXT("/Game/Alpha/Maps/L_DriftwoodBeach.L_DriftwoodBeach"), UWorld::StaticClass()},
@@ -421,8 +420,8 @@ int32 UDarkArisenMaterializeAlphaCommandlet::Main(const FString& Params)
         {TEXT("/Game/Alpha/Characters/Boarders/SK_Boarder_Alpha.SK_Boarder_Alpha"), USkeletalMesh::StaticClass()},
         {TEXT("/Game/Alpha/Ships/Harlow/SM_HarlowMerchantShip_Alpha.SM_HarlowMerchantShip_Alpha"), UStaticMesh::StaticClass()},
         {TEXT("/Game/Alpha/Ships/LaLiberacion/SM_LaLiberacion_Alpha.SM_LaLiberacion_Alpha"), UStaticMesh::StaticClass()}};
-    for (const auto& Entry : Required) if (!ValidateObject(Entry.Key, Entry.Value)) return 50;
+    for (const auto& Required : RequiredAssets) if (!ValidateAsset(Required.Key, Required.Value)) return 50;
 
-    UE_LOG(LogTemp, Display, TEXT("DarkArisen Alpha content materialised and validated for UE 5.8."));
+    UE_LOG(LogTemp, Display, TEXT("DarkArisen Alpha content materialised and validated."));
     return 0;
 }

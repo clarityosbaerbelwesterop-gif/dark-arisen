@@ -7,7 +7,7 @@ public class DarkArisenEditorTarget : TargetRules
     {
         Type = TargetType.Editor;
         DefaultBuildSettings = BuildSettingsVersion.V5;
-        IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_5;
+        IncludeOrderVersion = EngineIncludeOrderVersion.Latest;
         CppStandard = CppStandardVersion.Cpp20;
         ExtraModuleNames.AddRange(new[] { "DarkArisen", "DarkArisenEditor" });
     }
