@@ -21,6 +21,7 @@ public:
     UFUNCTION(BlueprintCallable) bool CompleteMission(FName MissionId);
     UFUNCTION(BlueprintCallable) bool FailMission(FName MissionId);
     UFUNCTION(BlueprintCallable) bool SetWorldFact(FName Fact,bool bEnabled=true);
+    UFUNCTION(BlueprintCallable) bool SetQuestOutcome(FName OutcomeKey,FName OutcomeValue);
     UFUNCTION(BlueprintCallable) bool MeetCrew(FName CharacterId);
     UFUNCTION(BlueprintCallable) bool SetCrewAvailable(FName CharacterId,FName Role);
     UFUNCTION(BlueprintCallable) bool RecruitCrew(FName CharacterId,FName Role);

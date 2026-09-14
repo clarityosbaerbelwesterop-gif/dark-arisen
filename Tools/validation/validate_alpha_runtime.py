@@ -23,7 +23,7 @@ required_files=['Story/MainStorySubsystem.cpp','Persistence/DarkArisenSaveGame.h
 for relative in required_files:
     if not (source/relative).is_file(): errors.append(f'missing native runtime file: {relative}')
 all_runtime='\n'.join(p.read_text(encoding='utf-8',errors='ignore') for p in source.rglob('*') if p.suffix in {'.h','.cpp'} and 'Tests' not in p.parts)
-for fact in ('Story.MarcDead','Story.DeniseDead','Story.EthanAbducted','Story.EthanRecovered','World.DriftwoodBeachReached','World.MoranOpeningRouteKnown','Ship.LaLiberacionOwned','World.RexaEntered','Story.MainComplete'):
+for fact in ('Story.MarcDead','Story.DeniseDead','Story.EthanAbducted','Story.EthanRecovered','World.DriftwoodBeachReached','World.MoranOpeningRouteKnown','Ship.LaLiberacionOwned','World.RexaEntered','Story.EthanAliveConfirmed','Story.EthanRouteMarksFound','Story.FirstHolderCrossed','Story.MainComplete'):
     if fact not in all_runtime: errors.append(f'missing runtime fact: {fact}')
 opening=(source/'Opening/OpeningRuntimeComponent.cpp').read_text(encoding='utf-8')
 for required in ('BeginBoardingEncounter','SignalDravenBoarded','SignalTakingStarted','SignalCrewRecruitmentAvailable','SignalLaLiberacionHelmSecured','SignalLaLiberacionHarborCleared','RestoreAtCheckpoint'):
@@ -34,7 +34,6 @@ if 'RaidState=EOpeningRaidState::Taking' in opening.split('SignalFirstBoarderDef
     errors.append('first boarder defeat still advances directly to Taking')
 if 'RequiredBoarders<2' not in opening:
     errors.append('boarding runtime no longer rejects the single-boarder shortcut')
-
 world_director=(source/'Story/DarkArisenWorldDirector.cpp').read_text(encoding='utf-8')
 opening_trigger=(source/'Opening/OpeningEventTriggerComponent.cpp').read_text(encoding='utf-8')
 if 'CreateDefaultSubobject<UOpeningRuntimeComponent>' not in world_director: errors.append('opening runtime is not owned by world director')
@@ -43,7 +42,6 @@ if 'SignalBoarderDefeated(EventId)' not in opening_trigger or 'BeginBoardingEnco
 authority=(root/'Docs/DesignAuthority.md').read_text(encoding='utf-8')
 for phrase in ('physically rescued in Chapter 8','real Ethan remains alive, recovered, friendly and non-hostile','LEGACY / SUPERSEDED'):
     if phrase not in authority: errors.append(f'missing current authority lock: {phrase}')
-
 if errors:
     print('\n'.join(f'ERROR: {e}' for e in errors));sys.exit(1)
 print('Alpha runtime static verification passed (34 missions; canonical facts; native story/opening/combat/ship/test sources).')
