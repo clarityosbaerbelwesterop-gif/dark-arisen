@@ -19,6 +19,8 @@ public:
     UFUNCTION(BlueprintCallable) void ResetForNewGame();
     UFUNCTION(BlueprintCallable) bool ActivateMission(FName MissionId);
     UFUNCTION(BlueprintCallable) bool CompleteMission(FName MissionId);
+    /** Physical/authored mission completion path. Adds the canonical persistent mission facts on the existing save authority. */
+    UFUNCTION(BlueprintCallable) bool CompleteAuthoredMission(FName MissionId);
     UFUNCTION(BlueprintCallable) bool FailMission(FName MissionId);
     UFUNCTION(BlueprintCallable) bool SetWorldFact(FName Fact,bool bEnabled=true);
     UFUNCTION(BlueprintCallable) bool SetQuestOutcome(FName OutcomeKey,FName OutcomeValue);
