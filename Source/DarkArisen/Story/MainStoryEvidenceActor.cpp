@@ -9,6 +9,8 @@ bool AMainStoryEvidenceActor::CanInteract_Implementation(AActor* Interactor) con
 void AMainStoryEvidenceActor::CompleteInteraction_Implementation(AActor* Interactor)
 {
     Super::CompleteInteraction_Implementation(Interactor);
-    if(!GetGameInstance())return; UMainStorySubsystem* Story=GetGameInstance()->GetSubsystem<UMainStorySubsystem>();
-    if(Story&&Story->CompleteMission(MissionId)&&!CheckpointId.IsNone()&&!SpawnId.IsNone()) Story->SetCheckpoint(CheckpointId,SpawnId);
+    if(!GetGameInstance())return;
+    UMainStorySubsystem* Story=GetGameInstance()->GetSubsystem<UMainStorySubsystem>();
+    if(Story&&Story->CompleteAuthoredMission(MissionId)&&!CheckpointId.IsNone()&&!SpawnId.IsNone())
+        Story->SetCheckpoint(CheckpointId,SpawnId);
 }
