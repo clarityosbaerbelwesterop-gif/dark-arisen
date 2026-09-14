@@ -18,5 +18,5 @@ void AMainStoryRouteResolutionActor::CompleteInteraction_Implementation(AActor*)
 {
     if(!GetGameInstance())return;UMainStorySubsystem* Story=GetGameInstance()->GetSubsystem<UMainStorySubsystem>();
     if(!Story||Story->GetMissionState(MissionId)!=EMainMissionState::Active)return;
-    if(Story->SetQuestOutcome(OutcomeKey,OutcomeValue)) Story->CompleteMission(MissionId);
+    if(Story->SetQuestOutcome(OutcomeKey,OutcomeValue)) Story->CompleteAuthoredMission(MissionId);
 }
