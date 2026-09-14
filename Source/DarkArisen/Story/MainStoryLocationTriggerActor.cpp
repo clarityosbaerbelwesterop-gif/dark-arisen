@@ -15,6 +15,6 @@ void AMainStoryLocationTriggerActor::HandleOverlap(UPrimitiveComponent*,AActor* 
     UMainStorySubsystem* Story=GetGameInstance()->GetSubsystem<UMainStorySubsystem>(); if(!Story)return;
     bool bChanged=false;
     if(Action==EMainStoryLocationAction::ActivateMission && Story->GetMissionState(MissionId)==EMainMissionState::Available) bChanged=Story->ActivateMission(MissionId);
-    else if(Action==EMainStoryLocationAction::CompleteMission && Story->GetMissionState(MissionId)==EMainMissionState::Active) bChanged=Story->CompleteMission(MissionId);
+    else if(Action==EMainStoryLocationAction::CompleteMission && Story->GetMissionState(MissionId)==EMainMissionState::Active) bChanged=Story->CompleteAuthoredMission(MissionId);
     if(bChanged&&!CheckpointId.IsNone()&&!SpawnId.IsNone()) Story->SetCheckpoint(CheckpointId,SpawnId);
 }
