@@ -12,71 +12,36 @@ class APhysicalMapActor;
 class USceneComponent;
 class USeaPassageComponent;
 class UShipHouseholdComponent;
+class UNavalCombatComponent;
 
-/**
- * Level-placeable source boundary for La Liberacion.
- *
- * The four scene roots are stable authored attachment boundaries for one continuous vessel:
- * Weather, Upper, Mid and Hold. No deck transition uses a loading screen or teleport API.
- * Voyage, household, physical-map and real-passage state all live on the same actor.
- */
+/** One continuous, physically traversable La Liberacion with native voyage and combat authority. */
 UCLASS()
 class DARKARISEN_API ALaLiberacionShip : public AActor
 {
     GENERATED_BODY()
-
 public:
     ALaLiberacionShip();
     virtual void BeginPlay() override;
 
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Ship|Structure")
-    TObjectPtr<USceneComponent> ShipRoot;
+    UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="Ship|Structure") TObjectPtr<USceneComponent> ShipRoot;
+    UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="Ship|Structure") TObjectPtr<USceneComponent> WeatherDeckRoot;
+    UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="Ship|Structure") TObjectPtr<USceneComponent> UpperDeckRoot;
+    UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="Ship|Structure") TObjectPtr<USceneComponent> MidDeckRoot;
+    UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="Ship|Structure") TObjectPtr<USceneComponent> HoldDeckRoot;
+    UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="Ship|Systems") TObjectPtr<UShipVoyageComponent> VoyageComponent;
+    UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="Ship|Systems") TObjectPtr<UShipHouseholdComponent> HouseholdComponent;
+    UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="Ship|Systems") TObjectPtr<USeaPassageComponent> SeaPassageComponent;
+    UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="Ship|Systems") TObjectPtr<UNavalCombatComponent> NavalCombatComponent;
+    UPROPERTY(EditDefaultsOnly,Category="Ship|Map") TSubclassOf<APhysicalMapActor> PhysicalMapClass;
 
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Ship|Structure")
-    TObjectPtr<USceneComponent> WeatherDeckRoot;
-
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Ship|Structure")
-    TObjectPtr<USceneComponent> UpperDeckRoot;
-
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Ship|Structure")
-    TObjectPtr<USceneComponent> MidDeckRoot;
-
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Ship|Structure")
-    TObjectPtr<USceneComponent> HoldDeckRoot;
-
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Ship|Systems")
-    TObjectPtr<UShipVoyageComponent> VoyageComponent;
-
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Ship|Systems")
-    TObjectPtr<UShipHouseholdComponent> HouseholdComponent;
-
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Ship|Systems")
-    TObjectPtr<USeaPassageComponent> SeaPassageComponent;
-
-    UPROPERTY(EditDefaultsOnly, Category="Ship|Map")
-    TSubclassOf<APhysicalMapActor> PhysicalMapClass;
-
-    UFUNCTION(BlueprintPure, Category="Ship|Structure")
-    USceneComponent* GetDeckRoot(EShipDeck Deck) const;
-
-    UFUNCTION(BlueprintPure, Category="Ship|Map")
-    APhysicalMapActor* GetPhysicalMap() const { return PhysicalMap; }
-
-    /** Compatibility path for a rest scene whose daypart advance was already authored. */
-    UFUNCTION(BlueprintCallable, Category="Ship|GreatCabin")
-    bool CompleteGreatCabinRest();
-
-    /** Canonical Great Cabin rest: four dayparts only, no arbitrary wait-until-hour. */
-    UFUNCTION(BlueprintCallable, Category="Ship|GreatCabin")
-    bool RestGreatCabinToDaypart(EDarkArisenDaypart TargetDaypart);
-
-    UFUNCTION(BlueprintPure, Category="Ship|GreatCabin")
-    bool CanRestInGreatCabin() const;
+    UFUNCTION(BlueprintPure,Category="Ship|Structure") USceneComponent* GetDeckRoot(EShipDeck Deck) const;
+    UFUNCTION(BlueprintPure,Category="Ship|Map") APhysicalMapActor* GetPhysicalMap() const{return PhysicalMap;}
+    UFUNCTION(BlueprintCallable,Category="Ship|GreatCabin") bool CompleteGreatCabinRest();
+    UFUNCTION(BlueprintCallable,Category="Ship|GreatCabin") bool RestGreatCabinToDaypart(EDarkArisenDaypart TargetDaypart);
+    UFUNCTION(BlueprintPure,Category="Ship|GreatCabin") bool CanRestInGreatCabin() const;
 
 private:
     bool HasCompleteFourDeckStructure() const;
     bool SpawnPhysicalMap();
-
-    UPROPERTY(Transient)
-    TObjectPtr<APhysicalMapActor> PhysicalMap;
+    UPROPERTY(Transient) TObjectPtr<APhysicalMapActor> PhysicalMap;
 };
