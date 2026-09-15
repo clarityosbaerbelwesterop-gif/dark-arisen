@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "missionId": "Main.C07.02.EthansMarks",
+  "regionId": "OpenSea/ArmadaSupplyRoute",
+  "mapId": "L_EthansMarks",
+  "entryAnchor": "ConvoySightline",
+  "checkpointId": "Checkpoint.C07.EthansMarks.Sightline",
+  "spawnId": "Spawn.C07.EthansMarks.Sightline",
+  "navigationLaw": "The prisoner-transfer ledger is seized from a physical hostile supply route. The route supports infiltration or combat and never resolves through a menu.",
+  "anchors": {"ConvoySightline":[0,0,0],"SeaApproach":[5200,0,0],"SupplyDeck":[9100,400,120],"QuartermasterCabin":[12100,-700,180],"LedgerTable":[13600,-500,200],"EscapeRail":[15800,900,150]},
+  "physicalGeometry": [{"name":"SupplyRoute","anchor":"SeaApproach","size":[8000,4500,250]},{"name":"SupplyShipDeck","anchor":"SupplyDeck","size":[5200,1800,350]},{"name":"QuartermasterCabin","anchor":"QuartermasterCabin","size":[2200,1600,800]}],
+  "actors": [
+    {"type":"LocationTrigger","name":"C07_02_Entry","anchor":"ConvoySightline","action":"ActivateMission"},
+    {"type":"Contact","name":"C07_02_Quartermaster","anchor":"QuartermasterCabin","contactId":"armada.quartermaster.c07","dialogueId":"Story.C07.EthansMarks.Quartermaster","displayName":"Armada quartermaster","text":"The navigator is moved when Voss moves. You will not find his name on a public manifest."},
+    {"type":"Evidence","name":"C07_02_PrisonerLedger","anchor":"LedgerTable","title":"Prisoner-transfer ledger","body":"A coded transfer line identifies Ethan as the Armada navigator and ties his next movement to a prison-navigation vessel inside Draven's protected network.","completesMission":true,"checkpointId":"Checkpoint.C07.EthansMarks.Ledger","spawnId":"Spawn.C07.EthansMarks.Escape"}
+  ],
+  "encounterIds": ["Encounter.C07.ConvoyOuter","Encounter.C07.SupplyDeck","Encounter.C07.QuartermasterGuard"],
+  "completionFacts": ["Story.EthanUsedAsNavigator"],
+  "nextMission": "Main.C07.03.ThroughTheNet"
+}
