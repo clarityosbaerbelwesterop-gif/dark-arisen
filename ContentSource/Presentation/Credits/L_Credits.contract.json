@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "mapId": "L_Credits",
+  "triggerFact": "Story.MainCampaignComplete",
+  "input": {"allowSkipAfterSeconds":8,"allowPause":true},
+  "presentation": {"background":"quiet open sea after dawn","camera":"slow forward drift","musicCue":"Music.EndCredits","rollSource":"ContentSource/Story/Credits/CreditsAuthority.json"},
+  "returnTarget": "MainMenu",
+  "status": "SOURCE CREATED / native map and UI materialisation pending"
+}
