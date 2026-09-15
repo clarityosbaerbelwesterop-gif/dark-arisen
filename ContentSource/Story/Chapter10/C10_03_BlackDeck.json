@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "missionId": "Main.C10.03.BlackDeck",
+  "regionId": "Ship/DravenFlagship",
+  "mapId": "L_BlackDeck",
+  "entryAnchor": "BoardingRail",
+  "checkpointId": "Checkpoint.C10.BlackDeck.Boarding",
+  "spawnId": "Spawn.C10.BlackDeck.Boarding",
+  "navigationLaw": "The flagship is a traversable physical space. Jake fights from boarding rail through gun deck, officers' passage and command deck before reaching Draven.",
+  "anchors": {"BoardingRail":[0,0,0],"GunDeck":[3400,400,80],"OfficerPassage":[6500,-500,120],"CommandStairs":[9200,300,180],"BlackDeckGate":[11600,0,240],"DravenDoor":[13900,0,260]},
+  "physicalGeometry": [{"name":"FlagshipGunDeck","anchor":"GunDeck","size":[6200,2600,500]},{"name":"OfficerPassage","anchor":"OfficerPassage","size":[3600,1400,850]},{"name":"CommandStairs","anchor":"CommandStairs","size":[2600,1800,1000]},{"name":"BlackDeckGate","anchor":"BlackDeckGate","size":[3200,2200,800]}],
+  "actors": [
+    {"type":"LocationTrigger","name":"C10_03_Entry","anchor":"BoardingRail","action":"ActivateMission"},
+    {"type":"Evidence","name":"C10_03_CommandOrders","anchor":"OfficerPassage","title":"Draven's final orders","body":"The orders show Draven tightening the fleet around his flagship after Ethan's route sabotage. The final command deck is ahead; no further prisoner transfer is listed."},
+    {"type":"LocationTrigger","name":"C10_03_DravenDoor","anchor":"DravenDoor","action":"CompleteMission","checkpointId":"Checkpoint.C10.BlackDeck.DravenDoor","spawnId":"Spawn.C10.BlackDeck.DravenArena"}
+  ],
+  "encounterIds": ["Encounter.C10.FlagshipGunDeck","Encounter.C10.OfficerPassage","Encounter.C10.CommandStairs"],
+  "completionFacts": ["Story.BlackDeckReached"],
+  "nextMission": "Main.C10.04.DravenVoss"
+}
