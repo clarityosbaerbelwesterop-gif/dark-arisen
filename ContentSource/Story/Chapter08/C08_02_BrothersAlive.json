@@ -7,12 +7,31 @@
   "checkpointId": "Checkpoint.C08.BrothersAlive.Deck",
   "spawnId": "Spawn.C08.BrothersAlive.Deck",
   "navigationLaw": "Ethan is a living friendly captive, never a boss. Jake crosses the ship interior, opens the captive route, reaches Ethan physically and leaves with him. Combat can surround the rescue but cannot turn Ethan hostile.",
-  "anchors": {"PrisonDeckEntry":[0,0,0],"GuardDeck":[3300,400,100],"Companionway":[5700,-500,-250],"CaptiveHold":[8200,0,-420],"CaptiveRelease":[10100,-900,-420],"NavigatorCell":[12300,500,-380],"EthanPosition":[13600,500,-380],"EscapeStairs":[15900,0,-100],"EscapeDeck":[18100,0,120]},
-  "physicalGeometry": [{"name":"PrisonDeck","anchor":"GuardDeck","size":[7000,2400,350]},{"name":"Companionway","anchor":"Companionway","size":[2200,1300,1000]},{"name":"CaptiveHold","anchor":"CaptiveHold","size":[5200,2600,900]},{"name":"NavigatorCell","anchor":"NavigatorCell","size":[2400,1800,850]},{"name":"EscapeDeck","anchor":"EscapeDeck","size":[5000,2200,350]}],
+  "anchors": {
+    "PrisonDeckEntry":[0,0,0],"GuardDeck":[3300,400,100],"DeckGuardA":[2600,-600,100],"DeckGuardB":[3900,900,100],
+    "Companionway":[5700,-500,-250],"CaptiveHold":[8200,0,-420],"HoldGuardA":[7600,-750,-400],"HoldGuardB":[9000,650,-400],
+    "CaptiveRelease":[10100,-900,-420],"NavigatorCell":[12300,500,-380],"NavigatorGuard":[11800,-400,-380],
+    "EthanPosition":[13600,500,-380],"EscapeStairs":[15900,0,-100],"EscapeDeck":[18100,0,120],
+    "EscapeGuardA":[17400,-650,120],"EscapeGuardB":[18700,700,120]
+  },
+  "physicalGeometry": [
+    {"name":"PrisonDeck","anchor":"GuardDeck","size":[7000,2400,350]},
+    {"name":"Companionway","anchor":"Companionway","size":[2200,1300,1000]},
+    {"name":"CaptiveHold","anchor":"CaptiveHold","size":[5200,2600,900]},
+    {"name":"NavigatorCell","anchor":"NavigatorCell","size":[2400,1800,850]},
+    {"name":"EscapeDeck","anchor":"EscapeDeck","size":[5000,2200,350]}
+  ],
   "actors": [
     {"type":"LocationTrigger","name":"C08_02_Entry","anchor":"PrisonDeckEntry","action":"ActivateMission"},
+    {"type":"DuelingEnemy","name":"C08_02_DeckGuard_A","anchor":"DeckGuardA"},
+    {"type":"DuelingEnemy","name":"C08_02_DeckGuard_B","anchor":"DeckGuardB"},
+    {"type":"DuelingEnemy","name":"C08_02_HoldGuard_A","anchor":"HoldGuardA"},
+    {"type":"DuelingEnemy","name":"C08_02_HoldGuard_B","anchor":"HoldGuardB"},
     {"type":"Contact","name":"C08_02_Captive","anchor":"CaptiveRelease","contactId":"captive.armada.c08","dialogueId":"Story.C08.BrothersAlive.Captive","displayName":"Freed captive","text":"The navigator is aft. They kept him apart because he kept changing their courses when no officer was watching."},
+    {"type":"DuelingEnemy","name":"C08_02_NavigatorGuard","anchor":"NavigatorGuard"},
     {"type":"Contact","name":"C08_02_Ethan","anchor":"EthanPosition","contactId":"ethan.harlow.real","dialogueId":"Story.C08.BrothersAlive.Ethan","displayName":"Ethan Harlow","text":"Jake. I knew the errors would reach you. I could not stop Voss from sailing, so I made every route cost him time. Get the others out first. Then we leave together."},
+    {"type":"DuelingEnemy","name":"C08_02_EscapeGuard_A","anchor":"EscapeGuardA"},
+    {"type":"DuelingEnemy","name":"C08_02_EscapeGuard_B","anchor":"EscapeGuardB"},
     {"type":"LocationTrigger","name":"C08_02_EthanFreed","anchor":"EscapeStairs","action":"CompleteMission","checkpointId":"Checkpoint.C08.BrothersAlive.EthanFreed","spawnId":"Spawn.C08.BrothersAlive.EscapeDeck"}
   ],
   "encounterIds": ["Encounter.C08.PrisonDeck","Encounter.C08.CaptiveHold","Encounter.C08.EscapeDeck"],
