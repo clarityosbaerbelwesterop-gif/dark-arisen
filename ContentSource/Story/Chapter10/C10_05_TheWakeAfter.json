@@ -18,6 +18,6 @@
     {"type":"LocationTrigger","name":"C10_05_CreditsHandoff","anchor":"CreditsThreshold","action":"CompleteMission","checkpointId":"Checkpoint.C10.WakeAfter.Credits","spawnId":"Spawn.C10.WakeAfter.Credits"}
   ],
   "completionFacts": ["Chapter.10.Complete","Story.MainCampaignComplete"],
-  "creditsHandoff": {"required":true,"map":"L_Credits","factualCreditsOnly":true,"status":"native credits presentation still requires materialisation/runtime wiring"},
+  "creditsHandoff": {"required":true,"map":"L_Credits","factualCreditsOnly":true,"status":"IMPLEMENTED / canonical completion event travels to native L_Credits; runtime verification pending"},
   "nextMission": ""
 }
