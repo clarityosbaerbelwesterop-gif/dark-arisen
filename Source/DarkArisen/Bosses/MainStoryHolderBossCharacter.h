@@ -29,6 +29,10 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Holder")
     FName OutcomeValue = TEXT("Defeated");
 
+    /** Some missions require physical evidence after the boss falls; those actors set this false. */
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Holder")
+    bool bCompleteMissionOnDefeat = true;
+
 private:
     UFUNCTION()
     void HandleHolderDied(AActor* DamageCauser);
