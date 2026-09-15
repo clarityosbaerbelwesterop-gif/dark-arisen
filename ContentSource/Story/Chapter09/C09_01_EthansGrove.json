@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "missionId": "Main.C09.01.EthansGrove",
+  "regionId": "Moran/EthansGrove",
+  "mapId": "L_EthansGrove",
+  "entryAnchor": "GroveTrail",
+  "checkpointId": "Checkpoint.C09.EthansGrove.Trail",
+  "spawnId": "Spawn.C09.EthansGrove.Trail",
+  "navigationLaw": "Ethan's Grove is a real quiet place tied to the Harlow brothers. It is reached on foot and remains visually grounded before the dream grammar begins.",
+  "anchors": {"GroveTrail":[0,0,0],"OldTree":[4200,600,100],"ChildhoodMarker":[6500,-700,120],"FamilyStone":[8400,300,150],"RestPlace":[10600,0,140],"DreamThreshold":[12900,0,160]},
+  "physicalGeometry": [{"name":"GroveTrail","anchor":"GroveTrail","size":[10000,2200,220]},{"name":"OldTreeGround","anchor":"OldTree","size":[2800,2400,300]},{"name":"RestPlace","anchor":"RestPlace","size":[3200,2600,280]}],
+  "actors": [
+    {"type":"LocationTrigger","name":"C09_01_Entry","anchor":"GroveTrail","action":"ActivateMission"},
+    {"type":"Evidence","name":"C09_01_ChildhoodMarker","anchor":"ChildhoodMarker","title":"Harlow brothers' mark","body":"Two old cuts in the wood mark a childhood promise: whichever brother lost the trail had to wait here until the other came back."},
+    {"type":"Contact","name":"C09_01_RealEthan","anchor":"RestPlace","contactId":"ethan.harlow.real.grove","dialogueId":"Story.C09.EthansGrove.RealEthan","displayName":"Ethan Harlow","text":"You found me, Jake. You do not have to keep finding me every time you close your eyes."},
+    {"type":"LocationTrigger","name":"C09_01_Rest","anchor":"DreamThreshold","action":"CompleteMission","checkpointId":"Checkpoint.C09.EthansGrove.Rest","spawnId":"Spawn.C09.EthansGrove.DreamThreshold"}
+  ],
+  "completionFacts": ["Story.EthansGroveReached"],
+  "nextMission": "Main.C09.02.MemoryOfABrother"
+}
