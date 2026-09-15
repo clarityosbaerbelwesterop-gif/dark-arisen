@@ -6,13 +6,17 @@
   "entryAnchor": "LiberacionBattleEntry",
   "checkpointId": "Checkpoint.C10.Armada.Entry",
   "spawnId": "Spawn.C10.Armada.Entry",
-  "navigationLaw": "La Liberacion enters the final Armada screen under player control. Ethan's course creates an opening but does not skip naval play, hostile ships or the physical route to Draven's flagship.",
-  "anchors": {"LiberacionBattleEntry":[0,0,0],"OuterScreen":[6200,0,0],"GunLine":[10800,-1800,0],"FireGap":[14600,1400,0],"FlagshipSightline":[18800,0,80],"BreachLane":[22800,0,0]},
+  "navigationLaw": "La Liberacion enters under player control. Ethan creates the opening; the player must fight through the hostile screen.",
+  "anchors": {"LiberacionBattleEntry":[0,0,0],"OuterScreen":[6200,0,0],"GunLine":[10800,-1800,0],"FireGap":[14600,1400,0],"FlagshipSightline":[18800,0,80],"BreachLane":[22800,0,0],"ArmadaPort":[7200,-3300,0],"ArmadaStarboard":[9800,3500,0],"ArmadaGunship":[14300,-2200,0]},
   "physicalGeometry": [{"name":"OuterArmadaSea","anchor":"OuterScreen","size":[14000,11000,260]},{"name":"GunLineZone","anchor":"GunLine","size":[7600,4200,300]},{"name":"BreachLane","anchor":"BreachLane","size":[6200,3000,260]}],
   "actors": [
     {"type":"LocationTrigger","name":"C10_01_Entry","anchor":"LiberacionBattleEntry","action":"ActivateMission"},
     {"type":"Contact","name":"C10_01_EthanCourse","anchor":"LiberacionBattleEntry","contactId":"ethan.harlow.real.armada","dialogueId":"Story.C10.Armada.Ethan","displayName":"Ethan Harlow","text":"Hold this bearing until the gun line commits. Then cut across the wake I marked. Voss will think we are trapped until we are already inside."},
-    {"type":"LocationTrigger","name":"C10_01_Breach","anchor":"BreachLane","action":"CompleteMission","checkpointId":"Checkpoint.C10.Armada.Breach","spawnId":"Spawn.C10.Armada.Breach"}
+    {"type":"PlayerShip","name":"C10_01_LaLiberacion","anchor":"LiberacionBattleEntry"},
+    {"type":"HostileNavalShip","name":"C10_01_PortEscort","anchor":"ArmadaPort"},
+    {"type":"HostileNavalShip","name":"C10_01_StarboardEscort","anchor":"ArmadaStarboard"},
+    {"type":"HostileNavalShip","name":"C10_01_Gunship","anchor":"ArmadaGunship"},
+    {"type":"NavalMissionGate","name":"C10_01_Breach","anchor":"BreachLane","requiredSunkShips":3,"checkpointId":"Checkpoint.C10.Armada.Breach","spawnId":"Spawn.C10.Armada.Breach"}
   ],
   "encounterIds": ["Encounter.C10.ArmadaOuter","Encounter.C10.ArmadaGunLine","Encounter.C10.ArmadaBreach"],
   "completionFacts": ["Story.ArmadaBreachOpen"],
