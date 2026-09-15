@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "missionId": "Main.C04.01.SaltAndIron",
+  "regionId": "Rexa",
+  "mapId": "L_SaltAndIron_Blockade",
+  "entryAnchor": "SeaApproach",
+  "checkpointId": "Checkpoint.C04.SaltAndIron.SeaApproach",
+  "spawnId": "Spawn.C04.SaltAndIron.SeaApproach",
+  "navigationLaw": "The blockade is read through ships, smoke, batteries, shoreline and crew dialogue. No marker, compass, player dot or water fast travel.",
+  "geometry": [
+    {"name":"SaltAndIronBlockade","objectPath":"/Game/Alpha/World/War/Chapter04/SM_SaltAndIronBlockade_Alpha.SM_SaltAndIronBlockade_Alpha","anchor":"BlockadeCenter"}
+  ],
+  "anchors": {
+    "SeaApproach": [0,0,0],
+    "BlockadeCenter": [42000,2500,0],
+    "ImperialBattery": [71000,-14500,600],
+    "AlbionPicket": [76000,18000,150],
+    "LiberationSkiff": [91500,-6000,20],
+    "BlockadeBoom": [108000,2500,100],
+    "SmugglerChannel": [128000,-17000,0],
+    "ContestedShore": [164000,-8500,100],
+    "BrokenJetty": [171000,-6200,80],
+    "BrokenCompactExit": [184000,-3000,120]
+  },
+  "physicalGeometry": [
+    {"name":"BlockadeBoomPhysical","anchor":"BlockadeBoom","size":[4200,700,450]},
+    {"name":"ImperialBatteryWall","anchor":"ImperialBattery","size":[3400,1600,900]},
+    {"name":"ContestedShoreBarricade","anchor":"ContestedShore","size":[2800,900,650]},
+    {"name":"BrokenJettyPhysical","anchor":"BrokenJetty","size":[4200,650,300]}
+  ],
+  "actors": [
+    {"type":"LocationTrigger","name":"C04_01_Entry","anchor":"SeaApproach","action":"ActivateMission"},
+    {"type":"Contact","name":"C04_01_ImperialLookout","anchor":"ImperialBattery","contactId":"war.rexa.imperial.lookout","dialogueId":"Story.C04.SaltAndIron.Imperial","displayName":"Imperial lookout","text":"Nothing enters the harbor without inspection. Albion guns answer from the east; the shore road is under fire."},
+    {"type":"Contact","name":"C04_01_AlbionPicket","anchor":"AlbionPicket","contactId":"war.rexa.albion.picket","dialogueId":"Story.C04.SaltAndIron.Albion","displayName":"Albion picket","text":"The old channel is mined badly, not well. Follow the dark water behind the broken boom if you mean to reach shore."},
+    {"type":"Contact","name":"C04_01_LiberationSkiff","anchor":"LiberationSkiff","contactId":"war.rexa.liberation.skiff","dialogueId":"Story.C04.SaltAndIron.Liberation","displayName":"Liberation runner","text":"Both flags watch the harbor mouth. Neither watches the mangrove cut when the tide turns."},
+    {"type":"LocationTrigger","name":"C04_01_ContestedShoreReached","anchor":"ContestedShore","action":"CompleteMission","checkpointId":"Checkpoint.C04.SaltAndIron.ContestedShore","spawnId":"Spawn.C04.SaltAndIron.ContestedShore"}
+  ],
+  "completionFacts": ["War.VisibleToJake"],
+  "nextMission": "Main.C04.02.BrokenCompact"
+}

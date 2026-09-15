@@ -38,13 +38,13 @@ bool BuildEditorForMaterialisation(const FString& Root, const FString& Engine)
         TEXT("-WarningsAsErrors")});
 }
 
-bool RunAlphaMaterialiser(const FString& Root, const FString& Engine)
+bool RunMaterialiser(const FString& Root, const FString& Engine, const FString& Commandlet)
 {
     const FString Project = FPaths::Combine(Root, TEXT("DarkArisen.uproject"));
     const FString Editor = AlphaEditorCommand(Engine);
     return RunProcess(Editor, {
         Project,
-        TEXT("-run=DarkArisenMaterializeAlpha"),
+        FString::Printf(TEXT("-run=%s"), *Commandlet),
         TEXT("-Unattended"),
         TEXT("-NoPause"),
         TEXT("-NoSplash"),
@@ -58,6 +58,12 @@ bool RequiredAlphaContentExists(const FString& Root)
         TEXT("Content/Alpha/Maps/L_AlphaStartup.umap"),
         TEXT("Content/Alpha/Maps/L_HarlowOpening.umap"),
         TEXT("Content/Alpha/Maps/L_DriftwoodBeach.umap"),
+        TEXT("Content/Alpha/Maps/L_RexaHarbor.umap"),
+        TEXT("Content/Alpha/Maps/L_RexaSafeRoutes.umap"),
+        TEXT("Content/Alpha/Maps/L_CrownCitadelApproach.umap"),
+        TEXT("Content/Alpha/Maps/L_SaltAndIron_Blockade.umap"),
+        TEXT("Content/Alpha/Maps/L_BrokenCompact.umap"),
+        TEXT("Content/Alpha/Maps/L_HerrerasFall.umap"),
         TEXT("Content/Alpha/Characters/Jake/SK_Jake_Alpha.uasset"),
         TEXT("Content/Alpha/Characters/Jake/SK_Jake_Alpha_Skeleton.uasset"),
         TEXT("Content/Alpha/Characters/Boarders/SK_Boarder_Alpha.uasset"),
@@ -90,9 +96,11 @@ int32 AlphaBuildCommand(const FParsedArgs& Args)
         UE_LOG(LogTemp, Error, TEXT("Editor compile failed before Alpha materialisation."));
         return 1;
     }
-    if (!RunAlphaMaterialiser(Root, Engine) || !RequiredAlphaContentExists(Root))
+    if (!RunMaterialiser(Root, Engine, TEXT("DarkArisenMaterializeAlpha"))
+        || !RunMaterialiser(Root, Engine, TEXT("DarkArisenMaterializeStory"))
+        || !RequiredAlphaContentExists(Root))
     {
-        UE_LOG(LogTemp, Error, TEXT("Alpha materialisation failed closed; game builds will not proceed."));
+        UE_LOG(LogTemp, Error, TEXT("Alpha physical materialisation failed closed; game builds will not proceed."));
         return 1;
     }
     const int32 BuildResult = BuildCommand(Args);
@@ -113,7 +121,7 @@ int32 AlphaPackageCommand(const FParsedArgs& Args)
     const FString Root = RepoRoot(Args);
     if (!RequiredAlphaContentExists(Root))
     {
-        UE_LOG(LogTemp, Error, TEXT("Refusing Cook/Package without materialised Alpha startup/opening/player content."));
+        UE_LOG(LogTemp, Error, TEXT("Refusing Cook/Package without materialised Alpha opening and physical story content."));
         return 1;
     }
     return PackageAlphaCommand(Args);
