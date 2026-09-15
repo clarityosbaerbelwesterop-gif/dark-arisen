@@ -1,63 +1,61 @@
 #include "DarkArisenOps.h"
+#include "OpsCommon.h"
 
-#include "HAL/FileManager.h"
+#include "HAL/PlatformProcess.h"
 #include "Misc/Paths.h"
 
-namespace DarkArisenOps
-{
 namespace
 {
-FString AlphaBuildScript(const FString& Engine)
+int32 RunUbtTarget(const FString& Root, const FString& EngineRoot, const FString& Target, const FString& Platform, const FString& Configuration)
 {
-#if PLATFORM_WINDOWS
-    return FPaths::Combine(Engine, TEXT("Engine/Build/BatchFiles/Build.bat"));
-#else
-    return FPaths::Combine(Engine, TEXT("Engine/Build/BatchFiles/Linux/Build.sh"));
-#endif
-}
-
-FString AlphaEditorCommand(const FString& Engine)
-{
-#if PLATFORM_WINDOWS
-    return FPaths::Combine(Engine, TEXT("Engine/Binaries/Win64/UnrealEditor-Cmd.exe"));
-#else
-    return FPaths::Combine(Engine, TEXT("Engine/Binaries/Linux/UnrealEditor-Cmd"));
-#endif
-}
-
-bool BuildEditorForMaterialisation(const FString& Root, const FString& Engine)
-{
+    const FString Ubt = FPaths::Combine(EngineRoot, TEXT("Engine/Binaries/DotNET/UnrealBuildTool/UnrealBuildTool"));
     const FString Project = FPaths::Combine(Root, TEXT("DarkArisen.uproject"));
-    return RunProcess(AlphaBuildScript(Engine), {
-        TEXT("DarkArisenEditor"),
-        PlatformName(),
-        TEXT("Development"),
-        FString::Printf(TEXT("-Project=%s"), *Project),
-        TEXT("-WaitMutex"),
-        TEXT("-NoHotReloadFromIDE"),
-        TEXT("-WarningsAsErrors")});
+    FString StdOut;
+    FString StdErr;
+    const int32 Exit = DarkArisenOpsCommon::RunProcess(Ubt, FString::Printf(TEXT("%s %s %s -Project=\"%s\" -WaitMutex"), *Target, *Platform, *Configuration, *Project), Root, StdOut, StdErr);
+    UE_LOG(LogTemp, Display, TEXT("%s"), *StdOut);
+    if (Exit != 0)
+    {
+        UE_LOG(LogTemp, Error, TEXT("%s"), *StdErr);
+    }
+    return Exit;
 }
 
-bool RunMaterialiser(const FString& Root, const FString& Engine, const FString& Commandlet)
+int32 RunMaterialiser(const FString& Root, const FString& EngineRoot, const FString& Commandlet)
 {
+    const FString EditorCmd = FPaths::Combine(EngineRoot, TEXT("Engine/Binaries/Win64/UnrealEditor-Cmd.exe"));
     const FString Project = FPaths::Combine(Root, TEXT("DarkArisen.uproject"));
-    const FString Editor = AlphaEditorCommand(Engine);
-    return RunProcess(Editor, {
-        Project,
-        FString::Printf(TEXT("-run=%s"), *Commandlet),
-        TEXT("-Unattended"),
-        TEXT("-NoPause"),
-        TEXT("-NoSplash"),
-        TEXT("-NoP4"),
-        TEXT("-NullRHI")}, nullptr, nullptr, Root);
+    if (!FPaths::FileExists(EditorCmd))
+    {
+        UE_LOG(LogTemp, Error, TEXT("Alpha materialisation requires UnrealEditor-Cmd.exe at %s"), *EditorCmd);
+        return 1;
+    }
+
+    FString StdOut;
+    FString StdErr;
+    const int32 Exit = DarkArisenOpsCommon::RunProcess(EditorCmd, FString::Printf(TEXT("\"%s\" -run=%s -unattended -nop4 -nosplash -NullRHI"), *Project, *Commandlet), Root, StdOut, StdErr);
+    UE_LOG(LogTemp, Display, TEXT("%s"), *StdOut);
+    if (Exit != 0)
+    {
+        UE_LOG(LogTemp, Error, TEXT("%s"), *StdErr);
+    }
+    return Exit;
 }
 
-bool RequiredAlphaContentExists(const FString& Root)
+bool HasRequiredMaterializedAlphaContent(const FString& Root)
 {
-    const TArray<FString> Required = {
+    const TArray<FString> RequiredFiles = {
+        TEXT("Content/Alpha/Characters/Jake/SK_Jake_Alpha.uasset"),
+        TEXT("Content/Alpha/Characters/Boarders/SK_Boarder_Alpha.uasset"),
         TEXT("Content/Alpha/Maps/L_AlphaStartup.umap"),
         TEXT("Content/Alpha/Maps/L_HarlowOpening.umap"),
         TEXT("Content/Alpha/Maps/L_DriftwoodBeach.umap"),
+        TEXT("Content/Alpha/Maps/L_DriftwoodCamp.umap"),
+        TEXT("Content/Alpha/Maps/L_MirasCove.umap"),
+        TEXT("Content/Alpha/Maps/L_MangroveShallows.umap"),
+        TEXT("Content/Alpha/Maps/L_KoaTradingPost.umap"),
+        TEXT("Content/Alpha/Maps/L_GalleonCove.umap"),
+        TEXT("Content/Alpha/Maps/L_OpenSea_FirstWake.umap"),
         TEXT("Content/Alpha/Maps/L_RexaHarbor.umap"),
         TEXT("Content/Alpha/Maps/L_RexaSafeRoutes.umap"),
         TEXT("Content/Alpha/Maps/L_CrownCitadelApproach.umap"),
@@ -67,66 +65,84 @@ bool RequiredAlphaContentExists(const FString& Root)
         TEXT("Content/Alpha/Maps/L_WarCurrent.umap"),
         TEXT("Content/Alpha/Maps/L_HoldersWake.umap"),
         TEXT("Content/Alpha/Maps/L_NoSafeHarbor.umap"),
-        TEXT("Content/Alpha/Characters/Jake/SK_Jake_Alpha.uasset"),
-        TEXT("Content/Alpha/Characters/Jake/SK_Jake_Alpha_Skeleton.uasset"),
-        TEXT("Content/Alpha/Characters/Boarders/SK_Boarder_Alpha.uasset"),
-        TEXT("Content/Alpha/Ships/Harlow/SM_HarlowMerchantShip_Alpha.uasset"),
-        TEXT("Content/Alpha/Ships/LaLiberacion/SM_LaLiberacion_Alpha.uasset")};
-    bool bOk = true;
-    for (const FString& Relative : Required)
+        TEXT("Content/Alpha/Maps/L_HighmooreRoad.umap"),
+        TEXT("Content/Alpha/Maps/L_CrystalPassage.umap"),
+        TEXT("Content/Alpha/Maps/L_TheNorthernOath.umap"),
+        TEXT("Content/Alpha/Maps/L_FalseBearings.umap"),
+        TEXT("Content/Alpha/Maps/L_EthansMarks.umap"),
+        TEXT("Content/Alpha/Maps/L_ThroughTheNet.umap"),
+        TEXT("Content/Alpha/Maps/L_ThePrisonCourse.umap"),
+        TEXT("Content/Alpha/Maps/L_BrothersAlive.umap"),
+        TEXT("Content/Alpha/Maps/L_HomewardBearing.umap")
+    };
+
+    for (const FString& Relative : RequiredFiles)
     {
-        const FString Path = FPaths::Combine(Root, Relative);
-        if (!IFileManager::Get().FileExists(*Path))
+        if (!FPaths::FileExists(FPaths::Combine(Root, Relative)))
         {
-            UE_LOG(LogTemp, Error, TEXT("Required materialised Alpha content is missing: %s"), *Path);
-            bOk = false;
+            UE_LOG(LogTemp, Error, TEXT("Required materialized Alpha content is missing: %s"), *Relative);
+            return false;
         }
     }
-    return bOk;
+    return true;
 }
 }
 
-int32 AlphaBuildCommand(const FParsedArgs& Args)
+int32 FDarkArisenOps::RunBuild(const TArray<FString>& Args)
 {
-    const FString Root = RepoRoot(Args);
-    const FString Engine = EngineRoot(Args);
-    if (RunnerCheckCommand(Args) != 0)
+    const FString Root = DarkArisenOpsCommon::ResolveRepoRoot(Args);
+    FString EngineRoot;
+    FString Error;
+    if (!DarkArisenOpsCommon::ResolveEngineRoot(Args, EngineRoot, Error))
     {
+        UE_LOG(LogTemp, Error, TEXT("%s"), *Error);
         return 1;
     }
-    if (!BuildEditorForMaterialisation(Root, Engine))
-    {
-        UE_LOG(LogTemp, Error, TEXT("Editor compile failed before Alpha materialisation."));
-        return 1;
-    }
-    if (!RunMaterialiser(Root, Engine, TEXT("DarkArisenMaterializeAlpha"))
-        || !RunMaterialiser(Root, Engine, TEXT("DarkArisenMaterializeStory"))
-        || !RequiredAlphaContentExists(Root))
-    {
-        UE_LOG(LogTemp, Error, TEXT("Alpha physical materialisation failed closed; game builds will not proceed."));
-        return 1;
-    }
-    const int32 BuildResult = BuildCommand(Args);
-    if (BuildResult != 0)
-    {
-        return BuildResult;
-    }
-    if (!RequiredAlphaContentExists(Root))
-    {
-        UE_LOG(LogTemp, Error, TEXT("Materialised Alpha content disappeared during build."));
-        return 1;
-    }
-    return 0;
+
+    FString Platform = DarkArisenOpsCommon::GetArgValue(Args, TEXT("--platform"));
+    if (Platform.IsEmpty()) Platform = TEXT("Win64");
+    FString Configuration = DarkArisenOpsCommon::GetArgValue(Args, TEXT("--configuration"));
+    if (Configuration.IsEmpty()) Configuration = TEXT("Development");
+
+    const int32 EditorExit = RunUbtTarget(Root, EngineRoot, TEXT("DarkArisenEditor"), Platform, TEXT("Development"));
+    if (EditorExit != 0) return EditorExit;
+
+    const int32 MaterialiseExit = RunMaterialiser(Root, EngineRoot, TEXT("DarkArisenMaterializeAlpha"));
+    if (MaterialiseExit != 0) return MaterialiseExit;
+    const int32 StoryMaterialiseExit = RunMaterialiser(Root, EngineRoot, TEXT("DarkArisenMaterializeStory"));
+    if (StoryMaterialiseExit != 0) return StoryMaterialiseExit;
+    if (!HasRequiredMaterializedAlphaContent(Root)) return 1;
+
+    return RunUbtTarget(Root, EngineRoot, TEXT("DarkArisen"), Platform, Configuration);
 }
 
-int32 AlphaPackageCommand(const FParsedArgs& Args)
+int32 FDarkArisenOps::RunPackage(const TArray<FString>& Args)
 {
-    const FString Root = RepoRoot(Args);
-    if (!RequiredAlphaContentExists(Root))
+    const FString Root = DarkArisenOpsCommon::ResolveRepoRoot(Args);
+    FString EngineRoot;
+    FString Error;
+    if (!DarkArisenOpsCommon::ResolveEngineRoot(Args, EngineRoot, Error))
     {
-        UE_LOG(LogTemp, Error, TEXT("Refusing Cook/Package without materialised Alpha opening and physical story content."));
+        UE_LOG(LogTemp, Error, TEXT("%s"), *Error);
         return 1;
     }
-    return PackageAlphaCommand(Args);
-}
+    if (!HasRequiredMaterializedAlphaContent(Root))
+    {
+        UE_LOG(LogTemp, Error, TEXT("Package refused: run DarkArisenOps build so authored Alpha source is materialized before cook."));
+        return 1;
+    }
+
+    FString Platform = DarkArisenOpsCommon::GetArgValue(Args, TEXT("--platform"));
+    if (Platform.IsEmpty()) Platform = TEXT("Win64");
+    const FString RunUAT = FPaths::Combine(EngineRoot, TEXT("Engine/Build/BatchFiles/RunUAT.bat"));
+    const FString Project = FPaths::Combine(Root, TEXT("DarkArisen.uproject"));
+    const FString Archive = FPaths::Combine(Root, TEXT("Artifacts"), Platform);
+    const FString UatPlatform = Platform.Equals(TEXT("Linux"), ESearchCase::IgnoreCase) ? TEXT("Linux") : TEXT("Win64");
+    const FString Params = FString::Printf(TEXT("BuildCookRun -project=\"%s\" -noP4 -platform=%s -clientconfig=Shipping -build -cook -stage -pak -archive -archivedirectory=\"%s\""), *Project, *UatPlatform, *Archive);
+    FString StdOut;
+    FString StdErr;
+    const int32 Exit = DarkArisenOpsCommon::RunProcess(RunUAT, Params, Root, StdOut, StdErr);
+    UE_LOG(LogTemp, Display, TEXT("%s"), *StdOut);
+    if (Exit != 0) UE_LOG(LogTemp, Error, TEXT("%s"), *StdErr);
+    return Exit;
 }
