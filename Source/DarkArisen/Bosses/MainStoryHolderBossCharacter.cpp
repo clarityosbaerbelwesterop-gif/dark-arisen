@@ -24,5 +24,5 @@ void AMainStoryHolderBossCharacter::HandleHolderDied(AActor* /*DamageCauser*/)
     if (!Story || Story->GetMissionState(MissionId) != EMainMissionState::Active) return;
     if (!Story->MarkBossDefeated(BossId)) return;
     if (!OutcomeKey.IsNone() && !OutcomeValue.IsNone() && !Story->SetQuestOutcome(OutcomeKey, OutcomeValue)) return;
-    Story->CompleteAuthoredMission(MissionId);
+    if (bCompleteMissionOnDefeat) Story->CompleteAuthoredMission(MissionId);
 }
