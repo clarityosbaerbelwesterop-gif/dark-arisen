@@ -1,5 +1,6 @@
 #include "Story/MainStoryLocationTriggerActor.h"
 #include "Components/BoxComponent.h"
+#include "Components/HealthComponent.h"
 #include "DuelingEnemyCharacter.h"
 #include "EngineUtils.h"
 #include "GameFramework/Pawn.h"
@@ -24,8 +25,8 @@ void AMainStoryLocationTriggerActor::HandleOverlap(UPrimitiveComponent*,AActor* 
     UMainStorySubsystem* Story=GetGameInstance()->GetSubsystem<UMainStorySubsystem>(); if(!Story)return;
 
     // Authored combat spaces must not be bypassable by sprinting through the completion volume.
-    // Only living DuelingEnemyCharacter instances belonging to the current mission map gate completion;
-    // bosses retain their own defeat-driven mission authority.
+    // Living dueling enemies in the current physical mission map gate completion; bosses keep
+    // their own defeat-driven story authority through AMainStoryHolderBossCharacter.
     if(Action==EMainStoryLocationAction::CompleteMission)
     {
         if(UWorld* World=GetWorld())
@@ -33,7 +34,7 @@ void AMainStoryLocationTriggerActor::HandleOverlap(UPrimitiveComponent*,AActor* 
             for(TActorIterator<ADuelingEnemyCharacter> It(World);It;++It)
             {
                 const ADuelingEnemyCharacter* Enemy=*It;
-                if(IsValid(Enemy)&&Enemy->HealthComponent&&Enemy->HealthComponent->CurrentHealth>0.f)
+                if(IsValid(Enemy)&&IsValid(Enemy->HealthComponent)&&!Enemy->HealthComponent->IsDead())
                     return;
             }
         }
