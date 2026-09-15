@@ -33,6 +33,7 @@ public:
     UFUNCTION(BlueprintPure) bool IsCrewRecruited(FName CharacterId) const;
     UFUNCTION(BlueprintPure) bool AreOpeningCrewRecruited() const;
     UFUNCTION(BlueprintCallable) bool MarkBossDefeated(FName BossId);
+    UFUNCTION(BlueprintPure) bool HasBossDefeated(FName BossId) const;
     UFUNCTION(BlueprintCallable) bool SetCheckpoint(FName CheckpointId,FName SpawnId);
     bool SetOpeningProgress(const FOpeningProgressState& Progress);
     UFUNCTION(BlueprintPure) bool HasStoryFact(FName Fact) const;
