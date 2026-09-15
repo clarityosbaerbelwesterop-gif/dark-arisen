@@ -8,6 +8,11 @@ bool UMainStorySubsystem::SetQuestOutcome(const FName OutcomeKey,const FName Out
     return true;
 }
 
+bool UMainStorySubsystem::HasBossDefeated(const FName BossId) const
+{
+    return State && !BossId.IsNone() && State->DefeatedBosses.Contains(BossId);
+}
+
 bool UMainStorySubsystem::CompleteAuthoredMission(const FName Id)
 {
     if(!State||GetMissionState(Id)!=EMainMissionState::Active)return false;
