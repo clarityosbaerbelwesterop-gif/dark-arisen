@@ -16,7 +16,7 @@ bool HasRequiredMaterializedAlphaContent(const FString& Root)
         TEXT("Content/Alpha/Maps/L_SaltAndIron_Blockade.umap"),TEXT("Content/Alpha/Maps/L_BrokenCompact.umap"),TEXT("Content/Alpha/Maps/L_HerrerasFall.umap"),TEXT("Content/Alpha/Maps/L_WarCurrent.umap"),TEXT("Content/Alpha/Maps/L_HoldersWake.umap"),TEXT("Content/Alpha/Maps/L_NoSafeHarbor.umap"),TEXT("Content/Alpha/Maps/L_HighmooreRoad.umap"),TEXT("Content/Alpha/Maps/L_CrystalPassage.umap"),TEXT("Content/Alpha/Maps/L_TheNorthernOath.umap"),TEXT("Content/Alpha/Maps/L_FalseBearings.umap"),TEXT("Content/Alpha/Maps/L_EthansMarks.umap"),TEXT("Content/Alpha/Maps/L_ThroughTheNet.umap"),
         TEXT("Content/Alpha/Maps/L_ThePrisonCourse.umap"),TEXT("Content/Alpha/Maps/L_BrothersAlive.umap"),TEXT("Content/Alpha/Maps/L_HomewardBearing.umap"),
         TEXT("Content/Alpha/Maps/L_EthansGrove.umap"),TEXT("Content/Alpha/Maps/L_MemoryOfABrother.umap"),TEXT("Content/Alpha/Maps/L_DreamFight.umap"),TEXT("Content/Alpha/Maps/L_WakingCourse.umap"),
-        TEXT("Content/Alpha/Maps/L_Armada.umap"),TEXT("Content/Alpha/Maps/L_BreakTheChain.umap"),TEXT("Content/Alpha/Maps/L_BlackDeck.umap"),TEXT("Content/Alpha/Maps/L_DravenVoss.umap"),TEXT("Content/Alpha/Maps/L_TheWakeAfter.umap")
+        TEXT("Content/Alpha/Maps/L_Armada.umap"),TEXT("Content/Alpha/Maps/L_BreakTheChain.umap"),TEXT("Content/Alpha/Maps/L_BlackDeck.umap"),TEXT("Content/Alpha/Maps/L_DravenVoss.umap"),TEXT("Content/Alpha/Maps/L_TheWakeAfter.umap"),TEXT("Content/Alpha/Maps/L_Credits.umap")
     };
     for(const FString& Relative:RequiredFiles){if(!FPaths::FileExists(FPaths::Combine(Root,Relative))){UE_LOG(LogTemp,Error,TEXT("Required materialized Alpha content is missing: %s"),*Relative);return false;}}
     return true;
