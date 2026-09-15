@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "missionId": "Main.C06.03.TheNorthernOath",
+  "regionId": "Archipelago/ContestedHolding",
+  "mapId": "L_TheNorthernOath",
+  "entryAnchor": "IntelligenceRoom",
+  "checkpointId": "Checkpoint.C06.NorthernOath.IntelligenceRoom",
+  "spawnId": "Spawn.C06.NorthernOath.IntelligenceRoom",
+  "navigationLaw": "Jake proves Ethan is deliberately corrupting routes by comparing a copied route against family chart habits. No supernatural inference and no mandatory optional Highmoore line.",
+  "anchors": {
+    "IntelligenceRoom": [0,0,0],
+    "FamilyChart": [1800,-450,120],
+    "EthanCopy": [1800,450,120],
+    "ComparisonTable": [3600,0,130],
+    "ErrorSequence": [5600,0,150],
+    "CrewWitness": [7100,-900,100],
+    "RetaliationExit": [9200,0,100]
+  },
+  "physicalGeometry": [
+    {"name":"IntelligenceRoom","anchor":"IntelligenceRoom","size":[3600,2800,850]},
+    {"name":"ComparisonTable","anchor":"ComparisonTable","size":[1700,1000,180]}
+  ],
+  "actors": [
+    {"type":"LocationTrigger","name":"C06_03_Entry","anchor":"IntelligenceRoom","action":"ActivateMission"},
+    {"type":"Evidence","name":"C06_03_FamilyChart","anchor":"FamilyChart","title":"Harlow family chart habits","body":"Marc's annotations favor consistent safety margins and repeatable tidal corrections. Jake knows the pattern well enough to recognize deliberate deviations."},
+    {"type":"Evidence","name":"C06_03_EthanCopy","anchor":"EthanCopy","title":"Ethan's copied route","body":"Tiny bearing errors recur where only another Harlow would know they are wrong. Each error bends a pursuer away from danger while remaining plausible to Draven."},
+    {"type":"Contact","name":"C06_03_CrewWitness","anchor":"CrewWitness","contactId":"crew.core.northern.oath","dialogueId":"Story.C06.NorthernOath.Crew","displayName":"Core crew","text":"He is not guiding Draven cleanly. He is surviving long enough to leave you a road back to him."},
+    {"type":"Evidence","name":"C06_03_Proof","anchor":"ErrorSequence","title":"Deliberate false bearings","body":"The errors form a consistent protective pattern. Ethan is resisting from inside the Armada's navigation chain.","completesMission":true,"checkpointId":"Checkpoint.C06.NorthernOath.Proved","spawnId":"Spawn.C06.NorthernOath.Exit"}
+  ],
+  "completionFacts": ["Story.EthanResisting","Chapter.06.Complete"],
+  "nextMission": "Main.C07.01.FalseBearings"
+}
