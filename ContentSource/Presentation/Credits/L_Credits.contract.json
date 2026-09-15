@@ -4,6 +4,6 @@
   "triggerFact": "Story.MainCampaignComplete",
   "input": {"allowSkipAfterSeconds":8,"allowPause":true},
   "presentation": {"background":"quiet open sea after dawn","camera":"slow forward drift","musicCue":"Music.EndCredits","rollSource":"ContentSource/Story/Credits/CreditsAuthority.json"},
-  "returnTarget": "MainMenu",
-  "status": "SOURCE CREATED / native map and UI materialisation pending"
+  "returnTarget": "L_AlphaStartup",
+  "status": "IMPLEMENTED / native map, factual roll and return flow; UE5.8 runtime verification pending"
 }
