@@ -18,6 +18,10 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadOnly) FText DisplayName;
     UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(MultiLine="true")) FText DialogueText;
     UPROPERTY(EditAnywhere, BlueprintReadOnly) bool bActivateMissionOnInteraction=false;
+    /** Physical reunion/decision contacts may finish their authored mission without creating a parallel story authority. */
+    UPROPERTY(EditAnywhere, BlueprintReadOnly) bool bCompleteMissionOnInteraction=false;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly) FName CheckpointId;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly) FName SpawnId;
     virtual bool CanInteract_Implementation(AActor* Interactor) const override;
     virtual EInteractionClass GetInteractionClass_Implementation() const override;
     virtual FText GetInteractionLabel_Implementation() const override;
