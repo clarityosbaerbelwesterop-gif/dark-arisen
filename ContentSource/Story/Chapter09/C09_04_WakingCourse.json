@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "missionId": "Main.C09.04.WakingCourse",
+  "regionId": "Moran/EthansGrove",
+  "mapId": "L_WakingCourse",
+  "entryAnchor": "WakeAtGrove",
+  "checkpointId": "Checkpoint.C09.WakingCourse.Wake",
+  "spawnId": "Spawn.C09.WakingCourse.Wake",
+  "navigationLaw": "Jake wakes beside the real rescued Ethan. The scene explicitly preserves the distinction between memory-image and living brother before the final Armada course is set.",
+  "anchors": {"WakeAtGrove":[0,0,0],"RealEthan":[1800,700,80],"JakeRest":[1500,-500,80],"FinalChart":[4200,0,100],"GroveExit":[6800,0,100]},
+  "physicalGeometry": [{"name":"WakeGrove","anchor":"WakeAtGrove","size":[6000,4200,260]},{"name":"FinalChartTable","anchor":"FinalChart","size":[1600,1000,180]}],
+  "actors": [
+    {"type":"LocationTrigger","name":"C09_04_Entry","anchor":"WakeAtGrove","action":"ActivateMission"},
+    {"type":"Contact","name":"C09_04_RealEthan","anchor":"RealEthan","contactId":"ethan.harlow.real.waking","dialogueId":"Story.C09.WakingCourse.RealEthan","displayName":"Ethan Harlow","text":"You were gone for a while. I am still here. And I know the last course Voss will trust."},
+    {"type":"Evidence","name":"C09_04_FinalCourse","anchor":"FinalChart","title":"Course into the Armada","body":"Ethan combines the route he was forced to maintain with the false bearings he planted. The result is a physical approach into Draven's final screen.","completesMission":true,"checkpointId":"Checkpoint.C09.WakingCourse.FinalCourse","spawnId":"Spawn.C09.WakingCourse.Exit"}
+  ],
+  "completionFacts": ["Chapter.09.Complete"],
+  "nextMission": "Main.C10.01.Armada"
+}
