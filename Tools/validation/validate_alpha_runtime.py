@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Fail-closed source validation usable when licensed UE 5.8 is unavailable."""
 from pathlib import Path
-import re, sys
+import json, re, sys
+
 root=Path(__file__).resolve().parents[2]
 source=root/'Source'/'DarkArisen'
 errors=[]
@@ -11,6 +12,7 @@ if len(missions)!=34: errors.append(f'catalog has {len(missions)} missions, expe
 counts=[sum(int(ch)==c for _,ch in missions) for c in range(1,11)]
 if counts!=[4,3,3,3,3,3,3,3,4,5]: errors.append(f'chapter distribution is {counts}')
 if missions and (missions[0][0]!='Main.C01.01.HomeWater' or missions[-1][0]!='Main.C10.05.TheWakeAfter'): errors.append('catalog endpoints changed')
+
 authority_text=(root/'Docs/MAIN_STORY_AUTHORITY_2026_09.md').read_text(encoding='utf-8')
 authority_ids=[]
 for mission_id in re.findall(r'`(Main\.C\d\d\.\d\d\.[A-Za-z0-9_]+)`',authority_text):
@@ -19,12 +21,59 @@ if [m for m,_ in missions] != authority_ids: errors.append('September story auth
 for mission,_ in missions:
     folded=mission.casefold()
     if any(token in folded for token in ('ethanboss','ethan.boss','ethanbetrayal')): errors.append(f'legacy mission path: {mission}')
-required_files=['Story/MainStorySubsystem.cpp','Persistence/DarkArisenSaveGame.h','Opening/OpeningRuntimeComponent.cpp','Opening/StoryTriggerComponent.cpp','Opening/OpeningEventTriggerComponent.cpp','Story/DarkArisenWorldDirector.cpp','Combat/DamagePipeline.cpp','AI/BoardingEnemyComponent.cpp','Ship/ShipVoyageComponent.cpp','Tests/MainStoryRuntimeSpec.cpp']
+
+required_files=[
+    'Story/MainStorySubsystem.cpp','Persistence/DarkArisenSaveGame.h','Opening/OpeningRuntimeComponent.cpp',
+    'Opening/StoryTriggerComponent.cpp','Opening/OpeningEventTriggerComponent.cpp','Story/DarkArisenWorldDirector.cpp',
+    'Story/MainStoryMapTransitionActor.cpp','Story/CreditsPresentationActor.cpp','Combat/DamagePipeline.cpp',
+    'AI/BoardingEnemyComponent.cpp','Ship/ShipVoyageComponent.cpp','Tests/MainStoryRuntimeSpec.cpp'
+]
 for relative in required_files:
     if not (source/relative).is_file(): errors.append(f'missing native runtime file: {relative}')
+
 all_runtime='\n'.join(p.read_text(encoding='utf-8',errors='ignore') for p in source.rglob('*') if p.suffix in {'.h','.cpp'} and 'Tests' not in p.parts)
 for fact in ('Story.MarcDead','Story.DeniseDead','Story.EthanAbducted','Story.EthanRecovered','World.DriftwoodBeachReached','World.MoranOpeningRouteKnown','Ship.LaLiberacionOwned','World.RexaEntered','Story.EthanAliveConfirmed','Story.EthanRouteMarksFound','Story.FirstHolderCrossed','Story.MainComplete'):
     if fact not in all_runtime: errors.append(f'missing runtime fact: {fact}')
+
+# Chapters 3-10 must have one physical source contract per canonical mission and a contiguous map graph.
+physical_missions=[m for m,ch in missions if int(ch)>=3]
+contracts={}
+map_ids=set()
+for path in sorted((root/'ContentSource'/'Story').glob('Chapter*/C*.json')):
+    try: data=json.loads(path.read_text(encoding='utf-8'))
+    except Exception as exc:
+        errors.append(f'invalid story JSON {path.relative_to(root)}: {exc}'); continue
+    mission=data.get('missionId')
+    map_id=data.get('mapId')
+    if not mission or not map_id: continue
+    if mission in contracts: errors.append(f'duplicate physical contract for {mission}')
+    contracts[mission]=(path,data)
+    if map_id in map_ids: errors.append(f'duplicate physical story mapId {map_id}')
+    map_ids.add(map_id)
+    if not data.get('entryAnchor'): errors.append(f'{mission} has no entryAnchor')
+    if not data.get('actors'): errors.append(f'{mission} has no physical actors')
+
+for index,mission in enumerate(physical_missions):
+    if mission not in contracts:
+        errors.append(f'missing physical story contract: {mission}'); continue
+    data=contracts[mission][1]
+    expected=physical_missions[index+1] if index+1<len(physical_missions) else ''
+    actual=data.get('nextMission','')
+    if actual!=expected: errors.append(f'{mission} nextMission={actual!r}, expected {expected!r}')
+
+extra=set(contracts)-set(physical_missions)
+for mission in sorted(extra): errors.append(f'non-canonical physical mission contract: {mission}')
+
+materializer=(root/'Source/DarkArisenEditor/Private/DarkArisenMaterializeStoryCommandlet.cpp').read_text(encoding='utf-8')
+for token in ('MainStoryMapTransitionActor','DuelingEnemy','MaterializeCredits','L_Credits'):
+    if token not in materializer: errors.append(f'story materializer missing {token}')
+credits_contract=root/'ContentSource/Presentation/Credits/L_Credits.contract.json'
+credits_authority=root/'ContentSource/Story/Credits/CreditsAuthority.json'
+if not credits_contract.is_file(): errors.append('missing L_Credits presentation contract')
+if not credits_authority.is_file(): errors.append('missing factual credits authority')
+packaging=(root/'Config/DefaultGame.ini').read_text(encoding='utf-8')
+if '/Game/Alpha/Maps/L_Credits' not in packaging: errors.append('L_Credits is not cook-listed')
+
 opening=(source/'Opening/OpeningRuntimeComponent.cpp').read_text(encoding='utf-8')
 for required in ('BeginBoardingEncounter','SignalDravenBoarded','SignalTakingStarted','SignalCrewRecruitmentAvailable','SignalLaLiberacionHelmSecured','SignalLaLiberacionHarborCleared','RestoreAtCheckpoint'):
     if required not in opening: errors.append(f'missing real opening gate: {required}')
@@ -34,14 +83,17 @@ if 'RaidState=EOpeningRaidState::Taking' in opening.split('SignalFirstBoarderDef
     errors.append('first boarder defeat still advances directly to Taking')
 if 'RequiredBoarders<2' not in opening:
     errors.append('boarding runtime no longer rejects the single-boarder shortcut')
+
 world_director=(source/'Story/DarkArisenWorldDirector.cpp').read_text(encoding='utf-8')
 opening_trigger=(source/'Opening/OpeningEventTriggerComponent.cpp').read_text(encoding='utf-8')
 if 'CreateDefaultSubobject<UOpeningRuntimeComponent>' not in world_director: errors.append('opening runtime is not owned by world director')
 if 'ADarkArisenWorldDirector::Resolve(this)' not in opening_trigger: errors.append('opening world trigger bypasses world director')
 if 'SignalBoarderDefeated(EventId)' not in opening_trigger or 'BeginBoardingEncounter(EventId,RequiredBoarders)' not in opening_trigger: errors.append('opening world trigger cannot drive boarding encounter')
+
 authority=(root/'Docs/DesignAuthority.md').read_text(encoding='utf-8')
 for phrase in ('physically rescued in Chapter 8','real Ethan remains alive, recovered, friendly and non-hostile','LEGACY / SUPERSEDED'):
     if phrase not in authority: errors.append(f'missing current authority lock: {phrase}')
+
 if errors:
     print('\n'.join(f'ERROR: {e}' for e in errors));sys.exit(1)
-print('Alpha runtime static verification passed (34 missions; canonical facts; native story/opening/combat/ship/test sources).')
+print(f'Alpha runtime static verification passed (34 canonical missions; {len(physical_missions)} physical Chapter 3-10 contracts; contiguous travel graph; native credits).')
