@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "missionId": "Main.C10.02.BreakTheChain",
+  "regionId": "OpenSea/CrimsonArmadaFinalScreen",
+  "mapId": "L_BreakTheChain",
+  "entryAnchor": "BreachEntry",
+  "checkpointId": "Checkpoint.C10.BreakChain.Entry",
+  "spawnId": "Spawn.C10.BreakChain.Entry",
+  "navigationLaw": "Jake breaks the flagship protection chain through physical combat and boarding actions. The mission does not resolve through fleet-strength arithmetic or a menu.",
+  "anchors": {"BreachEntry":[0,0,0],"EscortOne":[4200,-1900,80],"EscortTwo":[6900,2100,80],"ChainTender":[9800,0,100],"BoardingBridge":[12700,0,140],"FlagshipHull":[15600,0,180],"BoardingPoint":[18100,400,220]},
+  "physicalGeometry": [{"name":"EscortBattleZone","anchor":"ChainTender","size":[12000,8200,300]},{"name":"BoardingBridge","anchor":"BoardingBridge","size":[4800,1200,300]},{"name":"FlagshipHullApproach","anchor":"FlagshipHull","size":[5200,2400,600]}],
+  "actors": [
+    {"type":"LocationTrigger","name":"C10_02_Entry","anchor":"BreachEntry","action":"ActivateMission"},
+    {"type":"WarAction","name":"C10_02_ChainTender","anchor":"ChainTender","actionId":"FinalArmada.ChainTenderBroken","actionType":"Break","faction":"CrimsonArmada","locationId":"Armada.Final.ChainTender","requiredMissionId":"Main.C10.02.BreakTheChain"},
+    {"type":"LocationTrigger","name":"C10_02_BoardFlagship","anchor":"BoardingPoint","action":"CompleteMission","checkpointId":"Checkpoint.C10.BreakChain.Flagship","spawnId":"Spawn.C10.BreakChain.FlagshipDeck"}
+  ],
+  "encounterIds": ["Encounter.C10.EscortOne","Encounter.C10.EscortTwo","Encounter.C10.ChainTender","Encounter.C10.BoardingPoint"],
+  "completionFacts": ["Story.ChainBroken"],
+  "nextMission": "Main.C10.03.BlackDeck"
+}
