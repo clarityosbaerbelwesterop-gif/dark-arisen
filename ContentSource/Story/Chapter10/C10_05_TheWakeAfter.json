@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "missionId": "Main.C10.05.TheWakeAfter",
+  "regionId": "OpenSea/Aftermath",
+  "mapId": "L_TheWakeAfter",
+  "entryAnchor": "QuietDeck",
+  "checkpointId": "Checkpoint.C10.WakeAfter.Deck",
+  "spawnId": "Spawn.C10.WakeAfter.Deck",
+  "navigationLaw": "After Draven falls, the game gives the player a quiet physical aftermath on La Liberacion before credits. The ending acknowledges Ethan, crew and world consequences without a morality score screen.",
+  "anchors": {"QuietDeck":[0,0,0],"EthanPosition":[2600,-900,100],"MiraPosition":[3600,900,100],"BigTomPosition":[4700,100,100],"EstebanPosition":[4300,1500,100],"HorizonRail":[7200,0,120],"CreditsThreshold":[9400,0,120]},
+  "physicalGeometry": [{"name":"AftermathDeck","anchor":"QuietDeck","size":[9000,3400,350]},{"name":"HorizonRail","anchor":"HorizonRail","size":[2800,500,700]}],
+  "actors": [
+    {"type":"LocationTrigger","name":"C10_05_Entry","anchor":"QuietDeck","action":"ActivateMission"},
+    {"type":"Contact","name":"C10_05_Ethan","anchor":"EthanPosition","contactId":"ethan.harlow.real.aftermath","dialogueId":"Story.C10.WakeAfter.Ethan","displayName":"Ethan Harlow","text":"For the first time in months, I do not know where we have to sail next. I think that is a good thing."},
+    {"type":"Contact","name":"C10_05_Mira","anchor":"MiraPosition","contactId":"crew.mira.aftermath","dialogueId":"Story.C10.WakeAfter.Mira","displayName":"Mira","text":"The sea did not become kinder. We just get to choose our own course through it again."},
+    {"type":"Contact","name":"C10_05_BigTom","anchor":"BigTomPosition","contactId":"crew.bigtom.aftermath","dialogueId":"Story.C10.WakeAfter.BigTom","displayName":"Big Tom","text":"Eat something before you decide to save the world again."},
+    {"type":"Contact","name":"C10_05_Esteban","anchor":"EstebanPosition","contactId":"crew.esteban.aftermath","dialogueId":"Story.C10.WakeAfter.Esteban","displayName":"Esteban","text":"There are still wars, ports and debts out there. But this one ends here."},
+    {"type":"LocationTrigger","name":"C10_05_CreditsHandoff","anchor":"CreditsThreshold","action":"CompleteMission","checkpointId":"Checkpoint.C10.WakeAfter.Credits","spawnId":"Spawn.C10.WakeAfter.Credits"}
+  ],
+  "completionFacts": ["Chapter.10.Complete","Story.MainCampaignComplete"],
+  "creditsHandoff": {"required":true,"map":"L_Credits","factualCreditsOnly":true,"status":"native credits presentation still requires materialisation/runtime wiring"},
+  "nextMission": ""
+}
