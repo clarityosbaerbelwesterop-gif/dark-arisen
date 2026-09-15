@@ -1,61 +1,6 @@
 #include "Bosses/DravenVossBossCharacter.h"
 #include "Components/HealthComponent.h"
-
-ADravenVossBossCharacter::ADravenVossBossCharacter()
-{
-    BossId = TEXT("boss.draven_voss");
-    MissionId = TEXT("Main.C10.04.DravenVoss");
-    OutcomeKey = TEXT("Draven.Outcome");
-    OutcomeValue = TEXT("Defeated");
-    bCompleteMissionOnDefeat = true;
-
-    AttackCooldown = 1.05f;
-    AggroRange = 2300.f;
-    AttackRange = 235.f;
-    AttackDamage = 24.f;
-    AttackStaminaDamage = 38.f;
-}
-
-void ADravenVossBossCharacter::BeginPlay()
-{
-    Super::BeginPlay();
-    if (Health)
-    {
-        Health->SetMaxHealth(520.f, true);
-        Health->OnHealthChanged.AddDynamic(this, &ADravenVossBossCharacter::HandleDravenHealthChanged);
-    }
-    ApplyCombatPhase(1);
-}
-
-void ADravenVossBossCharacter::HandleDravenHealthChanged(float NewHealth, float Delta)
-{
-    if (!Health || Delta >= 0.f) return;
-    const float Fraction = NewHealth / FMath::Max(1.f, Health->GetMaxHealth());
-    if (Fraction <= 0.30f) ApplyCombatPhase(3);
-    else if (Fraction <= 0.65f) ApplyCombatPhase(2);
-}
-
-void ADravenVossBossCharacter::ApplyCombatPhase(int32 NewPhase)
-{
-    if (NewPhase <= CombatPhase && NewPhase != 1) return;
-    CombatPhase = FMath::Clamp(NewPhase, 1, 3);
-    if (CombatPhase == 1)
-    {
-        AttackCooldown = 1.05f;
-        AttackDamage = 24.f;
-        AttackStaminaDamage = 38.f;
-    }
-    else if (CombatPhase == 2)
-    {
-        AttackCooldown = 0.78f;
-        AttackDamage = 28.f;
-        AttackStaminaDamage = 45.f;
-    }
-    else
-    {
-        AttackCooldown = 0.58f;
-        AttackDamage = 32.f;
-        AttackStaminaDamage = 54.f;
-        AggroRange = 2700.f;
-    }
-}
+ADravenVossBossCharacter::ADravenVossBossCharacter(){BossId=TEXT("boss.draven_voss");MissionId=TEXT("Main.C10.04.DravenVoss");OutcomeKey=TEXT("Draven.Outcome");OutcomeValue=TEXT("Defeated");bCompleteMissionOnDefeat=true;AttackCooldown=1.05f;AggroRange=2300.f;AttackRange=235.f;AttackDamage=24.f;AttackStaminaDamage=38.f;}
+void ADravenVossBossCharacter::BeginPlay(){Super::BeginPlay();if(Health){Health->MaxHealth=520.f;Health->CurrentHealth=520.f;Health->OnHealthChanged.AddDynamic(this,&ADravenVossBossCharacter::HandleDravenHealthChanged);}ApplyCombatPhase(1);}
+void ADravenVossBossCharacter::HandleDravenHealthChanged(float NewHealth,float MaximumHealth,float Delta){if(Delta>=0.f)return;const float Fraction=NewHealth/FMath::Max(1.f,MaximumHealth);if(Fraction<=.30f)ApplyCombatPhase(3);else if(Fraction<=.65f)ApplyCombatPhase(2);}
+void ADravenVossBossCharacter::ApplyCombatPhase(int32 NewPhase){if(NewPhase<=CombatPhase&&NewPhase!=1)return;CombatPhase=FMath::Clamp(NewPhase,1,3);if(CombatPhase==1){AttackCooldown=1.05f;AttackDamage=24.f;AttackStaminaDamage=38.f;}else if(CombatPhase==2){AttackCooldown=.78f;AttackDamage=28.f;AttackStaminaDamage=45.f;}else{AttackCooldown=.58f;AttackDamage=32.f;AttackStaminaDamage=54.f;AggroRange=2700.f;}}
