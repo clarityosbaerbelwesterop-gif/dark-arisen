@@ -5,7 +5,7 @@
 #include "Ship/ShipVoyageComponent.h"
 #include "World/DarkArisenWorldRulesSubsystem.h"
 #include "LaLiberacionShip.generated.h"
-class APhysicalMapActor;class USceneComponent;class USeaPassageComponent;class UShipHouseholdComponent;class UNavalCombatComponent;
+class APhysicalMapActor;class USceneComponent;class USeaPassageComponent;class UShipHouseholdComponent;class UNavalCombatComponent;class USpringArmComponent;class UCameraComponent;
 UCLASS()
 class DARKARISEN_API ALaLiberacionShip : public AActor
 {
@@ -21,15 +21,14 @@ public:
     UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="Ship|Systems") TObjectPtr<UShipHouseholdComponent> HouseholdComponent;
     UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="Ship|Systems") TObjectPtr<USeaPassageComponent> SeaPassageComponent;
     UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="Ship|Systems") TObjectPtr<UNavalCombatComponent> NavalCombatComponent;
+    UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="Ship|Helm") TObjectPtr<USpringArmComponent> HelmCameraBoom;
+    UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="Ship|Helm") TObjectPtr<UCameraComponent> HelmCamera;
     UPROPERTY(EditDefaultsOnly,Category="Ship|Map") TSubclassOf<APhysicalMapActor> PhysicalMapClass;
-    /** Naval mission maps explicitly set this; ordinary world placement remains walkable/non-forced. */
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Ship|Helm") bool bStartInCombatHelm=false;
     UFUNCTION(BlueprintPure,Category="Ship|Structure") USceneComponent* GetDeckRoot(EShipDeck Deck) const;
     UFUNCTION(BlueprintPure,Category="Ship|Map") APhysicalMapActor* GetPhysicalMap() const{return PhysicalMap;}
     UFUNCTION(BlueprintCallable,Category="Ship|GreatCabin") bool CompleteGreatCabinRest();
     UFUNCTION(BlueprintCallable,Category="Ship|GreatCabin") bool RestGreatCabinToDaypart(EDarkArisenDaypart TargetDaypart);
     UFUNCTION(BlueprintPure,Category="Ship|GreatCabin") bool CanRestInGreatCabin() const;
-private:
-    bool HasCompleteFourDeckStructure() const;bool SpawnPhysicalMap();
-    UPROPERTY(Transient) TObjectPtr<APhysicalMapActor> PhysicalMap;
+private:bool HasCompleteFourDeckStructure() const;bool SpawnPhysicalMap();UPROPERTY(Transient) TObjectPtr<APhysicalMapActor> PhysicalMap;
 };
