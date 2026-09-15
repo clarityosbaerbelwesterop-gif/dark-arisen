@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "missionId": "Main.C10.01.Armada",
+  "regionId": "OpenSea/CrimsonArmadaFinalScreen",
+  "mapId": "L_Armada",
+  "entryAnchor": "LiberacionBattleEntry",
+  "checkpointId": "Checkpoint.C10.Armada.Entry",
+  "spawnId": "Spawn.C10.Armada.Entry",
+  "navigationLaw": "La Liberacion enters the final Armada screen under player control. Ethan's course creates an opening but does not skip naval play, hostile ships or the physical route to Draven's flagship.",
+  "anchors": {"LiberacionBattleEntry":[0,0,0],"OuterScreen":[6200,0,0],"GunLine":[10800,-1800,0],"FireGap":[14600,1400,0],"FlagshipSightline":[18800,0,80],"BreachLane":[22800,0,0]},
+  "physicalGeometry": [{"name":"OuterArmadaSea","anchor":"OuterScreen","size":[14000,11000,260]},{"name":"GunLineZone","anchor":"GunLine","size":[7600,4200,300]},{"name":"BreachLane","anchor":"BreachLane","size":[6200,3000,260]}],
+  "actors": [
+    {"type":"LocationTrigger","name":"C10_01_Entry","anchor":"LiberacionBattleEntry","action":"ActivateMission"},
+    {"type":"Contact","name":"C10_01_EthanCourse","anchor":"LiberacionBattleEntry","contactId":"ethan.harlow.real.armada","dialogueId":"Story.C10.Armada.Ethan","displayName":"Ethan Harlow","text":"Hold this bearing until the gun line commits. Then cut across the wake I marked. Voss will think we are trapped until we are already inside."},
+    {"type":"LocationTrigger","name":"C10_01_Breach","anchor":"BreachLane","action":"CompleteMission","checkpointId":"Checkpoint.C10.Armada.Breach","spawnId":"Spawn.C10.Armada.Breach"}
+  ],
+  "encounterIds": ["Encounter.C10.ArmadaOuter","Encounter.C10.ArmadaGunLine","Encounter.C10.ArmadaBreach"],
+  "completionFacts": ["Story.ArmadaBreachOpen"],
+  "nextMission": "Main.C10.02.BreakTheChain"
+}
