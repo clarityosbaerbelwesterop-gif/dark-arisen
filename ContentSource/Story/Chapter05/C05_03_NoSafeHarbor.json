@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "missionId": "Main.C05.03.NoSafeHarbor",
+  "regionId": "Archipelago/KnowledgeRoutes",
+  "mapId": "L_NoSafeHarbor",
+  "entryAnchor": "KnowledgeLanding",
+  "checkpointId": "Checkpoint.C05.NoSafeHarbor.Landing",
+  "spawnId": "Spawn.C05.NoSafeHarbor.Landing",
+  "navigationLaw": "Knowledge sources are independently reachable. The critical path requires enough authored interpretation to identify the corridor; no sage, optional region or Highmoore boss becomes mandatory.",
+  "geometry": [
+    {"name":"NoSafeHarborKnowledgeRoute","objectPath":"/Game/Alpha/World/Story/Chapter05/SM_NoSafeHarborKnowledgeRoute_Alpha.SM_NoSafeHarborKnowledgeRoute_Alpha","anchor":"KnowledgeRouteBody"}
+  ],
+  "anchors": {
+    "KnowledgeLanding": [0,0,0],
+    "KnowledgeRouteBody": [6200,0,0],
+    "ChartTable": [8100,-600,120],
+    "JacintaContact": [11100,3200,80],
+    "SeruniContact": [12800,-3500,160],
+    "FjordContact": [15400,4200,120],
+    "SailorContact": [17100,-2600,80],
+    "DeepRouteProof": [19600,0,130],
+    "HoldingRouteExit": [22300,1300,100]
+  },
+  "physicalGeometry": [
+    {"name":"KnowledgeChartTable","anchor":"ChartTable","size":[1500,900,180]},
+    {"name":"KnowledgeRouteRidge","anchor":"KnowledgeRouteBody","size":[5200,1600,600]},
+    {"name":"DeepRouteWall","anchor":"DeepRouteProof","size":[2200,700,700]}
+  ],
+  "actors": [
+    {"type":"LocationTrigger","name":"C05_03_Entry","anchor":"KnowledgeLanding","action":"ActivateMission"},
+    {"type":"Contact","name":"C05_03_Jacinta","anchor":"JacintaContact","contactId":"sage.jacinta","dialogueId":"Story.C05.NoSafeHarbor.Jacinta","displayName":"Mama Jacinta","text":"Deep water is not empty water. Watch what the birds refuse to cross and what the tide carries back."},
+    {"type":"Contact","name":"C05_03_Seruni","anchor":"SeruniContact","contactId":"sage.seruni","dialogueId":"Story.C05.NoSafeHarbor.Seruni","displayName":"Mbah Seruni","text":"Draven hides a road by making every ordinary captain afraid of it. Fear is a chart too."},
+    {"type":"Contact","name":"C05_03_FjordVoice","anchor":"FjordContact","contactId":"sage.north.route","dialogueId":"Story.C05.NoSafeHarbor.North","displayName":"Northern pilot","text":"The cold current bends south before the black shoal. A ship entering there can vanish from every coast watcher."},
+    {"type":"Contact","name":"C05_03_Sailor","anchor":"SailorContact","contactId":"sage.sailor.route","dialogueId":"Story.C05.NoSafeHarbor.Sailor","displayName":"Old deep-water sailor","text":"Put the Harlow errors beside the war current. They stop being mistakes and become a corridor."},
+    {"type":"Evidence","name":"C05_03_DeepRouteProof","anchor":"DeepRouteProof","title":"Reconstructed deep-water corridor","body":"Family chart habits, Ethan's false bearings, tide drift and the courier times intersect on one navigable corridor used by the Armada.","completesMission":true,"checkpointId":"Checkpoint.C05.NoSafeHarbor.Corridor","spawnId":"Spawn.C05.NoSafeHarbor.ChartTable"}
+  ],
+  "completionFacts": ["Story.DeepRouteKnown","Chapter.05.Complete"],
+  "nextMission": "Main.C06.01.HighmooreRoad"
+}

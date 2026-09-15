@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "missionId": "Main.C05.02.HoldersWake",
+  "regionId": "Rexa/BackRoutes",
+  "mapId": "L_HoldersWake",
+  "entryAnchor": "SettlementEntry",
+  "checkpointId": "Checkpoint.C05.HoldersWake.Entry",
+  "spawnId": "Spawn.C05.HoldersWake.Entry",
+  "navigationLaw": "Surveillance is conveyed by repeated sightlines, a missing contact and blocked streets. The safe room is found through authored back-route language, not a marker.",
+  "geometry": [
+    {"name":"HoldersWakeBackRoutes","objectPath":"/Game/Alpha/World/Story/Chapter05/SM_HoldersWakeBackRoutes_Alpha.SM_HoldersWakeBackRoutes_Alpha","anchor":"BackRouteBody"}
+  ],
+  "anchors": {
+    "SettlementEntry": [0,0,0],
+    "MissingContactDoor": [4100,-700,90],
+    "WatcherOne": [6100,2500,320],
+    "BackRouteBody": [8200,0,0],
+    "WatcherTwo": [10800,-2500,280],
+    "ChokePoint": [13200,400,100],
+    "SafeRoomDoor": [16800,-1200,90],
+    "NetworkProof": [17600,-850,140],
+    "KnowledgeRouteExit": [20100,1500,100]
+  },
+  "physicalGeometry": [
+    {"name":"HoldersWakeBlockedStreet","anchor":"ChokePoint","size":[2400,800,850]},
+    {"name":"HoldersWakeSafeRoom","anchor":"SafeRoomDoor","size":[2800,2200,1100]},
+    {"name":"HoldersWakeRoofOne","anchor":"WatcherOne","size":[1900,1400,650]},
+    {"name":"HoldersWakeRoofTwo","anchor":"WatcherTwo","size":[1900,1400,650]}
+  ],
+  "actors": [
+    {"type":"LocationTrigger","name":"C05_02_Entry","anchor":"SettlementEntry","action":"ActivateMission"},
+    {"type":"Contact","name":"C05_02_MissingContactTrace","anchor":"MissingContactDoor","contactId":"contact.c05.missing","dialogueId":"Story.C05.HoldersWake.Missing","displayName":"Abandoned doorway","text":"The meeting mark is fresh. The contact is gone. Two boot prints face the house rather than away from it."},
+    {"type":"Contact","name":"C05_02_WatcherOne","anchor":"WatcherOne","contactId":"assassin.watcher.one","dialogueId":"Story.C05.HoldersWake.WatcherOne","displayName":"Watcher","text":"The watcher breaks line of sight instead of approaching."},
+    {"type":"Contact","name":"C05_02_WatcherTwo","anchor":"WatcherTwo","contactId":"assassin.watcher.two","dialogueId":"Story.C05.HoldersWake.WatcherTwo","displayName":"Second watcher","text":"A second figure repeats the first one's distance. This is a net, not a tail."},
+    {"type":"Evidence","name":"C05_02_NetworkProof","anchor":"NetworkProof","title":"Safe-room targeting sheet","body":"Routes, crew descriptions and harbor times show coordinated surveillance. The assassin network has Jake's movements, not just his name.","completesMission":true,"checkpointId":"Checkpoint.C05.HoldersWake.SafeRoom","spawnId":"Spawn.C05.HoldersWake.SafeRoom"}
+  ],
+  "encounterIds": ["Encounter.C05.AssassinNet.BackRoute","Encounter.C05.AssassinNet.ChokePoint"],
+  "completionFacts": ["Assassins.Unlocked"],
+  "nextMission": "Main.C05.03.NoSafeHarbor"
+}
