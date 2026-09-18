@@ -76,6 +76,12 @@ if not credits_contract.is_file(): errors.append('missing L_Credits presentation
 if not credits_authority.is_file(): errors.append('missing factual credits authority')
 packaging=(root/'Config/DefaultGame.ini').read_text(encoding='utf-8')
 if '/Game/Alpha/Maps/L_Credits' not in packaging: errors.append('L_Credits is not cook-listed')
+render_cfg=(root/'Config/DefaultEngine.ini').read_text(encoding='utf-8')
+for token in ('DefaultGraphicsRHI_DX12','PCD3D_SM6','r.RayTracing=True','r.PathTracing=True','r.Nanite.ProjectEnabled=True','r.Lumen.HardwareRayTracing=True'):
+    if token not in render_cfg: errors.append(f'missing alpha rendering requirement: {token}')
+user_cfg=(root/'Config/DefaultGameUserSettings.ini').read_text(encoding='utf-8')
+for token in ('ResolutionSizeX=3840','ResolutionSizeY=2160','sg.GlobalIlluminationQuality=3','sg.ReflectionQuality=3'):
+    if token not in user_cfg: errors.append(f'missing default 4K Epic setting: {token}')
 input_cfg=(root/'Config/DefaultInput.ini').read_text(encoding='utf-8')
 for action in ('PauseMenu','WorldMap','MiniMap','QuickSave','QuickLoad'):
     if f'ActionName="{action}"' not in input_cfg: errors.append(f'missing alpha shell input action: {action}')
