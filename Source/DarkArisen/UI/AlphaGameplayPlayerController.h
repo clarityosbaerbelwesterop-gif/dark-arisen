@@ -22,5 +22,6 @@ public:
     UFUNCTION(BlueprintCallable) void ReturnToMainMenu();
     UFUNCTION(BlueprintCallable) void SetQualityPreset(int32 Level);
     UFUNCTION(BlueprintCallable) void ToggleVSync();
+    UFUNCTION(BlueprintCallable) void SetResolutionPreset(int32 Width,int32 Height);
 private:void ApplyOverlayInput();
 };
