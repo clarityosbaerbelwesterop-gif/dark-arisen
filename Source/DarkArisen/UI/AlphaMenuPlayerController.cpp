@@ -18,3 +18,5 @@ void AAlphaMenuPlayerController::SetQualityPreset(int32 L){if(auto* S=UGameUserS
 void AAlphaMenuPlayerController::ToggleFullscreen(){if(auto* S=UGameUserSettings::GetGameUserSettings()){const EWindowMode::Type Next=S->GetFullscreenMode()==EWindowMode::WindowedFullscreen?EWindowMode::Windowed:EWindowMode::WindowedFullscreen;S->SetFullscreenMode(Next);S->ApplySettings(false);S->SaveSettings();}}
 bool AAlphaMenuPlayerController::HasContinueSave()const{return UGameplayStatics::DoesSaveGameExist(SaveSlot,0);}
 void AAlphaMenuPlayerController::QuitGame(){UKismetSystemLibrary::QuitGame(this,this,EQuitPreference::Quit,false);}
+
+void AAlphaMenuPlayerController::SetResolutionPreset(int32 Width,int32 Height){if(auto* S=UGameUserSettings::GetGameUserSettings()){S->SetScreenResolution(FIntPoint(FMath::Max(1280,Width),FMath::Max(720,Height)));S->SetFullscreenMode(EWindowMode::WindowedFullscreen);S->ApplySettings(false);S->SaveSettings();}}
