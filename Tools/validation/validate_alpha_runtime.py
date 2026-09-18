@@ -25,8 +25,10 @@ for mission,_ in missions:
 required_files=[
     'Story/MainStorySubsystem.cpp','Persistence/DarkArisenSaveGame.h','Opening/OpeningRuntimeComponent.cpp',
     'Opening/StoryTriggerComponent.cpp','Opening/OpeningEventTriggerComponent.cpp','Story/DarkArisenWorldDirector.cpp',
-    'Story/MainStoryMapTransitionActor.cpp','Story/CreditsPresentationActor.cpp','Combat/DamagePipeline.cpp',
-    'AI/BoardingEnemyComponent.cpp','Ship/ShipVoyageComponent.cpp','Tests/MainStoryRuntimeSpec.cpp'
+    'Story/MainStoryMapTransitionActor.cpp','Story/MainStoryMapCatalog.cpp','Story/CreditsPresentationActor.cpp',
+    'Story/RacheStoryUnlockComponent.cpp','Characters/EthanHarlowCharacter.cpp','Combat/DamagePipeline.cpp',
+    'AI/BoardingEnemyComponent.cpp','Ship/ShipVoyageComponent.cpp','UI/AlphaMenuPlayerController.cpp',
+    'UI/AlphaGameplayPlayerController.cpp','PostureOnlyHUD.cpp','Tests/MainStoryRuntimeSpec.cpp'
 ]
 for relative in required_files:
     if not (source/relative).is_file(): errors.append(f'missing native runtime file: {relative}')
@@ -73,6 +75,18 @@ if not credits_contract.is_file(): errors.append('missing L_Credits presentation
 if not credits_authority.is_file(): errors.append('missing factual credits authority')
 packaging=(root/'Config/DefaultGame.ini').read_text(encoding='utf-8')
 if '/Game/Alpha/Maps/L_Credits' not in packaging: errors.append('L_Credits is not cook-listed')
+input_cfg=(root/'Config/DefaultInput.ini').read_text(encoding='utf-8')
+for action in ('PauseMenu','WorldMap','MiniMap','QuickSave','QuickLoad'):
+    if f'ActionName="{action}"' not in input_cfg: errors.append(f'missing alpha shell input action: {action}')
+menu=(source/'UI/AlphaMenuPlayerController.cpp').read_text(encoding='utf-8')
+for token in ('StartNewGame','ContinueGame','SetQualityPreset','ToggleFullscreen'):
+    if token not in menu: errors.append(f'front-end menu missing {token}')
+gameplay_ui=(source/'UI/AlphaGameplayPlayerController.cpp').read_text(encoding='utf-8')
+for token in ('QuickSave','QuickLoad','ToggleWorldMap','ToggleMiniMap','OpenSettings'):
+    if token not in gameplay_ui: errors.append(f'gameplay shell missing {token}')
+hud=(source/'PostureOnlyHUD.cpp').read_text(encoding='utf-8')
+for token in ('DrawMiniMap','EAlphaOverlay::Map','SAVE GAME','SETTINGS'):
+    if token not in hud: errors.append(f'gameplay HUD missing {token}')
 
 opening=(source/'Opening/OpeningRuntimeComponent.cpp').read_text(encoding='utf-8')
 for required in ('BeginBoardingEncounter','SignalDravenBoarded','SignalTakingStarted','SignalCrewRecruitmentAvailable','SignalLaLiberacionHelmSecured','SignalLaLiberacionHarborCleared','RestoreAtCheckpoint'):
@@ -96,4 +110,4 @@ for phrase in ('physically rescued in Chapter 8','real Ethan remains alive, reco
 
 if errors:
     print('\n'.join(f'ERROR: {e}' for e in errors));sys.exit(1)
-print(f'Alpha runtime static verification passed (34 canonical missions; {len(physical_missions)} physical Chapter 3-10 contracts; contiguous travel graph; native credits).')
+print(f'Alpha runtime static verification passed (34 canonical missions; {len(physical_missions)} physical Chapter 3-10 contracts; contiguous travel graph; native credits; menu/map/minimap/save/settings shell).')
