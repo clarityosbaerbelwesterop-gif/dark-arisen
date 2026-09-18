@@ -8,7 +8,7 @@
  * Build-visible constants for the twelve load-bearing design laws.
  * The full reasoning remains in the read-only design bible.
  *
- *  1. The player reads the world, not a HUD. The sole combat-HUD concession is posture.
+ *  1. The player reads the world first. The alpha HUD concessions are posture plus the user-requested navigation minimap.
  *  2. Interactions have no highlight and no fade; a corner prompt is allowed only at 1.4 m.
  *  3. Sixty frames per second is the floor because deflection is exactly six frames.
  *  4. Time dilation exists only for player-triggered Rache: 30% scale for at most five seconds.
@@ -29,7 +29,7 @@ namespace DarkArisen::DesignLaws
         static_cast<float>(DeflectionWindowFrames) / static_cast<float>(TargetFramesPerSecond);
 
     inline constexpr float InteractionPromptRangeMetres = 1.4f;
-    inline constexpr int32 PermittedCombatHudElements = 1;
+    inline constexpr int32 PermittedCombatHudElements = 2;
 
     inline constexpr float RacheTimeScale = 0.30f;
     inline constexpr float RacheMaximumRealSeconds = 5.0f;
@@ -49,7 +49,7 @@ namespace DarkArisen::DesignLaws
     static_assert(DeflectionWindowFrames == 6, "Design law: deflection is exactly six frames.");
     static_assert(DeflectionWindowSeconds > 0.099f && DeflectionWindowSeconds < 0.101f,
         "Six frames at 60 fps must remain one tenth of a second.");
-    static_assert(PermittedCombatHudElements == 1, "Only posture may appear in the combat HUD.");
+    static_assert(PermittedCombatHudElements == 2, "Alpha HUD law: posture and navigation minimap only during combat.");
     static_assert(RacheTimeScale == 0.30f, "Rache is the sole 30% time-scale exception.");
     static_assert(RacheMaximumRealSeconds == 5.0f, "Rache may last no more than five real seconds.");
     static_assert(AuthoredCutsceneCount == 19, "The authored cutscene catalog is locked at nineteen.");
