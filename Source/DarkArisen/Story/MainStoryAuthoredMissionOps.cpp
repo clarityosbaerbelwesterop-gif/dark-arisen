@@ -50,11 +50,11 @@ bool UMainStorySubsystem::CompleteAuthoredMission(const FName Id)
     else if(Id==TEXT("Main.C09.02.MemoryOfABrother"))Story(TEXT("Story.GroveVisited"));
     else if(Id==TEXT("Main.C09.03.DreamFight"))Story(TEXT("Story.DreamResolved"));
     else if(Id==TEXT("Main.C09.04.WakingCourse")){World(TEXT("Combat.RacheUnlocked"));Story(TEXT("Story.FinalRouteKnown"));World(TEXT("Chapter.09.Complete"));}
-    else if(Id==TEXT("Main.C10.01.Armada"))World(TEXT("Finale.EntryStateLocked"));
-    else if(Id==TEXT("Main.C10.02.BreakTheChain"))World(TEXT("Armada.LogisticsBroken"));
-    else if(Id==TEXT("Main.C10.03.BlackDeck"))World(TEXT("Finale.DravenReached"));
+    else if(Id==TEXT("Main.C10.01.Armada")){World(TEXT("Finale.EntryStateLocked"));Story(TEXT("Story.ArmadaBreachOpen"));}
+    else if(Id==TEXT("Main.C10.02.BreakTheChain")){World(TEXT("Armada.LogisticsBroken"));Story(TEXT("Story.ChainBroken"));}
+    else if(Id==TEXT("Main.C10.03.BlackDeck")){World(TEXT("Finale.DravenReached"));Story(TEXT("Story.BlackDeckReached"));}
     else if(Id==TEXT("Main.C10.04.DravenVoss"))Story(TEXT("Story.DravenDefeated"));
-    else if(Id==TEXT("Main.C10.05.TheWakeAfter"))World(TEXT("Chapter.10.Complete"));
+    else if(Id==TEXT("Main.C10.05.TheWakeAfter")){World(TEXT("Chapter.10.Complete"));Story(TEXT("Story.MainCampaignComplete"));}
 
     const bool bChapterBoundary=
         Id==TEXT("Main.C03.03.TheFirstHolder")||Id==TEXT("Main.C04.03.HerrerasFall")||
