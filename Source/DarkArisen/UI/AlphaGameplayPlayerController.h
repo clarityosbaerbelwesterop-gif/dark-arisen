@@ -11,16 +11,16 @@ public:
     virtual void SetupInputComponent() override;
     UPROPERTY(BlueprintReadOnly,Category="Alpha|UI") EAlphaOverlay Overlay=EAlphaOverlay::None;
     UPROPERTY(BlueprintReadOnly,Category="Alpha|UI") bool bMiniMapEnabled=true;
+    UPROPERTY(BlueprintReadOnly,Category="Alpha|UI") FString LastSystemMessage;
     UFUNCTION(BlueprintCallable) void TogglePauseMenu();
     UFUNCTION(BlueprintCallable) void ToggleWorldMap();
     UFUNCTION(BlueprintCallable) void ToggleMiniMap();
-    UFUNCTION(BlueprintCallable) bool QuickSave();
-    UFUNCTION(BlueprintCallable) bool QuickLoad();
+    UFUNCTION(BlueprintCallable) void QuickSave();
+    UFUNCTION(BlueprintCallable) void QuickLoad();
     UFUNCTION(BlueprintCallable) void OpenSettings();
     UFUNCTION(BlueprintCallable) void CloseOverlay();
     UFUNCTION(BlueprintCallable) void ReturnToMainMenu();
     UFUNCTION(BlueprintCallable) void SetQualityPreset(int32 Level);
     UFUNCTION(BlueprintCallable) void ToggleVSync();
-private:
-    void ApplyOverlayInput();
+private:void ApplyOverlayInput();
 };
