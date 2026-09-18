@@ -89,7 +89,7 @@ menu=(source/'UI/AlphaMenuPlayerController.cpp').read_text(encoding='utf-8')
 for token in ('StartNewGame','ContinueGame','SetQualityPreset','ToggleFullscreen'):
     if token not in menu: errors.append(f'front-end menu missing {token}')
 gameplay_ui=(source/'UI/AlphaGameplayPlayerController.cpp').read_text(encoding='utf-8')
-for token in ('QuickSave','QuickLoad','ToggleWorldMap','ToggleMiniMap','OpenSettings'):
+for token in ('QuickSave','QuickLoad','ToggleWorldMap','ToggleMiniMap','OpenSettings','EnablePathTracing','SetResolutionPreset'):
     if token not in gameplay_ui: errors.append(f'gameplay shell missing {token}')
 hud=(source/'PostureOnlyHUD.cpp').read_text(encoding='utf-8')
 for token in ('DrawMiniMap','EAlphaOverlay::Map','SAVE GAME','SETTINGS'):
