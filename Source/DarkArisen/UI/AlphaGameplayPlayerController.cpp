@@ -17,3 +17,5 @@ void AAlphaGameplayPlayerController::CloseOverlay(){Overlay=EAlphaOverlay::None;
 void AAlphaGameplayPlayerController::ReturnToMainMenu(){SetPause(false);UGameplayStatics::OpenLevel(this,TEXT("L_AlphaStartup"));}
 void AAlphaGameplayPlayerController::SetQualityPreset(int32 Level){if(auto* S=UGameUserSettings::GetGameUserSettings()){S->SetOverallScalabilityLevel(FMath::Clamp(Level,0,3));S->ApplySettings(false);S->SaveSettings();LastSystemMessage=TEXT("Graphics preset applied");}}
 void AAlphaGameplayPlayerController::ToggleVSync(){if(auto* S=UGameUserSettings::GetGameUserSettings()){S->SetVSyncEnabled(!S->IsVSyncEnabled());S->ApplySettings(false);S->SaveSettings();LastSystemMessage=S->IsVSyncEnabled()?TEXT("VSync enabled"):TEXT("VSync disabled");}}
+
+void AAlphaGameplayPlayerController::SetResolutionPreset(int32 Width,int32 Height){if(auto* S=UGameUserSettings::GetGameUserSettings()){S->SetScreenResolution(FIntPoint(FMath::Max(1280,Width),FMath::Max(720,Height)));S->SetFullscreenMode(EWindowMode::WindowedFullscreen);S->ApplySettings(false);S->SaveSettings();LastSystemMessage=FString::Printf(TEXT("Resolution %dx%d applied"),Width,Height);}}
