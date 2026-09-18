@@ -5,6 +5,12 @@ bool UMainStorySubsystem::SetQuestOutcome(const FName OutcomeKey,const FName Out
     if(!State||OutcomeKey.IsNone()||OutcomeValue.IsNone())return false;
     if(const FName* Existing=State->QuestOutcomes.Find(OutcomeKey))return *Existing==OutcomeValue;
     State->QuestOutcomes.Add(OutcomeKey,OutcomeValue);
+    const bool bChapterBoundary=
+        Id==TEXT("Main.C03.03.TheFirstHolder")||Id==TEXT("Main.C04.03.HerrerasFall")||
+        Id==TEXT("Main.C05.03.NoSafeHarbor")||Id==TEXT("Main.C06.03.TheNorthernOath")||
+        Id==TEXT("Main.C07.03.ThroughTheNet")||Id==TEXT("Main.C08.03.HomewardBearing")||
+        Id==TEXT("Main.C09.04.WakingCourse")||Id==TEXT("Main.C10.05.TheWakeAfter");
+    if(bChapterBoundary) Save(TEXT("DarkArisenAlpha"),0);
     return true;
 }
 
