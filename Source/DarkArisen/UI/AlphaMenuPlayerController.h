@@ -17,6 +17,7 @@ public:
     UFUNCTION(BlueprintCallable,Category="Alpha|Menu") void ToggleVSync();
     UFUNCTION(BlueprintCallable,Category="Alpha|Menu") void SetQualityPreset(int32 Level);
     UFUNCTION(BlueprintCallable,Category="Alpha|Menu") void ToggleFullscreen();
+    UFUNCTION(BlueprintCallable,Category="Alpha|Menu") void SetResolutionPreset(int32 Width,int32 Height);
     UFUNCTION(BlueprintPure,Category="Alpha|Menu") bool HasContinueSave() const;
     UFUNCTION(BlueprintCallable,Category="Alpha|Menu") void QuitGame();
     static const FString& GetAlphaSaveSlot();
