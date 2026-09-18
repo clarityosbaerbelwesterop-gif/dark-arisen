@@ -27,14 +27,15 @@ required_files=[
     'Opening/StoryTriggerComponent.cpp','Opening/OpeningEventTriggerComponent.cpp','Story/DarkArisenWorldDirector.cpp',
     'Story/MainStoryMapTransitionActor.cpp','Story/MainStoryMapCatalog.cpp','Story/CreditsPresentationActor.cpp',
     'Story/RacheStoryUnlockComponent.cpp','Characters/EthanHarlowCharacter.cpp','Combat/DamagePipeline.cpp',
-    'AI/BoardingEnemyComponent.cpp','Ship/ShipVoyageComponent.cpp','UI/AlphaMenuPlayerController.cpp',
+    'AI/BoardingEnemyComponent.cpp','Ship/ShipVoyageComponent.cpp','Ship/NavalCombatComponent.cpp','Ship/HostileNavalShip.cpp',
+    'Story/NavalEncounterGateActor.cpp','UI/AlphaMenuPlayerController.cpp',
     'UI/AlphaGameplayPlayerController.cpp','PostureOnlyHUD.cpp','Tests/MainStoryRuntimeSpec.cpp'
 ]
 for relative in required_files:
     if not (source/relative).is_file(): errors.append(f'missing native runtime file: {relative}')
 
 all_runtime='\n'.join(p.read_text(encoding='utf-8',errors='ignore') for p in source.rglob('*') if p.suffix in {'.h','.cpp'} and 'Tests' not in p.parts)
-for fact in ('Story.MarcDead','Story.DeniseDead','Story.EthanAbducted','Story.EthanRecovered','World.DriftwoodBeachReached','World.MoranOpeningRouteKnown','Ship.LaLiberacionOwned','World.RexaEntered','Story.EthanAliveConfirmed','Story.EthanRouteMarksFound','Story.FirstHolderCrossed','Story.MainComplete'):
+for fact in ('Story.MarcDead','Story.DeniseDead','Story.EthanAbducted','Story.EthanRecovered','World.DriftwoodBeachReached','World.MoranOpeningRouteKnown','Ship.LaLiberacionOwned','World.RexaEntered','Story.EthanAliveConfirmed','Story.EthanRouteMarksFound','Story.FirstHolderCrossed','Story.MainComplete','Story.ArmadaBreachOpen','Story.ChainBroken','Story.BlackDeckReached','Story.MainCampaignComplete'):
     if fact not in all_runtime: errors.append(f'missing runtime fact: {fact}')
 
 # Chapters 3-10 must have one physical source contract per canonical mission and a contiguous map graph.
@@ -67,7 +68,7 @@ extra=set(contracts)-set(physical_missions)
 for mission in sorted(extra): errors.append(f'non-canonical physical mission contract: {mission}')
 
 materializer=(root/'Source/DarkArisenEditor/Private/DarkArisenMaterializeStoryCommandlet.cpp').read_text(encoding='utf-8')
-for token in ('MainStoryMapTransitionActor','DuelingEnemy','MaterializeCredits','L_Credits'):
+for token in ('MainStoryMapTransitionActor','DuelingEnemy','PlayerShip','NavalEnemy','NavalEncounterGate','MaterializeCredits','L_Credits'):
     if token not in materializer: errors.append(f'story materializer missing {token}')
 credits_contract=root/'ContentSource/Presentation/Credits/L_Credits.contract.json'
 credits_authority=root/'ContentSource/Story/Credits/CreditsAuthority.json'
@@ -110,4 +111,4 @@ for phrase in ('physically rescued in Chapter 8','real Ethan remains alive, reco
 
 if errors:
     print('\n'.join(f'ERROR: {e}' for e in errors));sys.exit(1)
-print(f'Alpha runtime static verification passed (34 canonical missions; {len(physical_missions)} physical Chapter 3-10 contracts; contiguous travel graph; native credits; menu/map/minimap/save/settings shell).')
+print(f'Alpha runtime static verification passed (34 canonical missions; {len(physical_missions)} physical Chapter 3-10 contracts; contiguous travel graph; native credits; naval finale; menu/map/minimap/save/settings shell).')
