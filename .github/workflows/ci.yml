@@ -23,7 +23,7 @@ jobs:
       - name: Check out source
         uses: actions/checkout@v4
         with:
-          fetch-depth: 1
+          fetch-depth: 2
       - name: Validate canonical Alpha runtime graph
         run: python3 Tools/validation/validate_alpha_runtime.py
       - name: Validate authored story content
