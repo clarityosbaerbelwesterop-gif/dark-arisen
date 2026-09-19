@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "assetId": "ship.la_liberacion.alpha.higgsfield3d.r1",
+  "authorityDate": "2026-09-19",
+  "status": "SOURCE_CREATED_IMPORT_PENDING",
+  "sourceTool": "Higgsfield 3D Jutsu / Blender 5.2",
+  "projectId": "0bdf6705-9739-4d3b-bdac-8a25a4dbbb52",
+  "revision": 1,
+  "operationId": "dark-arisen-la-liberacion-v1b",
+  "glb": {
+    "sizeBytes": 8827508,
+    "etag": "b26ceeb6413e9a3baa70efca0e99c4f6"
+  },
+  "sourceScene": {
+    "meshObjects": 114,
+    "blenderVertices": 60864
+  },
+  "verifiedExportAudit": {
+    "gltfPositionAccessorVertices": 234641,
+    "materials": 5,
+    "texturesPresent": true,
+    "pbr": true,
+    "normals": true,
+    "uv0": true
+  },
+  "intendedObjectPath": "/Game/Alpha/Ships/LaLiberacion/SM_LaLiberacion_Alpha.SM_LaLiberacion_Alpha",
+  "acceptance": [
+    "download exact committed GLB revision",
+    "convert/import through controlled source pipeline",
+    "visual review in UE5.8",
+    "collision and walkable-deck authoring",
+    "Nanite/material audit",
+    "runtime continuity check"
+  ],
+  "note": "The committed Higgsfield revision is real source evidence, but it is not yet the repository's shipping mesh. The existing placeholder remains rejected until the exact revision is imported and reviewed."
+}

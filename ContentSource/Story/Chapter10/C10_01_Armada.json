@@ -91,11 +91,6 @@
       "action": "ActivateMission"
     },
     {
-      "type": "PlayerShip",
-      "name": "C10_01_LaLiberacion",
-      "anchor": "LiberacionBattleEntry"
-    },
-    {
       "type": "Contact",
       "name": "C10_01_EthanCourse",
       "anchor": "LiberacionBattleEntry",
@@ -103,27 +98,6 @@
       "dialogueId": "Story.C10.Armada.Ethan",
       "displayName": "Ethan Harlow",
       "text": "Hold this bearing until the gun line commits. Then cut across the wake I marked. Voss will think we are trapped until we are already inside."
-    },
-    {
-      "type": "NavalEnemy",
-      "name": "C10_01_ArmadaPort",
-      "anchor": "ArmadaPort"
-    },
-    {
-      "type": "NavalEnemy",
-      "name": "C10_01_ArmadaStarboard",
-      "anchor": "ArmadaStarboard"
-    },
-    {
-      "type": "NavalEnemy",
-      "name": "C10_01_ArmadaGunship",
-      "anchor": "ArmadaGunship"
-    },
-    {
-      "type": "NavalEncounterGate",
-      "name": "C10_01_FleetDefeatGate",
-      "anchor": "BreachLane",
-      "requiredDefeats": 3
     }
   ],
   "encounterIds": [

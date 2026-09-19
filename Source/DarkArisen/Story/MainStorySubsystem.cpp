@@ -7,6 +7,8 @@
 #include "World/DarkArisenWorldRulesSubsystem.h"
 #include "World/NPCLivingWorldSubsystem.h"
 #include "Components/QuestJournalComponent.h"
+#include "Components/HealthComponent.h"
+#include "Components/StaminaComponent.h"
 #include "Systems/ProgressionEconomyComponent.h"
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/Pawn.h"
@@ -93,6 +95,15 @@ bool UMainStorySubsystem::CaptureWorldState(UWorld* World)
                 State->QuestJournal = Journal->CaptureSnapshot();
             if (const auto* Progression = Pawn->FindComponentByClass<UProgressionEconomyComponent>())
                 State->ProgressionEconomy = Progression->CaptureSnapshot();
+            State->PlayerRuntime.bValid = true;
+            State->PlayerRuntime.MissionId = State->CurrentMission;
+            State->PlayerRuntime.SourceLevel = FName(*UGameplayStatics::GetCurrentLevelName(World, true));
+            State->PlayerRuntime.Transform = Pawn->GetActorTransform();
+            if (const auto* Health = Pawn->FindComponentByClass<UHealthComponent>())
+                State->PlayerRuntime.HealthFraction = FMath::Clamp(Health->GetHealthPercent(), 0.01f, 1.0f);
+            if (const auto* Stamina = Pawn->FindComponentByClass<UStaminaComponent>())
+                State->PlayerRuntime.StaminaFraction = Stamina->MaxStamina > 0.f
+                    ? FMath::Clamp(Stamina->CurrentStamina / Stamina->MaxStamina, 0.f, 1.f) : 1.f;
         }
     }
     return true;
@@ -172,6 +183,11 @@ bool UMainStorySubsystem::MigrateVersion(UDarkArisenSaveGame* Candidate,TArray<F
     if(Candidate->SaveVersion==7)
     {
         Candidate->SaveVersion=8;
+    }
+    if(Candidate->SaveVersion==8)
+    {
+        Candidate->PlayerRuntime=FPlayerRuntimeSnapshot{};
+        Candidate->SaveVersion=9;
     }
     Candidate->SaveVersion=UDarkArisenSaveGame::CurrentVersion;
     return true;
