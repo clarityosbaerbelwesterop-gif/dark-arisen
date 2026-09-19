@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "regionId": "region.open_sea_fort_carrion",
+  "displayName": "Open Sea / Fort Carrion",
+  "governingSource": "docs/design/region_05_open_sea_overview.md",
+  "summary": "Continuous naval traversal, patrols, boarding, hidden coves, staging islands and Fort Carrion.",
+  "playableMaterialized": false,
+  "releaseRequirements": [
+    "continuous physical traversal for authored routes",
+    "side-content entrances physically reachable",
+    "save/persistence integration",
+    "map/minimap authored bounds without objective radar",
+    "no water fast travel",
+    "release-grade art/audio/lighting and collision",
+    "UE5.8 runtime acceptance"
+  ]
+}
