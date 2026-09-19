@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "authorityDate": "2026-09-19",
+  "releaseDefinition": "First complete private Alpha; no prototype/vertical-slice substitution.",
+  "regions": [
+    "Moran",
+    "Rexa & The Mire",
+    "Ashenmoor",
+    "Quiet Coast / Fjordlund",
+    "Open Sea / Fort Carrion",
+    "Highmoore (optional)",
+    "The Maw (post-game; never blocks credits)"
+  ],
+  "required": {
+    "mainMissions": 34,
+    "threads": 17,
+    "dungeons": {
+      "named": 41,
+      "minor": 20,
+      "total": 61
+    },
+    "turns": 132,
+    "standingVariants": 147,
+    "tier1Bosses": 9,
+    "cutscenes": 19,
+    "protectedPlayableMoments": 22,
+    "stateTreasures": 9,
+    "buriedHoardChains": 16
+  },
+  "omissionLaw": "Undescribed quest identities/content are omitted from playable authored content and neutral-registered; never fabricate narrative filler or radiant quests.",
+  "worldLaws": [
+    "No water fast travel",
+    "Finite authored quests only",
+    "Physical dungeon entrances/exits",
+    "Persistent duplicate-protected treasures",
+    "La Liberacion is the Chapter 2 acquired mobile base",
+    "The Maw is post-game and cannot block credits"
+  ]
+}
