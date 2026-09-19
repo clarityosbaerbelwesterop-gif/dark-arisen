@@ -103,6 +103,12 @@ if r'\\n#include' in all_runtime or r'\\n    UFUNCTION' in all_runtime:
 ethan=(source/'Characters/EthanHarlowCharacter.h').read_text(encoding='utf-8')
 for token in ('ethan.harlow.real','bool IsFriendly() const{return true;}','bool IsCaptive() const'):
     if token not in ethan: errors.append(f'real Ethan runtime contract missing {token}')
+story_subsystem=(source/'Story/MainStorySubsystem.cpp').read_text(encoding='utf-8')
+for boss_id in ('boss.dream_ethan','boss.draven_voss'):
+    if boss_id not in story_subsystem: errors.append(f'finale boss registry missing {boss_id}')
+contact=(source/'Story/MainStoryContactActor.cpp').read_text(encoding='utf-8')
+for stale in ('IsMissionActive(','IsMissionComplete(','CompleteAuthoredMission(MissionId, CheckpointId, SpawnId)'):
+    if stale in contact: errors.append(f'story contact still calls stale subsystem API: {stale}')
 
 opening=(source/'Opening/OpeningRuntimeComponent.cpp').read_text(encoding='utf-8')
 for required in ('BeginBoardingEncounter','SignalDravenBoarded','SignalTakingStarted','SignalCrewRecruitmentAvailable','SignalLaLiberacionHelmSecured','SignalLaLiberacionHarborCleared','RestoreAtCheckpoint'):
