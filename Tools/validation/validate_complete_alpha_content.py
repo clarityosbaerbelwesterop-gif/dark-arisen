@@ -74,10 +74,20 @@ check=(ROOT/"Docs/ALPHA_DELIVERY_CHECKLIST.md").read_text(encoding="utf-8")
 open_items=len(re.findall(r"^- \[ \]",check,re.M))
 if open_items:errors.append(f"Alpha delivery checklist still has {open_items} open evidence/content gates")
 
+# Living-world NPC gate: reuse regional physical actors, add persistent memory/gossip/mood authority.
+living_h=(ROOT/"Source/DarkArisen/World/NPCLivingWorldSubsystem.h").read_text(encoding="utf-8") if (ROOT/"Source/DarkArisen/World/NPCLivingWorldSubsystem.h").is_file() else ""
+living_cpp=(ROOT/"Source/DarkArisen/World/NPCLivingWorldSubsystem.cpp").read_text(encoding="utf-8") if (ROOT/"Source/DarkArisen/World/NPCLivingWorldSubsystem.cpp").is_file() else ""
+rexa_director=(ROOT/"Source/DarkArisen/Rexa/RexaSettlementDirector.cpp").read_text(encoding="utf-8")
+rexa_resident=(ROOT/"Source/DarkArisen/Rexa/RexaSettlementResident.cpp").read_text(encoding="utf-8")
+for token in ("FNPCLivingMemory","PersonalReputation","SpecificTrust","ENPCLivingMood","ConnectNPCs","PropagateMemory","SimulateToGameMinute","FNPCLivingWorldSnapshot"):
+ if token not in living_h+living_cpp:errors.append(f"Living NPC authority missing {token}")
+for token in ("RegisterNPC","UpdateScheduleAnchor","EnterCivilianCombatFlee","ENPCLivingMood::Stressed"):
+ if token not in rexa_director+rexa_resident:errors.append(f"Rexa population not integrated with living NPC behavior: {token}")
+
 # Exploration persistence must use the canonical SaveGame authority.
 save_h=(ROOT/"Source/DarkArisen/Persistence/DarkArisenSaveGame.h").read_text(encoding="utf-8")
 ops=(ROOT/"Source/DarkArisen/Story/MainStoryAuthoredMissionOps.cpp").read_text(encoding="utf-8")
-for token in ("CurrentVersion = 7","DiscoveredDungeons","CompletedDungeons","RecoveredTreasures"):
+for token in ("CurrentVersion = 8","DiscoveredDungeons","CompletedDungeons","RecoveredTreasures"):
  if token not in save_h:errors.append(f"Save authority missing {token}")
 for token in ("DiscoverDungeon(","CompleteDungeon(","RecoverTreasure(","Network.StateTreasuresComplete"):
  if token not in ops:errors.append(f"World persistence runtime missing {token}")
