@@ -261,7 +261,9 @@ bool UMainStorySubsystem::SetWorldFact(const FName Fact,const bool Enabled)
     Temp->WorldFacts=Copy;
     TArray<FString> Errors;
     if(!ValidateState(Temp,Errors))return false;
+    const bool bChanged=State->WorldFacts.Contains(Fact)!=Enabled;
     State->WorldFacts=MoveTemp(Copy);
+    if(bChanged) OnWorldFactChanged.Broadcast(Fact,Enabled);
     return true;
 }
 
