@@ -3,6 +3,7 @@
 #include "World/DarkArisenWorldRulesSubsystem.h"
 
 #include "Stats/Stats.h"
+#include "World/NPCLivingWorldSubsystem.h"
 
 void UDarkArisenWorldRulesSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
@@ -24,6 +25,8 @@ void UDarkArisenWorldRulesSubsystem::Tick(float DeltaTime)
     {
         TotalWorldMinutes += WholeMinutes;
         FractionalWorldMinutes -= static_cast<float>(WholeMinutes);
+        if(UNPCLivingWorldSubsystem* Living=GetWorld()?GetWorld()->GetSubsystem<UNPCLivingWorldSubsystem>():nullptr)
+            Living->SimulateToGameMinute(TotalWorldMinutes);
     }
 }
 
@@ -100,6 +103,8 @@ bool UDarkArisenWorldRulesSubsystem::CompleteRest(
 
     TotalWorldMinutes += DeltaMinutes;
     FractionalWorldMinutes = 0.0f;
+    if(UNPCLivingWorldSubsystem* Living=GetWorld()?GetWorld()->GetSubsystem<UNPCLivingWorldSubsystem>():nullptr)
+        Living->SimulateToGameMinute(TotalWorldMinutes);
     QueueLegalAutosaveRequest();
     return true;
 }
