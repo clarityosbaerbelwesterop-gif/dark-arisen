@@ -33,6 +33,23 @@ void UCombatComponent::BeginPlay()
     CachedStamina = GetOwner() ? GetOwner()->FindComponentByClass<UStaminaComponent>() : nullptr;
     CachedHealth = GetOwner() ? GetOwner()->FindComponentByClass<UHealthComponent>() : nullptr;
     CurrentPosture = FMath::Clamp(CurrentPosture, 0.0f, MaxPosture);
+    if (const UWorld* World = GetWorld())
+    {
+        if (const UGameInstance* GameInstance = World->GetGameInstance())
+        {
+            if (UMainStorySubsystem* Story = GameInstance->GetSubsystem<UMainStorySubsystem>())
+            {
+                const bool bStoryUnlocked = Story->HasWorldFact(TEXT("Combat.RacheUnlocked"));
+                bRacheUnlocked = bRacheUnlocked || bStoryUnlocked;
+                if (bStoryUnlocked && !Story->HasWorldFact(TEXT("Combat.RachePrimed")))
+                {
+                    CurrentRache = MaxRache;
+                    Story->SetWorldFact(TEXT("Combat.RachePrimed"), true);
+                    OnRacheMeterChanged.Broadcast(CurrentRache, MaxRache);
+                }
+            }
+        }
+    }
     RefreshPostureVisualState();
 }
 
