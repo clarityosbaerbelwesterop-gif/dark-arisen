@@ -124,6 +124,16 @@ struct FQuestJournalEntry
     bool bCorrection = false;
 };
 
+USTRUCT(BlueprintType)
+struct FQuestJournalSnapshot
+{
+    GENERATED_BODY()
+    UPROPERTY(SaveGame) bool bValid=false;
+    UPROPERTY(SaveGame) TMap<FName,FQuestRuntimeState> QuestStates;
+    UPROPERTY(SaveGame) TArray<FQuestJournalEntry> JournalEntries;
+    UPROPERTY(SaveGame) int64 NextJournalSequence=0;
+};
+
 /**
  * Markerless quest state and Jake's chronological notebook.
  * Activation deliberately emits no screen, sound, camera, marker, or reminder event.
@@ -175,6 +185,11 @@ public:
 
     UFUNCTION(BlueprintPure, Category = "Quest|Journal")
     bool HasJournalEntryForQuest(FName QuestId) const;
+
+    UFUNCTION(BlueprintCallable, Category = "Quest|Persistence")
+    FQuestJournalSnapshot CaptureSnapshot() const;
+    UFUNCTION(BlueprintCallable, Category = "Quest|Persistence")
+    bool RestoreSnapshot(const FQuestJournalSnapshot& Snapshot);
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quest|Authoring")
     TArray<FQuestActivationDefinition> AuthoredDefinitions;
