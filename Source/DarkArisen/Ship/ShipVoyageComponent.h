@@ -36,6 +36,26 @@ enum class ECrewWatch : uint8
 };
 
 USTRUCT(BlueprintType)
+struct FShipVoyageSnapshot
+{
+    GENERATED_BODY()
+    UPROPERTY(SaveGame) bool bValid=false;
+    UPROPERTY(SaveGame) FTransform WorldTransform;
+    UPROPERTY(SaveGame) bool bOwnedAndUnlocked=false;
+    UPROPERTY(SaveGame) float Throttle=0.f;
+    UPROPERTY(SaveGame) float HullIntegrity=1000.f;
+    UPROPERTY(SaveGame) float HeadingDegrees=0.f;
+    UPROPERTY(SaveGame) float CommandedHeadingDegrees=0.f;
+    UPROPERTY(SaveGame) float ForwardSpeedMetresPerSecond=0.f;
+    UPROPERTY(SaveGame) float WindDirectionDegrees=90.f;
+    UPROPERTY(SaveGame) float WindStrengthMetresPerSecond=6.f;
+    UPROPERTY(SaveGame) bool bJakeInGreatCabin=false;
+    UPROPERTY(SaveGame) int32 ActiveHands=40;
+    UPROPERTY(SaveGame) TArray<FNamedCrewMemberState> NamedCrew;
+    UPROPERTY(SaveGame) TArray<FPhysicalChartRecord> PhysicalCharts;
+};
+
+USTRUCT(BlueprintType)
 struct FNamedCrewMemberState
 {
     GENERATED_BODY()
@@ -168,6 +188,11 @@ public:
 
     UFUNCTION(BlueprintPure, Category="Ship|Cabin")
     bool IsJakeInGreatCabin() const { return bJakeInGreatCabin; }
+
+    UFUNCTION(BlueprintCallable, Category="Ship|Persistence")
+    FShipVoyageSnapshot CaptureSnapshot() const;
+    UFUNCTION(BlueprintCallable, Category="Ship|Persistence")
+    bool RestoreSnapshot(const FShipVoyageSnapshot& Snapshot);
 
     UFUNCTION(BlueprintPure, Category="Ship|Structure")
     static int32 GetRequiredDeckCount() { return 4; }
