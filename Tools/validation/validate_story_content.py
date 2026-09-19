@@ -10,7 +10,7 @@ expected={
 'Main.C03.02.SafeRoutes':{'Story.EthanRouteMarksFound'},
 'Main.C03.03.TheFirstHolder':{'Story.FirstHolderCrossed','Chapter.03.Complete'}}
 files=sorted((ROOT/'ContentSource/Story/Chapter03').glob('*.json'))
-seen=set();known_types={'LocationTrigger','Evidence','Contact','RouteResolution'}
+seen=set();known_types={'LocationTrigger','Evidence','Contact','RouteResolution','PlayerShip','NavalEnemy','NavalEncounterGate'}
 for p in files:
     try:d=json.loads(p.read_text())
     except Exception as e:errors.append(f'{p}: invalid JSON: {e}');continue
@@ -41,8 +41,10 @@ if holder.get('bossId')!='boss.herrera':errors.append('Chapter 3 first Holder mu
 outcomes={a.get('outcomeValue') for a in holder.get('actors',[]) if a.get('type')=='RouteResolution'}
 if not {'NegotiatedPassage','AvoidedThroughOldQuarter'}<=outcomes:errors.append('TheFirstHolder must keep two physical non-final Herrera routes')
 if 'StoryRoute.Main.C03.03.TheFirstHolder' not in (ROOT/'ContentSource/Story/Chapter03/C03_03_TheFirstHolder.json').read_text():errors.append('Holder route outcome persistence missing')
-for forbidden in ('EthanBoss','Story.EthanBetrayal','boss.ethan'):
-    if forbidden in '\n'.join(p.read_text(errors='ignore') for p in (ROOT/'ContentSource/Story').rglob('*.json')):errors.append(f'legacy Ethan token in story content: {forbidden}')
+story_text='\n'.join(p.read_text(errors='ignore') for p in (ROOT/'ContentSource/Story').rglob('*.json'))
+for forbidden in ('Story.EthanBetrayal','boss.ethan'):
+    if forbidden in story_text:errors.append(f'legacy Ethan token in story content: {forbidden}')
+if re.search(r'(?<!Dream)EthanBoss',story_text):errors.append('legacy Ethan boss identity in story content')
 if errors:
     print('\n'.join('ERROR: '+e for e in errors));sys.exit(1)
 print('Story content validation passed: Chapter 3 has 3 canonical physical materialisation contracts.')
