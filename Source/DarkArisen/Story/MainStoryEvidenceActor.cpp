@@ -15,6 +15,8 @@ void AMainStoryEvidenceActor::CompleteInteraction_Implementation(AActor* Interac
     Super::CompleteInteraction_Implementation(Interactor);
     if(!GetGameInstance())return;
     UMainStorySubsystem* Story=GetGameInstance()->GetSubsystem<UMainStorySubsystem>();
-    if(Story&&Story->CompleteAuthoredMission(MissionId)&&!CheckpointId.IsNone()&&!SpawnId.IsNone())
+    if(!Story)return;
+    if(!WorldFactOnRead.IsNone()) Story->SetWorldFact(WorldFactOnRead,true);
+    if(bCompleteMissionOnInteraction&&Story->CompleteAuthoredMission(MissionId)&&!CheckpointId.IsNone()&&!SpawnId.IsNone())
         Story->SetCheckpoint(CheckpointId,SpawnId);
 }
