@@ -2,7 +2,7 @@ name: M0-M8 Native C++ CI
 
 on:
   push:
-    branches: [develop, main, work/alpha-content-production]
+    branches: [develop, main, work/alpha-content-production, work/final-alpha-opening-runtime]
   pull_request:
     branches: [develop, main, work/final-alpha-opening-runtime]
     types: [opened, synchronize, reopened, ready_for_review]
