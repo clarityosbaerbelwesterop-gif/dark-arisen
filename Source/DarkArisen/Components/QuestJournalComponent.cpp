@@ -271,3 +271,38 @@ bool UQuestJournalComponent::AppendJournalEntryInternal(
     JournalEntries.Add(MoveTemp(Entry));
     return true;
 }
+
+
+FQuestJournalSnapshot UQuestJournalComponent::CaptureSnapshot() const
+{
+    FQuestJournalSnapshot Snapshot;
+    Snapshot.bValid=true;
+    Snapshot.QuestStates=QuestStates;
+    Snapshot.JournalEntries=JournalEntries;
+    Snapshot.NextJournalSequence=NextJournalSequence;
+    return Snapshot;
+}
+
+bool UQuestJournalComponent::RestoreSnapshot(const FQuestJournalSnapshot& Snapshot)
+{
+    if(!Snapshot.bValid || Snapshot.NextJournalSequence<0) return false;
+    for(const TPair<FName,FQuestRuntimeState>& Pair:Snapshot.QuestStates)
+    {
+        if(Pair.Key.IsNone() || Pair.Value.QuestId!=Pair.Key || !DefinitionById.Contains(Pair.Key))
+            return false;
+    }
+    TSet<FName> EntryIds;
+    int64 MaxSequence=-1;
+    for(const FQuestJournalEntry& Entry:Snapshot.JournalEntries)
+    {
+        if(Entry.EntryId.IsNone() || Entry.QuestId.IsNone() || !Snapshot.QuestStates.Contains(Entry.QuestId) ||
+            Entry.Sequence<0 || EntryIds.Contains(Entry.EntryId)) return false;
+        EntryIds.Add(Entry.EntryId);
+        MaxSequence=FMath::Max(MaxSequence,Entry.Sequence);
+    }
+    if(Snapshot.NextJournalSequence<=MaxSequence) return false;
+    QuestStates=Snapshot.QuestStates;
+    JournalEntries=Snapshot.JournalEntries;
+    NextJournalSequence=Snapshot.NextJournalSequence;
+    return true;
+}
