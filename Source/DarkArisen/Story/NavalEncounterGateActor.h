@@ -8,5 +8,6 @@ UCLASS() class DARKARISEN_API ANavalEncounterGateActor:public AActor
 public:ANavalEncounterGateActor();virtual void Tick(float DeltaSeconds) override;
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Story") FName MissionId;
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Story") int32 RequiredDefeats=1;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Story") FName RequiredWorldFact;
 private:bool bCompleted=false;
 };
