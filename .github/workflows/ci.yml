@@ -15,9 +15,30 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  verify-static:
+    name: Static Alpha contracts
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Validate canonical Alpha runtime graph
+        run: python3 Tools/validation/validate_alpha_runtime.py
+      - name: Validate authored story content
+        run: python3 Tools/validation/validate_story_content.py
+      - name: Compile Python production tools
+        run: python3 -m compileall -q Tools
+      - name: Report visual release readiness
+        run: python3 Tools/validation/validate_visual_release.py
+      - name: Reject whitespace errors
+        run: git diff --check HEAD^
+
   verify-windows:
     name: Windows UE 5.8 materialise, compile, tests, laws
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    needs: verify-static
     runs-on: [self-hosted, Windows, X64, ue5.8, dark-arisen]
     timeout-minutes: 120
     steps:
@@ -51,6 +72,7 @@ jobs:
   verify-linux:
     name: Linux UE 5.8 materialise, compile, tests, laws
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    needs: verify-static
     runs-on: [self-hosted, Linux, X64, ue5.8, dark-arisen]
     timeout-minutes: 120
     steps:
