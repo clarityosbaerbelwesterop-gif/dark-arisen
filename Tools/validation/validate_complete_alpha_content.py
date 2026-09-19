@@ -54,7 +54,12 @@ dungeon_contracts=list((CS/"Dungeons").rglob("*.json")) if (CS/"Dungeons").exist
 turn_contracts=list((CS/"SideQuests"/"Turns").rglob("*.json")) if (CS/"SideQuests"/"Turns").exists() else []
 standing_contracts=list((CS/"SideQuests"/"Standing").rglob("*.json")) if (CS/"SideQuests"/"Standing").exists() else []
 hoard_contracts=list((CS/"Treasure"/"Hoards").rglob("*.json")) if (CS/"Treasure"/"Hoards").exists() else []
-region_contracts=list((CS/"World"/"Regions").rglob("*.json")) if (CS/"World"/"Regions").exists() else []
+region_files=list((CS/"World"/"Regions").rglob("*.json")) if (CS/"World"/"Regions").exists() else []
+region_contracts=[]
+for p in region_files:
+ try:
+  if json.loads(p.read_text(encoding="utf-8")).get("playableMaterialized") is True:region_contracts.append(p)
+ except Exception as e:errors.append(f"Invalid region contract {p.relative_to(ROOT)}: {e}")
 
 expected_dungeons=int(req.get("dungeons",{}).get("total",61))
 if len(dungeon_contracts)!=expected_dungeons:errors.append(f"Playable dungeon contracts: expected {expected_dungeons}, found {len(dungeon_contracts)}")
