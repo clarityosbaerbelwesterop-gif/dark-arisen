@@ -98,8 +98,11 @@ for token in ('DrawMiniMap','EAlphaOverlay::Map','SAVE GAME','SETTINGS'):
 combat=(source/'Components/CombatComponent.cpp').read_text(encoding='utf-8')
 for token in ('Combat.RacheUnlocked','Combat.RachePrimed','CurrentRache = MaxRache','StartRache()'):
     if token not in combat: errors.append(f'Rache runtime progression missing {token}')
-if r'\\n#include' in all_runtime:
-    errors.append('literal escaped newline found in native include block')
+if r'\\n#include' in all_runtime or r'\\n    UFUNCTION' in all_runtime:
+    errors.append('literal escaped newline found in native declaration/include block')
+ethan=(source/'Characters/EthanHarlowCharacter.h').read_text(encoding='utf-8')
+for token in ('ethan.harlow.real','bool IsFriendly() const{return true;}','bool IsCaptive() const'):
+    if token not in ethan: errors.append(f'real Ethan runtime contract missing {token}')
 
 opening=(source/'Opening/OpeningRuntimeComponent.cpp').read_text(encoding='utf-8')
 for required in ('BeginBoardingEncounter','SignalDravenBoarded','SignalTakingStarted','SignalCrewRecruitmentAvailable','SignalLaLiberacionHelmSecured','SignalLaLiberacionHarborCleared','RestoreAtCheckpoint'):
