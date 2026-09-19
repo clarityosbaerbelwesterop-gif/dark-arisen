@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "regionId": "region.the_maw",
+  "displayName": "The Maw",
+  "governingSource": "Docs/DesignAuthority.md",
+  "summary": "Post-game exploration layer. Never blocks aftermath or credits.",
+  "playableMaterialized": false,
+  "releaseRequirements": [
+    "continuous physical traversal for authored routes",
+    "side-content entrances physically reachable",
+    "save/persistence integration",
+    "map/minimap authored bounds without objective radar",
+    "no water fast travel",
+    "release-grade art/audio/lighting and collision",
+    "UE5.8 runtime acceptance"
+  ]
+}
