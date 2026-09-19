@@ -3,6 +3,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "EngineUtils.h"
 #include "Ship/LaLiberacionShip.h"
+#include "World/DarkArisenWorldRulesSubsystem.h"
 #include "Story/MainStoryMissionCatalog.h"
 
 namespace Facts
@@ -79,6 +80,12 @@ bool UMainStorySubsystem::Save(const FString& Slot,const int32 User)
             }
         }
     }
+    if(State)
+    {
+        if(UWorld* World=GetWorld())
+            if(UDarkArisenWorldRulesSubsystem* Rules=World->GetSubsystem<UDarkArisenWorldRulesSubsystem>())
+                State->WorldRules=Rules->CaptureSnapshot();
+    }
     TArray<FString> Errors;
     return Validate(Errors)&&UGameplayStatics::SaveGameToSlot(State,Slot,User);
 }
@@ -90,6 +97,9 @@ bool UMainStorySubsystem::Load(const FString& Slot,const int32 User)
     if(!Loaded||!MigrateVersion(Loaded,Errors)||!ValidateState(Loaded,Errors))return false;
     State=Loaded;
     RefreshAvailability();
+    if(UWorld* World=GetWorld())
+        if(UDarkArisenWorldRulesSubsystem* Rules=World->GetSubsystem<UDarkArisenWorldRulesSubsystem>())
+            if(State->WorldRules.bValid) Rules->RestoreSnapshot(State->WorldRules);
     return true;
 }
 
@@ -120,6 +130,10 @@ bool UMainStorySubsystem::MigrateVersion(UDarkArisenSaveGame* Candidate,TArray<F
     if(Candidate->SaveVersion==3)
     {
         Candidate->SaveVersion=4;
+    }
+    if(Candidate->SaveVersion==4)
+    {
+        Candidate->SaveVersion=5;
     }
     Candidate->SaveVersion=UDarkArisenSaveGame::CurrentVersion;
     return true;
