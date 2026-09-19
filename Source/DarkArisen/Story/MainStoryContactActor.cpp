@@ -17,7 +17,8 @@ bool AMainStoryContactActor::CanInteract_Implementation(AActor* Interactor) cons
     const UMainStorySubsystem* Story=GI?GI->GetSubsystem<UMainStorySubsystem>():nullptr;
     if(!Story) return false;
     if(MissionId.IsNone()) return true;
-    return Story->IsMissionActive(MissionId) || Story->IsMissionComplete(MissionId);
+    const EMainMissionState State=Story->GetMissionState(MissionId);
+    return State==EMainMissionState::Active || State==EMainMissionState::Completed;
 }
 
 EInteractionClass AMainStoryContactActor::GetInteractionClass_Implementation() const { return EInteractionClass::Talk; }
