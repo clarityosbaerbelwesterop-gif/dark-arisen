@@ -82,6 +82,8 @@ struct FShipVoyageSnapshot
     GENERATED_BODY()
     UPROPERTY(SaveGame) bool bValid=false;
     UPROPERTY(SaveGame) FTransform WorldTransform;
+    /** Optional for legacy saves: map-local coordinates must never carry into another level. */
+    UPROPERTY(SaveGame) FName SourceLevel;
     UPROPERTY(SaveGame) bool bOwnedAndUnlocked=false;
     UPROPERTY(SaveGame) float Throttle=0.f;
     UPROPERTY(SaveGame) float HullIntegrity=1000.f;

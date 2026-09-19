@@ -1,4 +1,6 @@
 #include "Story/MainStorySubsystem.h"
+#include "Engine/World.h"
+#include "World/DarkArisenWorldRulesSubsystem.h"
 
 bool UMainStorySubsystem::SetQuestOutcome(const FName OutcomeKey,const FName OutcomeValue)
 {
@@ -60,7 +62,8 @@ int32 UMainStorySubsystem::GetRecoveredTreasureCount() const
 bool UMainStorySubsystem::CompleteAuthoredMission(const FName Id)
 {
     if(!State||GetMissionState(Id)!=EMainMissionState::Active)return false;
-    if(!CompleteMission(Id))return false;
+    const int32 PreviousChapter = State->CurrentChapter;
+    if(!AdvanceMission(Id))return false;
 
     const auto Story=[this](const TCHAR* Fact){State->StoryFacts.Add(FName(Fact));};
     const auto World=[this](const TCHAR* Fact){SetWorldFact(FName(Fact),true);};
@@ -100,11 +103,23 @@ bool UMainStorySubsystem::CompleteAuthoredMission(const FName Id)
     else if(Id==TEXT("Main.C10.04.DravenVoss"))Story(TEXT("Story.DravenDefeated"));
     else if(Id==TEXT("Main.C10.05.TheWakeAfter")){World(TEXT("Chapter.10.Complete"));Story(TEXT("Story.MainCampaignComplete"));}
 
-    const bool bChapterBoundary=
-        Id==TEXT("Main.C03.03.TheFirstHolder")||Id==TEXT("Main.C04.03.HerrerasFall")||
-        Id==TEXT("Main.C05.03.NoSafeHarbor")||Id==TEXT("Main.C06.03.TheNorthernOath")||
-        Id==TEXT("Main.C07.03.ThroughTheNet")||Id==TEXT("Main.C08.03.HomewardBearing")||
-        Id==TEXT("Main.C09.04.WakingCourse")||Id==TEXT("Main.C10.05.TheWakeAfter");
-    if(bChapterBoundary) Save(TEXT("DarkArisenAlpha"),0);
+    const bool bChapterBoundary = State->CurrentChapter > PreviousChapter
+        || Id == TEXT("Main.C10.05.TheWakeAfter");
+    if (bChapterBoundary && GetWorld())
+    {
+        if (auto* Rules = GetWorld()->GetSubsystem<UDarkArisenWorldRulesSubsystem>())
+        {
+            Rules->NotifyChapterBoundary(State->CurrentChapter);
+            if (!Rules->IsAutosaveSuppressed())
+            {
+                if (Save(TEXT("DarkArisenAlpha"), 0))
+                    Rules->ConsumePendingAutosaveRequest();
+                else
+                    UE_LOG(LogTemp, Error, TEXT("Chapter-boundary autosave failed."));
+            }
+        }
+    }
+    // All authored facts and legal chapter saves precede listeners that can start map travel.
+    OnMissionChanged.Broadcast(Id, EMainMissionState::Completed);
     return true;
 }

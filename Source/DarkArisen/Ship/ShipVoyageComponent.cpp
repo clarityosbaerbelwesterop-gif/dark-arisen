@@ -7,6 +7,7 @@
 #include "Story/MainStorySubsystem.h"
 #include "Engine/GameInstance.h"
 #include "Engine/World.h"
+#include "Kismet/GameplayStatics.h"
 
 UShipVoyageComponent::UShipVoyageComponent()
 {
@@ -306,6 +307,7 @@ FShipVoyageSnapshot UShipVoyageComponent::CaptureSnapshot() const
     FShipVoyageSnapshot Snapshot;
     Snapshot.bValid=true;
     if(const AActor* Owner=GetOwner()) Snapshot.WorldTransform=Owner->GetActorTransform();
+    if (GetWorld()) Snapshot.SourceLevel = FName(*UGameplayStatics::GetCurrentLevelName(this, true));
     Snapshot.bOwnedAndUnlocked=bOwnedAndUnlocked;
     Snapshot.Throttle=Throttle;
     Snapshot.HullIntegrity=HullIntegrity;
@@ -338,7 +340,12 @@ bool UShipVoyageComponent::RestoreSnapshot(const FShipVoyageSnapshot& Snapshot)
     ActiveHands=Snapshot.ActiveHands;
     NamedCrew=Snapshot.NamedCrew;
     PhysicalCharts=Snapshot.PhysicalCharts;
-    if(AActor* Owner=GetOwner()) Owner->SetActorTransform(Snapshot.WorldTransform,false,nullptr,ETeleportType::TeleportPhysics);
+    if (AActor* Owner = GetOwner())
+    {
+        if (!Snapshot.SourceLevel.IsNone()
+            && Snapshot.SourceLevel == FName(*UGameplayStatics::GetCurrentLevelName(this, true)))
+            Owner->SetActorTransform(Snapshot.WorldTransform, false, nullptr, ETeleportType::TeleportPhysics);
+    }
     RecalculatePointOfSail();
     return true;
 }
