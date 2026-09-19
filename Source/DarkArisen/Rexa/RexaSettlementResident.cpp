@@ -182,6 +182,40 @@ bool ARexaSettlementResident::RestoreProtectedChildAfterCombat(
     return true;
 }
 
+bool ARexaSettlementResident::EnterCivilianCombatFlee(const FVector& CombatLocation)
+{
+    if(!bDefinitionInitialized || ResidentDefinition.bProtectedChild ||
+        CurrentSafetyState!=ERexaResidentSafetyState::Routine || CombatLocation.ContainsNaN()) return false;
+    FVector Away=GetActorLocation()-CombatLocation;
+    Away.Z=0.f;
+    if(Away.IsNearlyZero()) Away=GetActorForwardVector();
+    Away.Normalize();
+    if(!GetController()) SpawnDefaultController();
+    AAIController* ResidentController=Cast<AAIController>(GetController());
+    if(!ResidentController) return false;
+    GetCharacterMovement()->MaxWalkSpeed=FMath::Max(RoutineWalkSpeedCentimetresPerSecond,360.f);
+    const EPathFollowingRequestResult::Type Result=ResidentController->MoveToLocation(
+        GetActorLocation()+Away*1200.f,120.f,true,true,true,false,nullptr,true);
+    if(Result==EPathFollowingRequestResult::Failed)
+    {
+        GetCharacterMovement()->MaxWalkSpeed=RoutineWalkSpeedCentimetresPerSecond;
+        return false;
+    }
+    CurrentSafetyState=ERexaResidentSafetyState::FleeingCombat;
+    return true;
+}
+
+bool ARexaSettlementResident::RestoreCivilianRoutine()
+{
+    if(!bDefinitionInitialized || ResidentDefinition.bProtectedChild ||
+        CurrentSafetyState==ERexaResidentSafetyState::Routine) return false;
+    if(AAIController* ResidentController=Cast<AAIController>(GetController()))
+        ResidentController->StopMovement();
+    GetCharacterMovement()->MaxWalkSpeed=RoutineWalkSpeedCentimetresPerSecond;
+    CurrentSafetyState=ERexaResidentSafetyState::Routine;
+    return true;
+}
+
 bool ARexaSettlementResident::IsProtectedChildRuntime() const
 {
     if (!bDefinitionInitialized || !ResidentDefinition.bProtectedChild || CanBeDamaged())

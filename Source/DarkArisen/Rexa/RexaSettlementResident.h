@@ -54,6 +54,8 @@ public:
         ARexaSettlementAnchor* SafetyAnchor);
     bool ShelterProtectedChild(ARexaSettlementAnchor* SafetyAnchor);
     bool RestoreProtectedChildAfterCombat(ARexaSettlementAnchor* SafetyAnchor);
+    bool EnterCivilianCombatFlee(const FVector& CombatLocation);
+    bool RestoreCivilianRoutine();
 
     UFUNCTION(BlueprintPure, Category = "Rexa|Safety")
     bool IsProtectedChildRuntime() const;
