@@ -1,6 +1,8 @@
 #include "Story/MainStorySubsystem.h"
 
 #include "Kismet/GameplayStatics.h"
+#include "EngineUtils.h"
+#include "Ship/LaLiberacionShip.h"
 #include "Story/MainStoryMissionCatalog.h"
 
 namespace Facts
@@ -63,6 +65,20 @@ void UMainStorySubsystem::ResetForNewGame()
 
 bool UMainStorySubsystem::Save(const FString& Slot,const int32 User)
 {
+    if(State)
+    {
+        if(UWorld* World=GetWorld())
+        {
+            for(TActorIterator<ALaLiberacionShip> It(World);It;++It)
+            {
+                if(It->VoyageComponent)
+                {
+                    State->LaLiberacionVoyage=It->VoyageComponent->CaptureSnapshot();
+                    break;
+                }
+            }
+        }
+    }
     TArray<FString> Errors;
     return Validate(Errors)&&UGameplayStatics::SaveGameToSlot(State,Slot,User);
 }
@@ -100,6 +116,10 @@ bool UMainStorySubsystem::MigrateVersion(UDarkArisenSaveGame* Candidate,TArray<F
     if(Candidate->SaveVersion==2)
     {
         Candidate->SaveVersion=3;
+    }
+    if(Candidate->SaveVersion==3)
+    {
+        Candidate->SaveVersion=4;
     }
     Candidate->SaveVersion=UDarkArisenSaveGame::CurrentVersion;
     return true;

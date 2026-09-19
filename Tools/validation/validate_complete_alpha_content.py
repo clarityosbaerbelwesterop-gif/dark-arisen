@@ -77,10 +77,18 @@ if open_items:errors.append(f"Alpha delivery checklist still has {open_items} op
 # Exploration persistence must use the canonical SaveGame authority.
 save_h=(ROOT/"Source/DarkArisen/Persistence/DarkArisenSaveGame.h").read_text(encoding="utf-8")
 ops=(ROOT/"Source/DarkArisen/Story/MainStoryAuthoredMissionOps.cpp").read_text(encoding="utf-8")
-for token in ("CurrentVersion = 3","DiscoveredDungeons","CompletedDungeons","RecoveredTreasures"):
+for token in ("CurrentVersion = 4","DiscoveredDungeons","CompletedDungeons","RecoveredTreasures"):
  if token not in save_h:errors.append(f"Save authority missing {token}")
 for token in ("DiscoverDungeon(","CompleteDungeon(","RecoverTreasure(","Network.StateTreasuresComplete"):
  if token not in ops:errors.append(f"World persistence runtime missing {token}")
+
+ship_h=(ROOT/"Source/DarkArisen/Ship/ShipVoyageComponent.h").read_text(encoding="utf-8")
+ship_cpp=(ROOT/"Source/DarkArisen/Ship/ShipVoyageComponent.cpp").read_text(encoding="utf-8")
+ship_actor=(ROOT/"Source/DarkArisen/Ship/LaLiberacionShip.cpp").read_text(encoding="utf-8")
+for token in ("FShipVoyageSnapshot","CaptureSnapshot()","RestoreSnapshot("):
+ if token not in ship_h+ship_cpp:errors.append(f"Ship persistence missing {token}")
+for token in ("LaLiberacionVoyage","RestoreSnapshot"):
+ if token not in save_h+ship_actor:errors.append(f"Ship save/spawn integration missing {token}")
 
 # Physical exploration actors must bind authored world objects to persistence.
 for rel,tokens in {

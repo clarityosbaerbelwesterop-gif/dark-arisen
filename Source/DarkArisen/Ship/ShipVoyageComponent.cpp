@@ -299,3 +299,46 @@ void UShipVoyageComponent::BuildCanonicalCrew()
     AddCrew(TEXT("crew.ines"), TEXT("Ines"), TEXT("Surgeon"), ECrewWatch::Dusk);
     AddCrew(TEXT("crew.father_salvio"), TEXT("Father Salvio"), TEXT("Household"), ECrewWatch::Dawn);
 }
+
+
+FShipVoyageSnapshot UShipVoyageComponent::CaptureSnapshot() const
+{
+    FShipVoyageSnapshot Snapshot;
+    Snapshot.bValid=true;
+    if(const AActor* Owner=GetOwner()) Snapshot.WorldTransform=Owner->GetActorTransform();
+    Snapshot.bOwnedAndUnlocked=bOwnedAndUnlocked;
+    Snapshot.Throttle=Throttle;
+    Snapshot.HullIntegrity=HullIntegrity;
+    Snapshot.HeadingDegrees=HeadingDegrees;
+    Snapshot.CommandedHeadingDegrees=CommandedHeadingDegrees;
+    Snapshot.ForwardSpeedMetresPerSecond=ForwardSpeedMetresPerSecond;
+    Snapshot.WindDirectionDegrees=WindDirectionDegrees;
+    Snapshot.WindStrengthMetresPerSecond=WindStrengthMetresPerSecond;
+    Snapshot.bJakeInGreatCabin=bJakeInGreatCabin;
+    Snapshot.ActiveHands=ActiveHands;
+    Snapshot.NamedCrew=NamedCrew;
+    Snapshot.PhysicalCharts=PhysicalCharts;
+    return Snapshot;
+}
+
+bool UShipVoyageComponent::RestoreSnapshot(const FShipVoyageSnapshot& Snapshot)
+{
+    if(!Snapshot.bValid || Snapshot.HullIntegrity<0.f || Snapshot.HullIntegrity>1000.f ||
+        Snapshot.Throttle<0.f || Snapshot.Throttle>1.f || Snapshot.ActiveHands<0) return false;
+    bOwnedAndUnlocked=Snapshot.bOwnedAndUnlocked;
+    Throttle=Snapshot.Throttle;
+    HullIntegrity=Snapshot.HullIntegrity;
+    HeadingDegrees=NormalizeHeading(Snapshot.HeadingDegrees);
+    CommandedHeadingDegrees=NormalizeHeading(Snapshot.CommandedHeadingDegrees);
+    ForwardSpeedMetresPerSecond=FMath::Max(0.f,Snapshot.ForwardSpeedMetresPerSecond);
+    WindDirectionDegrees=NormalizeHeading(Snapshot.WindDirectionDegrees);
+    WindStrengthMetresPerSecond=FMath::Max(0.f,Snapshot.WindStrengthMetresPerSecond);
+    bJakeAtHelm=false;
+    bJakeInGreatCabin=Snapshot.bJakeInGreatCabin;
+    ActiveHands=Snapshot.ActiveHands;
+    NamedCrew=Snapshot.NamedCrew;
+    PhysicalCharts=Snapshot.PhysicalCharts;
+    if(AActor* Owner=GetOwner()) Owner->SetActorTransform(Snapshot.WorldTransform,false,nullptr,ETeleportType::TeleportPhysics);
+    RecalculatePointOfSail();
+    return true;
+}
