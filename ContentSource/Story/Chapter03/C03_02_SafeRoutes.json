@@ -6,25 +6,100 @@
   "entryAnchor": "RexaDeparture",
   "checkpointId": "Checkpoint.C03.SafeRoutes.Departure",
   "spawnId": "Spawn.C03.SafeRoutes.Departure",
-  "navigationLaw": "Physical sailing only; bearings come from mast silhouettes, reef color, wind and chart notes.",
+  "navigationLaw": "Physical sailing and environmental bearings remain primary; the Alpha map/minimap is available without objective arrows or floating mission markers.",
   "geometry": [
-    {"name":"ArmadaTenderWreckCove","objectPath":"/Game/Alpha/World/Rexa/Story/SM_ArmadaTenderWreckCove_Alpha.SM_ArmadaTenderWreckCove_Alpha","anchor":"EvidenceCove"}
+    {
+      "name": "ArmadaTenderWreckCove",
+      "objectPath": "/Game/Alpha/World/Rexa/Story/SM_ArmadaTenderWreckCove_Alpha.SM_ArmadaTenderWreckCove_Alpha",
+      "anchor": "EvidenceCove"
+    }
   ],
   "anchors": {
-    "RexaDeparture": [0,0,0],
-    "OuterMarker": [145000,18000,0],
-    "TenderContact": [265000,32000,0],
-    "EvidenceCove": [390000,47000,0],
-    "TenderDeck": [391000,47000,220],
-    "EthanShorthand": [392200,46600,180],
-    "CitadelRouteExit": [430000,52000,0]
+    "RexaDeparture": [
+      0,
+      0,
+      0
+    ],
+    "OuterMarker": [
+      145000,
+      18000,
+      0
+    ],
+    "TenderContact": [
+      265000,
+      32000,
+      0
+    ],
+    "EvidenceCove": [
+      390000,
+      47000,
+      0
+    ],
+    "TenderDeck": [
+      391000,
+      47000,
+      220
+    ],
+    "EthanShorthand": [
+      392200,
+      46600,
+      180
+    ],
+    "CitadelRouteExit": [
+      430000,
+      52000,
+      0
+    ]
   },
   "actors": [
-    {"type":"LocationTrigger","name":"C03_02_Entry","anchor":"RexaDeparture","action":"ActivateMission"},
-    {"type":"Contact","name":"C03_02_CrewBearing","anchor":"OuterMarker","contactId":"crew.mira","dialogueId":"Story.C03.SafeRoutes.Bearing","displayName":"Mira","text":"The tender cut inside the pale reef. Hold the dark water until the broken mast clears the headland."},
-    {"type":"Evidence","name":"C03_02_EthanShorthand","anchor":"EthanShorthand","title":"Route shorthand in Ethan's hand","body":"A familiar Harlow notation: safe water marked one degree wrong, repeatedly, in the same deliberate way.","completesMission":true,"checkpointId":"Checkpoint.C03.SafeRoutes.EvidenceCove","spawnId":"Spawn.C03.SafeRoutes.EvidenceCove"}
+    {
+      "type": "LocationTrigger",
+      "name": "C03_02_Entry",
+      "anchor": "RexaDeparture",
+      "action": "ActivateMission"
+    },
+    {
+      "type": "PlayerShip",
+      "name": "C03_02_LaLiberacion",
+      "anchor": "RexaDeparture"
+    },
+    {
+      "type": "Contact",
+      "name": "C03_02_CrewBearing",
+      "anchor": "OuterMarker",
+      "contactId": "crew.mira",
+      "dialogueId": "Story.C03.SafeRoutes.Bearing",
+      "displayName": "Mira",
+      "text": "The tender cut inside the pale reef. Hold the dark water until the broken mast clears the headland."
+    },
+    {
+      "type": "NavalEnemy",
+      "name": "C03_02_Asterion",
+      "anchor": "TenderContact"
+    },
+    {
+      "type": "Evidence",
+      "name": "C03_02_EthanShorthand",
+      "anchor": "EthanShorthand",
+      "title": "Route shorthand in Ethan's hand",
+      "body": "A familiar Harlow notation: safe water marked one degree wrong, repeatedly, in the same deliberate way.",
+      "worldFactOnRead": "Evidence.C03.EthanShorthandRead",
+      "checkpointId": "Checkpoint.C03.SafeRoutes.EvidenceCove",
+      "spawnId": "Spawn.C03.SafeRoutes.EvidenceCove"
+    },
+    {
+      "type": "NavalEncounterGate",
+      "name": "C03_02_AsterionDefeatGate",
+      "anchor": "CitadelRouteExit",
+      "requiredDefeats": 1,
+      "requiredWorldFact": "Evidence.C03.EthanShorthandRead"
+    }
   ],
-  "encounterIds": ["Encounter.C03.ArmadaTender.Asterion"],
-  "completionFacts": ["Story.EthanRouteMarksFound"],
+  "encounterIds": [
+    "Encounter.C03.ArmadaTender.Asterion"
+  ],
+  "completionFacts": [
+    "Story.EthanRouteMarksFound"
+  ],
   "nextMission": "Main.C03.03.TheFirstHolder"
 }
