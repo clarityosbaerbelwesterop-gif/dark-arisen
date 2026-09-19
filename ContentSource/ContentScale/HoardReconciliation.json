@@ -1,0 +1,164 @@
+{
+  "schemaVersion": 1,
+  "authorityDate": "2026-09-19",
+  "policy": "Preserves the fixed sixteen-chain treasure scope. Only identities explicitly described by existing design sources are named; undescribed chains remain blocked instead of receiving fabricated maps, owners, rewards or lore.",
+  "counts": {
+    "archipelago": 12,
+    "highmoore": 4,
+    "total": 16,
+    "sourceDescribed": 3,
+    "sourceUndescribed": 13
+  },
+  "globalLaws": {
+    "stepsPerChain": [
+      3,
+      5
+    ],
+    "lastStepNonCoinChains": 9,
+    "oneChainTerminatesInNothing": true,
+    "emptyChainCrossReference": "regional dungeon catalog.md §7.2 The First House",
+    "returnedCountNeverDisplayed": true
+  },
+  "hoards": [
+    {
+      "id": "hoard.archipelago.01",
+      "regionGroup": "archipelago",
+      "status": "source-locked",
+      "displayName": "Spanish Galleon Hoard",
+      "governingSources": [
+        "docs/design/region_02_rexa_overview.md",
+        "docs/design/region_02_rexa_economy.md"
+      ],
+      "terminalLocation": "Sunken Ship in the Mire Coast",
+      "goldBars": 7
+    },
+    {
+      "id": "hoard.archipelago.02",
+      "regionGroup": "archipelago",
+      "status": "source-locked",
+      "displayName": "Salazar's Personal Vault",
+      "governingSources": [
+        "docs/design/region_02_rexa_overview.md",
+        "docs/design/region_02_rexa_economy.md"
+      ],
+      "terminalLocation": "Hidden behind El Carnicero estate",
+      "goldBars": 8
+    },
+    {
+      "id": "hoard.archipelago.03",
+      "regionGroup": "archipelago",
+      "status": "source-locked",
+      "displayName": "The Old Fort Reserve",
+      "governingSources": [
+        "docs/design/region_02_rexa_overview.md",
+        "docs/design/region_02_rexa_economy.md"
+      ],
+      "terminalLocation": "Buried inside the Old Spanish Fort walls",
+      "goldBars": 5
+    },
+    {
+      "id": "hoard.archipelago.04",
+      "regionGroup": "archipelago",
+      "status": "source-undescribed-blocked",
+      "governingSources": [
+        "treasure system.md"
+      ]
+    },
+    {
+      "id": "hoard.archipelago.05",
+      "regionGroup": "archipelago",
+      "status": "source-undescribed-blocked",
+      "governingSources": [
+        "treasure system.md"
+      ]
+    },
+    {
+      "id": "hoard.archipelago.06",
+      "regionGroup": "archipelago",
+      "status": "source-undescribed-blocked",
+      "governingSources": [
+        "treasure system.md"
+      ]
+    },
+    {
+      "id": "hoard.archipelago.07",
+      "regionGroup": "archipelago",
+      "status": "source-undescribed-blocked",
+      "governingSources": [
+        "treasure system.md"
+      ]
+    },
+    {
+      "id": "hoard.archipelago.08",
+      "regionGroup": "archipelago",
+      "status": "source-undescribed-blocked",
+      "governingSources": [
+        "treasure system.md"
+      ]
+    },
+    {
+      "id": "hoard.archipelago.09",
+      "regionGroup": "archipelago",
+      "status": "source-undescribed-blocked",
+      "governingSources": [
+        "treasure system.md"
+      ]
+    },
+    {
+      "id": "hoard.archipelago.10",
+      "regionGroup": "archipelago",
+      "status": "source-undescribed-blocked",
+      "governingSources": [
+        "treasure system.md"
+      ]
+    },
+    {
+      "id": "hoard.archipelago.11",
+      "regionGroup": "archipelago",
+      "status": "source-undescribed-blocked",
+      "governingSources": [
+        "treasure system.md"
+      ]
+    },
+    {
+      "id": "hoard.archipelago.12",
+      "regionGroup": "archipelago",
+      "status": "source-undescribed-blocked",
+      "governingSources": [
+        "treasure system.md"
+      ]
+    },
+    {
+      "id": "hoard.highmoore.01",
+      "regionGroup": "highmoore",
+      "status": "source-undescribed-blocked",
+      "governingSources": [
+        "treasure system.md"
+      ]
+    },
+    {
+      "id": "hoard.highmoore.02",
+      "regionGroup": "highmoore",
+      "status": "source-undescribed-blocked",
+      "governingSources": [
+        "treasure system.md"
+      ]
+    },
+    {
+      "id": "hoard.highmoore.03",
+      "regionGroup": "highmoore",
+      "status": "source-undescribed-blocked",
+      "governingSources": [
+        "treasure system.md"
+      ]
+    },
+    {
+      "id": "hoard.highmoore.04",
+      "regionGroup": "highmoore",
+      "status": "source-undescribed-blocked",
+      "governingSources": [
+        "treasure system.md"
+      ]
+    }
+  ]
+}
