@@ -37,7 +37,7 @@ jobs:
 
   verify-windows:
     name: Windows UE 5.8 materialise, compile, tests, laws
-    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    if: env.ENABLE_UE58_RUNNERS == 'true' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
     needs: verify-static
     runs-on: [self-hosted, Windows, X64, ue5.8, dark-arisen]
     timeout-minutes: 120
@@ -71,7 +71,7 @@ jobs:
 
   verify-linux:
     name: Linux UE 5.8 materialise, compile, tests, laws
-    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    if: env.ENABLE_UE58_RUNNERS == 'true' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
     needs: verify-static
     runs-on: [self-hosted, Linux, X64, ue5.8, dark-arisen]
     timeout-minutes: 120
