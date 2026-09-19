@@ -30,6 +30,10 @@ jobs:
           fetch-depth: 1
           lfs: true
 
+      - name: Enforce complete world and side-content gate
+        shell: powershell
+        run: python Tools/validation/validate_complete_alpha_content.py
+
       - name: Enforce no-slop visual release gate
         shell: powershell
         run: python Tools/validation/validate_visual_release.py --release
