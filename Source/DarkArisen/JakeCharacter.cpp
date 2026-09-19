@@ -25,6 +25,7 @@
 #include "Story/RacheStoryUnlockComponent.h"
 #include "Story/MainStorySubsystem.h"
 #include "Engine/GameInstance.h"
+#include "Kismet/GameplayStatics.h"
 #include "Systems/ProgressionEconomyComponent.h"
 #include "UnrealClient.h"
 AJakeCharacter::AJakeCharacter(){PrimaryActorTick.bCanEverTick=true;GetCapsuleComponent()->InitCapsuleSize(42,96);bUseControllerRotationPitch=false;bUseControllerRotationYaw=false;bUseControllerRotationRoll=false;auto* M=GetCharacterMovement();M->bOrientRotationToMovement=true;M->RotationRate=FRotator(0,360,0);M->JumpZVelocity=520;M->AirControl=.25f;M->MaxWalkSpeed=RunSpeedCentimetresPerSecond;M->BrakingDecelerationWalking=1400;HealthComponent=CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));HealthComponent->bRallyEnabled=true;StaminaComponent=CreateDefaultSubobject<UStaminaComponent>(TEXT("StaminaComponent"));CombatComponent=CreateDefaultSubobject<UCombatComponent>(TEXT("CombatComponent"));WoundStateComponent=CreateDefaultSubobject<UWoundStateComponent>(TEXT("WoundStateComponent"));CameraStateComponent=CreateDefaultSubobject<UCameraStateComponent>(TEXT("CameraStateComponent"));InteractionComponent=CreateDefaultSubobject<UInteractionComponent>(TEXT("InteractionComponent"));LockOnComponent=CreateDefaultSubobject<ULockOnComponent>(TEXT("LockOnComponent"));QuestJournalComponent=CreateDefaultSubobject<UQuestJournalComponent>(TEXT("QuestJournalComponent"));HeatExposureComponent=CreateDefaultSubobject<UHeatExposureComponent>(TEXT("HeatExposureComponent"));WaterBreathComponent=CreateDefaultSubobject<UWaterBreathComponent>(TEXT("WaterBreathComponent"));ProgressionEconomyComponent=CreateDefaultSubobject<UProgressionEconomyComponent>(TEXT("ProgressionEconomyComponent"));RacheStoryUnlockComponent=CreateDefaultSubobject<URacheStoryUnlockComponent>(TEXT("RacheStoryUnlockComponent"));CameraBoom=CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));CameraBoom->SetupAttachment(RootComponent);CameraBoom->TargetArmLength=360;CameraBoom->SocketOffset=BaseCameraSocketOffset;CameraBoom->bUsePawnControlRotation=true;FollowCamera=CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));FollowCamera->SetupAttachment(CameraBoom,USpringArmComponent::SocketName);FollowCamera->bUsePawnControlRotation=false;}
@@ -36,7 +37,9 @@ void AJakeCharacter::BeginPlay(){Super::BeginPlay();if(!URexaM2MissionCatalog::R
                         UE_LOG(LogDarkArisen,Error,TEXT("Progression/economy restore failed closed."));
                     if(Save->PlayerRuntime.bValid&&Save->PlayerRuntime.MissionId==Save->CurrentMission)
                     {
-                        SetActorTransform(Save->PlayerRuntime.Transform,false,nullptr,ETeleportType::TeleportPhysics);
+                        if (!Save->PlayerRuntime.SourceLevel.IsNone()
+                            && Save->PlayerRuntime.SourceLevel == FName(*UGameplayStatics::GetCurrentLevelName(this, true)))
+                            SetActorTransform(Save->PlayerRuntime.Transform,false,nullptr,ETeleportType::TeleportPhysics);
                         HealthComponent->ResetForRespawn(FMath::Clamp(Save->PlayerRuntime.HealthFraction,0.01f,1.0f));
                         StaminaComponent->ResetForRespawn(FMath::Clamp(Save->PlayerRuntime.StaminaFraction,0.0f,1.0f));
                     }

@@ -326,7 +326,7 @@ int32 UDarkArisenMaterializeAlphaCommandlet::Main(const FString& Params)
     const TArray<TPair<FString,FString>> StaticSources = {
         {TEXT("ContentSource/Ships/Harlow/SM_HarlowMerchantShip_Alpha.gltf"), TEXT("/Game/Alpha/Ships/Harlow")},
         {TEXT("ContentSource/Ships/Harlow/SM_HarlowShip_WalkableCollision_Alpha.gltf"), TEXT("/Game/Alpha/Ships/Harlow")},
-        {TEXT("ContentSource/Ships/Harlow/SM_HarlowWreckage_Alpha.gltf"), TEXT("/Game/Alpha/World/Moran/DriftwoodBeach")},
+        {TEXT("ContentSource/World/Moran/DriftwoodBeach/SM_HarlowWreckage_Alpha.gltf"), TEXT("/Game/Alpha/World/Moran/DriftwoodBeach")},
         {TEXT("ContentSource/Ships/Draven/SM_DravenRaidSilhouette_Alpha.gltf"), TEXT("/Game/Alpha/Ships/Draven")},
         {TEXT("ContentSource/World/Moran/DriftwoodBeach/SM_DriftwoodTerrain_Alpha.gltf"), TEXT("/Game/Alpha/World/Moran/DriftwoodBeach")},
         {TEXT("ContentSource/World/Moran/OuterReef/SM_OuterReef_Alpha.gltf"), TEXT("/Game/Alpha/World/Moran/OuterReef")},

@@ -17,6 +17,10 @@ public:
     UFUNCTION(BlueprintCallable) void NewGame();
     UFUNCTION(BlueprintCallable) bool Save(const FString& SlotName,int32 UserIndex);
     UFUNCTION(BlueprintCallable) bool Load(const FString& SlotName,int32 UserIndex);
+    /** Copy live components to the game-instance state without writing a save slot. */
+    bool CaptureWorldState(UWorld* World);
+    /** Restore world-scoped state before the destination actors begin play. */
+    bool RestoreWorldState(UWorld* World) const;
     UFUNCTION(BlueprintCallable) void ResetForNewGame();
     UFUNCTION(BlueprintCallable) bool ActivateMission(FName MissionId);
     UFUNCTION(BlueprintCallable) bool CompleteMission(FName MissionId);
@@ -57,4 +61,5 @@ private:
     UPROPERTY() TObjectPtr<UDarkArisenSaveGame> State;
     void ApplyMissionFacts(FName MissionId);
     void RefreshAvailability();
+    bool AdvanceMission(FName MissionId);
 };

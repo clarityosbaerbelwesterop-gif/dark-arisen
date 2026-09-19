@@ -10,9 +10,6 @@ on:
 permissions:
   contents: read
 
-env:
-  ENABLE_UE58_RUNNERS: 'true' # Required for the first complete 3D Alpha acceptance.
-
 concurrency:
   group: dark-arisen-ci-${{ github.ref }}
   cancel-in-progress: true
@@ -40,7 +37,8 @@ jobs:
 
   verify-windows:
     name: Windows UE 5.8 materialise, compile, tests, laws
-    if: env.ENABLE_UE58_RUNNERS == 'true' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
+    # Job conditions are evaluated before runner env exists. Keep UE verification mandatory.
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     needs: verify-static
     runs-on: [self-hosted, Windows, X64, ue5.8, dark-arisen]
     timeout-minutes: 120
@@ -74,7 +72,7 @@ jobs:
 
   verify-linux:
     name: Linux UE 5.8 materialise, compile, tests, laws
-    if: env.ENABLE_UE58_RUNNERS == 'true' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     needs: verify-static
     runs-on: [self-hosted, Linux, X64, ue5.8, dark-arisen]
     timeout-minutes: 120

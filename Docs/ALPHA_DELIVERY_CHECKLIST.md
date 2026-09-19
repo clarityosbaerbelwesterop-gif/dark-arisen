@@ -1,7 +1,8 @@
 # Dark Arisen Alpha delivery checklist
 
-**Active source branch:** `feature/m5-m6-source-completion` / PR #8
-**Merged source history:** PR #4 → `develop`; PR #5 → `main`; PR #7 → `develop` on 2026-08-28. None of these source merges proves the still-missing runtime or Alpha gates.
+**Current source baseline:** `main`; Alpha CI/persistence continuation in PR #52. The older milestone narratives below are historical source records, not the current branch state.
+**Current verification:** `Docs/ALPHA_VERIFICATION_2026_09_19.md`. No unchecked runtime/content item has been promoted to accepted by the source repairs.
+**Historical source history:** PR #4 → `develop`; PR #5 → `main`; PR #7 → `develop` on 2026-08-28. None of these source merges proves the still-missing runtime or Alpha gates.
 **Engine:** Unreal Engine 5.8
 **Current runtime direction:** Flo directed on 2026-08-28 that unavailable UE 5.8 runtime/runner gates should not block further source work. They remain mandatory later acceptance gates and are not treated as passed.
 **Artifact definition:** the first Alpha is the complete private UE 5.8 game plus two separately verified, content-identical Shipping artifacts: `DarkArisen-Alpha-Windows-Arcware.zip` and `DarkArisen-Alpha-Linux-x86_64.zip`. The exact source archive accompanies them. A scaffold, greybox, vertical slice, streaming configuration or untested candidate is not an Alpha. Native PS5 work is deferred to Beta and is not an Alpha deliverable.

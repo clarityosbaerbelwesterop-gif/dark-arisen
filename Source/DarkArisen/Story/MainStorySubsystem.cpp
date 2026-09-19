@@ -1,6 +1,7 @@
 #include "Story/MainStorySubsystem.h"
 
 #include "Kismet/GameplayStatics.h"
+#include "Engine/World.h"
 #include "EngineUtils.h"
 #include "Ship/LaLiberacionShip.h"
 #include "World/DarkArisenWorldRulesSubsystem.h"
@@ -71,49 +72,59 @@ void UMainStorySubsystem::ResetForNewGame()
     State->CurrentChapter=1;
 }
 
+bool UMainStorySubsystem::CaptureWorldState(UWorld* World)
+{
+    if (!State || !World) return false;
+    for (TActorIterator<ALaLiberacionShip> It(World); It; ++It)
+    {
+        if (It->VoyageComponent)
+        {
+            State->LaLiberacionVoyage = It->VoyageComponent->CaptureSnapshot();
+            break;
+        }
+    }
+    if (const auto* Rules = World->GetSubsystem<UDarkArisenWorldRulesSubsystem>())
+        State->WorldRules = Rules->CaptureSnapshot();
+    if (const auto* Living = World->GetSubsystem<UNPCLivingWorldSubsystem>())
+        State->LivingNPCWorld = Living->CaptureSnapshot();
+    if (APlayerController* PC = World->GetFirstPlayerController())
+    {
+        if (APawn* Pawn = PC->GetPawn())
+        {
+            if (const auto* Journal = Pawn->FindComponentByClass<UQuestJournalComponent>())
+                State->QuestJournal = Journal->CaptureSnapshot();
+            if (const auto* Progression = Pawn->FindComponentByClass<UProgressionEconomyComponent>())
+                State->ProgressionEconomy = Progression->CaptureSnapshot();
+            State->PlayerRuntime.bValid = true;
+            State->PlayerRuntime.MissionId = State->CurrentMission;
+            State->PlayerRuntime.SourceLevel = FName(*UGameplayStatics::GetCurrentLevelName(World, true));
+            State->PlayerRuntime.Transform = Pawn->GetActorTransform();
+            if (const auto* Health = Pawn->FindComponentByClass<UHealthComponent>())
+                State->PlayerRuntime.HealthFraction = FMath::Clamp(Health->GetHealthPercent(), 0.01f, 1.0f);
+            if (const auto* Stamina = Pawn->FindComponentByClass<UStaminaComponent>())
+                State->PlayerRuntime.StaminaFraction = Stamina->MaxStamina > 0.f
+                    ? FMath::Clamp(Stamina->CurrentStamina / Stamina->MaxStamina, 0.f, 1.f) : 1.f;
+        }
+    }
+    return true;
+}
+
+bool UMainStorySubsystem::RestoreWorldState(UWorld* World) const
+{
+    if (!State || !World) return false;
+    auto* Rules = World->GetSubsystem<UDarkArisenWorldRulesSubsystem>();
+    auto* Living = World->GetSubsystem<UNPCLivingWorldSubsystem>();
+    if (!Rules || !Living) return false;
+    if (State->WorldRules.bValid && !Rules->RestoreSnapshot(State->WorldRules)) return false;
+    // Old saves and fresh games have no world snapshot. The story still owns the chapter.
+    Rules->SetChapter(State->CurrentChapter);
+    return !State->LivingNPCWorld.bValid || Living->RestoreSnapshot(State->LivingNPCWorld);
+}
+
 bool UMainStorySubsystem::Save(const FString& Slot,const int32 User)
 {
-    if(State)
-    {
-        if(UWorld* World=GetWorld())
-        {
-            for(TActorIterator<ALaLiberacionShip> It(World);It;++It)
-            {
-                if(It->VoyageComponent)
-                {
-                    State->LaLiberacionVoyage=It->VoyageComponent->CaptureSnapshot();
-                    break;
-                }
-            }
-        }
-    }
-    if(State)
-    {
-        if(UWorld* World=GetWorld())
-        {
-            if(UDarkArisenWorldRulesSubsystem* Rules=World->GetSubsystem<UDarkArisenWorldRulesSubsystem>())
-                State->WorldRules=Rules->CaptureSnapshot();
-            if(UNPCLivingWorldSubsystem* Living=World->GetSubsystem<UNPCLivingWorldSubsystem>())
-                State->LivingNPCWorld=Living->CaptureSnapshot();
-            if(APlayerController* PC=World->GetFirstPlayerController())
-            {
-                if(APawn* Pawn=PC->GetPawn())
-                {
-                    if(UQuestJournalComponent* Journal=Pawn->FindComponentByClass<UQuestJournalComponent>())
-                        State->QuestJournal=Journal->CaptureSnapshot();
-                    if(UProgressionEconomyComponent* Progression=Pawn->FindComponentByClass<UProgressionEconomyComponent>())
-                        State->ProgressionEconomy=Progression->CaptureSnapshot();
-                    State->PlayerRuntime.bValid=true;
-                    State->PlayerRuntime.MissionId=State->CurrentMission;
-                    State->PlayerRuntime.Transform=Pawn->GetActorTransform();
-                    if(const UHealthComponent* Health=Pawn->FindComponentByClass<UHealthComponent>())
-                        State->PlayerRuntime.HealthFraction=FMath::Clamp(Health->GetHealthPercent(),0.01f,1.0f);
-                    if(const UStaminaComponent* Stamina=Pawn->FindComponentByClass<UStaminaComponent>())
-                        State->PlayerRuntime.StaminaFraction=Stamina->MaxStamina>0.0f?FMath::Clamp(Stamina->CurrentStamina/Stamina->MaxStamina,0.0f,1.0f):1.0f;
-                }
-            }
-        }
-    }
+    // Headless catalog tests must never overwrite a player's actual Alpha save slot.
+    if (Slot.IsEmpty() || User < 0 || !CaptureWorldState(GetWorld())) return false;
     TArray<FString> Errors;
     return Validate(Errors)&&UGameplayStatics::SaveGameToSlot(State,Slot,User);
 }
@@ -125,13 +136,7 @@ bool UMainStorySubsystem::Load(const FString& Slot,const int32 User)
     if(!Loaded||!MigrateVersion(Loaded,Errors)||!ValidateState(Loaded,Errors))return false;
     State=Loaded;
     RefreshAvailability();
-    if(UWorld* World=GetWorld())
-    {
-        if(UDarkArisenWorldRulesSubsystem* Rules=World->GetSubsystem<UDarkArisenWorldRulesSubsystem>())
-            if(State->WorldRules.bValid) Rules->RestoreSnapshot(State->WorldRules);
-        if(UNPCLivingWorldSubsystem* Living=World->GetSubsystem<UNPCLivingWorldSubsystem>())
-            if(State->LivingNPCWorld.bValid) Living->RestoreSnapshot(State->LivingNPCWorld);
-    }
+    // The caller opens the saved map. Restoring into the world being discarded loses the snapshot.
     return true;
 }
 
@@ -212,15 +217,17 @@ bool UMainStorySubsystem::ActivateMission(const FName Id)
 
 bool UMainStorySubsystem::CompleteMission(const FName Id)
 {
+    return CompleteAuthoredMission(Id);
+}
+
+bool UMainStorySubsystem::AdvanceMission(const FName Id)
+{
     if(!State)return false;
     auto* Runtime=State->MissionStates.FindByPredicate([Id](const auto& V){return V.MissionId==Id;});
     if(!Runtime||Runtime->State!=EMainMissionState::Active)return false;
     Runtime->State=EMainMissionState::Completed;
     ApplyMissionFacts(Id);
     RefreshAvailability();
-    OnMissionChanged.Broadcast(Id,Runtime->State);
-    if(Id==TEXT("Main.C01.04.Undertow")||Id==TEXT("Main.C02.03.FirstWake"))
-        Save(TEXT("DarkArisenAlpha"),0);
     return true;
 }
 
@@ -412,12 +419,52 @@ bool UMainStorySubsystem::ValidateState(const UDarkArisenSaveGame* Candidate,TAr
         return Runtime?Runtime->State:EMainMissionState::Locked;
     };
 
-    bool FoundIncomplete=false;
-    for(const auto& Runtime:Candidate->MissionStates)
+    const auto& Catalog = FMainStoryMissionCatalog::Get();
+    int32 FirstIncomplete = INDEX_NONE;
+    for (int32 Index = 0; Index < Candidate->MissionStates.Num(); ++Index)
     {
-        if(Runtime.State==EMainMissionState::Completed){if(FoundIncomplete)Errors.Add(TEXT("Completed mission appears after an incomplete predecessor."));}
-        else if(Runtime.State!=EMainMissionState::Failed)FoundIncomplete=true;
+        const auto& Runtime = Candidate->MissionStates[Index];
+        if (!Catalog.IsValidIndex(Index) || Runtime.MissionId != Catalog[Index].MissionId)
+            Errors.Add(TEXT("Save missions must match the canonical order and identities."));
+        switch (Runtime.State)
+        {
+        case EMainMissionState::Completed:
+            if (FirstIncomplete != INDEX_NONE)
+                Errors.Add(TEXT("Completed mission appears after an incomplete predecessor."));
+            break;
+        case EMainMissionState::Locked:
+        case EMainMissionState::Available:
+        case EMainMissionState::Active:
+        case EMainMissionState::Failed:
+            if (FirstIncomplete == INDEX_NONE)
+            {
+                FirstIncomplete = Index;
+                if (Runtime.State == EMainMissionState::Locked)
+                    Errors.Add(TEXT("The next mission cannot be locked in a saved progression."));
+            }
+            else if (Runtime.State != EMainMissionState::Locked)
+                Errors.Add(TEXT("Only the first incomplete mission may be available, active or failed."));
+            break;
+        default:
+            Errors.Add(TEXT("Unknown saved mission state."));
+            break;
+        }
     }
+    const int32 CurrentIndex = FirstIncomplete == INDEX_NONE ? Catalog.Num() - 1 : FirstIncomplete;
+    if (!Catalog.IsValidIndex(CurrentIndex) || Candidate->CurrentMission != Catalog[CurrentIndex].MissionId
+        || Candidate->CurrentChapter != Catalog[CurrentIndex].Chapter)
+        Errors.Add(TEXT("Current mission/chapter does not match the canonical progression."));
+    if (Candidate->WorldRules.bValid && (Candidate->WorldRules.TotalWorldMinutes < 0
+        || Candidate->WorldRules.Chapter < 1 || Candidate->WorldRules.Chapter > 10))
+        Errors.Add(TEXT("Saved world clock/chapter is invalid."));
+    if (Candidate->LivingNPCWorld.bValid && !UNPCLivingWorldSubsystem::ValidateSnapshot(Candidate->LivingNPCWorld))
+        Errors.Add(TEXT("Saved NPC memories or social connections are invalid."));
+    if (Candidate->PlayerRuntime.bValid && (Candidate->PlayerRuntime.Transform.ContainsNaN()
+        || !FMath::IsFinite(Candidate->PlayerRuntime.HealthFraction)
+        || Candidate->PlayerRuntime.HealthFraction <= 0.f || Candidate->PlayerRuntime.HealthFraction > 1.f
+        || !FMath::IsFinite(Candidate->PlayerRuntime.StaminaFraction)
+        || Candidate->PlayerRuntime.StaminaFraction < 0.f || Candidate->PlayerRuntime.StaminaFraction > 1.f))
+        Errors.Add(TEXT("Saved player transform or vitals are invalid."));
 
     for(const FCrewRelationshipState& Crew:Candidate->Crew)
     {

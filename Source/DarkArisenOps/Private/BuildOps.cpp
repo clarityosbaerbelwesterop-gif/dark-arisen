@@ -404,6 +404,7 @@ int32 BuildCommand(const FParsedArgs& Args)
         return 1;
     }
     if (!BuildTarget(Root, Engine, TEXT("DarkArisenEditor"), TEXT("Development"))
+        || !MaterializeAlphaContent(Root, Engine)
         || !BuildTarget(Root, Engine, TEXT("DarkArisen"), TEXT("Development"))
         || !BuildTarget(Root, Engine, TEXT("DarkArisen"), TEXT("Shipping")))
     {
