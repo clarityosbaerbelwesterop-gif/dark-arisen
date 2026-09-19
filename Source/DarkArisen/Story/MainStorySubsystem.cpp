@@ -4,6 +4,9 @@
 #include "EngineUtils.h"
 #include "Ship/LaLiberacionShip.h"
 #include "World/DarkArisenWorldRulesSubsystem.h"
+#include "Components/QuestJournalComponent.h"
+#include "GameFramework/PlayerController.h"
+#include "GameFramework/Pawn.h"
 #include "Story/MainStoryMissionCatalog.h"
 
 namespace Facts
@@ -83,8 +86,14 @@ bool UMainStorySubsystem::Save(const FString& Slot,const int32 User)
     if(State)
     {
         if(UWorld* World=GetWorld())
+        {
             if(UDarkArisenWorldRulesSubsystem* Rules=World->GetSubsystem<UDarkArisenWorldRulesSubsystem>())
                 State->WorldRules=Rules->CaptureSnapshot();
+            if(APlayerController* PC=World->GetFirstPlayerController())
+                if(APawn* Pawn=PC->GetPawn())
+                    if(UQuestJournalComponent* Journal=Pawn->FindComponentByClass<UQuestJournalComponent>())
+                        State->QuestJournal=Journal->CaptureSnapshot();
+        }
     }
     TArray<FString> Errors;
     return Validate(Errors)&&UGameplayStatics::SaveGameToSlot(State,Slot,User);
@@ -134,6 +143,10 @@ bool UMainStorySubsystem::MigrateVersion(UDarkArisenSaveGame* Candidate,TArray<F
     if(Candidate->SaveVersion==4)
     {
         Candidate->SaveVersion=5;
+    }
+    if(Candidate->SaveVersion==5)
+    {
+        Candidate->SaveVersion=6;
     }
     Candidate->SaveVersion=UDarkArisenSaveGame::CurrentVersion;
     return true;
