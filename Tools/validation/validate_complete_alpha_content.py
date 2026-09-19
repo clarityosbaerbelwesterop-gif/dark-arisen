@@ -60,6 +60,14 @@ if len(set(all_dungeon_ids))!=61:errors.append("Dungeon reconciliation: stable i
 if any(x.get("status")=="source-withheld-blocked" for x in named_recon):
  errors.append("Dungeon reconciliation: one Region 06 Tier-E identity/image/boss remains source-withheld; do not fabricate it")
 
+# Reconcile fixed treasure-chain scope without inventing the thirteen identities absent from current source.
+hoard_recon=load("ContentSource/ContentScale/HoardReconciliation.json")
+hoard_slots=hoard_recon.get("hoards",[])
+if len(hoard_slots)!=16:errors.append(f"Hoard reconciliation: expected 16 slots, found {len(hoard_slots)}")
+if len({x.get("id") for x in hoard_slots})!=len(hoard_slots):errors.append("Hoard reconciliation: duplicate stable ids")
+undescribed_hoards=sum(1 for x in hoard_slots if x.get("status")=="source-undescribed-blocked")
+if undescribed_hoards:errors.append(f"Hoard reconciliation: {undescribed_hoards} chains remain source-undescribed; do not fabricate maps/owners/rewards/lore")
+
 # Full-vision playable source contracts. Design-only docs do not count here.
 dungeon_contracts=list((CS/"Dungeons").rglob("*.json")) if (CS/"Dungeons").exists() else []
 turn_contracts=list((CS/"SideQuests"/"Turns").rglob("*.json")) if (CS/"SideQuests"/"Turns").exists() else []
