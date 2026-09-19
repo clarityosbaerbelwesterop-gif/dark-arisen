@@ -95,6 +95,12 @@ hud=(source/'PostureOnlyHUD.cpp').read_text(encoding='utf-8')
 for token in ('DrawMiniMap','EAlphaOverlay::Map','SAVE GAME','SETTINGS'):
     if token not in hud: errors.append(f'gameplay HUD missing {token}')
 
+combat=(source/'Components/CombatComponent.cpp').read_text(encoding='utf-8')
+for token in ('Combat.RacheUnlocked','Combat.RachePrimed','CurrentRache = MaxRache','StartRache()'):
+    if token not in combat: errors.append(f'Rache runtime progression missing {token}')
+if r'\\n#include' in all_runtime:
+    errors.append('literal escaped newline found in native include block')
+
 opening=(source/'Opening/OpeningRuntimeComponent.cpp').read_text(encoding='utf-8')
 for required in ('BeginBoardingEncounter','SignalDravenBoarded','SignalTakingStarted','SignalCrewRecruitmentAvailable','SignalLaLiberacionHelmSecured','SignalLaLiberacionHarborCleared','RestoreAtCheckpoint'):
     if required not in opening: errors.append(f'missing real opening gate: {required}')
