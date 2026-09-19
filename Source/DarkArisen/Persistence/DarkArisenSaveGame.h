@@ -3,6 +3,7 @@
 #include "GameFramework/SaveGame.h"
 #include "Story/MainStoryTypes.h"
 #include "Ship/ShipVoyageComponent.h"
+#include "World/DarkArisenWorldRulesSubsystem.h"
 #include "DarkArisenSaveGame.generated.h"
 
 UCLASS()
@@ -10,7 +11,7 @@ class DARKARISEN_API UDarkArisenSaveGame : public USaveGame
 {
     GENERATED_BODY()
 public:
-    static constexpr int32 CurrentVersion = 4;
+    static constexpr int32 CurrentVersion = 5;
     UPROPERTY(SaveGame) int32 SaveVersion = CurrentVersion;
     UPROPERTY(SaveGame) FName CurrentMission;
     UPROPERTY(SaveGame) int32 CurrentChapter = 1;
@@ -21,6 +22,7 @@ public:
     UPROPERTY(SaveGame) TArray<FCrewRelationshipState> Crew;
     UPROPERTY(SaveGame) FName CurrentShip;
     UPROPERTY(SaveGame) FShipVoyageSnapshot LaLiberacionVoyage;
+    UPROPERTY(SaveGame) FDarkArisenWorldRulesSnapshot WorldRules;
     UPROPERTY(SaveGame) TSet<FName> DefeatedBosses;
     UPROPERTY(SaveGame) TSet<FName> ImportantShortcuts;
     UPROPERTY(SaveGame) TSet<FName> DiscoveredDungeons;
