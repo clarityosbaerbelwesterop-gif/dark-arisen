@@ -13,6 +13,10 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadOnly) FName SpawnId;
     /** Optional fail-closed gate for evidence physically secured behind a Holder encounter. */
     UPROPERTY(EditAnywhere, BlueprintReadOnly) FName RequiredBossId;
+    /** Optional fact written immediately when this physical evidence is read. */
+    UPROPERTY(EditAnywhere, BlueprintReadOnly) FName WorldFactOnRead;
+    /** Evidence may be required before another physical gate completes the mission. */
+    UPROPERTY(EditAnywhere, BlueprintReadOnly) bool bCompleteMissionOnInteraction=true;
     virtual bool CanInteract_Implementation(AActor* Interactor) const override;
     virtual void CompleteInteraction_Implementation(AActor* Interactor) override;
 };
