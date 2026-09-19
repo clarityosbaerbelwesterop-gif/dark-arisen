@@ -106,7 +106,7 @@ for token in ("RegisterNPC","UpdateScheduleAnchor","EnterCivilianCombatFlee","EN
 # Exploration persistence must use the canonical SaveGame authority.
 save_h=(ROOT/"Source/DarkArisen/Persistence/DarkArisenSaveGame.h").read_text(encoding="utf-8")
 ops=(ROOT/"Source/DarkArisen/Story/MainStoryAuthoredMissionOps.cpp").read_text(encoding="utf-8")
-for token in ("CurrentVersion = 8","DiscoveredDungeons","CompletedDungeons","RecoveredTreasures"):
+for token in ("CurrentVersion = 9","DiscoveredDungeons","CompletedDungeons","RecoveredTreasures","FPlayerRuntimeSnapshot","PlayerRuntime"):
  if token not in save_h:errors.append(f"Save authority missing {token}")
 for token in ("DiscoverDungeon(","CompleteDungeon(","RecoverTreasure(","Network.StateTreasuresComplete"):
  if token not in ops:errors.append(f"World persistence runtime missing {token}")
@@ -118,6 +118,8 @@ for token in ("FProgressionEconomySnapshot","CaptureSnapshot()","RestoreSnapshot
  if token not in progress_h+progress_cpp:errors.append(f"Progression persistence missing {token}")
 for token in ("ProgressionEconomy","RestoreSnapshot(Save->ProgressionEconomy)"):
  if token not in save_h+jake:errors.append(f"Progression save/spawn integration missing {token}")
+for token in ("PlayerRuntime.bValid","PlayerRuntime.Transform","HealthFraction","StaminaFraction","ResetForRespawn"):
+ if token not in save_h+jake:errors.append(f"Player runtime save/restore missing {token}")
 
 thread_cpp=(ROOT/"Source/DarkArisen/Missions/ThreadQuestCatalog.cpp").read_text(encoding="utf-8") if (ROOT/"Source/DarkArisen/Missions/ThreadQuestCatalog.cpp").is_file() else ""
 if thread_cpp.count('Thread(TEXT("thread.')!=17:errors.append("Runtime Thread catalog must register exactly 17 canonical identities")
