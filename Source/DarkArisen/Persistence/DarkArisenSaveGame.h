@@ -9,12 +9,23 @@
 #include "World/NPCLivingWorldSubsystem.h"
 #include "DarkArisenSaveGame.generated.h"
 
+USTRUCT(BlueprintType)
+struct FPlayerRuntimeSnapshot
+{
+    GENERATED_BODY()
+    UPROPERTY(SaveGame) bool bValid = false;
+    UPROPERTY(SaveGame) FName MissionId;
+    UPROPERTY(SaveGame) FTransform Transform = FTransform::Identity;
+    UPROPERTY(SaveGame) float HealthFraction = 1.0f;
+    UPROPERTY(SaveGame) float StaminaFraction = 1.0f;
+};
+
 UCLASS()
 class DARKARISEN_API UDarkArisenSaveGame : public USaveGame
 {
     GENERATED_BODY()
 public:
-    static constexpr int32 CurrentVersion = 8;
+    static constexpr int32 CurrentVersion = 9;
     UPROPERTY(SaveGame) int32 SaveVersion = CurrentVersion;
     UPROPERTY(SaveGame) FName CurrentMission;
     UPROPERTY(SaveGame) int32 CurrentChapter = 1;
@@ -22,6 +33,7 @@ public:
     UPROPERTY(SaveGame) TSet<FName> StoryFacts;
     UPROPERTY(SaveGame) TSet<FName> WorldFacts;
     UPROPERTY(SaveGame) FCharacterProgressionState CharacterProgression;
+    UPROPERTY(SaveGame) FPlayerRuntimeSnapshot PlayerRuntime;
     UPROPERTY(SaveGame) TArray<FCrewRelationshipState> Crew;
     UPROPERTY(SaveGame) FName CurrentShip;
     UPROPERTY(SaveGame) FShipVoyageSnapshot LaLiberacionVoyage;
