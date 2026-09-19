@@ -13,4 +13,5 @@ protected: virtual void BeginPlay() override;
 private:
     void RefreshUnlock();
     UFUNCTION() void HandleMissionChanged(FName MissionId,EMainMissionState State);
+    UFUNCTION() void HandleWorldFactChanged(FName Fact,bool bEnabled);
 };

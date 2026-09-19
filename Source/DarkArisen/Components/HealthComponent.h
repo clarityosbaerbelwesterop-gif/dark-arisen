@@ -96,6 +96,10 @@ public:
     UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Health|Stats")
     bool bIsDead = false;
 
+    /** Canon-protected story/noncombat actors can opt out of every HealthComponent damage path. */
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health|Stats")
+    bool bDamageImmune = false;
+
     /** Enabled for Jake, disabled for ordinary combatants. */
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health|Rally")
     bool bRallyEnabled = false;
