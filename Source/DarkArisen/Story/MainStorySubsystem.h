@@ -5,6 +5,7 @@
 #include "MainStorySubsystem.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FMainMissionChanged,FName,MissionId,EMainMissionState,State);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FWorldFactChanged,FName,Fact,bool,bEnabled);
 
 /** Persistent native authority for story, world, crew, progression and save data. */
 UCLASS()
@@ -51,6 +52,7 @@ public:
     bool ValidateState(const UDarkArisenSaveGame* Candidate,TArray<FString>& OutErrors) const;
     bool MigrateVersion(UDarkArisenSaveGame* Candidate,TArray<FString>& OutErrors) const;
     UPROPERTY(BlueprintAssignable) FMainMissionChanged OnMissionChanged;
+    UPROPERTY(BlueprintAssignable) FWorldFactChanged OnWorldFactChanged;
 private:
     UPROPERTY() TObjectPtr<UDarkArisenSaveGame> State;
     void ApplyMissionFacts(FName MissionId);
