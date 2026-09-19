@@ -10,6 +10,7 @@
 #include "Rexa/RexaSettlementRoster.h"
 #include "World/CombatProximitySubsystem.h"
 #include "World/DarkArisenWorldRulesSubsystem.h"
+#include "World/NPCLivingWorldSubsystem.h"
 
 ARexaSettlementDirector::ARexaSettlementDirector()
 {
@@ -107,6 +108,8 @@ bool ARexaSettlementDirector::SpawnAuthoredSettlement()
             return false;
         }
         SpawnedResidents.Add(Spawned);
+        if(UNPCLivingWorldSubsystem* Living=World->GetSubsystem<UNPCLivingWorldSubsystem>())
+            Living->RegisterNPC(Definition.StableResidentId,TEXT("community.raices"));
     }
     const bool bCompleteRoster =
         SpawnedResidents.Num() == URexaSettlementRoster::RequiredResidentCount;
@@ -172,6 +175,8 @@ bool ARexaSettlementDirector::ApplyGameMinute(const int64 GameMinute)
             }
             return false;
         }
+        if(UNPCLivingWorldSubsystem* Living=GetWorld()->GetSubsystem<UNPCLivingWorldSubsystem>())
+            Living->UpdateScheduleAnchor(Command.Resident->GetResidentDefinition().StableResidentId,Command.Anchor->AnchorId);
     }
     const bool bAllResidentsRouted =
         Commands.Num() == URexaSettlementRoster::RequiredResidentCount;
@@ -187,13 +192,21 @@ int32 ARexaSettlementDirector::NotifyCombatActivity(const FVector& CombatLocatio
     TMap<FName, ARexaSettlementAnchor*> Anchors;
     if (!BuildAnchorRegistry(Anchors)) Anchors.Reset();
     int32 AffectedChildren = 0;
+    int32 AffectedResidents = 0;
+    UNPCLivingWorldSubsystem* Living=GetWorld()?GetWorld()->GetSubsystem<UNPCLivingWorldSubsystem>():nullptr;
     for (ARexaSettlementResident* Resident : SpawnedResidents)
     {
-        if (!IsValid(Resident) ||
-            !Resident->GetResidentDefinition().bProtectedChild ||
-            FVector::DistSquared(Resident->GetActorLocation(), CombatLocation) >
+        if(!IsValid(Resident) ||
+            FVector::DistSquared(Resident->GetActorLocation(),CombatLocation)>
                 FMath::Square(ARexaSettlementResident::ChildCombatFleeRadiusCentimetres))
             continue;
+        ++AffectedResidents;
+        if(Living) Living->SetMood(Resident->GetResidentDefinition().StableResidentId,ENPCLivingMood::Stressed);
+        if(!Resident->GetResidentDefinition().bProtectedChild)
+        {
+            Resident->EnterCivilianCombatFlee(CombatLocation);
+            continue;
+        }
         ++AffectedChildren;
         ARexaSettlementAnchor* const* SafetyAnchor =
             Anchors.Find(Resident->GetResidentDefinition().ChildSafetyAnchorId);
@@ -205,7 +218,7 @@ int32 ARexaSettlementDirector::NotifyCombatActivity(const FVector& CombatLocatio
             Resident->ShelterProtectedChild(ValidSafetyAnchor);
     }
 
-    if (AffectedChildren > 0 || bCombatResponseActive)
+    if (AffectedResidents > 0 || bCombatResponseActive)
     {
         if (!bCombatResponseActive)
         {
@@ -249,6 +262,13 @@ bool ARexaSettlementDirector::EndCombatResponse()
     {
         if (!IsValid(Resident)) return false;
         if (Resident->CurrentSafetyState == ERexaResidentSafetyState::Routine) continue;
+        if(!Resident->GetResidentDefinition().bProtectedChild)
+        {
+            if(!Resident->RestoreCivilianRoutine()) return false;
+            if(UNPCLivingWorldSubsystem* Living=GetWorld()->GetSubsystem<UNPCLivingWorldSubsystem>())
+                Living->SetMood(Resident->GetResidentDefinition().StableResidentId,ENPCLivingMood::Content);
+            continue;
+        }
         ARexaSettlementAnchor* const* SafetyAnchor =
             Anchors.Find(Resident->GetResidentDefinition().ChildSafetyAnchorId);
         if (!SafetyAnchor || !IsValid(*SafetyAnchor) ||
@@ -259,6 +279,8 @@ bool ARexaSettlementDirector::EndCombatResponse()
         RestoreCommands)
     {
         if (!Command.Key->RestoreProtectedChildAfterCombat(Command.Value)) return false;
+        if(UNPCLivingWorldSubsystem* Living=GetWorld()->GetSubsystem<UNPCLivingWorldSubsystem>())
+            Living->SetMood(Command.Key->GetResidentDefinition().StableResidentId,ENPCLivingMood::Content);
     }
 
     bCombatResponseActive = false;
