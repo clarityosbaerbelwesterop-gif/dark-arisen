@@ -43,6 +43,12 @@ for p in story:
 # Ch1-2 are native opening/Moran authorities; the canonical story validator owns their 7 missions.
 if len(mission_ids)!=27:errors.append(f"Physical Chapter 3-10 contracts: expected 27, found {len(mission_ids)}")
 
+neutral=load("ContentSource/ContentScale/NeutralSourceGapRegistry.json")
+for key,count in (("minorDungeons",20),("turns",132),("standingVariants",147),("buriedHoards",16)):
+ items=neutral.get(key,[])
+ if len(items)!=count:errors.append(f"Neutral source-gap registry {key}: expected {count}, found {len(items)}")
+ if any(x.get("status")!="neutral-registered-source-gap" for x in items):errors.append(f"Neutral source-gap registry {key} contains invented/playable status")
+
 # Full-vision playable source contracts. Design-only docs do not count here.
 dungeon_contracts=list((CS/"Dungeons").rglob("*.json")) if (CS/"Dungeons").exists() else []
 turn_contracts=list((CS/"SideQuests"/"Turns").rglob("*.json")) if (CS/"SideQuests"/"Turns").exists() else []
