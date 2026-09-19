@@ -94,11 +94,15 @@ bool UMainStorySubsystem::Save(const FString& Slot,const int32 User)
             if(UNPCLivingWorldSubsystem* Living=World->GetSubsystem<UNPCLivingWorldSubsystem>())
                 State->LivingNPCWorld=Living->CaptureSnapshot();
             if(APlayerController* PC=World->GetFirstPlayerController())
+            {
                 if(APawn* Pawn=PC->GetPawn())
+                {
                     if(UQuestJournalComponent* Journal=Pawn->FindComponentByClass<UQuestJournalComponent>())
                         State->QuestJournal=Journal->CaptureSnapshot();
                     if(UProgressionEconomyComponent* Progression=Pawn->FindComponentByClass<UProgressionEconomyComponent>())
                         State->ProgressionEconomy=Progression->CaptureSnapshot();
+                }
+            }
         }
     }
     TArray<FString> Errors;
