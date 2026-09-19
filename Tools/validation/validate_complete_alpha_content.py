@@ -82,6 +82,7 @@ for token in ("CurrentVersion = 7","DiscoveredDungeons","CompletedDungeons","Rec
 for token in ("DiscoverDungeon(","CompleteDungeon(","RecoverTreasure(","Network.StateTreasuresComplete"):
  if token not in ops:errors.append(f"World persistence runtime missing {token}")
 
+jake=(ROOT/"Source/DarkArisen/JakeCharacter.cpp").read_text(encoding="utf-8")
 progress_h=(ROOT/"Source/DarkArisen/Systems/ProgressionEconomyComponent.h").read_text(encoding="utf-8")
 progress_cpp=(ROOT/"Source/DarkArisen/Systems/ProgressionEconomyComponent.cpp").read_text(encoding="utf-8")
 for token in ("FProgressionEconomySnapshot","CaptureSnapshot()","RestoreSnapshot("):
@@ -91,7 +92,6 @@ for token in ("ProgressionEconomy","RestoreSnapshot(Save->ProgressionEconomy)"):
 
 quest_h=(ROOT/"Source/DarkArisen/Components/QuestJournalComponent.h").read_text(encoding="utf-8")
 quest_cpp=(ROOT/"Source/DarkArisen/Components/QuestJournalComponent.cpp").read_text(encoding="utf-8")
-jake=(ROOT/"Source/DarkArisen/JakeCharacter.cpp").read_text(encoding="utf-8")
 for token in ("FQuestJournalSnapshot","CaptureSnapshot()","RestoreSnapshot("):
  if token not in quest_h+quest_cpp:errors.append(f"Quest persistence missing {token}")
 for token in ("QuestJournal","RestoreSnapshot(Save->QuestJournal)"):
