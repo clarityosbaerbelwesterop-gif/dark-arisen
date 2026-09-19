@@ -97,6 +97,10 @@ bool UMainStorySubsystem::MigrateVersion(UDarkArisenSaveGame* Candidate,TArray<F
         }
         Candidate->SaveVersion=2;
     }
+    if(Candidate->SaveVersion==2)
+    {
+        Candidate->SaveVersion=3;
+    }
     Candidate->SaveVersion=UDarkArisenSaveGame::CurrentVersion;
     return true;
 }
@@ -339,6 +343,11 @@ bool UMainStorySubsystem::ValidateState(const UDarkArisenSaveGame* Candidate,TAr
         if(Crew.bAboard&&!Crew.bRecruited)Errors.Add(TEXT("Non-recruited crew cannot be aboard."));
     }
 
+    for(const FName DungeonId:Candidate->CompletedDungeons)
+        if(!Candidate->DiscoveredDungeons.Contains(DungeonId))Errors.Add(TEXT("Completed dungeon was never discovered."));
+    for(const FName TreasureId:Candidate->RecoveredTreasures)
+        if(TreasureId.IsNone())Errors.Add(TEXT("Recovered treasure has no stable id."));
+    if(Candidate->RecoveredTreasures.Num()>9)Errors.Add(TEXT("Recovered State Treasure count exceeds canonical nine."));
     if(!IsOpeningProgressValid(Candidate->OpeningProgress))Errors.Add(TEXT("Opening route state is invalid."));
     if(SF(Facts::MainComplete)&&Mission(TEXT("Main.C10.05.TheWakeAfter"))!=EMainMissionState::Completed)
         Errors.Add(TEXT("Main completion requires the finale."));

@@ -13,6 +13,50 @@ bool UMainStorySubsystem::HasBossDefeated(const FName BossId) const
     return State && !BossId.IsNone() && State->DefeatedBosses.Contains(BossId);
 }
 
+bool UMainStorySubsystem::DiscoverDungeon(const FName DungeonId)
+{
+    if(!State || DungeonId.IsNone() || State->DiscoveredDungeons.Contains(DungeonId)) return false;
+    State->DiscoveredDungeons.Add(DungeonId);
+    return true;
+}
+
+bool UMainStorySubsystem::CompleteDungeon(const FName DungeonId)
+{
+    if(!State || DungeonId.IsNone() || State->CompletedDungeons.Contains(DungeonId)) return false;
+    State->DiscoveredDungeons.Add(DungeonId);
+    State->CompletedDungeons.Add(DungeonId);
+    return true;
+}
+
+bool UMainStorySubsystem::HasDiscoveredDungeon(const FName DungeonId) const
+{
+    return State && !DungeonId.IsNone() && State->DiscoveredDungeons.Contains(DungeonId);
+}
+
+bool UMainStorySubsystem::HasCompletedDungeon(const FName DungeonId) const
+{
+    return State && !DungeonId.IsNone() && State->CompletedDungeons.Contains(DungeonId);
+}
+
+bool UMainStorySubsystem::RecoverTreasure(const FName TreasureId)
+{
+    if(!State || TreasureId.IsNone() || State->RecoveredTreasures.Contains(TreasureId)) return false;
+    State->RecoveredTreasures.Add(TreasureId);
+    if(State->RecoveredTreasures.Num()==9)
+        State->WorldFacts.Add(TEXT("Network.StateTreasuresComplete"));
+    return true;
+}
+
+bool UMainStorySubsystem::HasRecoveredTreasure(const FName TreasureId) const
+{
+    return State && !TreasureId.IsNone() && State->RecoveredTreasures.Contains(TreasureId);
+}
+
+int32 UMainStorySubsystem::GetRecoveredTreasureCount() const
+{
+    return State ? State->RecoveredTreasures.Num() : 0;
+}
+
 bool UMainStorySubsystem::CompleteAuthoredMission(const FName Id)
 {
     if(!State||GetMissionState(Id)!=EMainMissionState::Active)return false;

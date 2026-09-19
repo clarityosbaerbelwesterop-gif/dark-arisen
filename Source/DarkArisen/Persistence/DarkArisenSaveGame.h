@@ -9,7 +9,7 @@ class DARKARISEN_API UDarkArisenSaveGame : public USaveGame
 {
     GENERATED_BODY()
 public:
-    static constexpr int32 CurrentVersion = 2;
+    static constexpr int32 CurrentVersion = 3;
     UPROPERTY(SaveGame) int32 SaveVersion = CurrentVersion;
     UPROPERTY(SaveGame) FName CurrentMission;
     UPROPERTY(SaveGame) int32 CurrentChapter = 1;
@@ -21,6 +21,9 @@ public:
     UPROPERTY(SaveGame) FName CurrentShip;
     UPROPERTY(SaveGame) TSet<FName> DefeatedBosses;
     UPROPERTY(SaveGame) TSet<FName> ImportantShortcuts;
+    UPROPERTY(SaveGame) TSet<FName> DiscoveredDungeons;
+    UPROPERTY(SaveGame) TSet<FName> CompletedDungeons;
+    UPROPERTY(SaveGame) TSet<FName> RecoveredTreasures;
     UPROPERTY(SaveGame) TMap<FName,FName> QuestOutcomes;
     UPROPERTY(SaveGame) FName CheckpointId;
     UPROPERTY(SaveGame) FName SpawnId;
