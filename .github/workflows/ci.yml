@@ -2,9 +2,9 @@ name: M0-M8 Native C++ CI
 
 on:
   push:
-    branches: [develop, main]
+    branches: [develop, main, work/alpha-content-production]
   pull_request:
-    branches: [develop, main]
+    branches: [develop, main, work/final-alpha-opening-runtime]
     types: [opened, synchronize, reopened, ready_for_review]
 
 permissions:
@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   verify-windows:
-    name: Windows UE 5.8 native C++ compile, tests, laws
+    name: Windows UE 5.8 materialise, compile, tests, laws
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: [self-hosted, Windows, X64, ue5.8, dark-arisen]
     timeout-minutes: 120
@@ -35,11 +35,11 @@ jobs:
         shell: cmd
         run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" runner-check "--root=%GITHUB_WORKSPACE%" "--engine=%UE_ROOT%"'
 
-      - name: Validate M0-M8 repository contract in native C++
+      - name: Validate repository contract in native C++
         shell: cmd
         run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" validate "--root=%GITHUB_WORKSPACE%"'
 
-      - name: Compile Editor, Development and Shipping; run automation
+      - name: Compile Editor, materialise Alpha content, validate, build game, run automation
         shell: cmd
         run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" build "--root=%GITHUB_WORKSPACE%" "--engine=%UE_ROOT%" --automation'
 
@@ -49,7 +49,7 @@ jobs:
         run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" package-alpha "--root=%GITHUB_WORKSPACE%" "--engine=%UE_ROOT%" "--revision=%GITHUB_SHA%"'
 
   verify-linux:
-    name: Linux UE 5.8 native C++ compile, tests, laws
+    name: Linux UE 5.8 materialise, compile, tests, laws
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: [self-hosted, Linux, X64, ue5.8, dark-arisen]
     timeout-minutes: 120
@@ -68,11 +68,11 @@ jobs:
         shell: bash
         run: '"$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" runner-check "--root=$GITHUB_WORKSPACE" "--engine=$UE_ROOT"'
 
-      - name: Validate M0-M8 repository contract in native C++
+      - name: Validate repository contract in native C++
         shell: bash
         run: '"$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" validate "--root=$GITHUB_WORKSPACE"'
 
-      - name: Compile Editor, Development and Shipping; run automation
+      - name: Compile Editor, materialise Alpha content, validate, build game, run automation
         shell: bash
         run: '"$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" build "--root=$GITHUB_WORKSPACE" "--engine=$UE_ROOT" --automation'
 

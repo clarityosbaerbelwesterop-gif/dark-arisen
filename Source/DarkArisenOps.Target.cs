@@ -8,7 +8,7 @@ public class DarkArisenOpsTarget : TargetRules
         LinkType = TargetLinkType.Monolithic;
         LaunchModuleName = "DarkArisenOps";
         DefaultBuildSettings = BuildSettingsVersion.V5;
-        IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_5;
+        IncludeOrderVersion = EngineIncludeOrderVersion.Latest;
         bCompileAgainstEngine = false;
         bCompileAgainstCoreUObject = false;
         bCompileAgainstApplicationCore = false;

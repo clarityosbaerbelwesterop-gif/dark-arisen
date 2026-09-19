@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "missionId": "Main.C04.02.BrokenCompact",
+  "regionId": "Rexa",
+  "mapId": "L_BrokenCompact",
+  "entryAnchor": "ContestedSettlementEntry",
+  "checkpointId": "Checkpoint.C04.BrokenCompact.Entry",
+  "spawnId": "Spawn.C04.BrokenCompact.Entry",
+  "navigationLaw": "Support, Break, Liberate and abstention are represented by distinct physical routes and interactions. No reputation meter or choice menu owns the outcome.",
+  "geometry": [
+    {"name":"BrokenCompactSettlement","objectPath":"/Game/Alpha/World/War/Chapter04/SM_BrokenCompactSettlement_Alpha.SM_BrokenCompactSettlement_Alpha","anchor":"SettlementCenter"}
+  ],
+  "anchors": {
+    "ContestedSettlementEntry": [0,0,0],
+    "SettlementCenter": [6800,300,0],
+    "ImperialSupplyYard": [11200,-2900,80],
+    "LiberationCellar": [10300,3400,-120],
+    "AlbionObservationLine": [13800,5200,220],
+    "SupportAction": [14600,-3300,100],
+    "BreakAction": [15900,200,80],
+    "LiberateAction": [15000,3900,40],
+    "AbstentionRoute": [18200,6200,80],
+    "HerreraRoadExit": [22600,900,140]
+  },
+  "physicalGeometry": [
+    {"name":"CompactMarketBarricade","anchor":"SettlementCenter","size":[1800,700,650]},
+    {"name":"ImperialSupplyStack","anchor":"ImperialSupplyYard","size":[1500,1200,500]},
+    {"name":"LiberationCellarWall","anchor":"LiberationCellar","size":[1800,800,500]},
+    {"name":"AlbionObservationWall","anchor":"AlbionObservationLine","size":[2200,600,650]}
+  ],
+  "actors": [
+    {"type":"LocationTrigger","name":"C04_02_Entry","anchor":"ContestedSettlementEntry","action":"ActivateMission"},
+    {"type":"Contact","name":"C04_02_LocalWitness","anchor":"SettlementCenter","contactId":"war.rexa.local.witness","dialogueId":"Story.C04.BrokenCompact.Witness","displayName":"Harbor cooper","text":"The compact is already broken in everything but ink. What you feed here decides who owns the road tomorrow."},
+    {"type":"WarAction","name":"C04_02_Support","anchor":"SupportAction","regionId":"Rexa","initialController":"Imperial","verb":"Support","targetFaction":"Imperial","controlDelta":12,"liberationDelta":0,"crimsonDelta":0,"outcomeKey":"WarChoice.Main.C04.02.BrokenCompact","outcomeValue":"SupportedImperialCompact","label":"Escort the imperial stores through the contested road"},
+    {"type":"WarAction","name":"C04_02_Break","anchor":"BreakAction","regionId":"Rexa","initialController":"Imperial","verb":"Break","targetFaction":"Imperial","controlDelta":18,"liberationDelta":4,"crimsonDelta":2,"outcomeKey":"WarChoice.Main.C04.02.BrokenCompact","outcomeValue":"BrokeImperialSupply","label":"Destroy the supply chain and open the road by force"},
+    {"type":"WarAction","name":"C04_02_Liberate","anchor":"LiberateAction","regionId":"Rexa","initialController":"Imperial","verb":"Liberate","targetFaction":"Imperial","controlDelta":0,"liberationDelta":18,"crimsonDelta":0,"outcomeKey":"WarChoice.Main.C04.02.BrokenCompact","outcomeValue":"LiberationAllianceSecuredPassage","label":"Arm the local cell and secure a free passage"},
+    {"type":"RouteResolution","name":"C04_02_Abstain","anchor":"AbstentionRoute","outcomeKey":"WarChoice.Main.C04.02.BrokenCompact","outcomeValue":"AbstainedUnderFire","label":"Refuse the compact and take the exposed outer road"}
+  ],
+  "completionFacts": ["War.Playable"],
+  "nextMission": "Main.C04.03.HerrerasFall"
+}

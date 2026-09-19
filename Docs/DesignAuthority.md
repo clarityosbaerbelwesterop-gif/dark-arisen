@@ -58,7 +58,7 @@ The April 2026 GDD is internally coherent as the original six-region pirate conc
 |---|---|
 | PS5, Xbox Series X/S, and PC | Windows/Linux Alpha plus Xbox Series X|S only through authorised GDKX console tooling; older PS5-only handoff language is superseded |
 | UE 5.4+ and multiple 30 fps modes | UE 5.8 M0 pin and 60 fps on every supported platform |
-| Health, stamina, Rache, ammo, boss bars, and minimap HUD | Posture-only combat HUD; no minimap or compass |
+| Health, stamina, Rache, ammo, boss bars, and minimap HUD | Posture-first combat HUD; Alpha permits an optional minimap/full map, while objective arrows and floating quest markers remain forbidden |
 | Dynamic combat score | Music never reacts |
 | Rache lasts about eight seconds | Rache lasts at most five real seconds at 30% time scale |
 | Ship as a fast-travel hub | No water fast travel |
@@ -103,3 +103,8 @@ The April 2026 GDD is internally coherent as the original six-region pirate conc
 - Resolve the remaining shared-value discrepancy between `mechanics_overview.md` (two-second stamina delay) and `mechanics/combat_feel.md` (one-second normal, three-second exhaustion delay). M0 currently follows the narrower combat specification.
 
 This register is an engineering routing decision, not a rewrite of the design bible. Any change to a locked law requires Flo's explicit approval.
+
+
+## Alpha navigation override — 2026-09-19
+
+The product owner explicitly requires a map and minimap for the first playable Alpha. This requirement supersedes older blanket "no minimap" statements for the Alpha runtime only. Environmental navigation, spoken directions, charts and landmark readability remain core design. The minimap must not become an objective radar: no floating quest markers, GPS route line, enemy omniscience, collectible sweep, or objective arrow is introduced by this override. Water fast travel remains forbidden.

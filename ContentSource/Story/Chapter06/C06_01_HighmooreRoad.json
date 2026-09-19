@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "missionId": "Main.C06.01.HighmooreRoad",
+  "regionId": "Archipelago/ContestedHolding",
+  "mapId": "L_HighmooreRoad",
+  "entryAnchor": "HoldingApproach",
+  "checkpointId": "Checkpoint.C06.HighmooreRoad.Approach",
+  "spawnId": "Spawn.C06.HighmooreRoad.Approach",
+  "navigationLaw": "The mission secures one defensible holding through existing colonial-war rules. Highmoore optional quest content, Crystal Guardian, Crystal Katana and Princess line are not required.",
+  "anchors": {
+    "HoldingApproach": [0,0,0],
+    "WarScarredRoad": [4300,600,80],
+    "OuterDefence": [7800,-300,120],
+    "NegotiationYard": [10100,900,140],
+    "HoldingGate": [12600,0,180],
+    "HoldingHeart": [15300,0,220],
+    "InteriorExit": [17700,-600,220]
+  },
+  "physicalGeometry": [
+    {"name":"HoldingRoad","anchor":"WarScarredRoad","size":[7200,1800,220]},
+    {"name":"OuterDefence","anchor":"OuterDefence","size":[2600,1500,850]},
+    {"name":"HoldingGate","anchor":"HoldingGate","size":[1800,650,1200]},
+    {"name":"HoldingInterior","anchor":"HoldingHeart","size":[4200,3200,700]}
+  ],
+  "actors": [
+    {"type":"LocationTrigger","name":"C06_01_Entry","anchor":"HoldingApproach","action":"ActivateMission"},
+    {"type":"Contact","name":"C06_01_HoldingActor","anchor":"NegotiationYard","contactId":"holding.contested.actor","dialogueId":"Story.C06.HighmooreRoad.Holding","displayName":"Holding steward","text":"The walls can shelter people again. What matters is whether you take responsibility for what survives inside them."},
+    {"type":"WarAction","name":"C06_01_SecureHolding","anchor":"HoldingHeart","actionId":"Holding.FirstOwned","actionType":"Support","faction":"Neutral","locationId":"Holding.C06.First","requiredMissionId":"Main.C06.01.HighmooreRoad","completesMission":true,"checkpointId":"Checkpoint.C06.HighmooreRoad.Functional","spawnId":"Spawn.C06.HighmooreRoad.Holding"}
+  ],
+  "runtimeBindings": {
+    "holdingComponent": "UColonyHoldingComponent",
+    "claimContract": "ClaimHolding + authored requirements; no duplicate holding authority",
+    "warState": "Existing ColonialWar runtime modifies resistance but may not delete the route"
+  },
+  "completionFacts": ["Holding.FirstOwned"],
+  "nextMission": "Main.C06.02.CrystalPassage"
+}

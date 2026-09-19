@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "missionId": "Main.C09.03.DreamFight",
+  "regionId": "Dream/HarlowMemory",
+  "mapId": "L_DreamFight",
+  "entryAnchor": "ArenaEntry",
+  "checkpointId": "Checkpoint.C09.DreamFight.Entry",
+  "spawnId": "Spawn.C09.DreamFight.Entry",
+  "navigationLaw": "Dream Ethan is a separate boss identity. The arena is readable and grounded enough for fair deflection, posture and dodge combat; visual memory shifts may not conceal unavoidable attacks.",
+  "anchors": {"ArenaEntry":[0,0,0],"ArenaCenter":[4200,0,80],"DreamEthanSpawn":[7600,0,80],"PhaseEdgeA":[4200,-2600,100],"PhaseEdgeB":[4200,2600,100],"WakeThreshold":[10500,0,120]},
+  "physicalGeometry": [{"name":"DreamArena","anchor":"ArenaCenter","size":[9200,7200,260]},{"name":"ArenaEdgeA","anchor":"PhaseEdgeA","size":[7200,500,650]},{"name":"ArenaEdgeB","anchor":"PhaseEdgeB","size":[7200,500,650]}],
+  "actors": [
+    {"type":"LocationTrigger","name":"C09_03_Entry","anchor":"ArenaEntry","action":"ActivateMission"},
+    {"type":"HolderBoss","name":"C09_03_DreamEthan","anchor":"DreamEthanSpawn","bossId":"boss.dream_ethan","outcomeKey":"DreamEthan.Outcome","outcomeValue":"Accepted","completesMissionOnDefeat":true}
+  ],
+  "bossClass": "ADreamEthanBossCharacter",
+  "bossIdentityLaw": "Never bind this actor to ethan.harlow.real. Dream defeat completes only the dream mission and canonical boss outcome.",
+  "combatContract": {"phases":3,"systems":["deflection","posture","telegraphs","dodge","damage","recovery"],"phaseIntent":["familiar rhythm","false bearings","acceptance under pressure"]},
+  "completionFacts": ["Story.DreamEthanDefeated"],
+  "nextMission": "Main.C09.04.WakingCourse"
+}

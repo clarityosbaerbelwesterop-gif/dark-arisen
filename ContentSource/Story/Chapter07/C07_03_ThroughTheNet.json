@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "missionId": "Main.C07.03.ThroughTheNet",
+  "regionId": "Ship/LaLiberacion",
+  "mapId": "L_ThroughTheNet",
+  "entryAnchor": "GreatCabinDoor",
+  "checkpointId": "Checkpoint.C07.ThroughTheNet.Cabin",
+  "spawnId": "Spawn.C07.ThroughTheNet.Cabin",
+  "navigationLaw": "The Great Cabin confrontation is anchored and player-paced. Jake may listen or interject; no affinity meter converts the scene into a reputation calculation.",
+  "anchors": {"GreatCabinDoor":[0,0,0],"JakePosition":[1800,0,0],"MiraPosition":[3300,-900,0],"BigTomPosition":[3500,200,0],"EstebanPosition":[3200,1100,0],"ChartTable":[4700,0,80],"DeckExit":[6900,0,0]},
+  "physicalGeometry": [{"name":"GreatCabin","anchor":"JakePosition","size":[6200,4200,900]},{"name":"GreatCabinChartTable","anchor":"ChartTable","size":[1800,1100,180]}],
+  "actors": [
+    {"type":"LocationTrigger","name":"C07_03_Entry","anchor":"GreatCabinDoor","action":"ActivateMission"},
+    {"type":"Contact","name":"C07_03_Mira","anchor":"MiraPosition","contactId":"crew.mira.c07","dialogueId":"Story.C07.ThroughTheNet.Mira","displayName":"Mira","text":"We are still with you. That is why we are telling you this now: Ethan comes first. Not every ship wearing Draven's colors has to become a grave."},
+    {"type":"Contact","name":"C07_03_BigTom","anchor":"BigTomPosition","contactId":"crew.bigtom.c07","dialogueId":"Story.C07.ThroughTheNet.BigTom","displayName":"Big Tom","text":"We paid for every mile of this chase. Bring your brother home before you decide what else the sea owes you."},
+    {"type":"Contact","name":"C07_03_Esteban","anchor":"EstebanPosition","contactId":"crew.esteban.c07","dialogueId":"Story.C07.ThroughTheNet.Esteban","displayName":"Esteban","text":"The ledger gives us a prison course. That is a rescue route, Jake. Keep it one."},
+    {"type":"LocationTrigger","name":"C07_03_CommitRescue","anchor":"ChartTable","action":"CompleteMission","checkpointId":"Checkpoint.C07.ThroughTheNet.RescueCommitted","spawnId":"Spawn.C07.ThroughTheNet.Deck"}
+  ],
+  "completionFacts": ["Story.RescueBeforeRevenge","Chapter.07.Complete"],
+  "nextMission": "Main.C08.01.ThePrisonCourse"
+}

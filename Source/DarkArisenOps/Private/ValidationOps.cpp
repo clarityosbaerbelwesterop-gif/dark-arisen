@@ -251,7 +251,7 @@ void ValidateGameplayContracts(const FString& Root, TArray<FString>& Errors)
     }
     const TArray<FString> Forbidden = {
         TEXT("CancelIntoDodge"), TEXT("CancelIntoBlock"), TEXT("HighlightNearbyLoot"), TEXT("TakeAllLoot"),
-        TEXT("FastTravel"), TEXT("TeleportToWaypoint"), TEXT("CompassWidget"), TEXT("Minimap"),
+        TEXT("FastTravel"), TEXT("TeleportToWaypoint"), TEXT("CompassWidget"),
         TEXT("ResetSkillTree"), TEXT("RefundMarks"), TEXT("AffinityMeter"), TEXT("RelationshipMeter"),
         TEXT("AutosaveBeforeDecision"), TEXT("AutosaveBeforeBoss"), TEXT("GenerateRadiantQuest")};
     for (const FString& Token : Forbidden)

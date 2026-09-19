@@ -1,0 +1,13 @@
+{
+  "version":1,
+  "authority":"UOpeningRuntimeComponent",
+  "sequences":[
+    {"id":"Cinematic.Opening.BlackSailsSighted","duration":6.5,"playerControl":"brief_hold","camera":"Camera.BlackSails","beats":[
+      {"t":0.0,"shot":"Jake deck eyeline through rigging"},{"t":1.2,"shot":"distant black-sail silhouette breaks fog bank"},{"t":3.1,"subtitle":{"speaker":"Marc","text":"Below deck. Now."}},{"t":4.4,"subtitle":{"speaker":"Ethan","text":"That's not a customs flag."}},{"t":6.2,"callback":"FleetPresentationComplete"}]},
+    {"id":"Presentation.Opening.DravenBoards","duration":3.8,"playerControl":"brief_hold","camera":"Draven.Arrival","beats":[{"t":0.0,"shot":"boots hit quarterdeck"},{"t":1.0,"shot":"Draven silhouette clears smoke"},{"t":2.2,"subtitle":{"speaker":"Draven","text":"Harlow. We need your routes."}},{"t":3.6,"callback":"ReadyForTaking"}]},
+    {"id":"Cinematic.Opening.TheTaking","duration":18.0,"playerControl":"authored_takeover","beats":[
+      {"t":0.0,"actors":{"Marc":"Family.Gathering","Denise":"Family.Gathering","Ethan":"Character.Ethan","Jake":"Spawn.Jake.HarlowOpening","Draven":"Draven.Arrival"}},
+      {"t":3.0,"subtitle":{"speaker":"Marc","text":"You leave my family out of this."}},{"t":5.6,"event":"MarcKilled"},{"t":8.1,"event":"DeniseKilled"},
+      {"t":10.0,"subtitle":{"speaker":"Ethan","text":"Jake—don't. Stay back."}},{"t":11.0,"event":"EthanSeizedAlive"},{"t":14.2,"event":"JakeForcedToOverboard"},{"t":17.8,"callback":"TakingPresentationComplete"}]}
+  ]
+}

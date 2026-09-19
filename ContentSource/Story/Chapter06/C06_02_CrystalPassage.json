@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "missionId": "Main.C06.02.CrystalPassage",
+  "regionId": "Archipelago/ContestedHolding",
+  "mapId": "L_CrystalPassage",
+  "entryAnchor": "HoldingCourtyard",
+  "checkpointId": "Checkpoint.C06.CrystalPassage.Courtyard",
+  "spawnId": "Spawn.C06.CrystalPassage.Courtyard",
+  "navigationLaw": "Crystal Passage is the holding restoration/intelligence mission name, not a gate into optional Highmoore Crystal Guardian content.",
+  "anchors": {
+    "HoldingCourtyard": [0,0,0],
+    "WaterStore": [3100,-1200,100],
+    "Infirmary": [4200,900,140],
+    "ArchiveRuin": [6800,400,180],
+    "RepairRoute": [9000,-600,160],
+    "IntelligenceRoom": [11600,0,220],
+    "ChartDesk": [13000,500,240]
+  },
+  "physicalGeometry": [
+    {"name":"HoldingCourtyard","anchor":"HoldingCourtyard","size":[4400,3600,300]},
+    {"name":"ArchiveRuin","anchor":"ArchiveRuin","size":[3000,2200,900]},
+    {"name":"IntelligenceRoom","anchor":"IntelligenceRoom","size":[2600,2100,850]}
+  ],
+  "actors": [
+    {"type":"LocationTrigger","name":"C06_02_Entry","anchor":"HoldingCourtyard","action":"ActivateMission"},
+    {"type":"Contact","name":"C06_02_Resident","anchor":"WaterStore","contactId":"holding.resident.water","dialogueId":"Story.C06.CrystalPassage.Resident","displayName":"Holding resident","text":"We can mend everything eventually. Today we choose what keeps people alive and what keeps the route from going dark."},
+    {"type":"Evidence","name":"C06_02_ArchiveReady","anchor":"IntelligenceRoom","title":"Restored intelligence room","body":"The repaired archive, chart desk and recovered records give the crew a defensible place to compare the Armada corridor with Harlow route habits.","completesMission":true,"checkpointId":"Checkpoint.C06.CrystalPassage.IntelligenceReady","spawnId":"Spawn.C06.CrystalPassage.ChartDesk"}
+  ],
+  "runtimeBindings": {
+    "holdingComponent": "UColonyHoldingComponent",
+    "developmentContract": "AdvanceDevelopment only after authored physical restoration requirements are satisfied"
+  },
+  "completionFacts": ["Holding.IntelligenceReady"],
+  "nextMission": "Main.C06.03.TheNorthernOath"
+}

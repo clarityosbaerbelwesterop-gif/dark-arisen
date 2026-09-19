@@ -1,28 +1,16 @@
-// Copyright (c) 2026 Dark Arisen. All Rights Reserved.
-
 #pragma once
-
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
 #include "PostureOnlyHUD.generated.h"
-
-/** The sole combat HUD element: one posture indicator and nothing else. */
-UCLASS()
-class DARKARISEN_API APostureOnlyHUD : public AHUD
+/** Minimal gameplay HUD: posture + requested minimap, with non-combat map/pause/settings overlays. */
+UCLASS() class DARKARISEN_API APostureOnlyHUD:public AHUD
 {
     GENERATED_BODY()
-
 public:
     virtual void DrawHUD() override;
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Posture")
-    FLinearColor BackgroundColor = FLinearColor(0.02f, 0.02f, 0.02f, 0.72f);
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Posture")
-    FLinearColor SetColor = FLinearColor(0.82f, 0.62f, 0.10f, 0.92f);
-
+    virtual void NotifyHitBoxClick(FName BoxName) override;
+    UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Posture") FLinearColor BackgroundColor=FLinearColor(.02f,.02f,.02f,.72f);
+    UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Posture") FLinearColor SetColor=FLinearColor(.82f,.62f,.10f,.92f);
 private:
-    void DrawPosture();
-    void DrawInteractionPrompt();
-    void DrawExaminePresentation();
+    void DrawPosture();void DrawInteractionPrompt();void DrawExaminePresentation();void DrawMiniMap();void DrawOverlay();void DrawButton(const FString&,FName,float,float,float,float);
 };

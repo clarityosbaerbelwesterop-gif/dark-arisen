@@ -1,0 +1,42 @@
+{
+  "fps": 30,
+  "timingSeconds": {
+    "LightAttack1": {
+      "startup": 0.18,
+      "contact": 0.27,
+      "recovery": 0.45
+    },
+    "LightAttack2": {
+      "startup": 0.2,
+      "contact": 0.3,
+      "recovery": 0.48
+    },
+    "HeavyAttack": {
+      "startup": 0.42,
+      "contact": 0.58,
+      "recovery": 0.57
+    },
+    "Deflect": {
+      "startup": 0.0,
+      "activeFrames": 6,
+      "activeSeconds": 0.1,
+      "recovery": 0.32
+    },
+    "Boarder.LightAttack1": {
+      "startup": 0.25,
+      "contact": 0.36,
+      "recovery": 0.36
+    },
+    "Boarder.LightAttack2": {
+      "startup": 0.28,
+      "contact": 0.4,
+      "recovery": 0.38
+    },
+    "Boarder.HeavyAttack": {
+      "startup": 0.48,
+      "contact": 0.63,
+      "recovery": 0.52
+    }
+  },
+  "law": "six-frame deflection window remains authoritative at 60fps gameplay"
+}

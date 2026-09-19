@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "missionId": "Main.C03.03.TheFirstHolder",
+  "regionId": "Rexa/PuertoDeLaCorona",
+  "mapId": "L_CrownCitadelApproach",
+  "entryAnchor": "LowerApproach",
+  "checkpointId": "Checkpoint.C03.FirstHolder.Approach",
+  "spawnId": "Spawn.C03.FirstHolder.Approach",
+  "navigationLaw": "Herrera is a territorial obstacle, not a level gate. Two authored physical routes remain available in this tranche.",
+  "geometry": [
+    {"name":"CrownCitadelApproach","objectPath":"/Game/Alpha/World/Rexa/Story/SM_CrownCitadelApproach_Alpha.SM_CrownCitadelApproach_Alpha","anchor":"CitadelGeometry"}
+  ],
+  "anchors": {
+    "LowerApproach": [0,0,0],
+    "CitadelGeometry": [5200,0,0],
+    "HerreraParley": [8400,700,80],
+    "IndigenousMemoryRoute": [8100,-2200,-40],
+    "UpperRoadExit": [12800,0,100]
+  },
+  "actors": [
+    {"type":"LocationTrigger","name":"C03_03_Entry","anchor":"LowerApproach","action":"ActivateMission"},
+    {"type":"RouteResolution","name":"C03_03_Parley","anchor":"HerreraParley","outcomeKey":"StoryRoute.Main.C03.03.TheFirstHolder","outcomeValue":"NegotiatedPassage","label":"Present the dated transfer evidence"},
+    {"type":"RouteResolution","name":"C03_03_MemoryRoute","anchor":"IndigenousMemoryRoute","outcomeKey":"StoryRoute.Main.C03.03.TheFirstHolder","outcomeValue":"AvoidedThroughOldQuarter","label":"Take the remembered route beneath the wall"}
+  ],
+  "bossId": "boss.herrera",
+  "bossResolutionLaw": "Herrera may be crossed here without final defeat; Main.C04.03.HerrerasFall owns his definitive fall/resolution.",
+  "completionFacts": ["Story.FirstHolderCrossed","Chapter.03.Complete"],
+  "nextMission": "Main.C04.01.SaltAndIron"
+}

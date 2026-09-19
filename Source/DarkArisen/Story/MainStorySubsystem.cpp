@@ -132,6 +132,8 @@ bool UMainStorySubsystem::CompleteMission(const FName Id)
     ApplyMissionFacts(Id);
     RefreshAvailability();
     OnMissionChanged.Broadcast(Id,Runtime->State);
+    if(Id==TEXT("Main.C01.04.Undertow")||Id==TEXT("Main.C02.03.FirstWake"))
+        Save(TEXT("DarkArisenAlpha"),0);
     return true;
 }
 

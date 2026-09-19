@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "missionId": "Main.C04.03.HerrerasFall",
+  "regionId": "Rexa/PuertoDeLaCorona",
+  "mapId": "L_HerrerasFall",
+  "entryAnchor": "FortArchiveApproach",
+  "checkpointId": "Checkpoint.C04.HerrerasFall.Approach",
+  "spawnId": "Spawn.C04.HerrerasFall.Approach",
+  "navigationLaw": "The archive is reached through the physical fort. Herrera is resolved through the existing Holder boss bridge; the Harlow chart remains inaccessible until his defeat is persisted.",
+  "geometry": [
+    {"name":"HerreraArchiveFort","objectPath":"/Game/Alpha/World/War/Chapter04/SM_HerreraArchiveFort_Alpha.SM_HerreraArchiveFort_Alpha","anchor":"FortBody"}
+  ],
+  "anchors": {
+    "FortArchiveApproach": [0,0,0],
+    "FortBody": [7200,0,0],
+    "OuterGate": [3900,0,120],
+    "ArchiveCourt": [8200,-900,120],
+    "CourierRemnants": [9100,-2100,90],
+    "HerreraArena": [11800,300,140],
+    "HarlowChart": [13600,1250,180],
+    "StoryExit": [16800,2600,120]
+  },
+  "physicalGeometry": [
+    {"name":"HerreraOuterGate","anchor":"OuterGate","size":[2600,700,1300]},
+    {"name":"HerreraArchiveWall","anchor":"ArchiveCourt","size":[3600,700,1100]},
+    {"name":"HerreraArenaCover","anchor":"HerreraArena","size":[1900,850,650]}
+  ],
+  "actors": [
+    {"type":"LocationTrigger","name":"C04_03_Entry","anchor":"FortArchiveApproach","action":"ActivateMission"},
+    {"type":"Evidence","name":"C04_03_CourierRemnants","anchor":"CourierRemnants","title":"Draven courier remnants","body":"A burned dispatch names a courier lane but not its safe-water annotations. The missing pattern belongs on the confiscated Harlow chart."},
+    {"type":"HolderBoss","name":"C04_03_Herrera","anchor":"HerreraArena","bossId":"boss.herrera","outcomeKey":"Holder.Main.C04.03.HerrerasFall","outcomeValue":"Defeated","completesMissionOnDefeat":false},
+    {"type":"Evidence","name":"C04_03_HarlowChart","anchor":"HarlowChart","title":"Damaged Harlow family chart","body":"The chart is Marc Harlow's hand. Torn annotations line up with Ethan's deliberate one-degree errors and reconstruct the next courier lane.","completesMission":true,"requiredBossId":"boss.herrera","checkpointId":"Checkpoint.C04.HerrerasFall.ChartRecovered","spawnId":"Spawn.C04.HerrerasFall.Archive"}
+  ],
+  "completionFacts": ["Story.HarlowChartRecovered","Chapter.04.Complete"],
+  "nextMission": "Main.C05.01.WarCurrent"
+}
