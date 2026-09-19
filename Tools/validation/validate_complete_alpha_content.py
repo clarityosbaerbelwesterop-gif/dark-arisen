@@ -63,6 +63,14 @@ check=(ROOT/"Docs/ALPHA_DELIVERY_CHECKLIST.md").read_text(encoding="utf-8")
 open_items=len(re.findall(r"^- \[ \]",check,re.M))
 if open_items:errors.append(f"Alpha delivery checklist still has {open_items} open evidence/content gates")
 
+# Exploration persistence must use the canonical SaveGame authority.
+save_h=(ROOT/"Source/DarkArisen/Persistence/DarkArisenSaveGame.h").read_text(encoding="utf-8")
+ops=(ROOT/"Source/DarkArisen/Story/MainStoryAuthoredMissionOps.cpp").read_text(encoding="utf-8")
+for token in ("CurrentVersion = 3","DiscoveredDungeons","CompletedDungeons","RecoveredTreasures"):
+ if token not in save_h:errors.append(f"Save authority missing {token}")
+for token in ("DiscoverDungeon(","CompleteDungeon(","RecoverTreasure(","Network.StateTreasuresComplete"):
+ if token not in ops:errors.append(f"World persistence runtime missing {token}")
+
 # Hero visual gate is part of the complete-content gate.
 visual=ROOT/"Tools/validation/validate_visual_release.py"
 if not visual.is_file():errors.append("Missing visual release validator")
