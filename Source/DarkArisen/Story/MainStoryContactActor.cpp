@@ -31,8 +31,12 @@ void AMainStoryContactActor::CompleteInteraction_Implementation(AActor* Interact
     UGameInstance* GI=GetGameInstance();
     UMainStorySubsystem* Story=GI?GI->GetSubsystem<UMainStorySubsystem>():nullptr;
     if(!Story || MissionId.IsNone()) return;
-    if(bActivateMissionOnInteraction && !Story->IsMissionActive(MissionId) && !Story->IsMissionComplete(MissionId))
+    const EMainMissionState State=Story->GetMissionState(MissionId);
+    if(bActivateMissionOnInteraction && State==EMainMissionState::Available)
         Story->ActivateMission(MissionId);
-    if(bCompleteMissionOnInteraction && Story->IsMissionActive(MissionId))
-        Story->CompleteAuthoredMission(MissionId, CheckpointId, SpawnId);
+    if(bCompleteMissionOnInteraction && Story->GetMissionState(MissionId)==EMainMissionState::Active)
+    {
+        if(Story->CompleteAuthoredMission(MissionId) && !CheckpointId.IsNone() && !SpawnId.IsNone())
+            Story->SetCheckpoint(CheckpointId,SpawnId);
+    }
 }
