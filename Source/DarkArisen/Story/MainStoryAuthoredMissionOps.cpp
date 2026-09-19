@@ -63,7 +63,7 @@ bool UMainStorySubsystem::CompleteAuthoredMission(const FName Id)
     if(!CompleteMission(Id))return false;
 
     const auto Story=[this](const TCHAR* Fact){State->StoryFacts.Add(FName(Fact));};
-    const auto World=[this](const TCHAR* Fact){State->WorldFacts.Add(FName(Fact));};
+    const auto World=[this](const TCHAR* Fact){SetWorldFact(FName(Fact),true);};
 
     if(Id==TEXT("Main.C03.01.RexaHarbor"))Story(TEXT("Story.EthanAliveConfirmed"));
     else if(Id==TEXT("Main.C03.02.SafeRoutes"))Story(TEXT("Story.EthanRouteMarksFound"));
