@@ -8,7 +8,9 @@
 #include "CoreLoopTuning.h"
 #include "DesignLaws.h"
 #include "GameFramework/Actor.h"
-#include "Engine/World.h"\n#include "Engine/GameInstance.h"\n#include "Story/MainStorySubsystem.h"
+#include "Engine/World.h"
+#include "Engine/GameInstance.h"
+#include "Story/MainStorySubsystem.h"
 #include "Kismet/GameplayStatics.h"
 #include "World/CombatProximitySubsystem.h"
 
