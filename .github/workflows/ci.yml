@@ -11,7 +11,7 @@ permissions:
   contents: read
 
 env:
-  ENABLE_UE58_RUNNERS: 'false' # Temporarily suspended for browser Alpha access.
+  ENABLE_UE58_RUNNERS: 'true' # Required for the first complete 3D Alpha acceptance.
 
 concurrency:
   group: dark-arisen-ci-${{ github.ref }}
