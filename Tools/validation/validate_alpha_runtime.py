@@ -67,6 +67,29 @@ for index,mission in enumerate(physical_missions):
 extra=set(contracts)-set(physical_missions)
 for mission in sorted(extra): errors.append(f'non-canonical physical mission contract: {mission}')
 
+# Chapter 10 naval population/completion has one authority: ContentSource/Naval + the dedicated naval materializer.
+# The generic story naval actors remain available for C03 Safe Routes only; duplicating them in C10 would spawn two fleets/gates.
+for mission in ('Main.C10.01.Armada','Main.C10.02.BreakTheChain'):
+    if mission in contracts:
+        actor_types=[a.get('type') for a in contracts[mission][1].get('actors',[]) if isinstance(a,dict)]
+        duplicated=sorted(set(actor_types)&{'PlayerShip','NavalEnemy','NavalEncounterGate'})
+        if duplicated: errors.append(f'{mission} duplicates dedicated naval authority with story actors: {duplicated}')
+naval_contracts={}
+for path in sorted((root/'ContentSource'/'Naval').glob('C10_*.naval.json')):
+    try: data=json.loads(path.read_text(encoding='utf-8'))
+    except Exception as exc:
+        errors.append(f'invalid naval JSON {path.relative_to(root)}: {exc}'); continue
+    naval_contracts[data.get('missionId')]=data
+for mission in ('Main.C10.01.Armada','Main.C10.02.BreakTheChain'):
+    data=naval_contracts.get(mission)
+    if not data:
+        errors.append(f'missing dedicated naval contract: {mission}'); continue
+    if len(data.get('hostiles',[]))!=3: errors.append(f'{mission} dedicated naval contract must materialize exactly 3 hostiles')
+    if data.get('completionGate',{}).get('requiredSunkShips')!=3: errors.append(f'{mission} dedicated naval gate must require 3 sunk ships')
+naval_materializer=(root/'Source/DarkArisenEditor/Private/DarkArisenMaterializeNavalCommandlet.cpp').read_text(encoding='utf-8')
+for token in ('ALaLiberacionShip','AHostileNavalShip','ANavalMissionGateActor','RequiredSunkShips'):
+    if token not in naval_materializer: errors.append(f'dedicated naval materializer missing {token}')
+
 materializer=(root/'Source/DarkArisenEditor/Private/DarkArisenMaterializeStoryCommandlet.cpp').read_text(encoding='utf-8')
 for token in ('MainStoryMapTransitionActor','DuelingEnemy','PlayerShip','NavalEnemy','NavalEncounterGate','MaterializeCredits','L_Credits'):
     if token not in materializer: errors.append(f'story materializer missing {token}')
