@@ -3,6 +3,8 @@
 #include "Camera/CameraComponent.h"
 #include "Components/SceneComponent.h"
 #include "Engine/World.h"
+#include "Engine/GameInstance.h"
+#include "Story/MainStorySubsystem.h"
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "InputCoreTypes.h"
@@ -12,6 +14,31 @@
 #include "Ship/ShipHouseholdComponent.h"
 #include "World/DarkArisenWorldRulesSubsystem.h"
 ALaLiberacionShip::ALaLiberacionShip(){PrimaryActorTick.bCanEverTick=true;ShipRoot=CreateDefaultSubobject<USceneComponent>(TEXT("ShipRoot"));SetRootComponent(ShipRoot);WeatherDeckRoot=CreateDefaultSubobject<USceneComponent>(TEXT("WeatherDeckRoot"));WeatherDeckRoot->SetupAttachment(ShipRoot);UpperDeckRoot=CreateDefaultSubobject<USceneComponent>(TEXT("UpperDeckRoot"));UpperDeckRoot->SetupAttachment(ShipRoot);MidDeckRoot=CreateDefaultSubobject<USceneComponent>(TEXT("MidDeckRoot"));MidDeckRoot->SetupAttachment(ShipRoot);HoldDeckRoot=CreateDefaultSubobject<USceneComponent>(TEXT("HoldDeckRoot"));HoldDeckRoot->SetupAttachment(ShipRoot);VoyageComponent=CreateDefaultSubobject<UShipVoyageComponent>(TEXT("VoyageComponent"));HouseholdComponent=CreateDefaultSubobject<UShipHouseholdComponent>(TEXT("HouseholdComponent"));SeaPassageComponent=CreateDefaultSubobject<USeaPassageComponent>(TEXT("SeaPassageComponent"));NavalCombatComponent=CreateDefaultSubobject<UNavalCombatComponent>(TEXT("NavalCombatComponent"));NavalCombatComponent->bPlayerAligned=true;HelmCameraBoom=CreateDefaultSubobject<USpringArmComponent>(TEXT("HelmCameraBoom"));HelmCameraBoom->SetupAttachment(ShipRoot);HelmCameraBoom->TargetArmLength=1500.f;HelmCameraBoom->SetRelativeLocation(FVector(-200.f,0.f,550.f));HelmCameraBoom->SetRelativeRotation(FRotator(-12.f,0.f,0.f));HelmCameraBoom->bDoCollisionTest=false;HelmCamera=CreateDefaultSubobject<UCameraComponent>(TEXT("HelmCamera"));HelmCamera->SetupAttachment(HelmCameraBoom,USpringArmComponent::SocketName);PhysicalMapClass=APhysicalMapActor::StaticClass();}
-void ALaLiberacionShip::BeginPlay(){Super::BeginPlay();ensureAlwaysMsgf(HasCompleteFourDeckStructure(),TEXT("La Liberacion requires exactly four authored deck attachment roots."));ensureAlwaysMsgf(SpawnPhysicalMap(),TEXT("La Liberacion requires a physical held map on the upper/great-cabin deck."));if(bStartInCombatHelm&&VoyageComponent){VoyageComponent->SetOwnedAndUnlocked(true);VoyageComponent->SetJakeAtHelm(true);VoyageComponent->SetThrottle(.65f);if(APlayerController* PC=GetWorld()?GetWorld()->GetFirstPlayerController():nullptr)PC->SetViewTargetWithBlend(this,.6f);}}
+void ALaLiberacionShip::BeginPlay()
+{
+    Super::BeginPlay();
+    ensureAlwaysMsgf(HasCompleteFourDeckStructure(),TEXT("La Liberacion requires exactly four authored deck attachment roots."));
+    ensureAlwaysMsgf(SpawnPhysicalMap(),TEXT("La Liberacion requires a physical held map on the upper/great-cabin deck."));
+    if(VoyageComponent)
+    {
+        if(const UGameInstance* GI=GetGameInstance())
+        {
+            if(const UMainStorySubsystem* Story=GI->GetSubsystem<UMainStorySubsystem>())
+            {
+                const UDarkArisenSaveGame* Save=Story->GetState();
+                if(Save && Save->CurrentShip==TEXT("ship.la_liberacion") && Save->LaLiberacionVoyage.bValid)
+                    VoyageComponent->RestoreSnapshot(Save->LaLiberacionVoyage);
+            }
+        }
+    }
+    if(bStartInCombatHelm&&VoyageComponent)
+    {
+        VoyageComponent->SetOwnedAndUnlocked(true);
+        VoyageComponent->SetJakeAtHelm(true);
+        VoyageComponent->SetThrottle(.65f);
+        if(APlayerController* PC=GetWorld()?GetWorld()->GetFirstPlayerController():nullptr)
+            PC->SetViewTargetWithBlend(this,.6f);
+    }
+}
 void ALaLiberacionShip::Tick(float D){Super::Tick(D);if(!VoyageComponent||!NavalCombatComponent||!VoyageComponent->IsJakeAtHelm())return;APlayerController* PC=GetWorld()?GetWorld()->GetFirstPlayerController():nullptr;if(!PC)return;const float PY=PC->GetInputAnalogKeyState(EKeys::Gamepad_LeftY),PX=PC->GetInputAnalogKeyState(EKeys::Gamepad_LeftX);VoyageComponent->SetThrottle((PC->IsInputKeyDown(EKeys::W)||PY>.25f)?1.f:((PC->IsInputKeyDown(EKeys::S)||PY<-.25f)?0.25f:0.65f));float H=VoyageComponent->GetHeadingDegrees();const float Turn=(PC->IsInputKeyDown(EKeys::A)?-1.f:0.f)+(PC->IsInputKeyDown(EKeys::D)?1.f:0.f)+PX;H+=FMath::Clamp(Turn,-1.f,1.f)*45.f*D;VoyageComponent->SetHelmCommandDegrees(H);if(PC->WasInputKeyJustPressed(EKeys::Q)||PC->WasInputKeyJustPressed(EKeys::Gamepad_LeftShoulder))NavalCombatComponent->FireBroadside(ENavalBroadside::Port);if(PC->WasInputKeyJustPressed(EKeys::E)||PC->WasInputKeyJustPressed(EKeys::Gamepad_RightShoulder))NavalCombatComponent->FireBroadside(ENavalBroadside::Starboard);}
 USceneComponent* ALaLiberacionShip::GetDeckRoot(const EShipDeck D) const{switch(D){case EShipDeck::Weather:return WeatherDeckRoot;case EShipDeck::Upper:return UpperDeckRoot;case EShipDeck::Mid:return MidDeckRoot;case EShipDeck::Hold:return HoldDeckRoot;default:return nullptr;}}bool ALaLiberacionShip::CompleteGreatCabinRest(){if(!CanRestInGreatCabin())return false;UWorld* W=GetWorld();auto* R=W?W->GetSubsystem<UDarkArisenWorldRulesSubsystem>():nullptr;return R&&R->NotifyRestCompleted();}bool ALaLiberacionShip::RestGreatCabinToDaypart(const EDarkArisenDaypart T){if(!CanRestInGreatCabin())return false;UWorld* W=GetWorld();auto* R=W?W->GetSubsystem<UDarkArisenWorldRulesSubsystem>():nullptr;return R&&R->CompleteRest(EDarkArisenRestLocation::GreatCabin,T);}bool ALaLiberacionShip::CanRestInGreatCabin() const{return VoyageComponent&&VoyageComponent->IsJakeInGreatCabin();}bool ALaLiberacionShip::HasCompleteFourDeckStructure() const{return ShipRoot&&WeatherDeckRoot&&UpperDeckRoot&&MidDeckRoot&&HoldDeckRoot&&UShipVoyageComponent::GetRequiredDeckCount()==4;}bool ALaLiberacionShip::SpawnPhysicalMap(){if(IsValid(PhysicalMap))return true;UWorld* W=GetWorld();if(!W||!UpperDeckRoot||!PhysicalMapClass)return false;FActorSpawnParameters P;P.Owner=this;P.SpawnCollisionHandlingOverride=ESpawnActorCollisionHandlingMethod::AlwaysSpawn;PhysicalMap=W->SpawnActor<APhysicalMapActor>(PhysicalMapClass,UpperDeckRoot->GetComponentTransform(),P);if(!PhysicalMap)return false;PhysicalMap->AttachToComponent(UpperDeckRoot,FAttachmentTransformRules::KeepWorldTransform);return true;}
