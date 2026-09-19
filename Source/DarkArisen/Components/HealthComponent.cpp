@@ -52,7 +52,7 @@ void UHealthComponent::ApplyDamageWithRally(
     AActor* DamageCauser,
     const ERallyDamageClass DamageClass)
 {
-    if (bIsDead || Amount <= 0.0f) return;
+    if (bDamageImmune || bIsDead || Amount <= 0.0f) return;
     const float PreviousHealth = CurrentHealth;
     CurrentHealth = FMath::Clamp(CurrentHealth - Amount, 0.0f, MaxHealth);
     const float AppliedDamage = PreviousHealth - CurrentHealth;
