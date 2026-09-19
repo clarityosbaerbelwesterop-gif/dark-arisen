@@ -5,6 +5,7 @@
 #include "Ship/LaLiberacionShip.h"
 #include "World/DarkArisenWorldRulesSubsystem.h"
 #include "Components/QuestJournalComponent.h"
+#include "Systems/ProgressionEconomyComponent.h"
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/Pawn.h"
 #include "Story/MainStoryMissionCatalog.h"
@@ -93,6 +94,8 @@ bool UMainStorySubsystem::Save(const FString& Slot,const int32 User)
                 if(APawn* Pawn=PC->GetPawn())
                     if(UQuestJournalComponent* Journal=Pawn->FindComponentByClass<UQuestJournalComponent>())
                         State->QuestJournal=Journal->CaptureSnapshot();
+                    if(UProgressionEconomyComponent* Progression=Pawn->FindComponentByClass<UProgressionEconomyComponent>())
+                        State->ProgressionEconomy=Progression->CaptureSnapshot();
         }
     }
     TArray<FString> Errors;
@@ -147,6 +150,10 @@ bool UMainStorySubsystem::MigrateVersion(UDarkArisenSaveGame* Candidate,TArray<F
     if(Candidate->SaveVersion==5)
     {
         Candidate->SaveVersion=6;
+    }
+    if(Candidate->SaveVersion==6)
+    {
+        Candidate->SaveVersion=7;
     }
     Candidate->SaveVersion=UDarkArisenSaveGame::CurrentVersion;
     return true;

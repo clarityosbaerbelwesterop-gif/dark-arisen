@@ -83,6 +83,34 @@ struct FCurrencyWallet
     int64 SilverMarks = 0;
 };
 
+USTRUCT(BlueprintType)
+struct FProgressionEconomySnapshot
+{
+    GENERATED_BODY()
+    UPROPERTY(SaveGame) bool bValid=false;
+    UPROPERTY(SaveGame) int32 MaximumHealth=200;
+    UPROPERTY(SaveGame) int32 MaximumStamina=120;
+    UPROPERTY(SaveGame) int32 MaximumPosture=100;
+    UPROPERTY(SaveGame) float CarryKilograms=80.f;
+    UPROPERTY(SaveGame) TSet<FName> PhysiciansDraughtSources;
+    UPROPERTY(SaveGame) TSet<FName> DeepWaterPearlSources;
+    UPROPERTY(SaveGame) TSet<FName> NamedDeflectionSources;
+    UPROPERTY(SaveGame) TSet<FName> CarryMilestones;
+    UPROPERTY(SaveGame) int32 MarksEarned=0;
+    UPROPERTY(SaveGame) int32 MarksSpent=0;
+    UPROPERTY(SaveGame) TSet<FName> AwardedMarkSources;
+    UPROPERTY(SaveGame) TSet<FName> TeachersMet;
+    UPROPERTY(SaveGame) TSet<FName> CompletedTeachingScenes;
+    UPROPERTY(SaveGame) TSet<FName> WorldFlags;
+    UPROPERTY(SaveGame) TSet<FName> LearnedNodes;
+    UPROPERTY(SaveGame) TSet<FName> ChosenExclusiveGroups;
+    UPROPERTY(SaveGame) FCurrencyWallet Wallet;
+    UPROPERTY(SaveGame) TMap<FName,ESocialGreetingState> GreetingStates;
+    UPROPERTY(SaveGame) TMap<FName,ESocialGreetingState> GreetingBeforeWary;
+    UPROPERTY(SaveGame) TMap<FName,int32> WaryChaptersRemaining;
+    UPROPERTY(SaveGame) TSet<FName> OverheardConversations;
+};
+
 /**
  * M4 source authority for the three non-convertible progression axes plus money/social state.
  *
@@ -216,6 +244,11 @@ public:
 
     UFUNCTION(BlueprintPure, Category="Progression|Body")
     int32 GetMaximumPosture() const { return MaximumPosture; }
+
+    UFUNCTION(BlueprintCallable, Category="Progression|Persistence")
+    FProgressionEconomySnapshot CaptureSnapshot() const;
+    UFUNCTION(BlueprintCallable, Category="Progression|Persistence")
+    bool RestoreSnapshot(const FProgressionEconomySnapshot& Snapshot);
 
     UFUNCTION(BlueprintPure, Category="Progression|Body")
     float GetCarryKilograms() const { return CarryKilograms; }

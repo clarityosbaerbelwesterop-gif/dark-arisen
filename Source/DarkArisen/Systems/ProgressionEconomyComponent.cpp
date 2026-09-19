@@ -546,3 +546,30 @@ int64& UProgressionEconomyComponent::ResolveCurrencyMutable(EDarkArisenCurrency 
         return Wallet.Doubloons;
     }
 }
+
+
+FProgressionEconomySnapshot UProgressionEconomyComponent::CaptureSnapshot() const
+{
+    FProgressionEconomySnapshot S;
+    S.bValid=true; S.MaximumHealth=MaximumHealth; S.MaximumStamina=MaximumStamina; S.MaximumPosture=MaximumPosture;
+    S.CarryKilograms=CarryKilograms; S.PhysiciansDraughtSources=PhysiciansDraughtSources; S.DeepWaterPearlSources=DeepWaterPearlSources;
+    S.NamedDeflectionSources=NamedDeflectionSources; S.CarryMilestones=CarryMilestones; S.MarksEarned=MarksEarned; S.MarksSpent=MarksSpent;
+    S.AwardedMarkSources=AwardedMarkSources; S.TeachersMet=TeachersMet; S.CompletedTeachingScenes=CompletedTeachingScenes;
+    S.WorldFlags=WorldFlags; S.LearnedNodes=LearnedNodes; S.ChosenExclusiveGroups=ChosenExclusiveGroups; S.Wallet=Wallet;
+    S.GreetingStates=GreetingStates; S.GreetingBeforeWary=GreetingBeforeWary; S.WaryChaptersRemaining=WaryChaptersRemaining;
+    S.OverheardConversations=OverheardConversations; return S;
+}
+
+bool UProgressionEconomyComponent::RestoreSnapshot(const FProgressionEconomySnapshot& S)
+{
+    if(!S.bValid || S.MaximumHealth<=0 || S.MaximumStamina<=0 || S.MaximumPosture<=0 || S.CarryKilograms<=0.f ||
+       S.MarksEarned<0 || S.MarksSpent<0 || S.MarksSpent>S.MarksEarned || S.MarksEarned>MaximumAvailableMarks) return false;
+    for(const FName Node:S.LearnedNodes) if(!SkillNodeDefinitions.Contains(Node)) return false;
+    MaximumHealth=S.MaximumHealth; MaximumStamina=S.MaximumStamina; MaximumPosture=S.MaximumPosture; CarryKilograms=S.CarryKilograms;
+    PhysiciansDraughtSources=S.PhysiciansDraughtSources; DeepWaterPearlSources=S.DeepWaterPearlSources; NamedDeflectionSources=S.NamedDeflectionSources;
+    CarryMilestones=S.CarryMilestones; MarksEarned=S.MarksEarned; MarksSpent=S.MarksSpent; AwardedMarkSources=S.AwardedMarkSources;
+    TeachersMet=S.TeachersMet; CompletedTeachingScenes=S.CompletedTeachingScenes; WorldFlags=S.WorldFlags; LearnedNodes=S.LearnedNodes;
+    ChosenExclusiveGroups=S.ChosenExclusiveGroups; Wallet=S.Wallet; GreetingStates=S.GreetingStates; GreetingBeforeWary=S.GreetingBeforeWary;
+    WaryChaptersRemaining=S.WaryChaptersRemaining; OverheardConversations=S.OverheardConversations;
+    ActiveListeningConversation=NAME_None; ActiveSeatId=NAME_None; return true;
+}
