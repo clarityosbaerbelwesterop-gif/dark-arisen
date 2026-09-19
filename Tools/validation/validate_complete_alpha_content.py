@@ -77,10 +77,18 @@ if open_items:errors.append(f"Alpha delivery checklist still has {open_items} op
 # Exploration persistence must use the canonical SaveGame authority.
 save_h=(ROOT/"Source/DarkArisen/Persistence/DarkArisenSaveGame.h").read_text(encoding="utf-8")
 ops=(ROOT/"Source/DarkArisen/Story/MainStoryAuthoredMissionOps.cpp").read_text(encoding="utf-8")
-for token in ("CurrentVersion = 5","DiscoveredDungeons","CompletedDungeons","RecoveredTreasures"):
+for token in ("CurrentVersion = 6","DiscoveredDungeons","CompletedDungeons","RecoveredTreasures"):
  if token not in save_h:errors.append(f"Save authority missing {token}")
 for token in ("DiscoverDungeon(","CompleteDungeon(","RecoverTreasure(","Network.StateTreasuresComplete"):
  if token not in ops:errors.append(f"World persistence runtime missing {token}")
+
+quest_h=(ROOT/"Source/DarkArisen/Components/QuestJournalComponent.h").read_text(encoding="utf-8")
+quest_cpp=(ROOT/"Source/DarkArisen/Components/QuestJournalComponent.cpp").read_text(encoding="utf-8")
+jake=(ROOT/"Source/DarkArisen/JakeCharacter.cpp").read_text(encoding="utf-8")
+for token in ("FQuestJournalSnapshot","CaptureSnapshot()","RestoreSnapshot("):
+ if token not in quest_h+quest_cpp:errors.append(f"Quest persistence missing {token}")
+for token in ("QuestJournal","RestoreSnapshot(Save->QuestJournal)"):
+ if token not in save_h+jake:errors.append(f"Quest save/spawn integration missing {token}")
 
 world_h=(ROOT/"Source/DarkArisen/World/DarkArisenWorldRulesSubsystem.h").read_text(encoding="utf-8")
 world_cpp=(ROOT/"Source/DarkArisen/World/DarkArisenWorldRulesSubsystem.cpp").read_text(encoding="utf-8")
