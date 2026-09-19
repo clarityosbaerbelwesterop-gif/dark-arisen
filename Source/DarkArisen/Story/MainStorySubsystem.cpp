@@ -276,7 +276,7 @@ bool UMainStorySubsystem::AreOpeningCrewRecruited() const
 
 bool UMainStorySubsystem::MarkBossDefeated(const FName Id)
 {
-    static const TSet<FName> Valid={TEXT("boss.herrera"),TEXT("boss.reyes"),TEXT("boss.cruz"),TEXT("boss.de_silva"),TEXT("boss.vega"),TEXT("boss.blackwood"),TEXT("boss.sterling"),TEXT("boss.ashcroft"),TEXT("boss.thorne")};
+    static const TSet<FName> Valid={TEXT("boss.herrera"),TEXT("boss.reyes"),TEXT("boss.cruz"),TEXT("boss.de_silva"),TEXT("boss.vega"),TEXT("boss.blackwood"),TEXT("boss.sterling"),TEXT("boss.ashcroft"),TEXT("boss.thorne"),TEXT("boss.dream_ethan"),TEXT("boss.draven_voss")};
     if(!State||!Valid.Contains(Id))return false;
     State->DefeatedBosses.Add(Id);
     return true;
