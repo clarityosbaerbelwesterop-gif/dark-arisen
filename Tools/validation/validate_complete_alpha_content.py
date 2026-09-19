@@ -77,10 +77,16 @@ if open_items:errors.append(f"Alpha delivery checklist still has {open_items} op
 # Exploration persistence must use the canonical SaveGame authority.
 save_h=(ROOT/"Source/DarkArisen/Persistence/DarkArisenSaveGame.h").read_text(encoding="utf-8")
 ops=(ROOT/"Source/DarkArisen/Story/MainStoryAuthoredMissionOps.cpp").read_text(encoding="utf-8")
-for token in ("CurrentVersion = 4","DiscoveredDungeons","CompletedDungeons","RecoveredTreasures"):
+for token in ("CurrentVersion = 5","DiscoveredDungeons","CompletedDungeons","RecoveredTreasures"):
  if token not in save_h:errors.append(f"Save authority missing {token}")
 for token in ("DiscoverDungeon(","CompleteDungeon(","RecoverTreasure(","Network.StateTreasuresComplete"):
  if token not in ops:errors.append(f"World persistence runtime missing {token}")
+
+world_h=(ROOT/"Source/DarkArisen/World/DarkArisenWorldRulesSubsystem.h").read_text(encoding="utf-8")
+world_cpp=(ROOT/"Source/DarkArisen/World/DarkArisenWorldRulesSubsystem.cpp").read_text(encoding="utf-8")
+for token in ("FDarkArisenWorldRulesSnapshot","CaptureSnapshot()","RestoreSnapshot("):
+ if token not in world_h+world_cpp:errors.append(f"World-time persistence missing {token}")
+if "WorldRules" not in save_h:errors.append("Save authority missing WorldRules snapshot")
 
 ship_h=(ROOT/"Source/DarkArisen/Ship/ShipVoyageComponent.h").read_text(encoding="utf-8")
 ship_cpp=(ROOT/"Source/DarkArisen/Ship/ShipVoyageComponent.cpp").read_text(encoding="utf-8")

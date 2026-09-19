@@ -22,6 +22,16 @@ enum class EDarkArisenDaypart : uint8
     Night
 };
 
+USTRUCT(BlueprintType)
+struct FDarkArisenWorldRulesSnapshot
+{
+    GENERATED_BODY()
+    UPROPERTY(SaveGame) bool bValid=false;
+    UPROPERTY(SaveGame) int64 TotalWorldMinutes=0;
+    UPROPERTY(SaveGame) int32 Chapter=1;
+    UPROPERTY(SaveGame) bool bAutosaveSuppressed=false;
+};
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
     FOnDarkArisenChapterBoundary,
     int32,
@@ -87,6 +97,11 @@ public:
 
     UFUNCTION(BlueprintPure, Category="World|Save")
     bool IsAutosaveSuppressed() const { return bAutosaveSuppressed; }
+
+    UFUNCTION(BlueprintCallable, Category="World|Persistence")
+    FDarkArisenWorldRulesSnapshot CaptureSnapshot() const;
+    UFUNCTION(BlueprintCallable, Category="World|Persistence")
+    bool RestoreSnapshot(const FDarkArisenWorldRulesSnapshot& Snapshot);
 
     UFUNCTION(BlueprintPure, Category="World|Save")
     bool CanManualSave() const { return true; }
