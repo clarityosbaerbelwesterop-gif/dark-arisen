@@ -12,7 +12,7 @@ The design bible is **complete: 63 documents, roughly 400,000 words**, covering 
 
 The person you report to is **Flo**, a solo founder working from an iPad. He is the decision-maker. He cannot run the editor locally — see Section 8, which is why Pixel Streaming is a Milestone 0 task and not a nice-to-have.
 
-**Scale honesty:** this is an Elden Ring / Red Dead Redemption 2 class design on a solo-founder budget. **The realistic near-term deliverable is a vertical slice, not a shipped game.** Plan and communicate accordingly. Do not pretend otherwise and do not quietly descope the parts that make the game distinctive.
+**Scale honesty:** this is an Elden Ring / Red Dead Redemption 2 class design on a solo-founder budget. The current near-term deliverable is the authored **start-to-credits Alpha**, not a claim of commercial AAA completion. Preserve scope honesty, verification evidence and the distinctive systems; do not label source wiring as runtime-verified gameplay.
 
 ---
 
@@ -20,7 +20,7 @@ The person you report to is **Flo**, a solo founder working from an iPad. He is 
 
 **Setting:** a fictional 19th-century archipelago under two colonial powers — **Das Imperium** (Spanish-coded, old, sword-and-cross) and the **Krone von Albion / Honourable Archipelago Company** (English-coded, new, treaty-and-debt). Six regions plus an anomalous seventh (Region 06).
 
-**Protagonist:** **Jake Harlow**, a ship's captain. His brother **Ethan** is dead. That is the wound the entire game is built around.
+**Protagonist:** **Jake Harlow**, a ship's captain. His older brother **Ethan is abducted alive**, coerced into navigating for Draven, deliberately corrupts routes to resist him, and is physically rescued in Chapter 8. Real Ethan remains friendly thereafter. Chapter 9's Dream Ethan is a separate memory-image/boss identity and never retcons the real Ethan.
 
 **The ship:** **La Liberación**, four decks, walkable, with a named crew of five and 40-90 hands.
 
@@ -37,8 +37,8 @@ The person you report to is **Flo**, a solo founder working from an iPad. He is 
 
 **These are the design decisions a competent engineer will "improve" by accident. Every one of them is load-bearing. Breaking any of them silently is the single fastest way to destroy this project.**
 
-### 2.1 — No HUD except one element
-No minimap. No compass. No quest markers. No objective text. No damage numbers. No player dot on the map. No completion percentage. **The only permitted combat HUD element is the posture indicator**, and the animation system must make it redundant. See `progression_overview.md` §1.1, `technical_targets.md` §8.
+### 2.1 — Restrained HUD; Alpha map/minimap owner override
+The product owner explicitly requires a full map and optional minimap for the first playable Alpha. They must remain navigation aids, not GPS objective radar: no floating quest markers, objective arrows, enemy omniscience, collectible sweep or water fast-travel route. Combat presentation remains posture-first; no damage-number spam or completion-percentage HUD. This Alpha override supersedes older blanket no-minimap prose.
 
 ### 2.2 — No interaction highlights, no fade-to-black
 Nothing glows, outlines, or sparkles. A small corner prompt at 1.4m only. Everything is reached for with a real animation. See `interaction_system.md` §1.

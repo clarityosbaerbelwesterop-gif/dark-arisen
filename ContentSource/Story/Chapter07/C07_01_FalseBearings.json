@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "missionId": "Main.C07.01.FalseBearings",
+  "regionId": "Archipelago/ContestedHolding",
+  "mapId": "L_FalseBearings",
+  "entryAnchor": "AlarmYard",
+  "checkpointId": "Checkpoint.C07.FalseBearings.Alarm",
+  "spawnId": "Spawn.C07.FalseBearings.Alarm",
+  "navigationLaw": "Retaliation is resolved in the physical holding and nearby route. Authored damage may persist; no mission-failed screen rewinds the assault.",
+  "anchors": {"AlarmYard":[0,0,0],"BreachWest":[3600,-1800,80],"BreachEast":[4300,1700,100],"ResidentRoute":[6500,300,120],"AttackerFallback":[9100,0,160],"DamageSurvey":[11700,-500,150]},
+  "physicalGeometry": [{"name":"HoldingBattlefield","anchor":"AlarmYard","size":[11000,7000,500]},{"name":"WestBreach","anchor":"BreachWest","size":[2200,1200,700]},{"name":"EastBreach","anchor":"BreachEast","size":[2200,1200,700]}],
+  "actors": [
+    {"type":"LocationTrigger","name":"C07_01_Entry","anchor":"AlarmYard","action":"ActivateMission"},
+    {"type":"Contact","name":"C07_01_Resident","anchor":"ResidentRoute","contactId":"holding.resident.retaliation","dialogueId":"Story.C07.FalseBearings.Resident","displayName":"Holding resident","text":"They came for the charts and the people who helped you read them. The east wall is failing; the west yard still has families in it."},
+    {"type":"LocationTrigger","name":"C07_01_AssaultResolved","anchor":"AttackerFallback","action":"CompleteMission","checkpointId":"Checkpoint.C07.FalseBearings.Resolved","spawnId":"Spawn.C07.FalseBearings.Survey"}
+  ],
+  "runtimeBindings": {"holdingDamage":"UColonyHoldingComponent::RecordPersistentDamage","battle":"Existing ColonialWar battle runtime; authored losses persist instead of mission failure"},
+  "completionFacts": ["Story.RetaliationPaid"],
+  "nextMission": "Main.C07.02.EthansMarks"
+}

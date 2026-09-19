@@ -12,8 +12,8 @@ void PrintUsage()
     UE_LOG(LogTemp, Display, TEXT("Commands:"));
     UE_LOG(LogTemp, Display, TEXT("  validate --root=<repo>"));
     UE_LOG(LogTemp, Display, TEXT("  runner-check --root=<repo> --engine=<UE5.8> [--min-disk-gb=120]"));
-    UE_LOG(LogTemp, Display, TEXT("  build --root=<repo> --engine=<UE5.8> [--automation]"));
-    UE_LOG(LogTemp, Display, TEXT("  package-alpha --revision=<40sha> [--output=<dir>]"));
+    UE_LOG(LogTemp, Display, TEXT("  build --root=<repo> --engine=<UE5.8> [--automation]  (Editor -> materialise -> validate -> game builds)"));
+    UE_LOG(LogTemp, Display, TEXT("  package-alpha --revision=<40sha> [--output=<dir>]  (fails closed without materialised Alpha content)"));
     UE_LOG(LogTemp, Display, TEXT("  promote-alpha --evidence=<json> --windows=<zip> --linux=<zip> --output=<dir>"));
     UE_LOG(LogTemp, Display, TEXT("  bootstrap-streaming --revision=<reviewed-40sha> [--infra=<dir>] [--force-rebuild]"));
     UE_LOG(LogTemp, Display, TEXT("  stream-signalling | stream-turn | stream-launch | stream-deploy"));
@@ -45,11 +45,11 @@ INT32_MAIN_INT32_ARGC_TCHAR_ARGV()
         }
         else if (Command == TEXT("build"))
         {
-            Result = DarkArisenOps::BuildCommand(Args);
+            Result = DarkArisenOps::AlphaBuildCommand(Args);
         }
         else if (Command == TEXT("package-alpha"))
         {
-            Result = DarkArisenOps::PackageAlphaCommand(Args);
+            Result = DarkArisenOps::AlphaPackageCommand(Args);
         }
         else if (Command == TEXT("promote-alpha"))
         {

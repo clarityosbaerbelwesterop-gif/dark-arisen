@@ -170,6 +170,19 @@ void UCombatComponent::SetDead()
     SetState(ECombatState::Dead);
 }
 
+void UCombatComponent::ResetAfterRespawn()
+{
+    StopRache();
+    DeflectionWindowRemaining = 0.0f;
+    InvulnerabilityRemaining = 0.0f;
+    ActionCommitmentRemaining = 0.0f;
+    PostureRegenDelayRemaining = 0.0f;
+    ClearQueuedMeleeHit();
+    CurrentPosture = 0.0f;
+    RefreshPostureVisualState();
+    SetState(ECombatState::Idle);
+}
+
 void UCombatComponent::SetNonHostile()
 {
     if (CurrentState == ECombatState::Dead) return;

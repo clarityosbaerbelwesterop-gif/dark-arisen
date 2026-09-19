@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "missionId": "Main.C05.01.WarCurrent",
+  "regionId": "OpenSea/Rexa",
+  "mapId": "L_WarCurrent",
+  "entryAnchor": "LaLiberacionBerth",
+  "checkpointId": "Checkpoint.C05.WarCurrent.Berth",
+  "spawnId": "Spawn.C05.WarCurrent.Berth",
+  "navigationLaw": "The letter arrives physically aboard La Liberacion. The observer is readable from position and behavior, not an awareness icon.",
+  "geometry": [
+    {"name":"WarCurrentHarbor","objectPath":"/Game/Alpha/World/Story/Chapter05/SM_WarCurrentHarbor_Alpha.SM_WarCurrentHarbor_Alpha","anchor":"HarborBody"}
+  ],
+  "anchors": {
+    "LaLiberacionBerth": [0,0,0],
+    "HarborBody": [4200,600,0],
+    "CrewTable": [1800,-450,140],
+    "AssassinObserver": [7800,4200,420],
+    "LetterDrop": [3300,250,130],
+    "BackStreetExit": [10600,2100,80]
+  },
+  "physicalGeometry": [
+    {"name":"WarCurrentQuay","anchor":"HarborBody","size":[6200,1800,300]},
+    {"name":"ObserverRoof","anchor":"AssassinObserver","size":[1900,1300,700]}
+  ],
+  "actors": [
+    {"type":"LocationTrigger","name":"C05_01_Entry","anchor":"LaLiberacionBerth","action":"ActivateMission"},
+    {"type":"Contact","name":"C05_01_CrewTable","anchor":"CrewTable","contactId":"crew.core.warcurrent","dialogueId":"Story.C05.WarCurrent.Crew","displayName":"Esteban","text":"No seal, no return hand, and someone watched the runner leave it. Read it before we move."},
+    {"type":"Contact","name":"C05_01_Observer","anchor":"AssassinObserver","contactId":"assassin.observer.first","dialogueId":"Story.C05.WarCurrent.Observer","displayName":"Distant observer","text":"The figure leaves the roof when Jake looks directly toward it."},
+    {"type":"Evidence","name":"C05_01_SealedLetter","anchor":"LetterDrop","title":"Sealed letter","body":"Harlow is named. Ethan is not. The writer calls him only the navigator and gives a route time that matches the recovered family chart.","completesMission":true,"checkpointId":"Checkpoint.C05.WarCurrent.LetterRead","spawnId":"Spawn.C05.WarCurrent.Berth"}
+  ],
+  "completionFacts": ["Story.NavigatorAliasKnown"],
+  "nextMission": "Main.C05.02.HoldersWake"
+}

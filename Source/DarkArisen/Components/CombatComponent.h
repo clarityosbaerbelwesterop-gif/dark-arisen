@@ -132,6 +132,8 @@ public:
     void FinishAction();
     UFUNCTION(BlueprintCallable, Category = "Combat|State")
     void SetDead();
+    UFUNCTION(BlueprintCallable, Category = "Combat|State")
+    void ResetAfterRespawn();
     /** Permanently leaves combat without fabricating a death. Used by authored mercy routes. */
     UFUNCTION(BlueprintCallable, Category = "Combat|State")
     void SetNonHostile();

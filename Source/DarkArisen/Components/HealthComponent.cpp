@@ -103,6 +103,20 @@ void UHealthComponent::ApplyHeal(
     RefreshTickState();
 }
 
+void UHealthComponent::ResetForRespawn(const float HealthFraction)
+{
+    const float PreviousHealth = CurrentHealth;
+    bIsDead = false;
+    PendingHeal = 0.0f;
+    HealTimeRemaining = 0.0f;
+    RallyAvailableHealth = 0.0f;
+    RallyWindowRemaining = 0.0f;
+    CurrentHealth = MaxHealth * FMath::Clamp(HealthFraction, 0.01f, 1.0f);
+    OnHealthChanged.Broadcast(CurrentHealth, MaxHealth, CurrentHealth - PreviousHealth);
+    OnRallyChanged.Broadcast(0.0f, 0.0f);
+    RefreshTickState();
+}
+
 float UHealthComponent::RecoverRally(const ERallyRecoveryAction RecoveryAction)
 {
     if (bIsDead || RallyAvailableHealth <= 0.0f) return 0.0f;

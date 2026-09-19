@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "characterId": "ethan.harlow.real",
+  "canonicalName": "Ethan Harlow",
+  "authority": "Docs/MAIN_STORY_AUTHORITY_2026_09.md",
+  "identityLaw": "Real Ethan is alive, coerced, resistant, physically rescued in Chapter 8, friendly after rescue, and must never be registered as a boss.",
+  "appearance": {
+    "role": "young adult Harlow navigator",
+    "silhouette": "lean, exhausted but capable; readable family resemblance to Jake without duplication",
+    "captivityState": "salt-stained practical maritime clothing, minor healed cuts, wrist chafing, fatigue; no fantasy armor",
+    "postRescueState": "same identity and injuries, cleaned/repaired clothing over time; no magical transformation"
+  },
+  "requiredAssetSlots": [
+    "skeletalMesh",
+    "skeleton",
+    "physicsAsset",
+    "skinMaterials",
+    "hair",
+    "eyes",
+    "captivityClothing",
+    "postRescueClothing"
+  ],
+  "requiredAnimationSets": [
+    "captivityIdle",
+    "injuredStand",
+    "reunion",
+    "assistedWalk",
+    "shipRest",
+    "navigatorChartWork",
+    "conversationGestures",
+    "facialDialogue"
+  ],
+  "requiredAudioSets": [
+    "reunionDialogue",
+    "escapeDialogue",
+    "aboardDialogue",
+    "effortBreaths",
+    "clothAndFootstepFoley"
+  ],
+  "requiredPresentation": [
+    "Chapter8CellReveal",
+    "Chapter8Reunion",
+    "Chapter8Escape",
+    "Chapter8AboardWelcome"
+  ],
+  "productionStatus": "SOURCE CONTRACT CREATED; Higgsfield public CLI installed in staging but CLI generation requires explicit auth/workspace; connected Higgsfield generation has limited credits; final 3D visual not yet accepted",
+  "temporarySourcePolicy": "Do not mislabel Jake or any duplicated mesh as final Ethan. A temporary humanoid proxy is allowed only for runtime wiring and must remain visibly classified as placeholder until a reviewed textured/rigged Ethan asset passes the visual release gate.",
+  "higgsfieldPromptId": "DarkArisen.Ethan.Real.ProductionReference.v1"
+}

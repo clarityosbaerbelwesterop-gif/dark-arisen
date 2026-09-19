@@ -1,0 +1,138 @@
+{
+  "schemaVersion": 1,
+  "missionId": "Main.C10.01.Armada",
+  "regionId": "OpenSea/CrimsonArmadaFinalScreen",
+  "mapId": "L_Armada",
+  "entryAnchor": "LiberacionBattleEntry",
+  "checkpointId": "Checkpoint.C10.Armada.Entry",
+  "spawnId": "Spawn.C10.Armada.Entry",
+  "navigationLaw": "La Liberacion enters under player control. Ethan creates the opening; the player must fight through the hostile screen. Naval actors and completion authority are materialized from ContentSource/Naval.",
+  "anchors": {
+    "LiberacionBattleEntry": [
+      0,
+      0,
+      0
+    ],
+    "OuterScreen": [
+      6200,
+      0,
+      0
+    ],
+    "GunLine": [
+      10800,
+      -1800,
+      0
+    ],
+    "FireGap": [
+      14600,
+      1400,
+      0
+    ],
+    "FlagshipSightline": [
+      18800,
+      0,
+      80
+    ],
+    "BreachLane": [
+      22800,
+      0,
+      0
+    ],
+    "ArmadaPort": [
+      7200,
+      -3300,
+      0
+    ],
+    "ArmadaStarboard": [
+      9800,
+      3500,
+      0
+    ],
+    "ArmadaGunship": [
+      14300,
+      -2200,
+      0
+    ]
+  },
+  "physicalGeometry": [
+    {
+      "name": "OuterArmadaSea",
+      "anchor": "OuterScreen",
+      "size": [
+        14000,
+        11000,
+        260
+      ]
+    },
+    {
+      "name": "GunLineZone",
+      "anchor": "GunLine",
+      "size": [
+        7600,
+        4200,
+        300
+      ]
+    },
+    {
+      "name": "BreachLane",
+      "anchor": "BreachLane",
+      "size": [
+        6200,
+        3000,
+        260
+      ]
+    }
+  ],
+  "actors": [
+    {
+      "type": "LocationTrigger",
+      "name": "C10_01_Entry",
+      "anchor": "LiberacionBattleEntry",
+      "action": "ActivateMission"
+    },
+    {
+      "type": "PlayerShip",
+      "name": "C10_01_LaLiberacion",
+      "anchor": "LiberacionBattleEntry"
+    },
+    {
+      "type": "Contact",
+      "name": "C10_01_EthanCourse",
+      "anchor": "LiberacionBattleEntry",
+      "contactId": "ethan.harlow.real.armada",
+      "dialogueId": "Story.C10.Armada.Ethan",
+      "displayName": "Ethan Harlow",
+      "text": "Hold this bearing until the gun line commits. Then cut across the wake I marked. Voss will think we are trapped until we are already inside."
+    },
+    {
+      "type": "NavalEnemy",
+      "name": "C10_01_ArmadaPort",
+      "anchor": "ArmadaPort"
+    },
+    {
+      "type": "NavalEnemy",
+      "name": "C10_01_ArmadaStarboard",
+      "anchor": "ArmadaStarboard"
+    },
+    {
+      "type": "NavalEnemy",
+      "name": "C10_01_ArmadaGunship",
+      "anchor": "ArmadaGunship"
+    },
+    {
+      "type": "NavalEncounterGate",
+      "name": "C10_01_FleetDefeatGate",
+      "anchor": "BreachLane",
+      "requiredDefeats": 3
+    }
+  ],
+  "encounterIds": [
+    "Encounter.C10.ArmadaOuter",
+    "Encounter.C10.ArmadaGunLine",
+    "Encounter.C10.ArmadaBreach"
+  ],
+  "completionFacts": [
+    "Story.ArmadaBreachOpen"
+  ],
+  "nextMission": "Main.C10.02.BreakTheChain"
+}

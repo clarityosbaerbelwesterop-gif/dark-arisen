@@ -2,9 +2,9 @@ name: M0-M8 Native C++ CI
 
 on:
   push:
-    branches: [develop, main]
+    branches: [develop, main, work/alpha-content-production, work/final-alpha-opening-runtime]
   pull_request:
-    branches: [develop, main]
+    branches: [develop, main, work/final-alpha-opening-runtime]
     types: [opened, synchronize, reopened, ready_for_review]
 
 permissions:
@@ -15,9 +15,30 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  verify-static:
+    name: Static Alpha contracts
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - name: Validate canonical Alpha runtime graph
+        run: python3 Tools/validation/validate_alpha_runtime.py
+      - name: Validate authored story content
+        run: python3 Tools/validation/validate_story_content.py
+      - name: Compile Python production tools
+        run: python3 -m compileall -q Tools
+      - name: Report visual release readiness
+        run: python3 Tools/validation/validate_visual_release.py
+      - name: Reject whitespace errors
+        run: git diff --check HEAD^
+
   verify-windows:
-    name: Windows UE 5.8 native C++ compile, tests, laws
+    name: Windows UE 5.8 materialise, compile, tests, laws
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    needs: verify-static
     runs-on: [self-hosted, Windows, X64, ue5.8, dark-arisen]
     timeout-minutes: 120
     steps:
@@ -35,11 +56,11 @@ jobs:
         shell: cmd
         run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" runner-check "--root=%GITHUB_WORKSPACE%" "--engine=%UE_ROOT%"'
 
-      - name: Validate M0-M8 repository contract in native C++
+      - name: Validate repository contract in native C++
         shell: cmd
         run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" validate "--root=%GITHUB_WORKSPACE%"'
 
-      - name: Compile Editor, Development and Shipping; run automation
+      - name: Compile Editor, materialise Alpha content, validate, build game, run automation
         shell: cmd
         run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" build "--root=%GITHUB_WORKSPACE%" "--engine=%UE_ROOT%" --automation'
 
@@ -49,8 +70,9 @@ jobs:
         run: '"%GITHUB_WORKSPACE%\Binaries\Win64\DarkArisenOps.exe" package-alpha "--root=%GITHUB_WORKSPACE%" "--engine=%UE_ROOT%" "--revision=%GITHUB_SHA%"'
 
   verify-linux:
-    name: Linux UE 5.8 native C++ compile, tests, laws
+    name: Linux UE 5.8 materialise, compile, tests, laws
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    needs: verify-static
     runs-on: [self-hosted, Linux, X64, ue5.8, dark-arisen]
     timeout-minutes: 120
     steps:
@@ -68,11 +90,11 @@ jobs:
         shell: bash
         run: '"$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" runner-check "--root=$GITHUB_WORKSPACE" "--engine=$UE_ROOT"'
 
-      - name: Validate M0-M8 repository contract in native C++
+      - name: Validate repository contract in native C++
         shell: bash
         run: '"$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" validate "--root=$GITHUB_WORKSPACE"'
 
-      - name: Compile Editor, Development and Shipping; run automation
+      - name: Compile Editor, materialise Alpha content, validate, build game, run automation
         shell: bash
         run: '"$GITHUB_WORKSPACE/Binaries/Linux/DarkArisenOps" build "--root=$GITHUB_WORKSPACE" "--engine=$UE_ROOT" --automation'
 

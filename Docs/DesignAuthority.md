@@ -1,5 +1,15 @@
 # Design authority and conflict register
 
+## 2026-09-13 live production overlay
+
+The user's explicit 2026-09-13 Final Alpha Completion / continuation direction is the highest implementation authority. Current repository authorities beneath it are `Docs/MAIN_STORY_AUTHORITY_2026_09.md`, `Docs/MORAN_OPENING_WORLD_AUTHORITY_2026_09.md`, `Docs/NON_AI_SLOP_STANDARD.md`, and `Docs/UE58_RENDERING_AND_UE6_BRIDGE.md`.
+
+**Canon lock:** Marc and Denise Harlow die in Draven's attack. Ethan Harlow is abducted **alive**, coerced for the Harlow safe-route knowledge, resists by subtly corrupting routes, and is physically rescued in Chapter 8. Chapter 9 uses a distinct Dream/Memory Ethan representation; real Ethan remains alive, recovered, friendly and non-hostile. Historical material that says Ethan willingly joins Draven, betrays Jake, dies in Chapter 1, or becomes the real Chapter-9 boss is **LEGACY / SUPERSEDED** and cannot drive runtime, dialogue, presentation, save facts, or boss registration.
+
+**Platform lock:** Windows x64 and Linux x86_64 are the immediate Alpha package targets. Xbox Series X|S is additional only with authorised Microsoft console GDK/GDKX platform extensions and developer access. Xbox-on-PC tooling is not console-package proof; leaked/community SDKs are forbidden.
+
+**Content lock:** Higgsfield may contribute real production media when the connected plan permits it and no unapproved spend is required. Provider output is not an Unreal asset until materialised, imported, bound, cooked and runtime-tested.
+
 **Reviewed:** 2026-08-26
 **Scope:** 185 repository documents (184 Markdown/text sources plus the OOXML file `Dark Arisen GDD v1.2`) and the two current engineering handoff documents supplied by Flo.
 
@@ -21,7 +31,7 @@ No source is deleted. A legacy source remains useful for names, tone, imagery, a
 | Area | Canonical decision | Primary authority |
 |---|---|---|
 | Engine | Unreal Engine 5.8 for M0; evaluate upgrades only as a separate compatibility milestone | Current engineering handoff and Pixel Streaming setup |
-| Shipping platforms | Alpha packages target Windows and Linux PC; native PlayStation 5 begins in Beta with authorised Sony tools; no Xbox, Switch, or mobile build target | Flo's current written direction and engineering handoff |
+| Shipping platforms | Alpha packages target Windows x64 and Linux x86_64. Xbox Series X|S is additionally targeted only when authorised Microsoft GDKX console tooling is genuinely available. | 2026-09-13 live direction; `Docs/UE58_RENDERING_AND_UE6_BRIDGE.md` |
 | Performance | 60 fps is the hard floor; six-frame deflection window | `technical targets.md`, `animation system.md` |
 | Combat HUD | Posture is the only permitted combat HUD element | Current engineering handoff, `technical targets.md` |
 | Interaction | No highlights and no fade-to-black; one four-second corner prompt at 1.4 m | `interaction system.md`, current engineering handoff |
@@ -46,16 +56,16 @@ The April 2026 GDD is internally coherent as the original six-region pirate conc
 
 | GDD v1.2 concept | Current canon |
 |---|---|
-| PS5, Xbox Series X/S, and PC | PC and PS5 only |
+| PS5, Xbox Series X/S, and PC | Windows/Linux Alpha plus Xbox Series X|S only through authorised GDKX console tooling; older PS5-only handoff language is superseded |
 | UE 5.4+ and multiple 30 fps modes | UE 5.8 M0 pin and 60 fps on every supported platform |
-| Health, stamina, Rache, ammo, boss bars, and minimap HUD | Posture-only combat HUD; no minimap or compass |
+| Health, stamina, Rache, ammo, boss bars, and minimap HUD | Posture-first combat HUD; Alpha permits an optional minimap/full map, while objective arrows and floating quest markers remain forbidden |
 | Dynamic combat score | Music never reacts |
 | Rache lasts about eight seconds | Rache lasts at most five real seconds at 30% time scale |
 | Ship as a fast-travel hub | No water fast travel |
 | Mission checkpoints and mission-failed flow | Chapter/rest autosave discipline; no failure screens |
 | Organic proficiency with no skill tree | Three-axis progression and a 68-node authored tree |
 | Mira as a potential systemic romance | No romance system |
-| Ethan is captured, joins Draven, and becomes the Chapter 9 boss | Later Phase 10/11 structure opens with Ethan's death and treats Chapter 9 around Ethan's Grove; the old betrayal/boss branch is legacy |
+| Ethan is captured, joins Draven, and becomes the Chapter 9 boss | **Superseded.** Ethan is abducted alive, coerced as navigator, resists Draven, is rescued in Chapter 8, and only a Dream/Memory Ethan is fought in Chapter 9. Real Ethan never becomes hostile. |
 | Twenty-three optional bosses plus the old story-boss list | Later boss and campaign catalogs govern; counts must be reconciled before content scale-out |
 
 ## Repository-quality findings
@@ -73,7 +83,7 @@ The April 2026 GDD is internally coherent as the original six-region pirate conc
    - `physics/cloth_hair_sound_physics.md`
    - `region_05_naval_combat.md`
 5. Phase 3 combat sources still mention Xbox and a 30 fps mode. Those clauses are superseded; their non-conflicting stamina, posture, and frame-data specifications remain provisional M1 inputs.
-6. The old German Ethan/Draven character bibles and their boss specifications conflict with the current Chapter 1/Chapter 9 structure. They remain legacy references until rewritten against Phase 11.
+6. The old German Ethan/Draven character bibles and boss specifications conflict with current September 2026 canon. They are explicitly **LEGACY / SUPERSEDED**; only non-conflicting historical tone/name context may be reused.
 
 ## M0 decisions derived from the review
 
@@ -85,7 +95,7 @@ The April 2026 GDD is internally coherent as the original six-region pirate conc
 
 ## Open canon work before M2 scale-out
 
-- Rewrite the Ethan and Draven character/boss material to the current Phase 11 story, or explicitly restore the older betrayal branch.
+- Rewrite the legacy Ethan/Draven character/boss material against the September 2026 authority. The older betrayal / real-Ethan boss branch is closed and must not be restored by implementation drift.
 - Publish one authoritative boss register and reconcile the old “23 optional bosses” promise.
 - Repair or replace the five unresolved cross-references and the three malformed paths.
 - Split or rename the orphaned Quiet Coast continuation.
@@ -93,3 +103,8 @@ The April 2026 GDD is internally coherent as the original six-region pirate conc
 - Resolve the remaining shared-value discrepancy between `mechanics_overview.md` (two-second stamina delay) and `mechanics/combat_feel.md` (one-second normal, three-second exhaustion delay). M0 currently follows the narrower combat specification.
 
 This register is an engineering routing decision, not a rewrite of the design bible. Any change to a locked law requires Flo's explicit approval.
+
+
+## Alpha navigation override — 2026-09-19
+
+The product owner explicitly requires a map and minimap for the first playable Alpha. This requirement supersedes older blanket "no minimap" statements for the Alpha runtime only. Environmental navigation, spoken directions, charts and landmark readability remain core design. The minimap must not become an objective radar: no floating quest markers, GPS route line, enemy omniscience, collectible sweep, or objective arrow is introduced by this override. Water fast travel remains forbidden.

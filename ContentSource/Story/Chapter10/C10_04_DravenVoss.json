@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "missionId": "Main.C10.04.DravenVoss",
+  "regionId": "Ship/DravenFlagship",
+  "mapId": "L_DravenVoss",
+  "entryAnchor": "ArenaEntry",
+  "checkpointId": "Checkpoint.C10.Draven.Entry",
+  "spawnId": "Spawn.C10.Draven.Entry",
+  "navigationLaw": "Draven Voss is fought physically on the flagship's Black Deck. He is not a reskinned disposable boarder and the encounter uses the existing native posture/deflection combat authority.",
+  "anchors": {"ArenaEntry":[0,0,0],"BlackDeckCenter":[4200,0,100],"DravenSpawn":[7800,0,100],"MastSide":[4200,-2600,120],"QuarterSide":[4200,2600,120],"AftermathThreshold":[10800,0,120]},
+  "physicalGeometry": [{"name":"BlackDeckArena","anchor":"BlackDeckCenter","size":[9800,7600,300]},{"name":"MastBoundary","anchor":"MastSide","size":[7000,600,850]},{"name":"QuarterBoundary","anchor":"QuarterSide","size":[7000,600,850]}],
+  "actors": [
+    {"type":"LocationTrigger","name":"C10_04_Entry","anchor":"ArenaEntry","action":"ActivateMission"},
+    {"type":"HolderBoss","name":"C10_04_Draven","anchor":"DravenSpawn","bossId":"boss.draven_voss","outcomeKey":"Draven.Outcome","outcomeValue":"Defeated","completesMissionOnDefeat":true}
+  ],
+  "bossClass": "ADravenVossBossCharacter",
+  "combatContract": {"phases":3,"systems":["deflection","posture","telegraphs","dodge","damage","recovery"],"intent":["controlled command","pressure escalation","desperate final stand"]},
+  "completionFacts": ["Story.DravenDefeated"],
+  "nextMission": "Main.C10.05.TheWakeAfter"
+}

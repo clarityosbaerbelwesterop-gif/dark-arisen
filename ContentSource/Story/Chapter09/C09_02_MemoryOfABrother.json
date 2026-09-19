@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "missionId": "Main.C09.02.MemoryOfABrother",
+  "regionId": "Dream/HarlowMemory",
+  "mapId": "L_MemoryOfABrother",
+  "entryAnchor": "MemoryStart",
+  "checkpointId": "Checkpoint.C09.Memory.Start",
+  "spawnId": "Spawn.C09.Memory.Start",
+  "navigationLaw": "The memory uses authored fragments of real places and voices. It must never rewrite the saved state of real Ethan or imply that Chapter 8 was false.",
+  "anchors": {"MemoryStart":[0,0,0],"MerchantDeckEcho":[3200,0,80],"DriftwoodEcho":[6100,-500,100],"PrisonEcho":[8800,600,120],"RealEthanVoice":[10700,0,140],"ArenaThreshold":[13200,0,160]},
+  "physicalGeometry": [{"name":"MemoryPath","anchor":"MemoryStart","size":[12000,2600,220]},{"name":"MerchantDeckEcho","anchor":"MerchantDeckEcho","size":[2600,1600,300]},{"name":"PrisonEcho","anchor":"PrisonEcho","size":[2400,1800,500]}],
+  "actors": [
+    {"type":"LocationTrigger","name":"C09_02_Entry","anchor":"MemoryStart","action":"ActivateMission"},
+    {"type":"Contact","name":"C09_02_EthanVoice","anchor":"RealEthanVoice","contactId":"memory.ethan.voice","dialogueId":"Story.C09.Memory.EthanVoice","displayName":"Ethan's memory","text":"You keep turning every road into the night you lost us. I am alive. Stop making my face carry everyone you could not save."},
+    {"type":"LocationTrigger","name":"C09_02_Arena","anchor":"ArenaThreshold","action":"CompleteMission","checkpointId":"Checkpoint.C09.Memory.Arena","spawnId":"Spawn.C09.Memory.Arena"}
+  ],
+  "completionFacts": ["Story.DreamConfrontationEntered"],
+  "nextMission": "Main.C09.03.DreamFight"
+}

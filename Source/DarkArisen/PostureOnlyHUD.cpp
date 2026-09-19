@@ -1,99 +1,19 @@
-// Copyright (c) 2026 Dark Arisen. All Rights Reserved.
-
 #include "PostureOnlyHUD.h"
-
 #include "Components/CombatComponent.h"
 #include "Components/InteractionComponent.h"
 #include "DesignLaws.h"
 #include "Engine/Canvas.h"
 #include "Engine/Engine.h"
+#include "GameFramework/GameUserSettings.h"
 #include "GameFramework/Pawn.h"
-#include "GameFramework/PlayerController.h"
-
-static_assert(
-    DarkArisen::DesignLaws::PermittedCombatHudElements == 1,
-    "The combat HUD may contain posture only.");
-
-void APostureOnlyHUD::DrawHUD()
-{
-    Super::DrawHUD();
-    if (!Canvas || !PlayerOwner) return;
-    DrawPosture();
-    DrawInteractionPrompt();
-    DrawExaminePresentation();
-}
-
-void APostureOnlyHUD::DrawPosture()
-{
-    const APawn* Pawn = PlayerOwner->GetPawn();
-    const UCombatComponent* Combat = Pawn
-        ? Pawn->FindComponentByClass<UCombatComponent>() : nullptr;
-    if (!Combat ||
-        (Combat->CurrentState == ECombatState::Idle && Combat->CurrentPosture <= 0.0f)) return;
-
-    const float Width = FMath::Clamp(Canvas->SizeX * 0.22f, 220.0f, 440.0f);
-    constexpr float Height = 8.0f;
-    const float X = (Canvas->SizeX - Width) * 0.5f;
-    const float Y = Canvas->SizeY - 72.0f;
-    DrawRect(BackgroundColor, X, Y, Width, Height);
-    DrawRect(
-        SetColor,
-        X,
-        Y,
-        Width * Combat->GetPostureRemainingFraction(),
-        Height);
-}
-
-void APostureOnlyHUD::DrawInteractionPrompt()
-{
-    const APawn* Pawn = PlayerOwner->GetPawn();
-    const UInteractionComponent* Interaction = Pawn
-        ? Pawn->FindComponentByClass<UInteractionComponent>() : nullptr;
-    if (!Interaction || !Interaction->IsPromptVisible() || Interaction->IsExamineVisible()) return;
-    UFont* Font = GEngine ? GEngine->GetSmallFont() : nullptr;
-    if (!Font) return;
-    const FString Prompt = Interaction->GetPromptLabel().ToString();
-    float Width = 0.0f;
-    float Height = 0.0f;
-    Canvas->StrLen(Font, Prompt, Width, Height);
-    constexpr float Margin = 28.0f;
-    DrawText(
-        Prompt,
-        FLinearColor(0.88f, 0.86f, 0.78f, 0.92f),
-        Canvas->SizeX - Width - Margin,
-        Canvas->SizeY - Height - Margin,
-        Font,
-        1.0f,
-        false);
-}
-
-void APostureOnlyHUD::DrawExaminePresentation()
-{
-    const APawn* Pawn = PlayerOwner->GetPawn();
-    const UInteractionComponent* Interaction = Pawn
-        ? Pawn->FindComponentByClass<UInteractionComponent>() : nullptr;
-    if (!Interaction || !Interaction->IsExamineVisible()) return;
-    UFont* Font = GEngine ? GEngine->GetSmallFont() : nullptr;
-    if (!Font) return;
-
-    const float Width = FMath::Min(Canvas->SizeX * 0.42f, 620.0f);
-    const float X = Canvas->SizeX - Width - 48.0f;
-    const float Y = Canvas->SizeY * 0.18f;
-    DrawRect(FLinearColor(0.03f, 0.025f, 0.02f, 0.74f), X, Y, Width, Canvas->SizeY * 0.60f);
-    DrawText(
-        Interaction->GetExamineTitle().ToString(),
-        FLinearColor(0.92f, 0.86f, 0.70f, 1.0f),
-        X + 24.0f,
-        Y + 22.0f,
-        Font,
-        1.25f,
-        false);
-    DrawText(
-        Interaction->GetExamineBody().ToString(),
-        FLinearColor(0.88f, 0.86f, 0.80f, 1.0f),
-        X + 24.0f,
-        Y + 64.0f,
-        Font,
-        1.0f,
-        false);
-}
+#include "Story/MainStorySubsystem.h"
+#include "UI/AlphaGameplayPlayerController.h"
+static_assert(DarkArisen::DesignLaws::PermittedCombatHudElements==2,"Alpha combat HUD is posture plus minimap.");
+void APostureOnlyHUD::DrawHUD(){Super::DrawHUD();if(!Canvas||!PlayerOwner)return;auto* PC=Cast<AAlphaGameplayPlayerController>(PlayerOwner);if(!PC)return;if(PC->Overlay==EAlphaOverlay::None){DrawPosture();DrawInteractionPrompt();DrawExaminePresentation();if(PC->bMiniMapEnabled)DrawMiniMap();}else DrawOverlay();}
+void APostureOnlyHUD::DrawPosture(){const APawn* P=PlayerOwner->GetPawn();const auto* C=P?P->FindComponentByClass<UCombatComponent>():nullptr;if(!C||(C->CurrentState==ECombatState::Idle&&C->CurrentPosture<=0))return;const float W=FMath::Clamp(Canvas->SizeX*.22f,220.f,440.f),X=(Canvas->SizeX-W)*.5f,Y=Canvas->SizeY-72;DrawRect(BackgroundColor,X,Y,W,8);DrawRect(SetColor,X,Y,W*C->GetPostureRemainingFraction(),8);}
+void APostureOnlyHUD::DrawInteractionPrompt(){const APawn* P=PlayerOwner->GetPawn();const auto* I=P?P->FindComponentByClass<UInteractionComponent>():nullptr;if(!I||!I->IsPromptVisible()||I->IsExamineVisible()||!GEngine)return;UFont* F=GEngine->GetSmallFont();float W=0,H=0;const FString T=I->GetPromptLabel().ToString();Canvas->StrLen(F,T,W,H);DrawText(T,FLinearColor(.88f,.86f,.78f,.92f),Canvas->SizeX-W-28,Canvas->SizeY-H-28,F,1,false);}
+void APostureOnlyHUD::DrawExaminePresentation(){const APawn* P=PlayerOwner->GetPawn();const auto* I=P?P->FindComponentByClass<UInteractionComponent>():nullptr;if(!I||!I->IsExamineVisible()||!GEngine)return;UFont* F=GEngine->GetSmallFont();const float W=FMath::Min(Canvas->SizeX*.42f,620.f),X=Canvas->SizeX-W-48,Y=Canvas->SizeY*.18f;DrawRect(FLinearColor(.03f,.025f,.02f,.74f),X,Y,W,Canvas->SizeY*.6f);DrawText(I->GetExamineTitle().ToString(),FLinearColor(.92f,.86f,.70f,1),X+24,Y+22,F,1.25f,false);DrawText(I->GetExamineBody().ToString(),FLinearColor(.88f,.86f,.80f,1),X+24,Y+64,F,1,false);}
+void APostureOnlyHUD::DrawMiniMap(){const APawn* P=PlayerOwner->GetPawn();if(!P||!GEngine)return;const float S=180,X=Canvas->SizeX-S-28,Y=28;DrawRect(FLinearColor(.015f,.02f,.025f,.82f),X,Y,S,S);for(int32 I=1;I<4;++I){const float O=S*I/4.f;DrawLine(X+O,Y,X+O,Y+S,FLinearColor(.2f,.2f,.2f,.35f),1);DrawLine(X,Y+O,X+S,Y+O,FLinearColor(.2f,.2f,.2f,.35f),1);}const FVector L=P->GetActorLocation();const float PX=X+S*.5f+FMath::Fmod(L.X/120.f,S*.42f),PY=Y+S*.5f+FMath::Fmod(L.Y/120.f,S*.42f);DrawRect(FLinearColor(.9f,.72f,.18f,1),PX-4,PY-4,8,8);const float A=FMath::DegreesToRadians(P->GetActorRotation().Yaw);DrawLine(PX,PY,PX+FMath::Cos(A)*18,PY+FMath::Sin(A)*18,FLinearColor::White,2);DrawText(TEXT("N"),FLinearColor(.8f,.8f,.8f,1),X+S*.5f-4,Y+5,GEngine->GetSmallFont(),.8f,false);}
+void APostureOnlyHUD::DrawButton(const FString& T,FName Id,float X,float Y,float W,float H){DrawRect(FLinearColor(.08f,.07f,.055f,.94f),X,Y,W,H);DrawText(T,FLinearColor(.92f,.86f,.70f,1),X+18,Y+13,GEngine->GetSmallFont(),1,false);AddHitBox(FVector2D(X,Y),FVector2D(W,H),Id,true,10);}
+void APostureOnlyHUD::DrawOverlay(){auto* PC=Cast<AAlphaGameplayPlayerController>(PlayerOwner);if(!PC||!GEngine)return;DrawRect(FLinearColor(.008f,.01f,.014f,.94f),0,0,Canvas->SizeX,Canvas->SizeY);UGameInstance* GI=GetGameInstance();auto* Story=GI?GI->GetSubsystem<UMainStorySubsystem>():nullptr;const auto* State=Story?Story->GetState():nullptr;const float X=80,Y0=90;float Y=Y0;DrawText(PC->Overlay==EAlphaOverlay::Map?TEXT("MAP"):PC->Overlay==EAlphaOverlay::Settings?TEXT("SETTINGS"):TEXT("PAUSED"),FLinearColor(.95f,.9f,.78f,1),X,Y,GEngine->GetLargeFont(),1.25f,false);Y+=80;if(PC->Overlay==EAlphaOverlay::Map){const float MX=X,MY=Y,MW=Canvas->SizeX-160,MH=Canvas->SizeY-Y-90;DrawRect(FLinearColor(.035f,.045f,.055f,1),MX,MY,MW,MH);for(int32 I=1;I<8;++I){DrawLine(MX+MW*I/8,MY,MX+MW*I/8,MY+MH,FLinearColor(.18f,.2f,.2f,.35f),1);DrawLine(MX,MY+MH*I/8,MX+MW,MY+MH*I/8,FLinearColor(.18f,.2f,.2f,.35f),1);}if(APawn* P=PlayerOwner->GetPawn()){const FVector L=P->GetActorLocation();const float PX=MX+MW*.5f+FMath::Clamp(L.X/300.f,-MW*.42f,MW*.42f),PY=MY+MH*.5f+FMath::Clamp(L.Y/300.f,-MH*.42f,MH*.42f);DrawRect(FLinearColor(.9f,.72f,.18f,1),PX-6,PY-6,12,12);}if(State)DrawText(FString::Printf(TEXT("Chapter %d   %s"),State->CurrentChapter,*State->CurrentMission.ToString()),FLinearColor::White,MX+18,MY+18,GEngine->GetSmallFont(),1,false);DrawText(TEXT("M to close"),FLinearColor(.7f,.7f,.7f,1),MX+18,MY+46,GEngine->GetSmallFont(),.9f,false);return;}if(PC->Overlay==EAlphaOverlay::Pause){DrawButton(TEXT("RESUME"),TEXT("Resume"),X,Y,330,50);Y+=62;DrawButton(TEXT("SAVE GAME"),TEXT("Save"),X,Y,330,50);Y+=62;DrawButton(TEXT("LOAD GAME"),TEXT("Load"),X,Y,330,50);Y+=62;DrawButton(TEXT("SETTINGS"),TEXT("Settings"),X,Y,330,50);Y+=62;DrawButton(TEXT("MAIN MENU"),TEXT("MainMenu"),X,Y,330,50);}else{auto* S=UGameUserSettings::GetGameUserSettings();DrawButton(FString::Printf(TEXT("VSYNC: %s"),S&&S->IsVSyncEnabled()?TEXT("ON"):TEXT("OFF")),TEXT("VSync"),X,Y,330,50);Y+=62;DrawButton(TEXT("GRAPHICS LOW"),TEXT("Q0"),X,Y,330,50);Y+=62;DrawButton(TEXT("GRAPHICS MEDIUM"),TEXT("Q1"),X,Y,330,50);Y+=62;DrawButton(TEXT("GRAPHICS HIGH"),TEXT("Q2"),X,Y,330,50);Y+=62;DrawButton(TEXT("GRAPHICS EPIC"),TEXT("Q3"),X,Y,330,50);Y+=62;DrawButton(TEXT("1920 x 1080"),TEXT("R1080"),X,Y,330,50);Y+=62;DrawButton(TEXT("2560 x 1440"),TEXT("R1440"),X,Y,330,50);Y+=62;DrawButton(TEXT("3840 x 2160 / 4K"),TEXT("R4K"),X,Y,330,50);Y+=62;DrawButton(PC->bPathTracingEnabled?TEXT("PATH TRACING: ON"):TEXT("PATH TRACING: OFF"),TEXT("PathTrace"),X,Y,330,50);Y+=62;DrawButton(TEXT("BACK"),TEXT("Back"),X,Y,330,50);}if(!PC->LastSystemMessage.IsEmpty())DrawText(PC->LastSystemMessage,FLinearColor(.72f,.72f,.72f,1),X,Y+72,GEngine->GetSmallFont(),.9f,false);}
+void APostureOnlyHUD::NotifyHitBoxClick(FName Id){Super::NotifyHitBoxClick(Id);auto* PC=Cast<AAlphaGameplayPlayerController>(PlayerOwner);if(!PC)return;if(Id==TEXT("Resume")||Id==TEXT("Back"))PC->CloseOverlay();else if(Id==TEXT("Save"))PC->QuickSave();else if(Id==TEXT("Load"))PC->QuickLoad();else if(Id==TEXT("Settings"))PC->OpenSettings();else if(Id==TEXT("MainMenu"))PC->ReturnToMainMenu();else if(Id==TEXT("VSync"))PC->ToggleVSync();else if(Id==TEXT("Q0"))PC->SetQualityPreset(0);else if(Id==TEXT("Q1"))PC->SetQualityPreset(1);else if(Id==TEXT("Q2"))PC->SetQualityPreset(2);else if(Id==TEXT("Q3"))PC->SetQualityPreset(3);else if(Id==TEXT("R1080"))PC->SetResolutionPreset(1920,1080);else if(Id==TEXT("R1440"))PC->SetResolutionPreset(2560,1440);else if(Id==TEXT("R4K"))PC->SetResolutionPreset(3840,2160);else if(Id==TEXT("PathTrace"))PC->TogglePathTracing();}

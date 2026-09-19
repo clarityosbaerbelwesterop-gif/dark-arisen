@@ -1,0 +1,107 @@
+{
+  "schemaVersion": 1,
+  "missionId": "Main.C03.01.RexaHarbor",
+  "regionId": "Rexa",
+  "mapId": "L_RexaHarbor",
+  "entryAnchor": "DockEntry",
+  "checkpointId": "Checkpoint.C03.RexaHarbor.Dock",
+  "spawnId": "Spawn.C03.RexaHarbor.Dock",
+  "layoutSource": "ContentSource/World/Rexa/Harbor/RexaHarbor_Layout.json",
+  "navigationLaw": "Physical navigation is primary; the player may use the authored Alpha map/minimap without objective arrows or floating mission markers.",
+  "geometry": [
+    {
+      "name": "RexaWarehouseQuarter",
+      "objectPath": "/Game/Alpha/World/Rexa/Story/SM_RexaWarehouseQuarter_Alpha.SM_RexaWarehouseQuarter_Alpha",
+      "anchor": "WarehouseQuarter"
+    }
+  ],
+  "anchors": {
+    "DockEntry": [
+      2800,
+      200,
+      0
+    ],
+    "PlayerBerth": [
+      3400,
+      450,
+      0
+    ],
+    "Broker": [
+      4700,
+      1250,
+      40
+    ],
+    "WarehouseQuarter": [
+      6200,
+      1450,
+      0
+    ],
+    "CargoRecords": [
+      6550,
+      1320,
+      95
+    ],
+    "Survivor": [
+      7350,
+      1850,
+      40
+    ],
+    "DockLedger": [
+      7900,
+      1700,
+      90
+    ],
+    "SafeRoutesExit": [
+      8800,
+      1400,
+      40
+    ]
+  },
+  "actors": [
+    {
+      "type": "LocationTrigger",
+      "name": "C03_01_Entry",
+      "anchor": "DockEntry",
+      "action": "ActivateMission"
+    },
+    {
+      "type": "Contact",
+      "name": "C03_01_Broker",
+      "anchor": "Broker",
+      "contactId": "contact.rexa.draven_broker",
+      "dialogueId": "Story.C03.RexaHarbor.Broker",
+      "displayName": "Dock broker",
+      "text": "Ships are easy to lie about. Dates are harder. The warehouse clerks keep copies."
+    },
+    {
+      "type": "Contact",
+      "name": "C03_01_Survivor",
+      "anchor": "Survivor",
+      "contactId": "contact.rexa.tender_survivor",
+      "dialogueId": "Story.C03.RexaHarbor.Survivor",
+      "displayName": "Tender survivor",
+      "text": "The younger Harlow was alive when they moved him. He watched every turn out of the harbor."
+    },
+    {
+      "type": "Evidence",
+      "name": "C03_01_CargoRecords",
+      "anchor": "CargoRecords",
+      "title": "Cargo transfer folio",
+      "body": "Three rumors disagree. The stamped cargo date and tender number agree."
+    },
+    {
+      "type": "Evidence",
+      "name": "C03_01_DockLedger",
+      "anchor": "DockLedger",
+      "title": "Dated dock ledger",
+      "body": "Transfer: Harlow, Ethan. Alive. Navigation detail retained aboard Armada tender Asterion.",
+      "completesMission": true,
+      "checkpointId": "Checkpoint.C03.RexaHarbor.Ledger",
+      "spawnId": "Spawn.C03.RexaHarbor.Warehouse"
+    }
+  ],
+  "completionFacts": [
+    "Story.EthanAliveConfirmed"
+  ],
+  "nextMission": "Main.C03.02.SafeRoutes"
+}

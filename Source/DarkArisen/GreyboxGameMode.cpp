@@ -17,6 +17,7 @@
 #include "Interaction/PhysicalDoorActor.h"
 #include "Interaction/PhysicalPickupActor.h"
 #include "PostureOnlyHUD.h"
+#include "Story/DarkArisenWorldDirector.h"
 
 namespace
 {
@@ -107,6 +108,7 @@ void AGreyboxGameMode::BuildGreybox()
     }
 
     World->SpawnActor<AFrameTimeTelemetryActor>();
+    World->SpawnActor<ADarkArisenWorldDirector>();
     World->SpawnActor<ADuelingEnemyCharacter>(
         FVector(650.0f, 0.0f, 120.0f),
         FRotator(0.0f, 180.0f, 0.0f));

@@ -57,6 +57,12 @@ void UWaterBreathComponent::SetBreathTier(const EWaterBreathTier NewTier)
     ResetBreath();
 }
 
+void UWaterBreathComponent::ResetForRespawn()
+{
+    bHeadSubmerged = false;
+    ResetBreath();
+}
+
 float UWaterBreathComponent::GetRemainingBreathFraction() const
 {
     if (HasIndefiniteBreath()) return 1.0f;

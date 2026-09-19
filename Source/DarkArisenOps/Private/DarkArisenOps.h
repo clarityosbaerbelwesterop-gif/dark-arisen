@@ -49,6 +49,8 @@ int32 ValidateCommand(const FParsedArgs& Args);
 int32 RunnerCheckCommand(const FParsedArgs& Args);
 int32 BuildCommand(const FParsedArgs& Args);
 int32 PackageAlphaCommand(const FParsedArgs& Args);
+int32 AlphaBuildCommand(const FParsedArgs& Args);
+int32 AlphaPackageCommand(const FParsedArgs& Args);
 int32 PromoteAlphaCommand(const FParsedArgs& Args);
 int32 StreamingCommand(const FString& Command, const FParsedArgs& Args);
 }

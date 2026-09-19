@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "missionId": "Main.C08.01.ThePrisonCourse",
+  "regionId": "OpenSea/CrimsonArmadaOccupation",
+  "mapId": "L_ThePrisonCourse",
+  "entryAnchor": "LiberacionApproach",
+  "checkpointId": "Checkpoint.C08.PrisonCourse.Approach",
+  "spawnId": "Spawn.C08.PrisonCourse.Approach",
+  "navigationLaw": "The rescue begins from La Liberacion, crosses a hostile occupied port and reaches the prison-navigation ship physically. The player reads Ethan's route marks in the world; no menu teleport or water fast travel.",
+  "anchors": {
+    "LiberacionApproach":[0,0,0],"ArmadaScreen":[5000,0,0],"OccupiedPort":[9100,-900,80],
+    "PortGuardA":[8500,-1600,100],"PortGuardB":[9700,300,100],
+    "WarehouseCut":[12100,1200,120],"WarehouseGuard":[12600,400,120],
+    "EthanRouteMarkA":[14300,-300,150],"EthanRouteMarkB":[16500,900,170],
+    "PrisonShipMooring":[19300,0,160],"MooringGuardA":[18700,-700,170],"MooringGuardB":[19900,850,170],
+    "BoardingRail":[21400,500,210]
+  },
+  "physicalGeometry": [
+    {"name":"ArmadaSeaScreen","anchor":"ArmadaScreen","size":[6500,5000,300]},
+    {"name":"OccupiedPort","anchor":"OccupiedPort","size":[7000,5200,650]},
+    {"name":"WarehouseCut","anchor":"WarehouseCut","size":[3600,2200,900]},
+    {"name":"PrisonShipMooring","anchor":"PrisonShipMooring","size":[5200,2200,400]}
+  ],
+  "actors": [
+    {"type":"LocationTrigger","name":"C08_01_Entry","anchor":"LiberacionApproach","action":"ActivateMission"},
+    {"type":"DuelingEnemy","name":"C08_01_PortGuard_A","anchor":"PortGuardA"},
+    {"type":"DuelingEnemy","name":"C08_01_PortGuard_B","anchor":"PortGuardB"},
+    {"type":"DuelingEnemy","name":"C08_01_WarehouseGuard","anchor":"WarehouseGuard"},
+    {"type":"Evidence","name":"C08_01_RouteMarkA","anchor":"EthanRouteMarkA","title":"Ethan's first route mark","body":"A Harlow correction scratched where an Armada navigator would notice it. The altered bearing points away from the guarded quay and toward a warehouse cut."},
+    {"type":"Evidence","name":"C08_01_RouteMarkB","anchor":"EthanRouteMarkB","title":"Ethan's second route mark","body":"A second deliberate error confirms the prison-navigation vessel's berth and a narrow boarding window between patrol turns."},
+    {"type":"DuelingEnemy","name":"C08_01_MooringGuard_A","anchor":"MooringGuardA"},
+    {"type":"DuelingEnemy","name":"C08_01_MooringGuard_B","anchor":"MooringGuardB"},
+    {"type":"LocationTrigger","name":"C08_01_BoardPrisonShip","anchor":"BoardingRail","action":"CompleteMission","checkpointId":"Checkpoint.C08.PrisonCourse.Aboard","spawnId":"Spawn.C08.PrisonCourse.PrisonDeck"}
+  ],
+  "encounterIds": ["Encounter.C08.ArmadaScreen","Encounter.C08.OccupiedPort","Encounter.C08.PrisonShipMooring"],
+  "completionFacts": ["Story.PrisonShipLocated"],
+  "nextMission": "Main.C08.02.BrothersAlive"
+}
