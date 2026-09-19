@@ -457,6 +457,14 @@ bool UMainStorySubsystem::ValidateState(const UDarkArisenSaveGame* Candidate,TAr
     if (Candidate->WorldRules.bValid && (Candidate->WorldRules.TotalWorldMinutes < 0
         || Candidate->WorldRules.Chapter < 1 || Candidate->WorldRules.Chapter > 10))
         Errors.Add(TEXT("Saved world clock/chapter is invalid."));
+    if (Candidate->LivingNPCWorld.bValid && !UNPCLivingWorldSubsystem::ValidateSnapshot(Candidate->LivingNPCWorld))
+        Errors.Add(TEXT("Saved NPC memories or social connections are invalid."));
+    if (Candidate->PlayerRuntime.bValid && (Candidate->PlayerRuntime.Transform.ContainsNaN()
+        || !FMath::IsFinite(Candidate->PlayerRuntime.HealthFraction)
+        || Candidate->PlayerRuntime.HealthFraction <= 0.f || Candidate->PlayerRuntime.HealthFraction > 1.f
+        || !FMath::IsFinite(Candidate->PlayerRuntime.StaminaFraction)
+        || Candidate->PlayerRuntime.StaminaFraction < 0.f || Candidate->PlayerRuntime.StaminaFraction > 1.f))
+        Errors.Add(TEXT("Saved player transform or vitals are invalid."));
 
     for(const FCrewRelationshipState& Crew:Candidate->Crew)
     {

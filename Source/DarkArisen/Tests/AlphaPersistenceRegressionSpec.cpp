@@ -126,4 +126,38 @@ bool FAlphaShipMapCoordinatesSpec::RunTest(const FString&)
     return true;
 }
 
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FAlphaNPCSnapshotSpec,
+    "DarkArisen.Alpha.Persistence.NPCSnapshotIntegrityAndDecay",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FAlphaNPCSnapshotSpec::RunTest(const FString&)
+{
+    auto* NPCs = NewObject<UNPCLivingWorldSubsystem>();
+    NPCs->RegisterNPC(TEXT("npc.test"), TEXT("community.test"));
+    FNPCLivingMemory Memory;
+    Memory.EventId = TEXT("event.test");
+    Memory.Emotion = ENPCMemoryEmotion::Negative;
+    Memory.OriginalWeight = 10;
+    Memory.EffectiveWeight = 10.f;
+    Memory.DecayPerGameDay = 10.f;
+    TestTrue(TEXT("Decaying memory recorded"), NPCs->RecordMemory(TEXT("npc.test"), Memory));
+    auto Snapshot = NPCs->CaptureSnapshot();
+    FNPCSocialConnection SelfConnection;
+    SelfConnection.OtherNpcId = TEXT("npc.test");
+    Snapshot.Records[TEXT("npc.test")].Connections.Add(SelfConnection);
+    TestFalse(TEXT("Self connection cannot invalidate propagation memory references"), NPCs->RestoreSnapshot(Snapshot));
+    auto* Story = NewObject<UMainStorySubsystem>();
+    Story->NewGame();
+    auto* Save = DuplicateObject<UDarkArisenSaveGame>(Story->GetState(), Story);
+    Save->LivingNPCWorld = Snapshot;
+    TArray<FString> Errors;
+    TestFalse(TEXT("Corrupt NPC state is rejected before replacing the live save"), Story->ValidateState(Save, Errors));
+    NPCs->SimulateToGameMinute(1440);
+    FNPCLivingRecord Record;
+    TestTrue(TEXT("NPC survives decay"), NPCs->TryGetRecord(TEXT("npc.test"), Record));
+    TestEqual(TEXT("Fully faded event no longer affects reputation"), Record.PersonalReputation, 0);
+    TestEqual(TEXT("Fully faded memory removed"), Record.Memories.Num(), 0);
+    return true;
+}
+
 #endif
