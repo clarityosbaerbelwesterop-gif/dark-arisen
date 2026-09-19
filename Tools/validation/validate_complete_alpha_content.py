@@ -90,6 +90,10 @@ for token in ("FProgressionEconomySnapshot","CaptureSnapshot()","RestoreSnapshot
 for token in ("ProgressionEconomy","RestoreSnapshot(Save->ProgressionEconomy)"):
  if token not in save_h+jake:errors.append(f"Progression save/spawn integration missing {token}")
 
+thread_cpp=(ROOT/"Source/DarkArisen/Missions/ThreadQuestCatalog.cpp").read_text(encoding="utf-8") if (ROOT/"Source/DarkArisen/Missions/ThreadQuestCatalog.cpp").is_file() else ""
+if thread_cpp.count('Thread(TEXT("thread.')!=17:errors.append("Runtime Thread catalog must register exactly 17 canonical identities")
+if "UThreadQuestCatalog::RegisterThreads(QuestJournalComponent)" not in jake:errors.append("Jake does not register canonical Thread catalog before restore")
+
 quest_h=(ROOT/"Source/DarkArisen/Components/QuestJournalComponent.h").read_text(encoding="utf-8")
 quest_cpp=(ROOT/"Source/DarkArisen/Components/QuestJournalComponent.cpp").read_text(encoding="utf-8")
 for token in ("FQuestJournalSnapshot","CaptureSnapshot()","RestoreSnapshot("):
