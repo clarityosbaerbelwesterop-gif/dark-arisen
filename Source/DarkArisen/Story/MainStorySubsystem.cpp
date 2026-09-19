@@ -4,6 +4,7 @@
 #include "EngineUtils.h"
 #include "Ship/LaLiberacionShip.h"
 #include "World/DarkArisenWorldRulesSubsystem.h"
+#include "World/NPCLivingWorldSubsystem.h"
 #include "Components/QuestJournalComponent.h"
 #include "Systems/ProgressionEconomyComponent.h"
 #include "GameFramework/PlayerController.h"
@@ -90,6 +91,8 @@ bool UMainStorySubsystem::Save(const FString& Slot,const int32 User)
         {
             if(UDarkArisenWorldRulesSubsystem* Rules=World->GetSubsystem<UDarkArisenWorldRulesSubsystem>())
                 State->WorldRules=Rules->CaptureSnapshot();
+            if(UNPCLivingWorldSubsystem* Living=World->GetSubsystem<UNPCLivingWorldSubsystem>())
+                State->LivingNPCWorld=Living->CaptureSnapshot();
             if(APlayerController* PC=World->GetFirstPlayerController())
                 if(APawn* Pawn=PC->GetPawn())
                     if(UQuestJournalComponent* Journal=Pawn->FindComponentByClass<UQuestJournalComponent>())
@@ -110,8 +113,12 @@ bool UMainStorySubsystem::Load(const FString& Slot,const int32 User)
     State=Loaded;
     RefreshAvailability();
     if(UWorld* World=GetWorld())
+    {
         if(UDarkArisenWorldRulesSubsystem* Rules=World->GetSubsystem<UDarkArisenWorldRulesSubsystem>())
             if(State->WorldRules.bValid) Rules->RestoreSnapshot(State->WorldRules);
+        if(UNPCLivingWorldSubsystem* Living=World->GetSubsystem<UNPCLivingWorldSubsystem>())
+            if(State->LivingNPCWorld.bValid) Living->RestoreSnapshot(State->LivingNPCWorld);
+    }
     return true;
 }
 
@@ -154,6 +161,10 @@ bool UMainStorySubsystem::MigrateVersion(UDarkArisenSaveGame* Candidate,TArray<F
     if(Candidate->SaveVersion==6)
     {
         Candidate->SaveVersion=7;
+    }
+    if(Candidate->SaveVersion==7)
+    {
+        Candidate->SaveVersion=8;
     }
     Candidate->SaveVersion=UDarkArisenSaveGame::CurrentVersion;
     return true;
