@@ -150,3 +150,25 @@ int32 UDarkArisenWorldRulesSubsystem::GetDaypartMinute(const EDarkArisenDaypart 
         return 6 * 60;
     }
 }
+
+
+FDarkArisenWorldRulesSnapshot UDarkArisenWorldRulesSubsystem::CaptureSnapshot() const
+{
+    FDarkArisenWorldRulesSnapshot Snapshot;
+    Snapshot.bValid=true;
+    Snapshot.TotalWorldMinutes=TotalWorldMinutes;
+    Snapshot.Chapter=Chapter;
+    Snapshot.bAutosaveSuppressed=bAutosaveSuppressed;
+    return Snapshot;
+}
+
+bool UDarkArisenWorldRulesSubsystem::RestoreSnapshot(const FDarkArisenWorldRulesSnapshot& Snapshot)
+{
+    if(!Snapshot.bValid || Snapshot.TotalWorldMinutes<0 || Snapshot.Chapter<1 || Snapshot.Chapter>10) return false;
+    TotalWorldMinutes=Snapshot.TotalWorldMinutes;
+    Chapter=Snapshot.Chapter;
+    bAutosaveSuppressed=Snapshot.bAutosaveSuppressed;
+    FractionalWorldMinutes=0.f;
+    bPendingAutosaveRequest=false;
+    return true;
+}
