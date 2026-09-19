@@ -17,5 +17,6 @@ public:
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Ethan") EEthanRuntimeState RuntimeState=EEthanRuntimeState::Captive;
     UFUNCTION(BlueprintCallable,Category="Ethan") bool MarkRescued();
     UFUNCTION(BlueprintCallable,Category="Ethan") bool MarkAboard();
-    UFUNCTION(BlueprintPure,Category="Ethan") bool IsFriendly() const{return RuntimeState!=EEthanRuntimeState::Captive;}
+    UFUNCTION(BlueprintPure,Category="Ethan") bool IsFriendly() const{return true;}
+    UFUNCTION(BlueprintPure,Category="Ethan") bool IsCaptive() const{return RuntimeState==EEthanRuntimeState::Captive;}
 };
