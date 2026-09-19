@@ -49,6 +49,17 @@ for key,count in (("minorDungeons",20),("turns",132),("standingVariants",147),("
  if len(items)!=count:errors.append(f"Neutral source-gap registry {key}: expected {count}, found {len(items)}")
  if any(x.get("status")!="neutral-registered-source-gap" for x in items):errors.append(f"Neutral source-gap registry {key} contains invented/playable status")
 
+# Reconcile the locked 41+20 dungeon identity/distribution authority before materialisation.
+dungeon_recon=load("ContentSource/ContentScale/DungeonReconciliation.json")
+named_recon=dungeon_recon.get("namedDungeons",[])
+minor_recon=dungeon_recon.get("minorDungeons",[])
+if len(named_recon)!=41:errors.append(f"Dungeon reconciliation: expected 41 named, found {len(named_recon)}")
+if len(minor_recon)!=20:errors.append(f"Dungeon reconciliation: expected 20 minor, found {len(minor_recon)}")
+all_dungeon_ids=[x.get("id") for x in named_recon+minor_recon]
+if len(set(all_dungeon_ids))!=61:errors.append("Dungeon reconciliation: stable ids must be unique across all 61 slots")
+if any(x.get("status")=="source-withheld-blocked" for x in named_recon):
+ errors.append("Dungeon reconciliation: one Region 06 Tier-E identity/image/boss remains source-withheld; do not fabricate it")
+
 # Full-vision playable source contracts. Design-only docs do not count here.
 dungeon_contracts=list((CS/"Dungeons").rglob("*.json")) if (CS/"Dungeons").exists() else []
 turn_contracts=list((CS/"SideQuests"/"Turns").rglob("*.json")) if (CS/"SideQuests"/"Turns").exists() else []

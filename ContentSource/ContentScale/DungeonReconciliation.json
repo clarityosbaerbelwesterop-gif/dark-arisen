@@ -1,0 +1,574 @@
+{
+  "schemaVersion": 1,
+  "authorityDate": "2026-09-19",
+  "policy": "Reconciles existing design sources only. It does not invent missing narrative content. Named sites preserve source names; Tier-A sites are intentionally unnamed by design.",
+  "counts": {
+    "named": 41,
+    "minor": 20,
+    "total": 61
+  },
+  "knownSourceConflict": {
+    "id": "dungeon.named.region06.tier_e_withheld",
+    "reason": "Global count requires Region 06 to contain two Tier-E sites, but current sources uniquely describe only the Fifth Connection Site while Fourth Fortress is already the Tier-D site. The second Tier-E identity/image/boss is withheld or absent; no narrative content is fabricated."
+  },
+  "namedDungeons": [
+    {
+      "id": "dungeon.named.rexa_moran.cenote_first_mother",
+      "displayName": "Cenote of the First Mother",
+      "regionId": "rexa_moran",
+      "tier": "B",
+      "governingSources": [
+        "regional dungeon catalog.md"
+      ],
+      "status": "source-locked"
+    },
+    {
+      "id": "dungeon.named.rexa_moran.la_garganta_verde",
+      "displayName": "La Garganta Verde",
+      "regionId": "rexa_moran",
+      "tier": "B",
+      "governingSources": [
+        "regional dungeon catalog.md"
+      ],
+      "status": "source-locked"
+    },
+    {
+      "id": "dungeon.named.rexa_moran.root_temple_ixchel",
+      "displayName": "Root Temple of Ix'Chel",
+      "regionId": "rexa_moran",
+      "tier": "B",
+      "governingSources": [
+        "regional dungeon catalog.md"
+      ],
+      "status": "source-locked"
+    },
+    {
+      "id": "dungeon.named.rexa_moran.drowned_plantation",
+      "displayName": "Drowned Plantation",
+      "regionId": "rexa_moran",
+      "tier": "B",
+      "governingSources": [
+        "regional dungeon catalog.md"
+      ],
+      "status": "source-locked"
+    },
+    {
+      "id": "dungeon.named.rexa_moran.hollow_city",
+      "displayName": "Hollow City",
+      "regionId": "rexa_moran",
+      "tier": "C",
+      "governingSources": [
+        "regional dungeon catalog.md"
+      ],
+      "status": "source-locked"
+    },
+    {
+      "id": "dungeon.named.rexa_moran.la_guardia_vieja",
+      "displayName": "La Guardia Vieja",
+      "regionId": "rexa_moran",
+      "tier": "D",
+      "governingSources": [
+        "regional dungeon catalog.md"
+      ],
+      "status": "source-locked"
+    },
+    {
+      "id": "dungeon.named.rexa_moran.grove_beneath_grove",
+      "displayName": "Grove Beneath the Grove",
+      "regionId": "rexa_moran",
+      "tier": "E",
+      "governingSources": [
+        "regional dungeon catalog.md",
+        "secret bosses.md"
+      ],
+      "status": "source-locked"
+    },
+    {
+      "id": "dungeon.named.fjordlund.whale_bone_barrow",
+      "displayName": "Whale-Bone Barrow",
+      "regionId": "fjordlund",
+      "tier": "B",
+      "governingSources": [
+        "regional dungeon catalog.md"
+      ],
+      "status": "source-locked"
+    },
+    {
+      "id": "dungeon.named.fjordlund.drowned_mead_hall",
+      "displayName": "Drowned Mead Hall",
+      "regionId": "fjordlund",
+      "tier": "B",
+      "governingSources": [
+        "regional dungeon catalog.md"
+      ],
+      "status": "source-locked"
+    },
+    {
+      "id": "dungeon.named.fjordlund.ice_caves_svart_fjord",
+      "displayName": "Ice Caves of Svart Fjord",
+      "regionId": "fjordlund",
+      "tier": "B",
+      "governingSources": [
+        "regional dungeon catalog.md"
+      ],
+      "status": "source-locked"
+    },
+    {
+      "id": "dungeon.named.fjordlund.stone_field_under_chamber",
+      "displayName": "Stone Field's Under-Chamber",
+      "regionId": "fjordlund",
+      "tier": "B",
+      "governingSources": [
+        "regional dungeon catalog.md"
+      ],
+      "status": "source-locked"
+    },
+    {
+      "id": "dungeon.named.fjordlund.hall_under_glacier",
+      "displayName": "Hall Under the Glacier",
+      "regionId": "fjordlund",
+      "tier": "C",
+      "governingSources": [
+        "regional dungeon catalog.md"
+      ],
+      "status": "source-locked"
+    },
+    {
+      "id": "dungeon.named.fjordlund.drowned_hold",
+      "displayName": "Drowned Hold",
+      "regionId": "fjordlund",
+      "tier": "D",
+      "governingSources": [
+        "regional dungeon catalog.md"
+      ],
+      "status": "source-locked"
+    },
+    {
+      "id": "dungeon.named.fjordlund.one_that_waited",
+      "displayName": "The One That Waited",
+      "regionId": "fjordlund",
+      "tier": "E",
+      "governingSources": [
+        "regional dungeon catalog.md",
+        "secret bosses.md"
+      ],
+      "status": "source-locked"
+    },
+    {
+      "id": "dungeon.named.ashenmoor.obsidian_vault",
+      "displayName": "Obsidian Vault",
+      "regionId": "ashenmoor",
+      "tier": "B",
+      "governingSources": [
+        "regional dungeon catalog.md"
+      ],
+      "status": "source-locked"
+    },
+    {
+      "id": "dungeon.named.ashenmoor.ash_buried_street",
+      "displayName": "Ash-Buried Street",
+      "regionId": "ashenmoor",
+      "tier": "B",
+      "governingSources": [
+        "regional dungeon catalog.md"
+      ],
+      "status": "source-locked"
+    },
+    {
+      "id": "dungeon.named.ashenmoor.singing_caverns",
+      "displayName": "Singing Caverns",
+      "regionId": "ashenmoor",
+      "tier": "B",
+      "governingSources": [
+        "regional dungeon catalog.md"
+      ],
+      "status": "source-locked"
+    },
+    {
+      "id": "dungeon.named.ashenmoor.vent_shrine",
+      "displayName": "Vent-Shrine",
+      "regionId": "ashenmoor",
+      "tier": "B",
+      "governingSources": [
+        "regional dungeon catalog.md"
+      ],
+      "status": "source-locked"
+    },
+    {
+      "id": "dungeon.named.ashenmoor.mountains_own",
+      "displayName": "Mountain's Own",
+      "regionId": "ashenmoor",
+      "tier": "C",
+      "governingSources": [
+        "regional dungeon catalog.md"
+      ],
+      "status": "source-locked"
+    },
+    {
+      "id": "dungeon.named.ashenmoor.ash_bastion",
+      "displayName": "Ash Bastion",
+      "regionId": "ashenmoor",
+      "tier": "D",
+      "governingSources": [
+        "regional dungeon catalog.md"
+      ],
+      "status": "source-locked"
+    },
+    {
+      "id": "dungeon.named.ashenmoor.thing_wyrm_left",
+      "displayName": "The Thing the Wyrm Left",
+      "regionId": "ashenmoor",
+      "tier": "E",
+      "governingSources": [
+        "regional dungeon catalog.md",
+        "secret bosses.md"
+      ],
+      "status": "source-locked"
+    },
+    {
+      "id": "dungeon.named.sea.reef_of_nails",
+      "displayName": "Reef of Nails",
+      "regionId": "sea",
+      "tier": "B",
+      "governingSources": [
+        "regional dungeon catalog.md"
+      ],
+      "status": "source-locked"
+    },
+    {
+      "id": "dungeon.named.sea.ghost_hull",
+      "displayName": "Ghost Hull",
+      "regionId": "sea",
+      "tier": "B",
+      "governingSources": [
+        "regional dungeon catalog.md"
+      ],
+      "status": "source-locked"
+    },
+    {
+      "id": "dungeon.named.sea.sunken_chapel",
+      "displayName": "Sunken Chapel",
+      "regionId": "sea",
+      "tier": "B",
+      "governingSources": [
+        "regional dungeon catalog.md"
+      ],
+      "status": "source-locked"
+    },
+    {
+      "id": "dungeon.named.sea.deep_harbour",
+      "displayName": "Deep Harbour",
+      "regionId": "sea",
+      "tier": "C",
+      "governingSources": [
+        "regional dungeon catalog.md"
+      ],
+      "status": "source-locked"
+    },
+    {
+      "id": "dungeon.named.sea.harbour_that_was_first",
+      "displayName": "Harbour That Was First",
+      "regionId": "sea",
+      "tier": "E",
+      "governingSources": [
+        "regional dungeon catalog.md",
+        "secret bosses.md"
+      ],
+      "status": "source-locked"
+    },
+    {
+      "id": "dungeon.named.colonial.valdena_mine",
+      "displayName": "Valdeña Mine",
+      "regionId": "colonial",
+      "tier": "B",
+      "governingSources": [
+        "regional dungeon catalog.md"
+      ],
+      "status": "source-locked"
+    },
+    {
+      "id": "dungeon.named.colonial.siege_tunnels_ciudadela",
+      "displayName": "Siege Tunnels of La Ciudadela",
+      "regionId": "colonial",
+      "tier": "B",
+      "governingSources": [
+        "regional dungeon catalog.md"
+      ],
+      "status": "source-locked"
+    },
+    {
+      "id": "dungeon.named.colonial.plague_vault",
+      "displayName": "Plague Vault",
+      "regionId": "colonial",
+      "tier": "B",
+      "governingSources": [
+        "regional dungeon catalog.md"
+      ],
+      "status": "source-locked"
+    },
+    {
+      "id": "dungeon.named.colonial.company_works",
+      "displayName": "Company Works",
+      "regionId": "colonial",
+      "tier": "C",
+      "governingSources": [
+        "regional dungeon catalog.md"
+      ],
+      "status": "source-locked"
+    },
+    {
+      "id": "dungeon.named.region06.first_house",
+      "displayName": "First House",
+      "regionId": "region06",
+      "tier": "B",
+      "governingSources": [
+        "regional dungeon catalog.md"
+      ],
+      "status": "source-locked"
+    },
+    {
+      "id": "dungeon.named.region06.third_bell",
+      "displayName": "Third Bell",
+      "regionId": "region06",
+      "tier": "B",
+      "governingSources": [
+        "regional dungeon catalog.md"
+      ],
+      "status": "source-locked"
+    },
+    {
+      "id": "dungeon.named.region06.fourth_fortress",
+      "displayName": "Fourth Fortress",
+      "regionId": "region06",
+      "tier": "D",
+      "governingSources": [
+        "regional dungeon catalog.md"
+      ],
+      "status": "source-locked"
+    },
+    {
+      "id": "dungeon.named.region06.fifth_connection_site",
+      "displayName": "Fifth Connection Site",
+      "regionId": "region06",
+      "tier": "E",
+      "governingSources": [
+        "regional dungeon catalog.md",
+        "secret bosses.md"
+      ],
+      "status": "source-locked"
+    },
+    {
+      "id": "dungeon.named.region06.tier_e_withheld",
+      "displayName": "WITHHELD TIER E",
+      "regionId": "region06",
+      "tier": "E",
+      "governingSources": [
+        "regional dungeon catalog.md",
+        "secret bosses.md"
+      ],
+      "status": "source-withheld-blocked"
+    },
+    {
+      "id": "dungeon.named.highmoore.long_barrow_braehead",
+      "displayName": "Long Barrow at Braehead",
+      "regionId": "highmoore",
+      "tier": "B",
+      "governingSources": [
+        "dungeon system global.md"
+      ],
+      "status": "source-locked"
+    },
+    {
+      "id": "dungeon.named.highmoore.drowned_mill",
+      "displayName": "Drowned Mill",
+      "regionId": "highmoore",
+      "tier": "B",
+      "governingSources": [
+        "dungeon system global.md"
+      ],
+      "status": "source-locked"
+    },
+    {
+      "id": "dungeon.named.highmoore.stone_row",
+      "displayName": "Stone Row",
+      "regionId": "highmoore",
+      "tier": "B",
+      "governingSources": [
+        "dungeon system global.md"
+      ],
+      "status": "source-locked"
+    },
+    {
+      "id": "dungeon.named.highmoore.ashby_crossing",
+      "displayName": "Ashby Crossing",
+      "regionId": "highmoore",
+      "tier": "B",
+      "governingSources": [
+        "dungeon system global.md"
+      ],
+      "status": "source-locked"
+    },
+    {
+      "id": "dungeon.named.highmoore.bowyers_wood",
+      "displayName": "Bowyer's Wood",
+      "regionId": "highmoore",
+      "tier": "B",
+      "governingSources": [
+        "dungeon system global.md"
+      ],
+      "status": "source-locked"
+    },
+    {
+      "id": "dungeon.named.highmoore.under_chamber_halford",
+      "displayName": "Under-Chamber at Halford",
+      "regionId": "highmoore",
+      "tier": "C",
+      "governingSources": [
+        "dungeon system global.md"
+      ],
+      "status": "source-locked"
+    }
+  ],
+  "minorDungeons": [
+    {
+      "id": "dungeon.minor.01",
+      "regionId": "rexa_moran",
+      "tier": "A",
+      "governingSource": "dungeon system global.md",
+      "status": "source-locked-unnamed-minor"
+    },
+    {
+      "id": "dungeon.minor.02",
+      "regionId": "rexa_moran",
+      "tier": "A",
+      "governingSource": "dungeon system global.md",
+      "status": "source-locked-unnamed-minor"
+    },
+    {
+      "id": "dungeon.minor.03",
+      "regionId": "rexa_moran",
+      "tier": "A",
+      "governingSource": "dungeon system global.md",
+      "status": "source-locked-unnamed-minor"
+    },
+    {
+      "id": "dungeon.minor.04",
+      "regionId": "rexa_moran",
+      "tier": "A",
+      "governingSource": "dungeon system global.md",
+      "status": "source-locked-unnamed-minor"
+    },
+    {
+      "id": "dungeon.minor.05",
+      "regionId": "fjordlund",
+      "tier": "A",
+      "governingSource": "dungeon system global.md",
+      "status": "source-locked-unnamed-minor"
+    },
+    {
+      "id": "dungeon.minor.06",
+      "regionId": "fjordlund",
+      "tier": "A",
+      "governingSource": "dungeon system global.md",
+      "status": "source-locked-unnamed-minor"
+    },
+    {
+      "id": "dungeon.minor.07",
+      "regionId": "fjordlund",
+      "tier": "A",
+      "governingSource": "dungeon system global.md",
+      "status": "source-locked-unnamed-minor"
+    },
+    {
+      "id": "dungeon.minor.08",
+      "regionId": "ashenmoor",
+      "tier": "A",
+      "governingSource": "dungeon system global.md",
+      "status": "source-locked-unnamed-minor"
+    },
+    {
+      "id": "dungeon.minor.09",
+      "regionId": "ashenmoor",
+      "tier": "A",
+      "governingSource": "dungeon system global.md",
+      "status": "source-locked-unnamed-minor"
+    },
+    {
+      "id": "dungeon.minor.10",
+      "regionId": "ashenmoor",
+      "tier": "A",
+      "governingSource": "dungeon system global.md",
+      "status": "source-locked-unnamed-minor"
+    },
+    {
+      "id": "dungeon.minor.11",
+      "regionId": "ashenmoor",
+      "tier": "A",
+      "governingSource": "dungeon system global.md",
+      "status": "source-locked-unnamed-minor"
+    },
+    {
+      "id": "dungeon.minor.12",
+      "regionId": "sea",
+      "tier": "A",
+      "governingSource": "dungeon system global.md",
+      "status": "source-locked-unnamed-minor"
+    },
+    {
+      "id": "dungeon.minor.13",
+      "regionId": "sea",
+      "tier": "A",
+      "governingSource": "dungeon system global.md",
+      "status": "source-locked-unnamed-minor"
+    },
+    {
+      "id": "dungeon.minor.14",
+      "regionId": "sea",
+      "tier": "A",
+      "governingSource": "dungeon system global.md",
+      "status": "source-locked-unnamed-minor"
+    },
+    {
+      "id": "dungeon.minor.15",
+      "regionId": "colonial",
+      "tier": "A",
+      "governingSource": "dungeon system global.md",
+      "status": "source-locked-unnamed-minor"
+    },
+    {
+      "id": "dungeon.minor.16",
+      "regionId": "colonial",
+      "tier": "A",
+      "governingSource": "dungeon system global.md",
+      "status": "source-locked-unnamed-minor"
+    },
+    {
+      "id": "dungeon.minor.17",
+      "regionId": "region06",
+      "tier": "A",
+      "governingSource": "dungeon system global.md",
+      "status": "source-locked-unnamed-minor"
+    },
+    {
+      "id": "dungeon.minor.18",
+      "regionId": "highmoore",
+      "tier": "A",
+      "governingSource": "dungeon system global.md",
+      "status": "source-locked-unnamed-minor"
+    },
+    {
+      "id": "dungeon.minor.19",
+      "regionId": "highmoore",
+      "tier": "A",
+      "governingSource": "dungeon system global.md",
+      "status": "source-locked-unnamed-minor"
+    },
+    {
+      "id": "dungeon.minor.20",
+      "regionId": "highmoore",
+      "tier": "A",
+      "governingSource": "dungeon system global.md",
+      "status": "source-locked-unnamed-minor"
+    }
+  ]
+}
