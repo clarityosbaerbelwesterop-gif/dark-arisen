@@ -71,6 +71,16 @@ for token in ("CurrentVersion = 3","DiscoveredDungeons","CompletedDungeons","Rec
 for token in ("DiscoverDungeon(","CompleteDungeon(","RecoverTreasure(","Network.StateTreasuresComplete"):
  if token not in ops:errors.append(f"World persistence runtime missing {token}")
 
+# Physical exploration actors must bind authored world objects to persistence.
+for rel,tokens in {
+ "Source/DarkArisen/World/StateTreasurePickupActor.cpp":("HasRecoveredTreasure","RecoverTreasure"),
+ "Source/DarkArisen/World/DungeonStateAnchorActor.cpp":("DiscoverDungeon","CompleteDungeon","OpenReturnShortcut"),
+}.items():
+ text=(ROOT/rel).read_text(encoding="utf-8") if (ROOT/rel).is_file() else ""
+ if not text:errors.append(f"Missing physical exploration runtime: {rel}")
+ for token in tokens:
+  if token not in text:errors.append(f"{rel} missing {token}")
+
 # Hero visual gate is part of the complete-content gate.
 visual=ROOT/"Tools/validation/validate_visual_release.py"
 if not visual.is_file():errors.append("Missing visual release validator")
