@@ -201,7 +201,23 @@ int32 ARexaSettlementDirector::NotifyCombatActivity(const FVector& CombatLocatio
                 FMath::Square(ARexaSettlementResident::ChildCombatFleeRadiusCentimetres))
             continue;
         ++AffectedResidents;
-        if(Living) Living->SetMood(Resident->GetResidentDefinition().StableResidentId,ENPCLivingMood::Stressed);
+        if(Living)
+        {
+            const FName NpcId=Resident->GetResidentDefinition().StableResidentId;
+            Living->SetMood(NpcId,ENPCLivingMood::Stressed);
+            if(const UDarkArisenWorldRulesSubsystem* Rules=GetWorld()->GetSubsystem<UDarkArisenWorldRulesSubsystem>())
+            {
+                FNPCLivingMemory Memory;
+                Memory.EventId=FName(*FString::Printf(TEXT("Combat.Nearby.Day%d"),Rules->GetDayNumber()));
+                Memory.Kind=ENPCMemoryKind::WitnessedEvent;
+                Memory.Emotion=ENPCMemoryEmotion::Negative;
+                Memory.OriginalWeight=5;
+                Memory.EffectiveWeight=5.f;
+                Memory.OccurredAtGameMinute=Rules->GetTotalWorldMinutes();
+                Memory.DecayPerGameDay=1.f;
+                if(Living->RecordMemory(NpcId,Memory)) Living->PropagateMemory(NpcId,Memory.EventId);
+            }
+        }
         if(!Resident->GetResidentDefinition().bProtectedChild)
         {
             Resident->EnterCivilianCombatFlee(CombatLocation);
