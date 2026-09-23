@@ -1,0 +1,10 @@
+# Native O3DE operations owner for Dark Arisen (no engine dependency).
+cmake_minimum_required(VERSION 3.22)
+project(DarkArisenO3DEOps LANGUAGES CXX)
+add_executable(DarkArisenO3DE Ops/DarkArisenO3DE.cpp)
+target_compile_features(DarkArisenO3DE PRIVATE cxx_std_20)
+if(MSVC)
+    target_compile_options(DarkArisenO3DE PRIVATE /W4 /WX /permissive-)
+else()
+    target_compile_options(DarkArisenO3DE PRIVATE -Wall -Wextra -Wpedantic -Werror)
+endif()

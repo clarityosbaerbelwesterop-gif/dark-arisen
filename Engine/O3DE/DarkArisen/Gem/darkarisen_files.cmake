@@ -1,0 +1,19 @@
+# Dark Arisen O3DE adapter sources. Gameplay rules live in /Core (engine-neutral).
+set(FILES
+    Include/DarkArisen/DarkArisenTypeIds.h
+    Include/DarkArisen/CampaignBus.h
+    Include/DarkArisen/CombatBus.h
+    Include/DarkArisen/ShipBus.h
+    Source/Story/CampaignSystemComponent.h
+    Source/Story/CampaignSystemComponent.cpp
+    Source/Story/StoryTriggerComponent.h
+    Source/Story/StoryTriggerComponent.cpp
+    Source/Persistence/SaveSlotStore.h
+    Source/Persistence/SaveSlotStore.cpp
+    Source/Combat/CombatantComponent.h
+    Source/Combat/CombatantComponent.cpp
+    Source/Ships/ShipVoyageComponent.h
+    Source/Ships/ShipVoyageComponent.cpp
+    Source/Player/JakeInputComponent.h
+    Source/Player/JakeInputComponent.cpp
+)

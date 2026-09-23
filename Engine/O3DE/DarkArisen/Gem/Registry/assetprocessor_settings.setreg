@@ -1,0 +1,18 @@
+{
+    "Amazon": {
+        "AssetProcessor": {
+            "Settings": {
+                "ScanFolder DarkArisen/Assets": {
+                    "watch": "@GEMROOT:DarkArisen@/Assets",
+                    "recursive": 1,
+                    "order": 101
+                },
+                "ScanFolder DarkArisen/Registry": {
+                    "watch": "@GEMROOT:DarkArisen@/Registry",
+                    "recursive": 1,
+                    "order": 102
+                }
+            }
+        }
+    }
+}

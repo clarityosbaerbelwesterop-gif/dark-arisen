@@ -1,0 +1,42 @@
+#include <AzCore/Memory/SystemAllocator.h>
+#include <AzCore/Module/Module.h>
+
+#include <DarkArisen/DarkArisenTypeIds.h>
+
+#include "Combat/CombatantComponent.h"
+#include "Player/JakeInputComponent.h"
+#include "Ships/ShipVoyageComponent.h"
+#include "Story/CampaignSystemComponent.h"
+#include "Story/StoryTriggerComponent.h"
+
+namespace DarkArisen
+{
+    class DarkArisenModule : public AZ::Module
+    {
+    public:
+        AZ_RTTI(DarkArisenModule, DarkArisenModuleTypeId, AZ::Module);
+        AZ_CLASS_ALLOCATOR(DarkArisenModule, AZ::SystemAllocator);
+
+        DarkArisenModule()
+        {
+            m_descriptors.insert(m_descriptors.end(), {
+                CampaignSystemComponent::CreateDescriptor(),
+                CombatantComponent::CreateDescriptor(),
+                ShipVoyageComponent::CreateDescriptor(),
+                StoryTriggerComponent::CreateDescriptor(),
+                JakeInputComponent::CreateDescriptor(),
+            });
+        }
+
+        AZ::ComponentTypeList GetRequiredSystemComponents() const override
+        {
+            return AZ::ComponentTypeList{ azrtti_typeid<CampaignSystemComponent>() };
+        }
+    };
+}
+
+#if defined(O3DE_GEM_NAME)
+AZ_DECLARE_MODULE_CLASS(AZ_JOIN(Gem_, O3DE_GEM_NAME), DarkArisen::DarkArisenModule)
+#else
+AZ_DECLARE_MODULE_CLASS(Gem_DarkArisen, DarkArisen::DarkArisenModule)
+#endif
