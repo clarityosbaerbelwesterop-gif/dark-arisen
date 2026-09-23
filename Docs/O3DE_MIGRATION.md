@@ -55,7 +55,13 @@ dependencies pinned in `Tools/o3de/AzCoreProbe/DEPENDENCIES.lock`, and runs Dark
 `CampaignSystemComponent` inside a real `AZ::ComponentApplication`: `AZ::Interface` registration, EBus
 notifications, O3DE `LocalFileIO`, Harlow raid to Driftwood Camp, chapter-boundary autosave on disk,
 load/migrate/validate, corrupt-save rejection with untouched state, path-traversal rejection, manual save,
-autosave suppression. Result: 23/23 checks passed; reproduced from an empty dependency folder. The CI job
+autosave suppression. Result: 23/23 checks passed; reproduced from an empty dependency folder.
+A second probe runs the gameplay adapters on entities (`CombatantComponent`, `EnemyBrainComponent`,
+`ShipVoyageComponent`) with O3DE's real AzFramework physics types, reflection and service resolution:
+boarder telegraph and attack over the buses, parry/deflect, Rache driving `AZ::ITime` to 0.30 and back
+within five real seconds, player capture/restore scoped to its level, real-Ethan hit rejection, ship
+ownership gate and physical sailing on TickBus. Result: 17/17 passed. No PhysX scene exists in the probe,
+so the melee sweep logs its documented error and hits are resolved directly. The CI job
 `verify-o3de-framework` repeats it on every PR. Findings on the way: O3DE needs its patched RapidXML
 (`isError/getError`), a RapidJSON newer than the 3p recipe commit, and `O3DE_DISABLE_CONDITIONAL_EXPLICIT`
 for Clang 18 (O3DE's CMake sets the latter itself). Required build host: 100+ GB free, 8+ cores (2 GB RAM per build thread), 32 GB RAM,
@@ -95,10 +101,10 @@ Engine/O3DE/DarkArisen/Assets ──► Asset Processor   │  StoryTriggerCompo
 | Cross-map persistence (PR #52) | `CaptureWorldState/RestoreWorldState` | UE-coupled | capture/restore notifications VERIFIED on AzCore; level loading via Editor/launcher RUNTIME VERIFY PENDING |
 | Opening Ch. 1–2 runtime | `Opening/OpeningRuntimeComponent.cpp` | engine-independent logic | IMPLEMENTED (Core), triggers IMPLEMENTED / RUNTIME VERIFY PENDING |
 | Combat, stamina, health/rally, damage | `Components/*`, `Combat/DamagePipeline.cpp` | engine-independent math | IMPLEMENTED (Core), parity-tested |
-| Melee sweep, targeting | `CombatComponent::TraceAndResolvePendingHit` | UE-coupled | IMPLEMENTED (PhysX sphere cast) / RUNTIME VERIFY PENDING |
+| Melee sweep, targeting | `CombatComponent::TraceAndResolvePendingHit` | UE-coupled | IMPLEMENTED (PhysX sphere cast) / PhysX RUNTIME VERIFY PENDING; combat adapter VERIFIED on AzCore |
 | Jake movement/input | `JakeCharacter.cpp` | UE-coupled | PARTIAL: input, run/sprint, combat; camera, swimming, lock-on NOT DONE |
-| Enemy AI (boarders, Holders, Dream Ethan, Draven) | `AI/*`, `Bosses/*` | UE-coupled | NOT DONE |
-| La Liberación voyage | `Ship/ShipVoyageComponent.cpp` | engine-independent model | IMPLEMENTED (Core) + adapter / RUNTIME VERIFY PENDING; buoyancy/collision sweep NOT DONE |
+| Enemy AI (boarders, Holders, Dream Ethan, Draven) | `AI/*`, `Bosses/*`, `DuelingEnemyCharacter` | engine-independent decisions | IMPLEMENTED (Core `EnemyBrain`, phases, telegraphs, boss defeat to story); adapter VERIFIED on AzCore; PhysX movement/line of sight RUNTIME VERIFY PENDING; Draven still lacks distinct moves beyond phases (gap carried over from UE) |
+| La Liberación voyage | `Ship/ShipVoyageComponent.cpp` | engine-independent model | IMPLEMENTED (Core); adapter VERIFIED on AzCore (ownership gate, sailing); buoyancy/collision sweep NOT DONE |
 | Ethan canon guards | scattered validators | engine-independent | IMPLEMENTED: real Ethan can never be hostile, damaged or a boss; `boss.dream_ethan` is separate |
 | Chapter 3–10 physical contracts | `ContentSource/Story/Chapter03..10` (27 JSON) | CONTENT SOURCE | SOURCE CREATED; O3DE prefab materialiser NOT DONE |
 | Credits | `ContentSource/Story/Credits/CreditsAuthority.json` | CONTENT SOURCE | SOURCE CREATED; O3DE UI NOT DONE |

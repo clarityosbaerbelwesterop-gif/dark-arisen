@@ -92,3 +92,26 @@ target_link_libraries(DarkArisenCampaignProbe PRIVATE AzCore DarkArisen::Core)
 
 enable_testing()
 add_test(NAME DarkArisenCampaignProbe COMMAND DarkArisenCampaignProbe)
+
+# Gameplay adapters (combat, enemy brain, ship) on the same AzCore runtime.
+add_executable(DarkArisenGameplayProbe
+    GameplayRuntimeProbe.cpp
+    ${GEM}/Source/Story/CampaignSystemComponent.cpp
+    ${GEM}/Source/Persistence/SaveSlotStore.cpp
+    ${GEM}/Source/Combat/CombatantComponent.cpp
+    ${GEM}/Source/Combat/EnemyBrainComponent.cpp
+    ${GEM}/Source/Ships/ShipVoyageComponent.cpp
+    ${AZF}/AzFramework/API/ApplicationAPI.cpp
+    ${AZF}/AzFramework/IO/LocalFileIO.cpp
+    ${AZF}/Platform/Common/UnixLike/AzFramework/IO/LocalFileIO_UnixLike.cpp
+    ${AZF}/AzFramework/Physics/CharacterBus.cpp
+    ${AZF}/AzFramework/Physics/Common/PhysicsSceneQueries.cpp
+    ${AZF}/AzFramework/Physics/Collision/CollisionGroups.cpp
+    ${AZF}/AzFramework/Physics/ShapeConfiguration.cpp
+    ${AZF}/AzFramework/Physics/Collision/CollisionLayers.cpp
+    ${AZF}/AzFramework/Physics/CollisionBus.cpp
+    ${AZF}/AzFramework/Physics/SystemBus.cpp)
+target_include_directories(DarkArisenGameplayProbe PRIVATE ${AZF} ${AZF}/Platform/Linux ${AZF}/Platform/Common
+    ${GEM}/Include ${GEM}/Source)
+target_link_libraries(DarkArisenGameplayProbe PRIVATE AzCore DarkArisen::Core)
+add_test(NAME DarkArisenGameplayProbe COMMAND DarkArisenGameplayProbe)
