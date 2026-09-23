@@ -52,12 +52,14 @@ bool UNPCLivingWorldSubsystem::IsValidMemory(const FNPCLivingMemory& Memory)
 {
     return !Memory.EventId.IsNone() && Memory.OriginalWeight>=1 && Memory.OriginalWeight<=100 &&
         Memory.EffectiveWeight>=0.f && Memory.EffectiveWeight<=100.f &&
-        Memory.OccurredAtGameMinute>=0 && Memory.DecayPerGameDay>=0.f;
+        Memory.OccurredAtGameMinute>=0 && FMath::IsFinite(Memory.DecayPerGameDay) && Memory.DecayPerGameDay>=0.f &&
+        static_cast<uint8>(Memory.Kind)<=static_cast<uint8>(ENPCMemoryKind::CulturalReputation) &&
+        static_cast<uint8>(Memory.Emotion)<=static_cast<uint8>(ENPCMemoryEmotion::Positive);
 }
 
 int32 UNPCLivingWorldSubsystem::ReputationDelta(const FNPCLivingMemory& Memory)
 {
-    if(Memory.Emotion==ENPCMemoryEmotion::Neutral) return 0;
+    if(Memory.Emotion==ENPCMemoryEmotion::Neutral || Memory.EffectiveWeight<.5f) return 0;
     const int32 Magnitude=FMath::Clamp(FMath::RoundToInt(Memory.EffectiveWeight*.5f),1,50);
     return Memory.Emotion==ENPCMemoryEmotion::Positive ? Magnitude : -Magnitude;
 }
@@ -174,13 +176,22 @@ FNPCLivingWorldSnapshot UNPCLivingWorldSubsystem::CaptureSnapshot() const
     return Snapshot;
 }
 
-bool UNPCLivingWorldSubsystem::RestoreSnapshot(const FNPCLivingWorldSnapshot& Snapshot)
+bool UNPCLivingWorldSubsystem::ValidateSnapshot(const FNPCLivingWorldSnapshot& Snapshot)
 {
     if(!Snapshot.bValid || Snapshot.LastSimulatedGameMinute<0) return false;
     for(const TPair<FName,FNPCLivingRecord>& Pair:Snapshot.Records)
     {
         if(Pair.Key.IsNone() || Pair.Value.NpcId!=Pair.Key || Pair.Value.PersonalReputation<-100 ||
-            Pair.Value.PersonalReputation>100 || Pair.Value.SpecificTrust<-100 || Pair.Value.SpecificTrust>100) return false;
+            Pair.Value.PersonalReputation>100 || Pair.Value.SpecificTrust<-100 || Pair.Value.SpecificTrust>100 ||
+            static_cast<uint8>(Pair.Value.Mood)>static_cast<uint8>(ENPCLivingMood::Excited)) return false;
+        TSet<FName> Connections;
+        for (const FNPCSocialConnection& Connection : Pair.Value.Connections)
+        {
+            if (Connection.OtherNpcId == Pair.Key || !Snapshot.Records.Contains(Connection.OtherNpcId)
+                || Connections.Contains(Connection.OtherNpcId)
+                || static_cast<uint8>(Connection.Kind) > static_cast<uint8>(ENPCConnectionKind::Community)) return false;
+            Connections.Add(Connection.OtherNpcId);
+        }
         TSet<FName> Events;
         for(const FNPCLivingMemory& M:Pair.Value.Memories)
         {
@@ -190,6 +201,12 @@ bool UNPCLivingWorldSubsystem::RestoreSnapshot(const FNPCLivingWorldSnapshot& Sn
             Events.Add(Composite);
         }
     }
+    return true;
+}
+
+bool UNPCLivingWorldSubsystem::RestoreSnapshot(const FNPCLivingWorldSnapshot& Snapshot)
+{
+    if (!ValidateSnapshot(Snapshot)) return false;
     Records=Snapshot.Records;
     LastSimulatedGameMinute=Snapshot.LastSimulatedGameMinute;
     return true;

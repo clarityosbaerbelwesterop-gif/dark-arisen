@@ -88,6 +88,7 @@ public:
     FNPCLivingWorldSnapshot CaptureSnapshot() const;
     UFUNCTION(BlueprintCallable,Category="NPC|Persistence")
     bool RestoreSnapshot(const FNPCLivingWorldSnapshot& Snapshot);
+    static bool ValidateSnapshot(const FNPCLivingWorldSnapshot& Snapshot);
 
 private:
     UPROPERTY() TMap<FName,FNPCLivingRecord> Records;
