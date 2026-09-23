@@ -4,6 +4,7 @@ set(FILES
     Include/DarkArisen/CampaignBus.h
     Include/DarkArisen/CombatBus.h
     Include/DarkArisen/ShipBus.h
+    Include/DarkArisen/EnemyBus.h
     Source/Story/CampaignSystemComponent.h
     Source/Story/CampaignSystemComponent.cpp
     Source/Story/StoryTriggerComponent.h
@@ -12,6 +13,8 @@ set(FILES
     Source/Persistence/SaveSlotStore.cpp
     Source/Combat/CombatantComponent.h
     Source/Combat/CombatantComponent.cpp
+    Source/Combat/EnemyBrainComponent.h
+    Source/Combat/EnemyBrainComponent.cpp
     Source/Ships/ShipVoyageComponent.h
     Source/Ships/ShipVoyageComponent.cpp
     Source/Player/JakeInputComponent.h

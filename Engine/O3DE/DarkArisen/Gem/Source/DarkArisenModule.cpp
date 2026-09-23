@@ -4,6 +4,7 @@
 #include <DarkArisen/DarkArisenTypeIds.h>
 
 #include "Combat/CombatantComponent.h"
+#include "Combat/EnemyBrainComponent.h"
 #include "Player/JakeInputComponent.h"
 #include "Ships/ShipVoyageComponent.h"
 #include "Story/CampaignSystemComponent.h"
@@ -25,6 +26,7 @@ namespace DarkArisen
                 ShipVoyageComponent::CreateDescriptor(),
                 StoryTriggerComponent::CreateDescriptor(),
                 JakeInputComponent::CreateDescriptor(),
+                EnemyBrainComponent::CreateDescriptor(),
             });
         }
 

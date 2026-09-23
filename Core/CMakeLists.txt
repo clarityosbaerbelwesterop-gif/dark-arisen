@@ -18,6 +18,7 @@ add_library(DarkArisenCore STATIC
     Source/Combat.cpp
     Source/ShipVoyage.cpp
     Source/EntityPolicy.cpp
+    Source/EnemyBrain.cpp
 )
 add_library(DarkArisen::Core ALIAS DarkArisenCore)
 target_include_directories(DarkArisenCore PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Include)
@@ -42,6 +43,7 @@ if(DARKARISEN_CORE_TESTS)
         Tests/CombatTests.cpp
         Tests/ShipVoyageTests.cpp
         Tests/CanonTests.cpp
+        Tests/EnemyBrainTests.cpp
         Tests/UnrealParityTests.cpp
     )
     target_link_libraries(DarkArisenCoreTests PRIVATE DarkArisen::Core)

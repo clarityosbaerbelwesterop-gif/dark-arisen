@@ -46,6 +46,8 @@ namespace DarkArisen
         float GetStaminaFraction() const override;
         float GetPostureRemainingFraction() const override;
         bool IsDead() const override;
+        AZStd::string GetCombatantId() const override { return m_combatantId; }
+        AZ::EntityId GetCombatantEntityId() const override { return GetEntityId(); }
         Core::Combatant& GetCombatant() override { return m_combatant; }
         void RecoverAtCheckpoint(float healthFraction, float staminaFraction) override;
 
