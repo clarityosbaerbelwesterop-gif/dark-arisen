@@ -8,6 +8,13 @@ Milestone 0 establishes a compileable project boundary, a procedural greybox, Ja
 
 This is **not yet a playable Alpha or Beta**. An Alpha exists only after the complete M0–M8 game passes Windows and Linux UE compile/automation, native start-to-credits playthroughs, performance/content checks, iPad Pixel Streaming and the remaining gates in `Docs/ALPHA_DELIVERY_CHECKLIST.md` on the exact candidate hashes.
 
+## O3DE evaluation (in progress)
+
+An open-source engine evaluation on **O3DE 2605.0** (pinned in `Tools/o3de/O3DE_VERSION.lock`) runs alongside
+the Unreal reference, which stays intact until O3DE proves Dark Arisen itself runs. Gameplay rules are being
+moved into the engine-neutral `Core/` library (built and tested in CI); O3DE adapters live in
+`Engine/O3DE/DarkArisen`. Status, evidence, blockers and gates: `Docs/O3DE_MIGRATION.md`.
+
 ## Engine and platform
 
 - Unreal Engine **5.8**, with the project association, native operations checks, CI runner labels and Pixel Streaming integration aligned to that version.
