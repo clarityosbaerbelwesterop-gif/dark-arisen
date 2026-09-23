@@ -47,7 +47,18 @@ SOURCE CREATED, IMPORT READY, PARTIAL, BLOCKED, NOT DONE.
 - `vulkan` warn: no GPU; Editor and GameLauncher cannot render here even after a build.
 
 Therefore ENGINE BUILD, EDITOR LAUNCH and GAME LAUNCHER are **BLOCKED in this environment**, not failed
-by O3DE. Required build host: 100+ GB free, 8+ cores (2 GB RAM per build thread), 32 GB RAM,
+by O3DE.
+
+**Framework-level runtime evidence (VERIFIED, 2026-09-23):** `DarkArisenO3DE probe` builds O3DE 2605.0
+**AzCore from the pinned engine sources** (Clang 18, O3DE's own Linux defines and flags) with the
+dependencies pinned in `Tools/o3de/AzCoreProbe/DEPENDENCIES.lock`, and runs Dark Arisen's
+`CampaignSystemComponent` inside a real `AZ::ComponentApplication`: `AZ::Interface` registration, EBus
+notifications, O3DE `LocalFileIO`, Harlow raid to Driftwood Camp, chapter-boundary autosave on disk,
+load/migrate/validate, corrupt-save rejection with untouched state, path-traversal rejection, manual save,
+autosave suppression. Result: 23/23 checks passed; reproduced from an empty dependency folder. The CI job
+`verify-o3de-framework` repeats it on every PR. Findings on the way: O3DE needs its patched RapidXML
+(`isError/getError`), a RapidJSON newer than the 3p recipe commit, and `O3DE_DISABLE_CONDITIONAL_EXPLICIT`
+for Clang 18 (O3DE's CMake sets the latter itself). Required build host: 100+ GB free, 8+ cores (2 GB RAM per build thread), 32 GB RAM,
 DX12/Vulkan GPU, network access to the host above, GitHub and git-lfs.
 
 ## 4. Architecture decision
@@ -79,9 +90,9 @@ Engine/O3DE/DarkArisen/Assets ──► Asset Processor   │  StoryTriggerCompo
 | System | UE source | Class | O3DE status |
 |---|---|---|---|
 | 34-mission catalog | `Story/MainStoryMissionCatalog.cpp` | engine-independent | IMPLEMENTED in Core, parity-tested against UE source |
-| Story authority, facts, crew, bosses, checkpoints | `Story/MainStorySubsystem*.cpp` | engine-independent logic, UE-coupled shell | IMPLEMENTED (Core) + adapter IMPLEMENTED / RUNTIME VERIFY PENDING |
+| Story authority, facts, crew, bosses, checkpoints | `Story/MainStorySubsystem*.cpp` | engine-independent logic, UE-coupled shell | IMPLEMENTED (Core); campaign adapter VERIFIED on O3DE AzCore runtime (probe) |
 | Save schema v9, migration, validation (PR #52) | `Persistence/DarkArisenSaveGame.h`, `ValidateState` | engine-independent rules | IMPLEMENTED + checksummed codec; quest journal, economy, living-NPC snapshots NOT DONE |
-| Cross-map persistence (PR #52) | `CaptureWorldState/RestoreWorldState` | UE-coupled | IMPLEMENTED in adapter / RUNTIME VERIFY PENDING |
+| Cross-map persistence (PR #52) | `CaptureWorldState/RestoreWorldState` | UE-coupled | capture/restore notifications VERIFIED on AzCore; level loading via Editor/launcher RUNTIME VERIFY PENDING |
 | Opening Ch. 1–2 runtime | `Opening/OpeningRuntimeComponent.cpp` | engine-independent logic | IMPLEMENTED (Core), triggers IMPLEMENTED / RUNTIME VERIFY PENDING |
 | Combat, stamina, health/rally, damage | `Components/*`, `Combat/DamagePipeline.cpp` | engine-independent math | IMPLEMENTED (Core), parity-tested |
 | Melee sweep, targeting | `CombatComponent::TraceAndResolvePendingHit` | UE-coupled | IMPLEMENTED (PhysX sphere cast) / RUNTIME VERIFY PENDING |
@@ -156,5 +167,6 @@ Build/ops/DarkArisenO3DE bootstrap              # clone + verify pinned SHA + LF
 Build/ops/DarkArisenO3DE configure && Build/ops/DarkArisenO3DE build
 Build/ops/DarkArisenO3DE test                   # Core tests always; O3DE tests when configured
 Build/ops/DarkArisenO3DE import-glb --manifest=... --glb=...
+Build/ops/DarkArisenO3DE probe                  # AzCore from pinned sources + campaign runtime probe
 ```
 `O3DE_ENGINE_ROOT` overrides the engine location (`/opt/dark-arisen/o3de`, `C:\DarkArisenEngine\o3de`).

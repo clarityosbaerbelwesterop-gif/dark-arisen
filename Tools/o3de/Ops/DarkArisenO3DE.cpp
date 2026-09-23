@@ -380,9 +380,63 @@ namespace
         return Ok;
     }
 
+    /**
+     * Builds O3DE 2605.0 AzCore from the pinned engine sources plus the dependencies pinned in
+     * AzCoreProbe/DEPENDENCIES.lock, then runs the campaign adapter inside AZ::ComponentApplication.
+     * Needs no O3DE package server; proves framework-level runtime, not Editor/Atom.
+     */
+    int CommandProbe(const Options& Opts, const std::map<std::string, std::string>& Lock)
+    {
+        if (!Opts.DryRun && VerifyEngine(Opts, Lock) != Ok)
+        {
+            return EngineCheckout;
+        }
+        const fs::path ProbeDir = Opts.RepoRoot / "Tools" / "o3de" / "AzCoreProbe";
+        const fs::path Deps = Opts.BuildDir / "probe-deps";
+        std::ifstream Stream(ProbeDir / "DEPENDENCIES.lock");
+        std::string Line;
+        while (std::getline(Stream, Line))
+        {
+            if (Line.empty() || Line[0] == '#') continue;
+            std::istringstream Fields(Line);
+            std::string NameAndUrl, Commit;
+            Fields >> NameAndUrl >> Commit;
+            const auto Split = NameAndUrl.find('=');
+            if (Split == std::string::npos || Commit.size() != 40)
+            {
+                std::cerr << "error: malformed probe dependency line: " << Line << "\n";
+                return LockError;
+            }
+            const std::string Name = NameAndUrl.substr(0, Split);
+            const std::string Url = NameAndUrl.substr(Split + 1);
+            const std::string Target = Quote((Deps / Name).string());
+            if (!fs::exists(Deps / Name / ".git") &&
+                Run("git init -q " + Target + " && git -C " + Target + " remote add origin " + Url, Opts) != 0)
+            {
+                return CommandFailed;
+            }
+            if (Run("git -C " + Target + " fetch -q --depth 1 origin " + Commit, Opts) != 0 ||
+                Run("git -C " + Target + " checkout -q --detach " + Commit, Opts) != 0)
+            {
+                return CommandFailed;
+            }
+        }
+        const fs::path Build = Opts.BuildDir / "azcore-probe";
+        if (Run("cmake -S " + Quote(ProbeDir.string()) + " -B " + Quote(Build.string()) +
+                    " -G Ninja -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=Release" +
+                    " -DO3DE_ENGINE_ROOT=" + Quote(Opts.EngineRoot.string()) + " -DDARKARISEN_PROBE_DEPS=" + Quote(Deps.string()),
+                Opts) != 0 ||
+            Run("cmake --build " + Quote(Build.string()), Opts) != 0 ||
+            Run("ctest --test-dir " + Quote(Build.string()) + " --output-on-failure", Opts) != 0)
+        {
+            return CommandFailed;
+        }
+        return Ok;
+    }
+
     void PrintUsage()
     {
-        std::cout << "usage: DarkArisenO3DE <doctor|lock|bootstrap|configure|build|test|package|import-glb> [--repo=PATH]\n"
+        std::cout << "usage: DarkArisenO3DE <doctor|lock|bootstrap|configure|build|test|package|import-glb|probe> [--repo=PATH]\n"
                      "       [--engine=PATH] [--build-dir=PATH] [--config=profile|debug|release] [--dry-run]\n"
                      "       import-glb --manifest=PATH --glb=PATH [--min-vertices=N]\n"
                      "O3DE_ENGINE_ROOT overrides the default engine location ("
@@ -442,6 +496,7 @@ int main(int ArgumentCount, char** Arguments)
     if (Opts.Command == "test") return CommandTest(Opts);
     if (Opts.Command == "package") return CommandPackage(Opts, Lock);
     if (Opts.Command == "import-glb") return CommandImportGlb(Opts);
+    if (Opts.Command == "probe") return CommandProbe(Opts, Lock);
     PrintUsage();
     return Usage;
 }

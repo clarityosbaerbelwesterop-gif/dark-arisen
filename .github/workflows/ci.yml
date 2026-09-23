@@ -70,6 +70,35 @@ jobs:
           echo "pinned=$pinned upstream=$upstream"
           test -n "$pinned" && test "$pinned" = "$upstream"
 
+  verify-o3de-framework:
+    # Builds AzCore from the pinned O3DE sources (no O3DE package server) and runs the
+    # Dark Arisen campaign adapter inside a real AZ::ComponentApplication.
+    name: O3DE 2605.0 AzCore runtime probe (Linux)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    needs: verify-engine-neutral
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+      - name: Install toolchain
+        run: sudo apt-get update -q && sudo apt-get install -y -q clang ninja-build libzstd-dev zlib1g-dev libunwind-dev
+      - name: Build the operations tool
+        run: |
+          cmake -S Tools/o3de -B build/ops -DCMAKE_BUILD_TYPE=Release
+          cmake --build build/ops
+      - name: Check out the pinned O3DE engine sources
+        run: |
+          commit=$(build/ops/DarkArisenO3DE lock | sed -n 's/^commit=//p')
+          git init -q "$RUNNER_TEMP/o3de"
+          git -C "$RUNNER_TEMP/o3de" remote add origin https://github.com/o3de/o3de.git
+          GIT_LFS_SKIP_SMUDGE=1 git -C "$RUNNER_TEMP/o3de" fetch -q --depth 1 origin "$commit"
+          GIT_LFS_SKIP_SMUDGE=1 git -C "$RUNNER_TEMP/o3de" checkout -q --detach "$commit"
+      - name: Build AzCore and run the campaign probe
+        run: build/ops/DarkArisenO3DE probe --engine="$RUNNER_TEMP/o3de" --build-dir="$RUNNER_TEMP/build"
+
   verify-windows:
     name: Windows UE 5.8 materialise, compile, tests, laws
     # Job conditions are evaluated before runner env exists. Keep UE verification mandatory.
