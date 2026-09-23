@@ -5,7 +5,11 @@
 // Every step is deterministic and fails closed with a stable exit code:
 //   0 ok, 2 usage, 3 lock file, 4 missing prerequisite, 5 engine checkout, 6 command failed.
 
+#include "AssetPipeline.h"
+
 #include <array>
+#include <chrono>
+#include <ctime>
 #include <cstdio>
 #include <cstdlib>
 #include <filesystem>
@@ -51,6 +55,9 @@ namespace
         fs::path EngineRoot;
         fs::path BuildDir;
         std::string Config = "profile";
+        fs::path Manifest;
+        fs::path Glb;
+        long long MinimumVertices = 0;
         bool DryRun = false;
     };
 
@@ -334,10 +341,50 @@ namespace
         return Run(CommandLine, Opts) == 0 ? Ok : CommandFailed;
     }
 
+    std::string UtcNow()
+    {
+        const std::time_t Now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+        std::tm Utc{};
+#if defined(_WIN32)
+        gmtime_s(&Utc, &Now);
+#else
+        gmtime_r(&Now, &Utc);
+#endif
+        char Buffer[32];
+        std::strftime(Buffer, sizeof(Buffer), "%Y-%m-%dT%H:%M:%SZ", &Utc);
+        return Buffer;
+    }
+
+    int CommandImportGlb(const Options& Opts)
+    {
+        if (Opts.Manifest.empty() || Opts.Glb.empty())
+        {
+            std::cerr << "error: import-glb needs --manifest=<Higgsfield3DSource.json> --glb=<exact downloaded GLB>\n";
+            return Usage;
+        }
+        DarkArisen::Tools::ImportRequest Request;
+        Request.RepoRoot = Opts.RepoRoot;
+        Request.ManifestPath = Opts.Manifest.is_absolute() ? Opts.Manifest : Opts.RepoRoot / Opts.Manifest;
+        Request.GlbPath = Opts.Glb;
+        Request.MinimumVertices = Opts.MinimumVertices;
+        Request.ImportDateUtc = UtcNow();
+        DarkArisen::Tools::ImportResult Result;
+        std::string Error;
+        if (!DarkArisen::Tools::ImportProviderGlb(Request, Result, Error))
+        {
+            std::cerr << "import rejected: " << Error << "\n";
+            return CommandFailed;
+        }
+        std::cout << "imported " << Result.Destination.string() << "\nsha256 " << Result.Sha256 << "\nprovenance "
+                  << Result.ProvenancePath.string() << "\n";
+        return Ok;
+    }
+
     void PrintUsage()
     {
-        std::cout << "usage: DarkArisenO3DE <doctor|lock|bootstrap|configure|build|test|package> [--repo=PATH]\n"
+        std::cout << "usage: DarkArisenO3DE <doctor|lock|bootstrap|configure|build|test|package|import-glb> [--repo=PATH]\n"
                      "       [--engine=PATH] [--build-dir=PATH] [--config=profile|debug|release] [--dry-run]\n"
+                     "       import-glb --manifest=PATH --glb=PATH [--min-vertices=N]\n"
                      "O3DE_ENGINE_ROOT overrides the default engine location ("
                   << DefaultEngineRoot << ").\n";
     }
@@ -357,6 +404,9 @@ int main(int ArgumentCount, char** Arguments)
         else if (Argument.rfind("--engine=", 0) == 0) Opts.EngineRoot = Value("--engine=");
         else if (Argument.rfind("--build-dir=", 0) == 0) Opts.BuildDir = Value("--build-dir=");
         else if (Argument.rfind("--config=", 0) == 0) Opts.Config = Value("--config=");
+        else if (Argument.rfind("--manifest=", 0) == 0) Opts.Manifest = Value("--manifest=");
+        else if (Argument.rfind("--glb=", 0) == 0) Opts.Glb = Value("--glb=");
+        else if (Argument.rfind("--min-vertices=", 0) == 0) Opts.MinimumVertices = std::atoll(Value("--min-vertices=").c_str());
         else if (Argument == "--dry-run") Opts.DryRun = true;
         else if (Opts.Command.empty() && Argument.rfind("--", 0) != 0) Opts.Command = Argument;
         else
@@ -391,6 +441,7 @@ int main(int ArgumentCount, char** Arguments)
     if (Opts.Command == "build") return CommandBuild(Opts);
     if (Opts.Command == "test") return CommandTest(Opts);
     if (Opts.Command == "package") return CommandPackage(Opts, Lock);
+    if (Opts.Command == "import-glb") return CommandImportGlb(Opts);
     PrintUsage();
     return Usage;
 }

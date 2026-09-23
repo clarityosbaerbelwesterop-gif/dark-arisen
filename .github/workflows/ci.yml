@@ -35,6 +35,41 @@ jobs:
       - name: Reject whitespace errors
         run: git diff --check HEAD^
 
+  verify-engine-neutral:
+    # Runs on GitHub-hosted runners: the gameplay core and O3DE tooling need no engine.
+    name: Engine-neutral core and O3DE tooling (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+      - name: Build and test the engine-neutral core
+        run: |
+          cmake -S Core -B build/core -DCMAKE_BUILD_TYPE=Release
+          cmake --build build/core --config Release
+          ctest --test-dir build/core -C Release --output-on-failure
+      - name: Build and test the O3DE operations tool
+        run: |
+          cmake -S Tools/o3de -B build/ops -DCMAKE_BUILD_TYPE=Release
+          cmake --build build/ops --config Release
+          ctest --test-dir build/ops -C Release --output-on-failure
+      - name: Verify the O3DE pin still matches the official tag
+        run: |
+          tool=build/ops/DarkArisenO3DE
+          if [ -f build/ops/Release/DarkArisenO3DE.exe ]; then tool=build/ops/Release/DarkArisenO3DE.exe; fi
+          pinned=$("$tool" lock | sed -n 's/^commit=//p')
+          tag=$("$tool" lock | sed -n 's/^tag=//p')
+          upstream=$(git ls-remote https://github.com/o3de/o3de.git "refs/tags/$tag" | cut -f1)
+          echo "pinned=$pinned upstream=$upstream"
+          test -n "$pinned" && test "$pinned" = "$upstream"
+
   verify-windows:
     name: Windows UE 5.8 materialise, compile, tests, laws
     # Job conditions are evaluated before runner env exists. Keep UE verification mandatory.
