@@ -36,6 +36,11 @@ namespace DarkArisen
         float m_windSpeed = 6.0f;
         float m_windDirection = 90.0f;
         float m_exposure = 1.0f;
+        /**
+         * Use the renderer's clock (SceneSrg::m_time = real elapsed time) so the drawn waves and the
+         * simulated surface agree; off only for deterministic tests, which advance by tick deltas.
+         */
+        bool m_rendererClock = true;
         Core::OceanSurface m_surface;
         double m_time = 0.0;
     };

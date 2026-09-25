@@ -2,6 +2,7 @@
 
 #include "Json.h"
 
+#include <algorithm>
 #include <array>
 #include <cmath>
 #include <cstdint>
@@ -665,5 +666,35 @@ namespace DarkArisen::Tools
         const std::vector<std::uint16_t> Indices = {0, 2, 1, 0, 3, 2, 4, 5, 6, 4, 6, 7, 0, 1, 5, 0, 5, 4,
             1, 2, 6, 1, 6, 5, 2, 3, 7, 2, 7, 6, 3, 0, 4, 3, 4, 7};
         return MeshGltf(Positions, Indices, Name, "DarkArisenO3DE placeholder prop");
+    }
+
+    std::string MakeOceanGridGltf(const double Size, const int Cells, const std::string_view Name)
+    {
+        const int Clamped = std::clamp(Cells, 1, 254);
+        const int Side = Clamped + 1;
+        std::vector<float> Positions;
+        Positions.reserve(static_cast<std::size_t>(Side * Side * 3));
+        for (int Row = 0; Row < Side; ++Row)
+        {
+            for (int Column = 0; Column < Side; ++Column)
+            {
+                Positions.push_back(static_cast<float>(-Size / 2.0 + Size * Column / Clamped));
+                Positions.push_back(static_cast<float>(-Size / 2.0 + Size * Row / Clamped));
+                Positions.push_back(0.0f);
+            }
+        }
+        std::vector<std::uint16_t> Indices;
+        Indices.reserve(static_cast<std::size_t>(Clamped * Clamped * 6));
+        for (int Row = 0; Row < Clamped; ++Row)
+        {
+            for (int Column = 0; Column < Clamped; ++Column)
+            {
+                const auto At = [Side](const int R, const int C) { return static_cast<std::uint16_t>(R * Side + C); };
+                // Counter-clockwise seen from above (+Z) in the source frame.
+                Indices.insert(Indices.end(), {At(Row, Column), At(Row, Column + 1), At(Row + 1, Column + 1),
+                    At(Row, Column), At(Row + 1, Column + 1), At(Row + 1, Column)});
+            }
+        }
+        return MeshGltf(Positions, Indices, Name, "DarkArisenO3DE ocean grid");
     }
 }

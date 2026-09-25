@@ -75,6 +75,12 @@ namespace DarkArisen::Tools
      */
     std::string MakePlaceholderFigureGltf(double Height, double Radius, std::string_view Name);
 
+    /**
+     * Flat still-water grid (source frame, Z up) centred on the origin: Size metres square with
+     * Cells x Cells quads. The ocean shader displaces it; at most 254 cells (16-bit indices).
+     */
+    std::string MakeOceanGridGltf(double Size, int Cells, std::string_view Name);
+
     /** Placeholder prop: an axis-aligned box standing on the origin, source frame. */
     std::string MakePlaceholderBoxGltf(double SizeX, double SizeY, double SizeZ, std::string_view Name);
 }

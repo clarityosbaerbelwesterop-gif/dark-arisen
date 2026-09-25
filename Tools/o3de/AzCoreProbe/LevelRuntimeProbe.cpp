@@ -45,6 +45,7 @@
 #include <DarkArisen/Core/CampaignRuntime.h>
 #include <DarkArisen/Core/Combat.h>
 #include <DarkArisen/Core/Facts.h>
+#include <DarkArisen/Core/Ocean.h>
 #include <DarkArisen/Core/OpeningRuntime.h>
 
 #include "ProbeSupport.h"
@@ -495,6 +496,30 @@ int main(int argc, char** argv)
         level.m_rejectedComponents, level.m_engineComponents);
     Check(level.m_gameComponents == 16 && level.m_rejectedComponents == 0,
         "Harlow: every game component deserialised by O3DE's JSON serializer with no unknown fields");
+    {
+        // The drawn ocean (material written by the materialiser) and the simulated one are the same sea.
+        std::ifstream materialStream(repo / "Engine/O3DE/DarkArisen/Assets/Materials/DarkArisenOcean.material", std::ios::binary);
+        const std::string materialText((std::istreambuf_iterator<char>(materialStream)), std::istreambuf_iterator<char>());
+        rapidjson::Document material;
+        material.Parse(materialText.c_str());
+        const DarkArisen::OceanRequests* sea = DarkArisen::OceanInterface::Get();
+        bool same = sea != nullptr && !material.HasParseError() && material.HasMember("propertyValues");
+        if (same)
+        {
+            const std::vector<float> constants = sea->GetSurface().PackShaderConstants();
+            for (size_t wave = 0; wave < constants.size() / 4 && same; ++wave)
+            {
+                const AZStd::string key = AZStd::string::format("waves.w%zu", wave);
+                const auto found = material["propertyValues"].FindMember(key.c_str());
+                same = found != material["propertyValues"].MemberEnd() && found->value.IsArray() && found->value.Size() == 4;
+                for (rapidjson::SizeType component = 0; same && component < 4; ++component)
+                {
+                    same = AZ::IsClose(found->value[component].GetFloat(), constants[wave * 4 + component], 1e-6f);
+                }
+            }
+        }
+        Check(same, "ocean material waves equal the live OceanComponent surface (drawn sea = simulated sea)");
+    }
     const AZ::EntityId jake = level.Id("Jake");
     Check(Position(jake).IsClose(AZ::Vector3(-9.0f, 0.0f, 2.2f)), "Harlow: player spawn resolved to Spawn.Jake.HarlowOpening");
     const AZ::EntityId boarders[] = {level.Id("Boarder Boarding.Port.A"), level.Id("Boarder Boarding.Port.B"), level.Id("Boarder Boarding.Starboard.A")};

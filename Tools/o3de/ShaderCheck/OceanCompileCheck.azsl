@@ -1,5 +1,5 @@
-// Compile check for the Dark Arisen ocean include: AZSL -> HLSL (azslc) -> SPIR-V (glslang).
-// check: vert MainVS
+// Compile check for the standalone Dark Arisen ocean include: AZSL -> HLSL (azslc) -> SPIR-V + DXIL (DXC).
+// check: vs_6_2 MainVS
 // Not a production shader; the production ocean pass binds the same SRG layout.
 #include "GerstnerOcean.azsli"
 

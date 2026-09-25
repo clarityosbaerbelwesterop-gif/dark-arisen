@@ -1,0 +1,23 @@
+/*
+ * Dark Arisen ocean, depth pass: the same displacement as the forward pass, so depth and colour agree.
+ * check: vs_6_2 DepthPassVS
+ */
+#include "DarkArisenOceanCommon.azsli"
+
+struct VSInput
+{
+    float3 m_position : POSITION;
+};
+
+struct VSDepthOutput
+{
+    precise float4 m_position : SV_Position;
+};
+
+VSDepthOutput DepthPassVS(VSInput IN, uint instanceId : SV_InstanceID)
+{
+    VSDepthOutput OUT;
+    const OceanSurfacePoint surface = DisplaceOceanVertex(IN.m_position, instanceId);
+    OUT.m_position = mul(ViewSrg::m_viewProjectionMatrix, float4(surface.m_position, 1.0));
+    return OUT;
+}

@@ -1,0 +1,324 @@
+{
+    "description": "Dark Arisen ocean: the Gerstner surface gameplay simulates (Core::OceanSurface), displaced in the forward and depth passes on the scene clock. Wave constants are written by DarkArisenO3DE materialize.",
+    "version": 1,
+    "versionUpdates": [],
+    "propertyLayout": {
+        "propertyGroups": [
+            {
+                "name": "waves",
+                "displayName": "Waves (materialised)",
+                "description": "Core::OceanSurface::PackShaderConstants for the level's sea state.",
+                "properties": [
+                    {
+                        "name": "w0",
+                        "displayName": "Wave constant 0",
+                        "type": "Vector4",
+                        "defaultValue": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "connection": {
+                            "type": "ShaderInput",
+                            "name": "m_wave0"
+                        }
+                    },
+                    {
+                        "name": "w1",
+                        "displayName": "Wave constant 1",
+                        "type": "Vector4",
+                        "defaultValue": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "connection": {
+                            "type": "ShaderInput",
+                            "name": "m_wave1"
+                        }
+                    },
+                    {
+                        "name": "w2",
+                        "displayName": "Wave constant 2",
+                        "type": "Vector4",
+                        "defaultValue": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "connection": {
+                            "type": "ShaderInput",
+                            "name": "m_wave2"
+                        }
+                    },
+                    {
+                        "name": "w3",
+                        "displayName": "Wave constant 3",
+                        "type": "Vector4",
+                        "defaultValue": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "connection": {
+                            "type": "ShaderInput",
+                            "name": "m_wave3"
+                        }
+                    },
+                    {
+                        "name": "w4",
+                        "displayName": "Wave constant 4",
+                        "type": "Vector4",
+                        "defaultValue": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "connection": {
+                            "type": "ShaderInput",
+                            "name": "m_wave4"
+                        }
+                    },
+                    {
+                        "name": "w5",
+                        "displayName": "Wave constant 5",
+                        "type": "Vector4",
+                        "defaultValue": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "connection": {
+                            "type": "ShaderInput",
+                            "name": "m_wave5"
+                        }
+                    },
+                    {
+                        "name": "w6",
+                        "displayName": "Wave constant 6",
+                        "type": "Vector4",
+                        "defaultValue": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "connection": {
+                            "type": "ShaderInput",
+                            "name": "m_wave6"
+                        }
+                    },
+                    {
+                        "name": "w7",
+                        "displayName": "Wave constant 7",
+                        "type": "Vector4",
+                        "defaultValue": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "connection": {
+                            "type": "ShaderInput",
+                            "name": "m_wave7"
+                        }
+                    },
+                    {
+                        "name": "w8",
+                        "displayName": "Wave constant 8",
+                        "type": "Vector4",
+                        "defaultValue": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "connection": {
+                            "type": "ShaderInput",
+                            "name": "m_wave8"
+                        }
+                    },
+                    {
+                        "name": "w9",
+                        "displayName": "Wave constant 9",
+                        "type": "Vector4",
+                        "defaultValue": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "connection": {
+                            "type": "ShaderInput",
+                            "name": "m_wave9"
+                        }
+                    },
+                    {
+                        "name": "w10",
+                        "displayName": "Wave constant 10",
+                        "type": "Vector4",
+                        "defaultValue": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "connection": {
+                            "type": "ShaderInput",
+                            "name": "m_wave10"
+                        }
+                    },
+                    {
+                        "name": "w11",
+                        "displayName": "Wave constant 11",
+                        "type": "Vector4",
+                        "defaultValue": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "connection": {
+                            "type": "ShaderInput",
+                            "name": "m_wave11"
+                        }
+                    },
+                    {
+                        "name": "w12",
+                        "displayName": "Wave constant 12",
+                        "type": "Vector4",
+                        "defaultValue": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "connection": {
+                            "type": "ShaderInput",
+                            "name": "m_wave12"
+                        }
+                    },
+                    {
+                        "name": "w13",
+                        "displayName": "Wave constant 13",
+                        "type": "Vector4",
+                        "defaultValue": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "connection": {
+                            "type": "ShaderInput",
+                            "name": "m_wave13"
+                        }
+                    },
+                    {
+                        "name": "w14",
+                        "displayName": "Wave constant 14",
+                        "type": "Vector4",
+                        "defaultValue": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "connection": {
+                            "type": "ShaderInput",
+                            "name": "m_wave14"
+                        }
+                    },
+                    {
+                        "name": "w15",
+                        "displayName": "Wave constant 15",
+                        "type": "Vector4",
+                        "defaultValue": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "connection": {
+                            "type": "ShaderInput",
+                            "name": "m_wave15"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "surface",
+                "displayName": "Surface",
+                "properties": [
+                    {
+                        "name": "deepColor",
+                        "displayName": "Deep Color",
+                        "type": "Color",
+                        "defaultValue": [
+                            0.02,
+                            0.07,
+                            0.1
+                        ],
+                        "connection": {
+                            "type": "ShaderInput",
+                            "name": "m_deepColor"
+                        }
+                    },
+                    {
+                        "name": "shallowColor",
+                        "displayName": "Crest Color",
+                        "type": "Color",
+                        "defaultValue": [
+                            0.05,
+                            0.2,
+                            0.22
+                        ],
+                        "connection": {
+                            "type": "ShaderInput",
+                            "name": "m_shallowColor"
+                        }
+                    },
+                    {
+                        "name": "skyColor",
+                        "displayName": "Sky Reflection",
+                        "type": "Color",
+                        "defaultValue": [
+                            0.5,
+                            0.62,
+                            0.72
+                        ],
+                        "connection": {
+                            "type": "ShaderInput",
+                            "name": "m_skyColor"
+                        }
+                    },
+                    {
+                        "name": "specularStrength",
+                        "displayName": "Sun Glint",
+                        "type": "Float",
+                        "defaultValue": 4.0,
+                        "min": 0.0,
+                        "connection": {
+                            "type": "ShaderInput",
+                            "name": "m_specularStrength"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "functors": [],
+    "shaders": [
+        {
+            "file": "../../Shaders/Ocean/DarkArisenOcean_Forward.shader"
+        },
+        {
+            "file": "../../Shaders/Ocean/DarkArisenOcean_Depth.shader"
+        }
+    ]
+}

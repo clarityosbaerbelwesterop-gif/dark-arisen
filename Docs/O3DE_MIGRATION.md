@@ -80,7 +80,15 @@ travel to Driftwood Camp, plus two deaths: drowning in Undertow returns Jake to 
 swimming again with full vitals; dying after the recovery returns him to the beach checkpoint. Result: 41/41. Stand-ins, stated in the probe: transforms, a character
 controller that integrates velocity over a beach ground profile, point-in-box triggers on the
 materialised trigger colliders, the game entity context and the `LoadLevel` console command.
-Editor loading, Asset Processor output and PhysX behaviour of these prefabs are RUNTIME VERIFY PENDING. No PhysX scene exists in the probe,
+Editor loading, Asset Processor output and PhysX behaviour of these prefabs are RUNTIME VERIFY PENDING.
+
+**Atom shader path (VERIFIED at compile level, 2026-09-25):** `DarkArisenO3DE shader-check` runs the
+Asset Processor's shader chain without the Asset Processor: preprocess with the engine's Atom shader
+include roots, AZSL -> HLSL with O3DE's azslc 1.8.22, then HLSL -> SPIR-V (Vulkan) and DXIL (DX12)
+with DXC 1.8.2505.1, the compiler release O3DE 2605.0 pins (downloaded from Microsoft's release,
+SHA-256 pinned in `Tools/o3de/ShaderCheck/ARCHIVES.lock`). O3DE's own `Unlit.azsl` is compiled first
+as the calibration reference; then the ocean forward pass (VS/PS) and depth pass (VS). 6 entry points
+compile. Rendering on a GPU is RUNTIME VERIFY PENDING. No PhysX scene exists in the probe,
 so the melee sweep logs its documented error and hits are resolved directly. The CI job
 `verify-o3de-framework` repeats it on every PR. Findings on the way: O3DE needs its patched RapidXML
 (`isError/getError`), a RapidJSON newer than the 3p recipe commit, and `O3DE_DISABLE_CONDITIONAL_EXPLICIT`
@@ -123,6 +131,7 @@ Engine/O3DE/DarkArisen/Assets ──► Asset Processor   │  StoryTriggerCompo
 | Combat, stamina, health/rally, damage | `Components/*`, `Combat/DamagePipeline.cpp` | engine-independent math | IMPLEMENTED (Core), parity-tested |
 | Melee sweep, targeting | `CombatComponent::TraceAndResolvePendingHit` | UE-coupled | IMPLEMENTED (PhysX sphere cast) / PhysX RUNTIME VERIFY PENDING; combat adapter VERIFIED on AzCore |
 | Jake movement/input | `JakeCharacter.cpp` | UE-coupled | PARTIAL: input, run/sprint, combat, surface swimming; camera, lock-on, diving NOT DONE |
+| Visible ocean (Atom) | none in Unreal source (no water system shipped in O3DE 2605.0 either) | rendering | IMPLEMENTED: `DarkArisenOcean.materialtype`, forward + depth shaders displacing tiled grids with the gameplay Gerstner waves on `SceneSrg::m_time` (the clock `OceanComponent` now reads); compiles to SPIR-V and DXIL; material waves = live `OceanComponent` surface (level probe); foam, refraction, underwater fog and runtime weather changes on the material NOT DONE; GPU RUNTIME VERIFY PENDING |
 | Swimming, currents, breath, drowning | `Components/WaterBreathComponent.cpp`, `Opening/OpeningWaterCurrentVolume.cpp` | engine-independent rules, UE-coupled movement | IMPLEMENTED (Core `BreathModel`, `SwimModel`, design speeds 1/1.5/2 m/s); adapters VERIFIED on AzCore; PhysX trigger volumes RUNTIME VERIFY PENDING; swim stamina values PROVISIONAL (section 6, item 9) |
 | Player death and checkpoint respawn | `AJakeCharacter::RestoreAtCheckpoint` (only reachable through an unplaced trigger) | UE-coupled | IMPLEMENTED: 2 s death beat, checkpoint or legal level spawn, full vitals, back in the water when placed inside a volume, no failure screen; VERIFIED on AzCore (level probe) |
 | Enemy AI (boarders, Holders, Dream Ethan, Draven) | `AI/*`, `Bosses/*`, `DuelingEnemyCharacter` | engine-independent decisions | IMPLEMENTED (Core `EnemyBrain`, phases, telegraphs, boss defeat to story); adapter VERIFIED on AzCore; PhysX movement/line of sight RUNTIME VERIFY PENDING; Draven still lacks distinct moves beyond phases (gap carried over from UE) |
@@ -232,6 +241,6 @@ Build/ops/DarkArisenO3DE test                   # Core tests always; O3DE tests 
 Build/ops/DarkArisenO3DE import-glb --manifest=... --glb=...
 Build/ops/DarkArisenO3DE probe                  # AzCore from pinned sources + campaign/gameplay/level runtime probes
 Build/ops/DarkArisenO3DE materialize [--check]  # ContentSource -> Chapter 1 level prefabs + O3DE-frame greybox
-Build/ops/DarkArisenO3DE shader-check           # O3DE azslc 1.8.22 + glslang: AZSL -> HLSL -> SPIR-V
+Build/ops/DarkArisenO3DE shader-check --engine=PATH  # azslc 1.8.22 + DXC 1.8.2505.1: AZSL -> HLSL -> SPIR-V + DXIL
 ```
 `O3DE_ENGINE_ROOT` overrides the engine location (`/opt/dark-arisen/o3de`, `C:\DarkArisenEngine\o3de`).

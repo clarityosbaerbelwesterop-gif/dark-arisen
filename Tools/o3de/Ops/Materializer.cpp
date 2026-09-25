@@ -12,6 +12,7 @@
 #include <DarkArisen/Core/CampaignState.h>
 #include <DarkArisen/Core/LevelSpawn.h>
 #include <DarkArisen/Core/MissionCatalog.h>
+#include <DarkArisen/Core/Ocean.h>
 #include <DarkArisen/Core/Presentation.h>
 
 #include <algorithm>
@@ -153,6 +154,8 @@ namespace DarkArisen::Tools
                 Vec3d Centimetres;
                 return Anchor(Layout, Key, Centimetres) ? LayoutToWorld(Centimetres) : Vec3d{};
             }
+
+            bool HasOutput(const std::string& Relative) const { return Outputs.count(Relative) != 0; }
 
             void Emit(const std::string& Relative, std::string Content)
             {
@@ -485,10 +488,80 @@ namespace DarkArisen::Tools
             }
         }
 
-        void AddSea(PrefabBuilder& Prefab)
+        /**
+         * The ocean material: DarkArisenOcean.materialtype with the wave constants of the sea state
+         * OceanComponent starts with (Core::SeaState defaults), so drawn and simulated waves match.
+         */
+        ModelRef OceanMaterial(Session& Work)
+        {
+            const std::string Relative = "Assets/Materials/DarkArisenOcean.material";
+            if (!Work.HasOutput(ProjectDir + "/" + Relative))
+            {
+                const Core::OceanSurface Surface{Core::SeaState{}};
+                const std::vector<float> Constants = Surface.PackShaderConstants();
+                JsonValue Values = JsonObject();
+                for (std::size_t Wave = 0; Wave < Constants.size() / 4; ++Wave)
+                {
+                    JsonValue Vector = JsonArray();
+                    for (std::size_t Component = 0; Component < 4; ++Component)
+                    {
+                        Vector.Items.push_back(JsonNumber(static_cast<double>(Constants[Wave * 4 + Component])));
+                    }
+                    Values.Members["waves.w" + std::to_string(Wave)] = std::move(Vector);
+                }
+                JsonValue Material = JsonObject();
+                Material.Members["materialType"] = JsonString("Types/DarkArisenOcean.materialtype");
+                Material.Members["materialTypeVersion"] = JsonNumber(1);
+                Material.Members["propertyValues"] = std::move(Values);
+                Work.Emit(ProjectDir + "/" + Relative, JsonWriter::Write(Material, 4));
+            }
+            return {SourceAssetUuid(Relative), 0, Lower("Assets/Materials/DarkArisenOcean.azmaterial")};
+        }
+
+        void AddSea(Session& Work, PrefabBuilder& Prefab)
         {
             const std::string Sea = Prefab.AddEntity("Sea", {});
-            AddGame(Prefab, Sea, OceanComponentTypeId, "OceanComponent");  // component defaults
+            AddGame(Prefab, Sea, OceanComponentTypeId, "OceanComponent");  // component defaults = Core::SeaState{}
+
+            // Visible water: 100 m tiles at 1 m around the play area, 400 m tiles at 8 m to the horizon.
+            const ModelRef Material = OceanMaterial(Work);
+            JsonValue Override = JsonObject();
+            Override.Members["Key"] = JsonObject();
+            JsonValue Assignment = JsonObject();
+            Assignment.Members["MaterialAsset"] = AssetReference(Material.Guid, 0, Material.Hint);
+            Override.Members["Value"] = std::move(Assignment);
+            JsonValue Materials = JsonArray();
+            Materials.Items.push_back(std::move(Override));
+            const auto AddTile = [&Prefab, &Materials](const std::string& Name, const Vec3d& Where, const ModelRef& Tile)
+            {
+                const std::string Entity = Prefab.AddEntity(Name, Where, {}, "");
+                Prefab.AddComponent(Entity, "AZ::Render::EditorMeshComponent", MeshComponent(Tile));
+                JsonValue Configuration = JsonObject();
+                Configuration.Members["materials"] = Materials;
+                JsonValue Controller = JsonObject();
+                Controller.Members["Configuration"] = std::move(Configuration);
+                JsonValue Body = JsonObject();
+                Body.Members["Controller"] = std::move(Controller);
+                Prefab.AddComponent(Entity, "EditorMaterialComponent", std::move(Body));
+            };
+            const ModelRef Near = Work.GeneratedModel("SM_OceanTile_Near", MakeOceanGridGltf(100.0, 100, "SM_OceanTile_Near"));
+            const ModelRef Far = Work.GeneratedModel("SM_OceanTile_Far", MakeOceanGridGltf(400.0, 50, "SM_OceanTile_Far"));
+            for (int Row = 0; Row < 4; ++Row)
+            {
+                for (int Column = 0; Column < 4; ++Column)
+                {
+                    AddTile("Ocean Near " + std::to_string(Row) + std::to_string(Column),
+                        {-150.0 + 100.0 * Column, -150.0 + 100.0 * Row, 0.0}, Near);
+                }
+            }
+            for (int Row = -1; Row <= 1; ++Row)
+            {
+                for (int Column = -1; Column <= 1; ++Column)
+                {
+                    if (Row == 0 && Column == 0) continue;
+                    AddTile("Ocean Far " + std::to_string(Row + 1) + std::to_string(Column + 1), {400.0 * Column, 400.0 * Row, 0.0}, Far);
+                }
+            }
         }
 
         void AddStaticMesh(PrefabBuilder& Prefab, const std::string& Name, const Vec3d& Where, const ModelRef& Model)
@@ -625,7 +698,7 @@ namespace DarkArisen::Tools
             const std::string Layout = "ContentSource/Ships/Harlow/HarlowShip_GameplayLayout.json";
             PrefabBuilder Prefab("L_HarlowOpening");
             AddEnvironment(Work, Prefab);
-            AddSea(Prefab);
+            AddSea(Work, Prefab);
 
             AddStaticMesh(Prefab, "Harlow Merchant Ship", {}, Work.RenderModel("ContentSource/Ships/Harlow/SM_HarlowMerchantShip_Alpha.gltf"));
             const std::string Deck = Prefab.AddEntity("Harlow Walkable Collision", {});
@@ -742,7 +815,7 @@ namespace DarkArisen::Tools
             const std::string Reef = "ContentSource/World/Moran/OuterReef/OuterReef_GameplayLayout.json";
             PrefabBuilder Prefab("L_DriftwoodBeach");
             AddEnvironment(Work, Prefab);
-            AddSea(Prefab);
+            AddSea(Work, Prefab);
 
             const std::string Terrain = "ContentSource/World/Moran/DriftwoodBeach/SM_DriftwoodTerrain_Alpha.gltf";
             AddStaticMesh(Prefab, "Driftwood Terrain", {}, Work.RenderModel(Terrain));

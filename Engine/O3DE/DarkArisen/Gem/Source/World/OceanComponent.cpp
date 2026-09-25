@@ -2,6 +2,7 @@
 
 #include <AzCore/Serialization/EditContext.h>
 #include <AzCore/Serialization/SerializeContext.h>
+#include <AzCore/Time/ITime.h>
 
 namespace DarkArisen
 {
@@ -18,7 +19,8 @@ namespace DarkArisen
             ->Version(1)
             ->Field("WindSpeed", &OceanComponent::m_windSpeed)
             ->Field("WindDirection", &OceanComponent::m_windDirection)
-            ->Field("Exposure", &OceanComponent::m_exposure);
+            ->Field("Exposure", &OceanComponent::m_exposure)
+            ->Field("RendererClock", &OceanComponent::m_rendererClock);
         if (AZ::EditContext* editContext = serializeContext->GetEditContext())
         {
             editContext->Class<OceanComponent>("Dark Arisen Ocean", "Sea state shared by gameplay and the ocean shader.")
@@ -27,7 +29,9 @@ namespace DarkArisen
                 ->Attribute(AZ::Edit::Attributes::AppearsInAddComponentMenu, AZ_CRC_CE("Level"))
                 ->DataElement(AZ::Edit::UIHandlers::Default, &OceanComponent::m_windSpeed, "Wind (m/s)", "")
                 ->DataElement(AZ::Edit::UIHandlers::Default, &OceanComponent::m_windDirection, "Wind Direction", "Degrees, 0 = north (+Y)")
-                ->DataElement(AZ::Edit::UIHandlers::Default, &OceanComponent::m_exposure, "Exposure", "0 sheltered harbour ... 1 open sea");
+                ->DataElement(AZ::Edit::UIHandlers::Default, &OceanComponent::m_exposure, "Exposure", "0 sheltered harbour ... 1 open sea")
+                ->DataElement(AZ::Edit::UIHandlers::Default, &OceanComponent::m_rendererClock, "Renderer Clock",
+                    "Run on the scene clock the ocean shader uses");
         }
     }
 
@@ -77,6 +81,7 @@ namespace DarkArisen
 
     void OceanComponent::OnTick(const float deltaTime, [[maybe_unused]] AZ::ScriptTimePoint time)
     {
-        m_time += static_cast<double>(deltaTime);
+        const bool sceneClock = m_rendererClock && AZ::Interface<AZ::ITime>::Get() != nullptr;
+        m_time = sceneClock ? AZ::TimeUsToSecondsDouble(AZ::GetRealElapsedTimeUs()) : m_time + static_cast<double>(deltaTime);
     }
 }

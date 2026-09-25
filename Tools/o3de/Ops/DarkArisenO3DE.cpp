@@ -6,8 +6,10 @@
 //   0 ok, 2 usage, 3 lock file, 4 missing prerequisite, 5 engine checkout, 6 command failed.
 
 #include "AssetPipeline.h"
+#include "Hash.h"
 #include "Materializer.h"
 
+#include <algorithm>
 #include <array>
 #include <cctype>
 #include <chrono>
@@ -17,6 +19,7 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <iterator>
 #include <map>
 #include <sstream>
 #include <string>
@@ -424,101 +427,187 @@ namespace
     }
 
     /**
-     * AZSL -> HLSL with O3DE's azslc (pinned to O3DE's package version), then HLSL -> SPIR-V with
-     * glslang for a full front-end type check. Each check file declares "// check: <stage> <entry>".
+     * Downloads an archive pinned by SHA-256 (fail closed on any mismatch) and extracts it once.
+     * Lock line: "<name>=<https url> sha256:<64 hex>".
+     */
+    int FetchVerifiedArchive(const fs::path& LockPath, const std::string& Name, const fs::path& Destination, const Options& Opts)
+    {
+        std::ifstream Stream(LockPath);
+        std::string Line, Url, Expected;
+        while (std::getline(Stream, Line))
+        {
+            if (Line.rfind(Name + "=", 0) != 0) continue;
+            std::istringstream Fields(Line.substr(Name.size() + 1));
+            std::string Hash;
+            Fields >> Url >> Hash;
+            if (Hash.rfind("sha256:", 0) == 0) Expected = Hash.substr(7);
+        }
+        if (Url.empty() || Expected.size() != 64 || Expected.find_first_not_of("0123456789abcdef") != std::string::npos)
+        {
+            std::cerr << "error: " << LockPath << " has no valid pinned entry for " << Name << "\n";
+            return LockError;
+        }
+        const fs::path Archive = Destination / (Name + ".tar.gz");
+        const fs::path Extracted = Destination / Name;
+        fs::create_directories(Destination);
+        if (Opts.DryRun)
+        {
+            std::cout << "[dry-run] fetch " << Url << " (sha256 " << Expected << ")\n";
+            return Ok;
+        }
+        const auto Digest = [&Archive]()
+        {
+            std::ifstream In(Archive, std::ios::binary);
+            const std::string Bytes((std::istreambuf_iterator<char>(In)), std::istreambuf_iterator<char>());
+            return DarkArisen::Tools::Sha256Hex(Bytes);
+        };
+        if (!fs::exists(Archive) || Digest() != Expected)
+        {
+            if (Run("curl -fsSL -o " + Quote(Archive.string()) + " " + Quote(Url), Opts) != 0)
+            {
+                return CommandFailed;
+            }
+            if (Digest() != Expected)
+            {
+                std::cerr << "error: " << Name << " archive does not match its pinned sha256\n";
+                return LockError;
+            }
+            std::error_code Ignored;
+            fs::remove_all(Extracted, Ignored);
+        }
+        if (!fs::exists(Extracted))
+        {
+            fs::create_directories(Extracted);
+            if (Run("tar -xzf " + Quote(Archive.string()) + " -C " + Quote(Extracted.string()), Opts) != 0)
+            {
+                return CommandFailed;
+            }
+        }
+        return Ok;
+    }
+
+    /**
+     * The Atom shader path without the Asset Processor: preprocess with the engine's shader
+     * include roots, AZSL -> HLSL with O3DE's azslc 1.8.22, then HLSL -> SPIR-V (Vulkan) and DXIL
+     * (DX12) with DXC 1.8.2505.1, the compiler O3DE 2605.0 pins. Every .azsl under the project's
+     * Assets/Shaders and Tools/o3de/ShaderCheck is compiled for each "check: <profile> <entry>"
+     * line it carries; O3DE's own Unlit shader is compiled first as the calibration reference.
      */
     int CommandShaderCheck(const Options& Opts)
     {
+#if defined(_WIN32)
+        std::cerr << "error: shader-check runs on Linux (the pinned DXC archive is the Linux build)\n";
+        return MissingPrerequisite;
+#else
         const fs::path CheckDir = Opts.RepoRoot / "Tools" / "o3de" / "ShaderCheck";
         const fs::path Deps = Opts.BuildDir / "shader-deps";
         if (const int Status = FetchPinnedDependencies(CheckDir / "DEPENDENCIES.lock", Deps, Opts); Status != Ok)
         {
             return Status;
         }
-        if (!Opts.DryRun && !Succeeds("glslangValidator --version"))
+        if (const int Status = FetchVerifiedArchive(CheckDir / "ARCHIVES.lock", "dxc", Deps, Opts); Status != Ok)
         {
-            std::cerr << "error: glslangValidator not found (install glslang-tools)\n";
-            return MissingPrerequisite;
+            return Status;
         }
         const fs::path AzslcBuild = Opts.BuildDir / "azslc";
-#if defined(_WIN32)
-        const fs::path Azslc = AzslcBuild / "Release" / "azslc.exe";
-        const std::string CxxFlags;
-#else
         const fs::path Azslc = AzslcBuild / "azslc";
         const std::string CxxFlags = " \"-DCMAKE_CXX_FLAGS=-include cstdint\""; // upstream misses <cstdint> on GCC 13
-#endif
         if (Run("cmake -S " + Quote((Deps / "azslc" / "src").string()) + " -B " + Quote(AzslcBuild.string()) +
                     " -DCMAKE_BUILD_TYPE=Release -DANTLR_BUILD_CPP_TESTS=OFF" + CxxFlags, Opts) != 0 ||
             Run("cmake --build " + Quote(AzslcBuild.string()) + " --config Release", Opts) != 0)
         {
             return CommandFailed;
         }
+        const fs::path DxcRoot = Deps / "dxc";
+        const std::string Dxc = "LD_LIBRARY_PATH=" + Quote((DxcRoot / "lib").string()) + " " + Quote((DxcRoot / "bin" / "dxc").string());
 
-        std::string Includes;
-        const fs::path ShaderRoot = Opts.RepoRoot / "Engine" / "O3DE" / "DarkArisen" / "Assets" / "Shaders";
-        if (fs::exists(ShaderRoot))
+        const fs::path Project = Opts.RepoRoot / "Engine" / "O3DE" / "DarkArisen";
+        const fs::path ShaderRoot = Project / "Assets" / "Shaders";
+        const fs::path& Engine = Opts.EngineRoot;
+        if (!Opts.DryRun && !fs::exists(Engine / "Gems" / "Atom" / "Feature" / "Common" / "Assets" / "ShaderLib"))
         {
-            for (const auto& Entry : fs::recursive_directory_iterator(ShaderRoot))
+            std::cerr << "error: Atom shader libraries not found under " << Engine << " (pass --engine=PATH)\n";
+            return MissingPrerequisite;
+        }
+        std::string Includes = " -I " + Quote((Project / "ShaderLib").string());
+        for (const fs::path& Root : {Engine / "Gems" / "Atom" / "Feature" / "Common" / "Assets" / "ShaderLib",
+                 Engine / "Gems" / "Atom" / "RPI" / "Assets" / "ShaderLib", Engine / "Gems" / "Atom" / "Feature" / "Common" / "Assets" / "Shaders",
+                 Engine / "Gems"})
+        {
+            Includes += " -I " + Quote(Root.string());
+        }
+        std::vector<std::pair<fs::path, std::vector<std::pair<std::string, std::string>>>> Jobs;
+        Jobs.push_back({Engine / "Gems" / "Atom" / "Feature" / "Common" / "Assets" / "Shaders" / "Unlit" / "Unlit.azsl",
+            {{"vs_6_2", "MainVS"}, {"ps_6_2", "MainPS"}}});
+        std::vector<fs::path> Sources;
+        for (const fs::path& Root : {CheckDir, ShaderRoot})
+        {
+            if (!fs::exists(Root)) continue;
+            for (const auto& Entry : fs::recursive_directory_iterator(Root))
             {
-                if (Entry.is_directory()) Includes += " -I " + Quote(Entry.path().string());
+                if (Entry.is_directory())
+                {
+                    Includes += " -I " + Quote(Entry.path().string());
+                }
+                else if (Entry.path().extension() == ".azsl")
+                {
+                    Sources.push_back(Entry.path());
+                }
             }
         }
-        const fs::path Out = Opts.BuildDir / "shader-check";
-        fs::create_directories(Out);
-        int Checked = 0;
-        for (const auto& Entry : fs::directory_iterator(CheckDir))
+        std::sort(Sources.begin(), Sources.end());
+        for (const fs::path& Source : Sources)
         {
-            if (Entry.path().extension() != ".azsl") continue;
-            std::ifstream Source(Entry.path());
-            std::string Line, Stage, EntryPoint;
-            while (std::getline(Source, Line))
+            std::ifstream In(Source);
+            std::string Line;
+            std::vector<std::pair<std::string, std::string>> Entries;
+            while (std::getline(In, Line))
             {
-                const auto Marker = Line.find("// check:");
+                const auto Marker = Line.find("check:");
                 if (Marker == std::string::npos) continue;
-                std::istringstream Fields(Line.substr(Marker + 9));
-                Fields >> Stage >> EntryPoint;
-                break;
+                std::istringstream Fields(Line.substr(Marker + 6));
+                std::string Profile, EntryPoint;
+                Fields >> Profile >> EntryPoint;
+                if (Profile.size() == 6 && Profile[2] == '_' && !EntryPoint.empty()) Entries.push_back({Profile, EntryPoint});
             }
-            if (Stage.empty() || EntryPoint.empty())
+            if (Entries.empty())
             {
-                std::cerr << "error: " << Entry.path().filename() << " lacks a '// check: <stage> <entry>' line\n";
+                std::cerr << "error: " << Source.filename() << " lacks a 'check: <profile> <entry>' line (e.g. vs_6_2 MainVS)\n";
                 return LockError;
             }
-            const std::string Stem = Entry.path().stem().string();
+            Jobs.push_back({Source, Entries});
+        }
+
+        const fs::path Out = Opts.BuildDir / "shader-check";
+        fs::create_directories(Out);
+        int Compiled = 0;
+        for (const auto& [Source, Entries] : Jobs)
+        {
+            const std::string Stem = Source.stem().string();
             const fs::path Pre = Out / (Stem + ".pre.azsl");
             const fs::path Hlsl = Out / (Stem + ".hlsl");
-            const fs::path GlslangHlsl = Out / (Stem + ".glslang.hlsl");
-            const fs::path Spirv = Out / (Stem + ".spv");
-            if (Run("clang -E -P -x c" + Includes + " " + Quote(Entry.path().string()) + " -o " + Quote(Pre.string()), Opts) != 0 ||
+            if (Run("clang -E -P -x c -Wno-pragma-once-outside-header" + Includes + " " + Quote(Source.string()) + " -o " + Quote(Pre.string()), Opts) != 0 ||
                 Run(Quote(Azslc.string()) + " " + Quote(Pre.string()) + " -o " + Quote(Hlsl.string()), Opts) != 0)
             {
+                std::cerr << "error: " << Source << " failed AZSL -> HLSL\n";
                 return CommandFailed;
             }
-            if (!Opts.DryRun)
+            for (const auto& [Profile, EntryPoint] : Entries)
             {
-                // glslang's HLSL front end rejects the leading "::" global qualifiers azslc emits (DXC accepts them).
-                std::ifstream In(Hlsl);
-                std::ostringstream Buffer;
-                Buffer << In.rdbuf();
-                std::string Text = Buffer.str();
-                for (std::size_t At = Text.find("::"); At != std::string::npos; At = Text.find("::", At))
+                const std::string Base = (Out / (Stem + "." + EntryPoint)).string();
+                if (Run(Dxc + " -T " + Profile + " -E " + EntryPoint + " -spirv -fspv-target-env=vulkan1.1 " + Quote(Hlsl.string()) +
+                            " -Fo " + Quote(Base + ".spv"), Opts) != 0 ||
+                    Run(Dxc + " -T " + Profile + " -E " + EntryPoint + " " + Quote(Hlsl.string()) + " -Fo " + Quote(Base + ".dxil"), Opts) != 0)
                 {
-                    const bool Global = At == 0 || !(std::isalnum(static_cast<unsigned char>(Text[At - 1])) || Text[At - 1] == '_');
-                    if (Global) Text.erase(At, 2);
-                    else At += 2;
+                    std::cerr << "error: " << Source << " " << EntryPoint << " failed HLSL -> SPIR-V/DXIL\n";
+                    return CommandFailed;
                 }
-                std::ofstream(GlslangHlsl) << Text;
+                ++Compiled;
             }
-            if (Run("glslangValidator -D -V -S " + Stage + " -e " + EntryPoint + " " + Quote(GlslangHlsl.string()) + " -o " +
-                        Quote(Spirv.string()), Opts) != 0)
-            {
-                return CommandFailed;
-            }
-            ++Checked;
         }
-        std::cout << Checked << " shader check(s) compiled AZSL -> HLSL -> SPIR-V\n";
-        return Checked > 0 ? Ok : LockError;
+        std::cout << Compiled << " entry points compiled AZSL -> HLSL -> SPIR-V + DXIL (" << Jobs.size() << " shaders, O3DE Unlit as calibration)\n";
+        return Compiled > 0 ? Ok : LockError;
+#endif
     }
 
     /**

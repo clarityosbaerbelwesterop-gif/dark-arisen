@@ -91,7 +91,7 @@ jobs:
       - name: Check out source
         uses: actions/checkout@v4
       - name: Install toolchain
-        run: sudo apt-get update -q && sudo apt-get install -y -q clang ninja-build libzstd-dev zlib1g-dev libunwind-dev glslang-tools
+        run: sudo apt-get update -q && sudo apt-get install -y -q clang ninja-build libzstd-dev zlib1g-dev libunwind-dev
       - name: Build the operations tool
         run: |
           cmake -S Tools/o3de -B build/ops -DCMAKE_BUILD_TYPE=Release
@@ -105,8 +105,8 @@ jobs:
           GIT_LFS_SKIP_SMUDGE=1 git -C "$RUNNER_TEMP/o3de" checkout -q --detach "$commit"
       - name: Build AzCore and run the campaign, gameplay and level probes
         run: build/ops/DarkArisenO3DE probe --engine="$RUNNER_TEMP/o3de" --build-dir="$RUNNER_TEMP/build"
-      - name: Compile Dark Arisen shaders with O3DE azslc 1.8.22 and glslang
-        run: build/ops/DarkArisenO3DE shader-check --build-dir="$RUNNER_TEMP/build"
+      - name: Compile Atom shaders with O3DE azslc 1.8.22 and DXC 1.8.2505.1 (SPIR-V and DXIL)
+        run: build/ops/DarkArisenO3DE shader-check --engine="$RUNNER_TEMP/o3de" --build-dir="$RUNNER_TEMP/build"
 
   verify-windows:
     name: Windows UE 5.8 materialise, compile, tests, laws

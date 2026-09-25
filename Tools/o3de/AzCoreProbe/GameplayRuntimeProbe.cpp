@@ -241,7 +241,9 @@ int main(int argc, char** argv)
 
     // The level's sea: one OceanComponent registers the shared surface.
     AZ::Entity* ocean = aznew AZ::Entity("Ocean");
-    ocean->CreateComponent<DarkArisen::OceanComponent>();
+    auto* oceanComponent = ocean->CreateComponent<DarkArisen::OceanComponent>();
+    // The probe advances time by tick deltas, not wall clock, so the heave test is deterministic.
+    Check(SetReflectedField(serialize, oceanComponent, "RendererClock", false), "ocean clock set to tick time through its reflected field");
     ocean->Init();
     ocean->Activate();
     auto* sea = DarkArisen::OceanInterface::Get();
