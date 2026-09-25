@@ -22,6 +22,7 @@ add_library(DarkArisenCore STATIC
     Source/Ocean.cpp
     Source/Water.cpp
     Source/Presentation.cpp
+    Source/LevelSpawn.cpp
 )
 add_library(DarkArisen::Core ALIAS DarkArisenCore)
 target_include_directories(DarkArisenCore PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Include)

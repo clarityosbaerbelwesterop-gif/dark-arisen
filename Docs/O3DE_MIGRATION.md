@@ -66,7 +66,20 @@ PhysX character gravity suspended in water and restored on the shallow walk-out,
 sea, casual stroke losing and sprint beating the current, exhaustion, 30 s breath and 20 drowning damage
 per whole second, breath refill on surfacing. Result: 35/35 passed (2026-09-25). The remaining Gem
 sources (`JakeInputComponent`, `StoryTriggerComponent`, the module) are compiled against the pinned
-engine headers in the same run, so every adapter source is compiler-checked on each PR. No PhysX scene exists in the probe,
+engine headers in the same run, so every adapter source is compiler-checked on each PR.
+
+**Materialised Chapter 1 levels (VERIFIED on AzCore, 2026-09-25):** `DarkArisenO3DE materialize` turns
+ContentSource into `Levels/L_HarlowOpening`, `L_DriftwoodBeach` and `L_DriftwoodCamp` prefabs plus
+O3DE-frame greybox meshes (20 files, byte-identical from GCC and Clang builds, `--check` in CI). A third
+probe loads those prefabs, deserialises every Dark Arisen game component with O3DE's JSON serializer
+(unknown or mistyped fields fail; entity references resolved like prefab aliases) and plays the chapter
+on the real adapters: family talk, cargo manifest, black sails, three boarders released and defeated,
+Draven, The Taking (Marc and Denise fall, Ethan seized alive), map transition, arrival in the water,
+Outer Reef swim, walk-out at wading depth, beach, camp smoke (chapter-boundary autosave on disk) and
+travel to Driftwood Camp. Result: 38/38. Stand-ins, stated in the probe: transforms, a character
+controller that integrates velocity over a beach ground profile, point-in-box triggers on the
+materialised trigger colliders, the game entity context and the `LoadLevel` console command.
+Editor loading, Asset Processor output and PhysX behaviour of these prefabs are RUNTIME VERIFY PENDING. No PhysX scene exists in the probe,
 so the melee sweep logs its documented error and hits are resolved directly. The CI job
 `verify-o3de-framework` repeats it on every PR. Findings on the way: O3DE needs its patched RapidXML
 (`isError/getError`), a RapidJSON newer than the 3p recipe commit, and `O3DE_DISABLE_CONDITIONAL_EXPLICIT`
@@ -114,7 +127,9 @@ Engine/O3DE/DarkArisen/Assets ──► Asset Processor   │  StoryTriggerCompo
 | Enemy AI (boarders, Holders, Dream Ethan, Draven) | `AI/*`, `Bosses/*`, `DuelingEnemyCharacter` | engine-independent decisions | IMPLEMENTED (Core `EnemyBrain`, phases, telegraphs, boss defeat to story); adapter VERIFIED on AzCore; PhysX movement/line of sight RUNTIME VERIFY PENDING; Draven still lacks distinct moves beyond phases (gap carried over from UE) |
 | La Liberación voyage | `Ship/ShipVoyageComponent.cpp` | engine-independent model | IMPLEMENTED (Core); adapter VERIFIED on AzCore (ownership gate, sailing); buoyancy/collision sweep NOT DONE |
 | Ethan canon guards | scattered validators | engine-independent | IMPLEMENTED: real Ethan can never be hostile, damaged or a boss; `boss.dream_ethan` is separate |
-| Chapter 3–10 physical contracts | `ContentSource/Story/Chapter03..10` (27 JSON) | CONTENT SOURCE | SOURCE CREATED; O3DE prefab materialiser NOT DONE |
+| Chapter 1 levels (Harlow, Driftwood Beach with Outer Reef, Driftwood Camp) | `DarkArisenMaterializeAlphaCommandlet.cpp` | content build | IMPLEMENTED (`materialize`): prefabs, O3DE-frame greybox, PhysX collision manifests, opening director, map transitions, spawn rules; VERIFIED on AzCore (level probe 38/38); Editor/Launcher RUNTIME VERIFY PENDING |
+| Opening presentation (black sails, Draven, The Taking) | never wired in Unreal | presentation | IMPLEMENTED as timed beats + subtitles bus (Core `OpeningDirector`); cameras, animation and the not-authored `Cinematic.Opening.JakeOverboard` NOT DONE |
+| Chapter 3–10 physical contracts | `ContentSource/Story/Chapter03..10` (27 JSON) | CONTENT SOURCE | SOURCE CREATED; O3DE prefab materialiser for them NOT DONE |
 | Credits | `ContentSource/Story/Credits/CreditsAuthority.json` | CONTENT SOURCE | SOURCE CREATED; O3DE UI NOT DONE |
 | Higgsfield GLB ingest | `Tools/higgsfield/import_3d_jutsu_glb.py` | tooling | IMPLEMENTED natively (`import-glb`), IMPORT READY once the GLBs are supplied |
 | Pixel Streaming | `DarkArisenOps/StreamingOps.cpp` | UE-only | replaced by plan in section 8 |
@@ -154,7 +169,24 @@ Engine/O3DE/DarkArisen/Assets ──► Asset Processor   │  StoryTriggerCompo
     walks out only at wading depth, and marks the unspecified numbers PROVISIONAL for a design ruling:
     water drag 1/s (Current.A 130 cm/s² therefore drifts 1.3 m/s), active stroke 3/s, swim sprint 15/s
     (land sprint 10/s), 4/s per m/s of opposing current, in-water regen ×0.25, exhaustion until 25 %.
-10. **CI.** PR #52 made the UE jobs unconditional on self-hosted `ue5.8` runners that do not exist, so
+10. **Chapter 1 could not be played through in the Unreal maps.** The materialiser placed no trigger
+    for the fleet, nothing called `StartEncounter` or `SignalDravenArrived`, nothing listened to
+    `OnCinematicRequested`, no map transition left Harlow, Driftwood had no beach, recovery or camp
+    beats, and Jake spawned on the beach although Undertow starts in the water. The O3DE build wires
+    each step (cargo manifest per the family manifest's gate, `OpeningDirector`, `MapTransitionComponent`,
+    `PlayerSpawnComponent` with an overboard arrival) and the level probe plays it end to end.
+11. **Unreal ignored the authored Outer Reef data.** `BuildDriftwood` hard-codes currents and extents
+    (130/20, 80/-35, 45/0 cm/s²) that differ from `OuterReef_GameplayLayout.json` (130/15, 90/30, 45/0);
+    the O3DE materialiser uses the layout.
+12. **Greybox meshes are Z-up inside glTF.** The ContentSource greybox glTF files carry Unreal-frame,
+    Z-up metres, while glTF is Y-up and the project imports glTF with the root transform. The
+    materialiser rewrites them (O3DE `(x, -y, z)`, winding reversed): forward and up are kept and
+    port stays port (Harlow boarders on the left of the bow in the probe).
+13. **PROVISIONAL authoring defaults** (no size in ContentSource): beach, smoke and camp-route beat
+    volumes 6 × 6 × 4 m; family members use a generated placeholder figure and the cargo manifest a
+    placeholder crate (no greybox exists); Jake and the boarders use static bind poses of their skinned
+    greyboxes; the follow camera is a child at the Unreal boom length (camera system NOT DONE).
+14. **CI.** PR #52 made the UE jobs unconditional on self-hosted `ue5.8` runners that do not exist, so
    those jobs can only queue or be cancelled. The new `verify-engine-neutral` job gives real, executed
    C++ evidence on every PR.
 
@@ -190,7 +222,8 @@ Build/ops/DarkArisenO3DE bootstrap              # clone + verify pinned SHA + LF
 Build/ops/DarkArisenO3DE configure && Build/ops/DarkArisenO3DE build
 Build/ops/DarkArisenO3DE test                   # Core tests always; O3DE tests when configured
 Build/ops/DarkArisenO3DE import-glb --manifest=... --glb=...
-Build/ops/DarkArisenO3DE probe                  # AzCore from pinned sources + campaign/gameplay runtime probes
+Build/ops/DarkArisenO3DE probe                  # AzCore from pinned sources + campaign/gameplay/level runtime probes
+Build/ops/DarkArisenO3DE materialize [--check]  # ContentSource -> Chapter 1 level prefabs + O3DE-frame greybox
 Build/ops/DarkArisenO3DE shader-check           # O3DE azslc 1.8.22 + glslang: AZSL -> HLSL -> SPIR-V
 ```
 `O3DE_ENGINE_ROOT` overrides the engine location (`/opt/dark-arisen/o3de`, `C:\DarkArisenEngine\o3de`).

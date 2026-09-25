@@ -60,6 +60,11 @@ jobs:
           cmake -S Tools/o3de -B build/ops -DCMAKE_BUILD_TYPE=Release
           cmake --build build/ops --config Release
           ctest --test-dir build/ops -C Release --output-on-failure
+      - name: Verify the materialised O3DE levels match ContentSource
+        run: |
+          tool=build/ops/DarkArisenO3DE
+          if [ -f build/ops/Release/DarkArisenO3DE.exe ]; then tool=build/ops/Release/DarkArisenO3DE.exe; fi
+          "$tool" materialize --check
       - name: Verify the O3DE pin still matches the official tag
         run: |
           tool=build/ops/DarkArisenO3DE
@@ -96,7 +101,7 @@ jobs:
           git -C "$RUNNER_TEMP/o3de" remote add origin https://github.com/o3de/o3de.git
           GIT_LFS_SKIP_SMUDGE=1 git -C "$RUNNER_TEMP/o3de" fetch -q --depth 1 origin "$commit"
           GIT_LFS_SKIP_SMUDGE=1 git -C "$RUNNER_TEMP/o3de" checkout -q --detach "$commit"
-      - name: Build AzCore and run the campaign and gameplay probes
+      - name: Build AzCore and run the campaign, gameplay and level probes
         run: build/ops/DarkArisenO3DE probe --engine="$RUNNER_TEMP/o3de" --build-dir="$RUNNER_TEMP/build"
       - name: Compile Dark Arisen shaders with O3DE azslc 1.8.22 and glslang
         run: build/ops/DarkArisenO3DE shader-check --build-dir="$RUNNER_TEMP/build"

@@ -6,6 +6,7 @@
 #include <cmath>
 #include <cstdint>
 #include <cstring>
+#include <iterator>
 #include <limits>
 #include <set>
 #include <vector>
@@ -493,7 +494,79 @@ namespace DarkArisen::Tools
         };
     }
 
-    bool ConvertGreyboxGltf(const std::string_view Source, std::string& OutGltf, GltfConversionStats& OutStats, std::string& OutError)
+    namespace
+    {
+        bool StripSkin(JsonValue& Root, std::string& Error)
+        {
+            Root.Members.erase("skins");
+            Root.Members.erase("animations");
+            auto NodesIt = Root.Members.find("nodes");
+            if (NodesIt == Root.Members.end() || !NodesIt->second.IsArray())
+            {
+                Error = "skinned glTF without nodes";
+                return false;
+            }
+            // Keep mesh nodes only, flattened to the scene root; joints carry no geometry.
+            JsonValue MeshNodes;
+            MeshNodes.Type = JsonValue::Kind::Array;
+            for (const JsonValue& Node : NodesIt->second.Items)
+            {
+                if (!Node.Find("mesh"))
+                {
+                    continue;
+                }
+                JsonValue Kept;
+                Kept.Type = JsonValue::Kind::Object;
+                for (const char* Key : {"mesh", "name"})
+                {
+                    if (const JsonValue* Value = Node.Find(Key)) Kept.Members[Key] = *Value;
+                }
+                MeshNodes.Items.push_back(std::move(Kept));
+            }
+            if (MeshNodes.Items.empty())
+            {
+                Error = "skinned glTF has no mesh node";
+                return false;
+            }
+            JsonValue SceneNodes;
+            SceneNodes.Type = JsonValue::Kind::Array;
+            for (std::size_t Index = 0; Index < MeshNodes.Items.size(); ++Index)
+            {
+                SceneNodes.Items.push_back(MakeNumber(static_cast<double>(Index)));
+            }
+            NodesIt->second = std::move(MeshNodes);
+            JsonValue Scene;
+            Scene.Type = JsonValue::Kind::Object;
+            Scene.Members["nodes"] = std::move(SceneNodes);
+            JsonValue Scenes;
+            Scenes.Type = JsonValue::Kind::Array;
+            Scenes.Items.push_back(std::move(Scene));
+            Root.Members["scenes"] = std::move(Scenes);
+            Root.Members["scene"] = MakeNumber(0.0);
+            if (auto MeshesIt = Root.Members.find("meshes"); MeshesIt != Root.Members.end())
+            {
+                for (JsonValue& Mesh : MeshesIt->second.Items)
+                {
+                    auto PrimitivesIt = Mesh.Members.find("primitives");
+                    if (PrimitivesIt == Mesh.Members.end()) continue;
+                    for (JsonValue& Primitive : PrimitivesIt->second.Items)
+                    {
+                        auto AttributesIt = Primitive.Members.find("attributes");
+                        if (AttributesIt == Primitive.Members.end()) continue;
+                        for (auto Attribute = AttributesIt->second.Members.begin(); Attribute != AttributesIt->second.Members.end();)
+                        {
+                            const bool SkinAttribute = Attribute->first.rfind("JOINTS_", 0) == 0 || Attribute->first.rfind("WEIGHTS_", 0) == 0;
+                            Attribute = SkinAttribute ? AttributesIt->second.Members.erase(Attribute) : std::next(Attribute);
+                        }
+                    }
+                }
+            }
+            return true;
+        }
+    }
+
+    bool ConvertGreyboxGltf(const std::string_view Source, std::string& OutGltf, GltfConversionStats& OutStats, std::string& OutError,
+        const GltfConversionOptions& Options)
     {
         OutStats = {};
         JsonValue Root;
@@ -507,6 +580,10 @@ namespace DarkArisen::Tools
             OutError = "glTF root must be an object";
             return false;
         }
+        if (Options.StripSkinToBindPose && Root.Find("skins") && !StripSkin(Root, OutError))
+        {
+            return false;
+        }
         Converter Work(Root, OutError);
         if (!Work.Run(OutStats))
         {
@@ -514,5 +591,79 @@ namespace DarkArisen::Tools
         }
         OutGltf = JsonWriter::Write(Root, 1);
         return true;
+    }
+
+    namespace
+    {
+        std::string MeshGltf(const std::vector<float>& Positions, const std::vector<std::uint16_t>& Indices, const std::string_view Name,
+            const std::string_view Generator)
+        {
+            std::vector<std::uint8_t> Bytes(Positions.size() * 4 + Indices.size() * 2);
+            std::memcpy(Bytes.data(), Positions.data(), Positions.size() * 4);
+            std::memcpy(Bytes.data() + Positions.size() * 4, Indices.data(), Indices.size() * 2);
+            std::string Escaped;
+            JsonWriter::AppendString(Escaped, Name);
+            std::string GeneratorText;
+            JsonWriter::AppendString(GeneratorText, Generator);
+            std::string Json = "{\"asset\":{\"version\":\"2.0\",\"generator\":" + GeneratorText + "},";
+            Json += "\"buffers\":[{\"byteLength\":" + std::to_string(Bytes.size()) +
+                ",\"uri\":\"data:application/octet-stream;base64," + EncodeBase64(Bytes) + "\"}],";
+            Json += "\"bufferViews\":[{\"buffer\":0,\"byteOffset\":0,\"byteLength\":" + std::to_string(Positions.size() * 4) +
+                "},{\"buffer\":0,\"byteOffset\":" + std::to_string(Positions.size() * 4) + ",\"byteLength\":" +
+                std::to_string(Indices.size() * 2) + "}],";
+            Json += "\"accessors\":[{\"bufferView\":0,\"componentType\":5126,\"count\":" + std::to_string(Positions.size() / 3) +
+                ",\"type\":\"VEC3\"},{\"bufferView\":1,\"componentType\":5123,\"count\":" + std::to_string(Indices.size()) +
+                ",\"type\":\"SCALAR\"}],";
+            Json += "\"meshes\":[{\"name\":" + Escaped + ",\"primitives\":[{\"attributes\":{\"POSITION\":0},\"indices\":1}]}],";
+            Json += "\"nodes\":[{\"name\":" + Escaped + ",\"mesh\":0}],\"scenes\":[{\"nodes\":[0]}],\"scene\":0}";
+            return Json;
+        }
+    }
+
+    std::string MakePlaceholderFigureGltf(const double Height, const double Radius, const std::string_view Name)
+    {
+        constexpr int Sides = 8;
+        const double Pi = std::acos(-1.0);
+        std::vector<float> Positions;
+        const double Shoulder = Height - Radius;
+        const double Hip = Radius;
+        for (const double Z : {Hip, Shoulder})
+        {
+            for (int Side = 0; Side < Sides; ++Side)
+            {
+                const double Angle = 2.0 * Pi * Side / Sides;
+                Positions.push_back(static_cast<float>(Radius * std::cos(Angle)));
+                Positions.push_back(static_cast<float>(Radius * std::sin(Angle)));
+                Positions.push_back(static_cast<float>(Z));
+            }
+        }
+        const std::uint16_t Bottom = static_cast<std::uint16_t>(Positions.size() / 3);
+        Positions.insert(Positions.end(), {0.0f, 0.0f, 0.0f});
+        const std::uint16_t Top = static_cast<std::uint16_t>(Positions.size() / 3);
+        Positions.insert(Positions.end(), {0.0f, 0.0f, static_cast<float>(Height)});
+        std::vector<std::uint16_t> Indices;
+        for (int Side = 0; Side < Sides; ++Side)
+        {
+            const auto Low = static_cast<std::uint16_t>(Side);
+            const auto LowNext = static_cast<std::uint16_t>((Side + 1) % Sides);
+            const auto High = static_cast<std::uint16_t>(Side + Sides);
+            const auto HighNext = static_cast<std::uint16_t>((Side + 1) % Sides + Sides);
+            Indices.insert(Indices.end(), {Low, LowNext, HighNext, Low, HighNext, High});  // outward, counter-clockwise
+            Indices.insert(Indices.end(), {Bottom, LowNext, Low});
+            Indices.insert(Indices.end(), {Top, High, HighNext});
+        }
+        return MeshGltf(Positions, Indices, Name, "DarkArisenO3DE placeholder figure");
+    }
+
+    std::string MakePlaceholderBoxGltf(const double SizeX, const double SizeY, const double SizeZ, const std::string_view Name)
+    {
+        const float X = static_cast<float>(SizeX / 2.0);
+        const float Y = static_cast<float>(SizeY / 2.0);
+        const float Z = static_cast<float>(SizeZ);
+        const std::vector<float> Positions = {-X, -Y, 0, X, -Y, 0, X, Y, 0, -X, Y, 0, -X, -Y, Z, X, -Y, Z, X, Y, Z, -X, Y, Z};
+        // Counter-clockwise seen from outside, in the source (Z-up) frame.
+        const std::vector<std::uint16_t> Indices = {0, 2, 1, 0, 3, 2, 4, 5, 6, 4, 6, 7, 0, 1, 5, 0, 5, 4,
+            1, 2, 6, 1, 6, 5, 2, 3, 7, 2, 7, 6, 3, 0, 4, 3, 4, 7};
+        return MeshGltf(Positions, Indices, Name, "DarkArisenO3DE placeholder prop");
     }
 }

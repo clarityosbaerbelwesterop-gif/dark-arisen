@@ -6,6 +6,7 @@
 //   0 ok, 2 usage, 3 lock file, 4 missing prerequisite, 5 engine checkout, 6 command failed.
 
 #include "AssetPipeline.h"
+#include "Materializer.h"
 
 #include <array>
 #include <cctype>
@@ -60,6 +61,7 @@ namespace
         fs::path Glb;
         long long MinimumVertices = 0;
         bool DryRun = false;
+        bool Check = false;
     };
 
     std::string Quote(const std::string& Value)
@@ -549,11 +551,40 @@ namespace
         return Ok;
     }
 
+    /** Writes (or with --check verifies) the O3DE vertical-slice levels generated from ContentSource. */
+    int CommandMaterialize(const Options& Opts)
+    {
+        DarkArisen::Tools::MaterializeResult Result;
+        if (!DarkArisen::Tools::MaterializeVerticalSlice(Opts.RepoRoot, Result))
+        {
+            for (const std::string& Error : Result.Errors)
+            {
+                std::cerr << "materialize: " << Error << "\n";
+            }
+            return CommandFailed;
+        }
+        std::vector<std::string> Stale;
+        const bool Ok_ = DarkArisen::Tools::ApplyMaterialization(Opts.RepoRoot, Result, Opts.Check, Stale);
+        for (const std::string& Path : Stale)
+        {
+            std::cout << (Opts.Check ? "stale: " : "wrote: ") << Path << "\n";
+        }
+        std::cout << Result.Files.size() << " files, " << Stale.size() << (Opts.Check ? " stale" : " updated") << "\n";
+        if (!Ok_)
+        {
+            std::cerr << (Opts.Check ? "materialized content is out of date; run DarkArisenO3DE materialize\n" : "write failed\n");
+            return CommandFailed;
+        }
+        return Ok;
+    }
+
     void PrintUsage()
     {
-        std::cout << "usage: DarkArisenO3DE <doctor|lock|bootstrap|configure|build|test|package|import-glb|probe|shader-check> [--repo=PATH]\n"
+        std::cout << "usage: DarkArisenO3DE <doctor|lock|bootstrap|configure|build|test|package|import-glb|probe|shader-check|materialize>\n"
+                     "       [--repo=PATH]\n"
                      "       [--engine=PATH] [--build-dir=PATH] [--config=profile|debug|release] [--dry-run]\n"
                      "       import-glb --manifest=PATH --glb=PATH [--min-vertices=N]\n"
+                     "       materialize [--check]\n"
                      "O3DE_ENGINE_ROOT overrides the default engine location ("
                   << DefaultEngineRoot << ").\n";
     }
@@ -577,6 +608,7 @@ int main(int ArgumentCount, char** Arguments)
         else if (Argument.rfind("--glb=", 0) == 0) Opts.Glb = Value("--glb=");
         else if (Argument.rfind("--min-vertices=", 0) == 0) Opts.MinimumVertices = std::atoll(Value("--min-vertices=").c_str());
         else if (Argument == "--dry-run") Opts.DryRun = true;
+        else if (Argument == "--check") Opts.Check = true;
         else if (Opts.Command.empty() && Argument.rfind("--", 0) != 0) Opts.Command = Argument;
         else
         {
@@ -613,6 +645,7 @@ int main(int ArgumentCount, char** Arguments)
     if (Opts.Command == "import-glb") return CommandImportGlb(Opts);
     if (Opts.Command == "probe") return CommandProbe(Opts, Lock);
     if (Opts.Command == "shader-check") return CommandShaderCheck(Opts);
+    if (Opts.Command == "materialize") return CommandMaterialize(Opts);
     PrintUsage();
     return Usage;
 }

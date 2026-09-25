@@ -164,6 +164,16 @@ int main()
         "ContentSource SM_OuterReef_Alpha converts");
     const fs::path Jake = fs::path(DARKARISEN_REPO_ROOT) / "ContentSource/Characters/Jake/SK_Jake_Alpha.gltf";
     Check(!ConvertGreyboxGltf(Read(Jake), Converted, Stats, Error), "skinned Jake greybox is left to the actor pipeline");
+    GltfConversionOptions BindPose;
+    BindPose.StripSkinToBindPose = true;
+    Check(ConvertGreyboxGltf(Read(Jake), Converted, Stats, Error, BindPose) && Stats.Vertices == 56, "Jake bind pose converts to a static figure");
+    Check(JsonReader::Parse(Converted, Out, Error) && !Out.Find("skins") && Out.Find("nodes")->Items.size() == 1 &&
+              !Out.Find("meshes")->Items[0].Find("primitives")->Items[0].Find("attributes")->Find("JOINTS_0"),
+        "bind pose keeps only the mesh node, without joints");
+
+    Check(ConvertGreyboxGltf(MakePlaceholderFigureGltf(1.8, 0.35, "SM_Placeholder_Figure"), Converted, Stats, Error) &&
+              Stats.Vertices == 18 && Stats.Triangles == 32,
+        "placeholder figure is a valid greybox");
 
     std::cout << (Failures == 0 ? "conversion tests passed\n" : "conversion tests FAILED\n");
     return Failures == 0 ? 0 : 1;

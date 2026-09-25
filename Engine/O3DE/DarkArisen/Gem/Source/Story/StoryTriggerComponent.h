@@ -1,5 +1,7 @@
 #pragma once
 
+#include <DarkArisen/AuthoringEnums.h>
+
 #include <AzCore/Component/Component.h>
 #include <AzCore/Component/ComponentBus.h>
 #include <AzCore/RTTI/TypeInfo.h>
@@ -8,31 +10,6 @@
 
 namespace DarkArisen
 {
-    /** Authored physical beats of the Chapter 1/2 opening (OpeningRuntime signals). */
-    enum class StorySignal : int
-    {
-        FamilyInteraction,
-        FleetDetected,
-        BoardingStarted,
-        BeginBoardingEncounter,
-        DravenBoarded,
-        TakingStarted,
-        TakingCinematicComplete,
-        EnteredWater,
-        ReachedOuterReef,
-        ReachedLocation,
-        RecoveryComplete,
-        CrewMet,
-        CrewRecruitmentAvailable,
-        CrewRecruited,
-        GalleonCoveCleared,
-        LaLiberacionBoarded,
-        LaLiberacionHelmSecured,
-        LaLiberacionHarborCleared,
-        BeginFirstWake,
-        ReachRexaHarbor
-    };
-
     class StoryTriggerRequests : public AZ::ComponentBus
     {
     public:
@@ -56,6 +33,9 @@ namespace DarkArisen
 
         static void Reflect(AZ::ReflectContext* context);
         static void GetDependentServices(AZ::ComponentDescriptor::DependencyArrayType& dependent);
+
+        /** A body entered the trigger volume (PhysX trigger event); only Jake fires the beat. */
+        bool NotifyBodyEntered(AZ::EntityId other);
 
     protected:
         void Activate() override;

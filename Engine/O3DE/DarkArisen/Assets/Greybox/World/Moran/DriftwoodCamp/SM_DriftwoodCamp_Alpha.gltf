@@ -1,0 +1,89 @@
+{
+ "accessors": [
+  {
+   "bufferView": 0,
+   "componentType": 5126,
+   "count": 48,
+   "max": [
+    0.699999988079071,
+    0.699999988079071,
+    1.0499999523162842
+   ],
+   "min": [
+    -6.550000190734863,
+    0,
+    -1.0499999523162842
+   ],
+   "type": "VEC3"
+  },
+  {
+   "bufferView": 1,
+   "componentType": 5123,
+   "count": 216,
+   "type": "SCALAR"
+  }
+ ],
+ "asset": {
+  "generator": "Dark Arisen Alpha source + DarkArisenO3DE frame conversion",
+  "version": "2.0"
+ },
+ "bufferViews": [
+  {
+   "buffer": 0,
+   "byteLength": 576,
+   "byteOffset": 0
+  },
+  {
+   "buffer": 0,
+   "byteLength": 432,
+   "byteOffset": 576
+  }
+ ],
+ "buffers": [
+  {
+   "byteLength": 1008,
+   "uri": "data:application/octet-stream;base64,zcwMPwAAAACamRm+zcwMvwAAAACamRm+zcwMvwAAAABmZoa/zcwMPwAAAABmZoa/zcwMPzMzMz+amRm+zcwMvzMzMz+amRm+zcwMvzMzMz9mZoa/zcwMPzMzMz9mZoa/MzNzvwAAAABmZoY/MzMDwAAAAABmZoY/MzMDwAAAAACamRk+MzNzvwAAAACamRk+MzNzvzMzMz9mZoY/MzMDwDMzMz9mZoY/MzMDwDMzMz+amRk+MzNzvzMzMz+amRk+zcwcwAAAAACamRm+MzNjwAAAAACamRm+MzNjwAAAAABmZoa/zcwcwAAAAABmZoa/zcwcwDMzMz+amRm+MzNjwDMzMz+amRm+MzNjwDMzMz9mZoa/zcwcwDMzMz9mZoa/zcx8wAAAAABmZoY/mpmhwAAAAABmZoY/mpmhwAAAAACamRk+zcx8wAAAAACamRk+zcx8wDMzMz9mZoY/mpmhwDMzMz9mZoY/mpmhwDMzMz+amRk+zcx8wDMzMz+amRk+ZmauwAAAAACamRm+mpnRwAAAAACamRm+mpnRwAAAAABmZoa/ZmauwAAAAABmZoa/ZmauwDMzMz+amRm+mpnRwDMzMz+amRm+mpnRwDMzMz9mZoa/ZmauwDMzMz9mZoa/MzMzPwAAAADNzEw/ZmamvwAAAADNzEw/ZmamvwAAAADNzEy/MzMzPwAAAADNzEy/MzMzPwrXIz7NzEw/ZmamvwrXIz7NzEw/ZmamvwrXIz7NzEy/MzMzPwrXIz7NzEy/AAACAAEAAAADAAIABAAFAAYABAAGAAcAAAAFAAQAAAABAAUAAQAGAAUAAQACAAYAAgAHAAYAAgADAAcAAwAEAAcAAwAAAAQACAAKAAkACAALAAoADAANAA4ADAAOAA8ACAANAAwACAAJAA0ACQAOAA0ACQAKAA4ACgAPAA4ACgALAA8ACwAMAA8ACwAIAAwAEAASABEAEAATABIAFAAVABYAFAAWABcAEAAVABQAEAARABUAEQAWABUAEQASABYAEgAXABYAEgATABcAEwAUABcAEwAQABQAGAAaABkAGAAbABoAHAAdAB4AHAAeAB8AGAAdABwAGAAZAB0AGQAeAB0AGQAaAB4AGgAfAB4AGgAbAB8AGwAcAB8AGwAYABwAIAAiACEAIAAjACIAJAAlACYAJAAmACcAIAAlACQAIAAhACUAIQAmACUAIQAiACYAIgAnACYAIgAjACcAIwAkACcAIwAgACQAKAAqACkAKAArACoALAAtAC4ALAAuAC8AKAAtACwAKAApAC0AKQAuAC0AKQAqAC4AKgAvAC4AKgArAC8AKwAsAC8AKwAoACwA"
+  }
+ ],
+ "materials": [
+  {
+   "pbrMetallicRoughness": {
+    "baseColorFactor": [
+     0.28,
+     0.18,
+     0.08,
+     1
+    ],
+    "roughnessFactor": 0.8
+   }
+  }
+ ],
+ "meshes": [
+  {
+   "name": "SM_DriftwoodCamp_Alpha",
+   "primitives": [
+    {
+     "attributes": {
+      "POSITION": 0
+     },
+     "indices": 1,
+     "material": 0
+    }
+   ]
+  }
+ ],
+ "nodes": [
+  {
+   "mesh": 0,
+   "name": "SM_DriftwoodCamp_Alpha"
+  }
+ ],
+ "scene": 0,
+ "scenes": [
+  {
+   "nodes": [
+    0
+   ]
+  }
+ ]
+}

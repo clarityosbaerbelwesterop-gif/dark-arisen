@@ -6,9 +6,12 @@
 #include "Combat/CombatantComponent.h"
 #include "Combat/EnemyBrainComponent.h"
 #include "Player/JakeInputComponent.h"
+#include "Player/PlayerSpawnComponent.h"
 #include "Player/SwimmerComponent.h"
 #include "Ships/ShipVoyageComponent.h"
 #include "Story/CampaignSystemComponent.h"
+#include "Story/MapTransitionComponent.h"
+#include "Story/OpeningDirectorComponent.h"
 #include "Story/StoryTriggerComponent.h"
 #include "World/OceanComponent.h"
 #include "World/WaterVolumeComponent.h"
@@ -33,6 +36,9 @@ namespace DarkArisen
                 OceanComponent::CreateDescriptor(),
                 SwimmerComponent::CreateDescriptor(),
                 WaterVolumeComponent::CreateDescriptor(),
+                OpeningDirectorComponent::CreateDescriptor(),
+                MapTransitionComponent::CreateDescriptor(),
+                PlayerSpawnComponent::CreateDescriptor(),
             });
         }
 

@@ -2,6 +2,8 @@
 
 #include <DarkArisen/CombatBus.h>
 
+#include <DarkArisen/AuthoringEnums.h>
+
 #include <AzCore/Component/Component.h>
 #include <AzCore/Component/TickBus.h>
 #include <AzCore/Math/Vector3.h>
@@ -13,14 +15,6 @@
 
 namespace DarkArisen
 {
-    enum class EnemyProfileKind : int
-    {
-        Boarder,
-        Holder,
-        DreamEthan,
-        DravenVoss
-    };
-
     /**
      * Drives an enemy's CombatantComponent with the engine-neutral Core::EnemyBrain.
      * Perception: distance to Jake plus a line-of-sight ray. Movement: PhysX character velocity.

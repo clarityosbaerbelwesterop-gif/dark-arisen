@@ -1,6 +1,7 @@
 #include "TestHarness.h"
 
 #include "DarkArisen/Core/Facts.h"
+#include "DarkArisen/Core/LevelSpawn.h"
 #include "DarkArisen/Core/Presentation.h"
 
 #include <optional>
@@ -175,4 +176,23 @@ TEST_CASE("Opening director: a raid interrupted mid-fight resumes with the remai
     }
     After.Run(0.1, 1.0 / 60.0);
     CHECK(After.Opening->Progress().RaidState == OpeningRaidState::DravenAboard);
+}
+
+TEST_CASE("Level spawn: checkpoint, then overboard arrival, then the level arrival")
+{
+    const std::vector<SpawnPoint> Driftwood = {
+        {"Spawn.Moran.DriftwoodBeach.Arrival", SpawnRule::Arrival},
+        {"WaterEntry", SpawnRule::OpeningOverboard},
+        {"Spawn.Moran.DriftwoodBeach.Recovery", SpawnRule::Checkpoint}};
+    CampaignState State = CampaignState::NewGame();
+    CHECK_EQ(ResolveSpawn(State, Driftwood), 0);
+    State.Opening.RecoveryState = WaterRecoveryState::Overboard;
+    CHECK_EQ(ResolveSpawn(State, Driftwood), 1);  // arriving over the rail: in the water, not on the beach
+    State.Opening.RecoveryState = WaterRecoveryState::Recovered;
+    State.SpawnId = "Spawn.Moran.DriftwoodBeach.Recovery";
+    CHECK_EQ(ResolveSpawn(State, Driftwood), 2);
+    State.SpawnId = "Spawn.Elsewhere";
+    CHECK_EQ(ResolveSpawn(State, Driftwood), 0);
+    CHECK_EQ(ResolveSpawn(State, {}), -1);
+    CHECK_EQ(ResolveSpawn(State, {{"", SpawnRule::Arrival}}), -1);
 }

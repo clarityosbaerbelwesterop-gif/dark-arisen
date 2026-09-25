@@ -50,11 +50,31 @@ namespace DarkArisen::Tools
         std::size_t Triangles = 0;
     };
 
+    struct GltfConversionOptions
+    {
+        /**
+         * Skinned greybox characters become static bind-pose meshes: skins, animations, joint nodes
+         * and JOINTS/WEIGHTS attributes are dropped. The actor pipeline (EMotionFX) is separate.
+         */
+        bool StripSkinToBindPose = false;
+    };
+
     /**
      * Rewrites a static greybox glTF (embedded base64 buffers, indexed triangles, POSITION and
      * optional NORMAL) into the O3DE frame. Fails closed on anything it cannot convert exactly:
      * skins, animations, node transforms, extensions, sparse accessors, external buffers,
      * non-triangle primitives or malformed accessors.
      */
-    bool ConvertGreyboxGltf(std::string_view Source, std::string& OutGltf, GltfConversionStats& OutStats, std::string& OutError);
+    bool ConvertGreyboxGltf(std::string_view Source, std::string& OutGltf, GltfConversionStats& OutStats, std::string& OutError,
+        const GltfConversionOptions& Options = {});
+
+    /**
+     * Placeholder figure for characters that have no greybox in ContentSource: an octagonal prism
+     * with pointed caps, standing on the origin, in the source frame (metres, Z up). Feed it to
+     * ConvertGreyboxGltf like any other greybox.
+     */
+    std::string MakePlaceholderFigureGltf(double Height, double Radius, std::string_view Name);
+
+    /** Placeholder prop: an axis-aligned box standing on the origin, source frame. */
+    std::string MakePlaceholderBoxGltf(double SizeX, double SizeY, double SizeZ, std::string_view Name);
 }

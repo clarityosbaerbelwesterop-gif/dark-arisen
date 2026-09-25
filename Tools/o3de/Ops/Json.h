@@ -40,6 +40,7 @@ namespace DarkArisen::Tools
     public:
         static bool Parse(std::string_view Text, JsonValue& Out, std::string& OutError)
         {
+            Out = JsonValue{};  // parsing into a reused value must not merge with its old members
             JsonReader Reader(Text);
             if (!Reader.ParseValue(Out, 0))
             {

@@ -87,19 +87,9 @@ namespace DarkArisen
         m_triggerEnterHandler = AzPhysics::SimulatedBodyEvents::OnTriggerEnter::Handler(
             [this]([[maybe_unused]] AzPhysics::SimulatedBodyHandle bodyHandle, const AzPhysics::TriggerEvent& event)
             {
-                if (!event.m_otherBody)
+                if (event.m_otherBody)
                 {
-                    return;
-                }
-                const AZ::EntityId other = event.m_otherBody->GetEntityId();
-                bool isJake = false;
-                CombatRequestBus::Event(other, [&isJake](CombatRequests* handler)
-                {
-                    isJake = handler->GetCombatant().EntityId == Core::EntityPolicy::JakeId;
-                });
-                if (isJake)
-                {
-                    Fire();
+                    NotifyBodyEntered(event.m_otherBody->GetEntityId());
                 }
             });
 
@@ -125,6 +115,20 @@ namespace DarkArisen
     bool StoryTriggerComponent::Interact(const AZStd::string& actorId)
     {
         return m_requiresInteract && actorId == Core::EntityPolicy::JakeId.data() && Fire();
+    }
+
+    bool StoryTriggerComponent::NotifyBodyEntered(const AZ::EntityId other)
+    {
+        if (m_requiresInteract)
+        {
+            return false;
+        }
+        bool isJake = false;
+        CombatRequestBus::Event(other, [&isJake](CombatRequests* handler)
+        {
+            isJake = handler->GetCombatant().EntityId == Core::EntityPolicy::JakeId;
+        });
+        return isJake && Fire();
     }
 
     bool StoryTriggerComponent::Fire()
