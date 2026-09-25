@@ -21,6 +21,9 @@
 #include "Combat/EnemyBrainComponent.h"
 #include "Ships/ShipVoyageComponent.h"
 #include "Story/CampaignSystemComponent.h"
+#include "World/OceanComponent.h"
+#include <DarkArisen/OceanBus.h>
+#include <DarkArisen/Core/Ocean.h>
 
 #include <DarkArisen/Core/CampaignRuntime.h>
 #include <DarkArisen/Core/Combat.h>
@@ -131,7 +134,7 @@ int main(int argc, char** argv)
     for (const AZ::ComponentDescriptor* componentDescriptor :
          {DarkArisen::CampaignSystemComponent::CreateDescriptor(), DarkArisen::CombatantComponent::CreateDescriptor(),
              DarkArisen::EnemyBrainComponent::CreateDescriptor(), DarkArisen::ShipVoyageComponent::CreateDescriptor(),
-             ProbeSupport::ProbeTransformComponent::CreateDescriptor()})
+             DarkArisen::OceanComponent::CreateDescriptor(), ProbeSupport::ProbeTransformComponent::CreateDescriptor()})
     {
         app.RegisterComponentDescriptor(componentDescriptor);
     }
@@ -244,6 +247,19 @@ int main(int argc, char** argv)
     Check(ethanModel && !DarkArisen::Core::ResolveMeleeHit(*jakeModel, *ethanModel, DarkArisen::Core::HitKind::Critical).Resolved,
         "real Ethan entity rejects every hostile hit");
 
+    // The level's sea: one OceanComponent registers the shared surface.
+    AZ::Entity* ocean = aznew AZ::Entity("Ocean");
+    ocean->CreateComponent<DarkArisen::OceanComponent>();
+    ocean->Init();
+    ocean->Activate();
+    auto* sea = DarkArisen::OceanInterface::Get();
+    Check(sea != nullptr, "OceanComponent registered the level sea through AZ::Interface");
+    if (sea)
+    {
+        sea->SetWeather(14.0f, 90.0f, 1.0f);
+        Check(sea->GetSurface().CombinedSteepness() <= 1.0, "level sea is loop-free at 14 m/s");
+    }
+
     // La Liberacion: physical sailing on TickBus, ownership from the campaign fact.
     AZ::Entity* ship = MakeEntity("LaLiberacion", AZ::Vector3(100.0f, 0.0f, 0.0f));
     ship->CreateComponent<DarkArisen::ShipVoyageComponent>();
@@ -259,7 +275,21 @@ int main(int argc, char** argv)
     DarkArisen::ShipRequestBus::EventResult(throttle, ship->GetId(), &DarkArisen::ShipRequests::SetThrottle, 1.0f);
     DarkArisen::ShipRequestBus::Event(ship->GetId(), &DarkArisen::ShipRequests::SetHelmCommandDegrees, 180.0f);
     Check(helm && throttle, "owned ship accepts helm and throttle");
-    Tick(20.0f);
+    float lowestDeck = 1000.0f;
+    float highestDeck = -1000.0f;
+    float largestTilt = 0.0f;
+    for (int second = 0; second < 20; ++second)
+    {
+        Tick(1.0f);
+        AZ::Transform shipTM = AZ::Transform::CreateIdentity();
+        AZ::TransformBus::EventResult(shipTM, ship->GetId(), &AZ::TransformBus::Events::GetWorldTM);
+        lowestDeck = AZ::GetMin(lowestDeck, shipTM.GetTranslation().GetZ());
+        highestDeck = AZ::GetMax(highestDeck, shipTM.GetTranslation().GetZ());
+        const AZ::Vector3 up = shipTM.GetBasisZ();
+        largestTilt = AZ::GetMax(largestTilt, AZ::Acos(AZ::GetClamp(up.GetZ(), -1.0f, 1.0f)));
+    }
+    Check(highestDeck - lowestDeck > 0.1f, "ship heaves on the shared sea");
+    Check(largestTilt > 0.005f && largestTilt < 0.6f, "ship pitches/rolls within hull limits");
     AZ::Vector3 shipPosition = AZ::Vector3::CreateZero();
     AZ::TransformBus::EventResult(shipPosition, ship->GetId(), &AZ::TransformBus::Events::GetWorldTranslation);
     float speed = 0.0f;
@@ -268,7 +298,7 @@ int main(int argc, char** argv)
         "ship sails physically over ticks (no teleport, no route skip)");
 
     enemyEvents.BusDisconnect();
-    for (AZ::Entity* entity : {ship, ethan, boarder, jake})
+    for (AZ::Entity* entity : {ship, ocean, ethan, boarder, jake})
     {
         entity->Deactivate();
         delete entity;

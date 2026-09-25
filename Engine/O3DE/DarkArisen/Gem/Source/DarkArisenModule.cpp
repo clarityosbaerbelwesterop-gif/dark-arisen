@@ -9,6 +9,7 @@
 #include "Ships/ShipVoyageComponent.h"
 #include "Story/CampaignSystemComponent.h"
 #include "Story/StoryTriggerComponent.h"
+#include "World/OceanComponent.h"
 
 namespace DarkArisen
 {
@@ -27,6 +28,7 @@ namespace DarkArisen
                 StoryTriggerComponent::CreateDescriptor(),
                 JakeInputComponent::CreateDescriptor(),
                 EnemyBrainComponent::CreateDescriptor(),
+                OceanComponent::CreateDescriptor(),
             });
         }
 

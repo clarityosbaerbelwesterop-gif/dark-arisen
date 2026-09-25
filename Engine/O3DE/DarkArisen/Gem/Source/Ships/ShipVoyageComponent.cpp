@@ -5,8 +5,11 @@
 #include <AzCore/Serialization/EditContext.h>
 #include <AzCore/Serialization/SerializeContext.h>
 
+#include <DarkArisen/OceanBus.h>
+
 #include <DarkArisen/Core/CampaignRuntime.h>
 #include <DarkArisen/Core/Facts.h>
+#include <DarkArisen/Core/Ocean.h>
 
 namespace DarkArisen
 {
@@ -22,7 +25,8 @@ namespace DarkArisen
         serializeContext->Class<ShipVoyageComponent, AZ::Component>()
             ->Version(1)
             ->Field("WindDirection", &ShipVoyageComponent::m_windDirectionDegrees)
-            ->Field("WindStrength", &ShipVoyageComponent::m_windStrengthMetresPerSecond);
+            ->Field("WindStrength", &ShipVoyageComponent::m_windStrengthMetresPerSecond)
+            ->Field("Waterline", &ShipVoyageComponent::m_waterlineHeightMetres);
         if (AZ::EditContext* editContext = serializeContext->GetEditContext())
         {
             editContext->Class<ShipVoyageComponent>("Dark Arisen Ship Voyage", "La Liberacion helm, wind and crew model.")
@@ -32,7 +36,9 @@ namespace DarkArisen
                 ->DataElement(AZ::Edit::UIHandlers::Default, &ShipVoyageComponent::m_windDirectionDegrees,
                     "Initial Wind Direction", "Degrees, 0 = north (+Y).")
                 ->DataElement(AZ::Edit::UIHandlers::Default, &ShipVoyageComponent::m_windStrengthMetresPerSecond,
-                    "Initial Wind Strength", "m/s");
+                    "Initial Wind Strength", "m/s (the level ocean overrides both wind values)")
+                ->DataElement(AZ::Edit::UIHandlers::Default, &ShipVoyageComponent::m_waterlineHeightMetres, "Waterline Height",
+                    "Entity origin height above still water in metres.");
         }
     }
 
@@ -84,6 +90,12 @@ namespace DarkArisen
 
     void ShipVoyageComponent::OnTick(const float deltaTime, [[maybe_unused]] AZ::ScriptTimePoint time)
     {
+        // One weather source: the level's sea drives both the sails and the waves the hull rides.
+        if (const OceanRequests* ocean = OceanInterface::Get())
+        {
+            const Core::SeaState& sea = ocean->GetSurface().GetSeaState();
+            m_voyage.SetWind(static_cast<float>(sea.WindDirectionDegrees), static_cast<float>(sea.WindSpeedMetresPerSecond));
+        }
         ApplyHeadingToEntity(m_voyage.Tick(deltaTime));
     }
 
@@ -93,12 +105,19 @@ namespace DarkArisen
         const AZ::Vector3 forward(AZ::Sin(headingRadians), AZ::Cos(headingRadians), 0.0f);
         AZ::Vector3 position = AZ::Vector3::CreateZero();
         AZ::TransformBus::EventResult(position, GetEntityId(), &AZ::TransformBus::Events::GetWorldTranslation);
-        AZ::TransformBus::Event(GetEntityId(), &AZ::TransformBus::Events::SetWorldRotationQuaternion,
-            AZ::Quaternion::CreateRotationZ(-headingRadians));
-        if (travelledMetres != 0.0f)
+        AZ::Quaternion rotation = AZ::Quaternion::CreateRotationZ(-headingRadians);
+        position += forward * travelledMetres;
+        if (const OceanRequests* ocean = OceanInterface::Get())
         {
-            AZ::TransformBus::Event(GetEntityId(), &AZ::TransformBus::Events::SetWorldTranslation, position + forward * travelledMetres);
+            // Heave, pitch (bow up) and roll (starboard down) from the shared sea; the hull filters chop.
+            const Core::HullPose pose = Core::ComputeHullPose(ocean->GetSurface(), Core::HullShape{}, position.GetX(),
+                position.GetY(), m_voyage.GetHeadingDegrees(), ocean->GetOceanTime());
+            position.SetZ(m_waterlineHeightMetres + static_cast<float>(pose.HeaveMetres));
+            rotation = rotation * AZ::Quaternion::CreateRotationX(static_cast<float>(pose.PitchRadians)) *
+                AZ::Quaternion::CreateRotationY(static_cast<float>(pose.RollRadians));
         }
+        AZ::TransformBus::Event(GetEntityId(), &AZ::TransformBus::Events::SetWorldRotationQuaternion, rotation);
+        AZ::TransformBus::Event(GetEntityId(), &AZ::TransformBus::Events::SetWorldTranslation, position);
     }
 
     void ShipVoyageComponent::OnCaptureWorldState()

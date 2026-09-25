@@ -54,6 +54,7 @@ namespace DarkArisen
         Core::ShipVoyage m_voyage;
         float m_windDirectionDegrees = 90.0f;
         float m_windStrengthMetresPerSecond = 6.0f;
+        float m_waterlineHeightMetres = 0.0f;
 
         void ApplyHeadingToEntity(float travelledMetres) const;
     };

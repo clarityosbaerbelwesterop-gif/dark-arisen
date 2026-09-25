@@ -8,6 +8,7 @@
 #include "AssetPipeline.h"
 
 #include <array>
+#include <cctype>
 #include <chrono>
 #include <ctime>
 #include <cstdio>
@@ -380,6 +381,144 @@ namespace
         return Ok;
     }
 
+    /** Fetches every "name=url <40-hex commit>" line of a lock file into Destination/name, exactly. */
+    int FetchPinnedDependencies(const fs::path& LockPath, const fs::path& Destination, const Options& Opts)
+    {
+        std::ifstream Stream(LockPath);
+        if (!Stream)
+        {
+            std::cerr << "error: missing dependency lock " << LockPath << "\n";
+            return LockError;
+        }
+        std::string Line;
+        while (std::getline(Stream, Line))
+        {
+            if (Line.empty() || Line[0] == '#') continue;
+            std::istringstream Fields(Line);
+            std::string NameAndUrl, Commit;
+            Fields >> NameAndUrl >> Commit;
+            const auto Split = NameAndUrl.find('=');
+            if (Split == std::string::npos || Commit.size() != 40 ||
+                Commit.find_first_not_of("0123456789abcdef") != std::string::npos)
+            {
+                std::cerr << "error: malformed dependency line: " << Line << "\n";
+                return LockError;
+            }
+            const std::string Name = NameAndUrl.substr(0, Split);
+            const std::string Url = NameAndUrl.substr(Split + 1);
+            const std::string Target = Quote((Destination / Name).string());
+            if (!fs::exists(Destination / Name / ".git") &&
+                Run("git init -q " + Target + " && git -C " + Target + " remote add origin " + Url, Opts) != 0)
+            {
+                return CommandFailed;
+            }
+            if (Run("git -C " + Target + " fetch -q --depth 1 origin " + Commit, Opts) != 0 ||
+                Run("git -C " + Target + " checkout -q --detach " + Commit, Opts) != 0)
+            {
+                return CommandFailed;
+            }
+        }
+        return Ok;
+    }
+
+    /**
+     * AZSL -> HLSL with O3DE's azslc (pinned to O3DE's package version), then HLSL -> SPIR-V with
+     * glslang for a full front-end type check. Each check file declares "// check: <stage> <entry>".
+     */
+    int CommandShaderCheck(const Options& Opts)
+    {
+        const fs::path CheckDir = Opts.RepoRoot / "Tools" / "o3de" / "ShaderCheck";
+        const fs::path Deps = Opts.BuildDir / "shader-deps";
+        if (const int Status = FetchPinnedDependencies(CheckDir / "DEPENDENCIES.lock", Deps, Opts); Status != Ok)
+        {
+            return Status;
+        }
+        if (!Opts.DryRun && !Succeeds("glslangValidator --version"))
+        {
+            std::cerr << "error: glslangValidator not found (install glslang-tools)\n";
+            return MissingPrerequisite;
+        }
+        const fs::path AzslcBuild = Opts.BuildDir / "azslc";
+#if defined(_WIN32)
+        const fs::path Azslc = AzslcBuild / "Release" / "azslc.exe";
+        const std::string CxxFlags;
+#else
+        const fs::path Azslc = AzslcBuild / "azslc";
+        const std::string CxxFlags = " \"-DCMAKE_CXX_FLAGS=-include cstdint\""; // upstream misses <cstdint> on GCC 13
+#endif
+        if (Run("cmake -S " + Quote((Deps / "azslc" / "src").string()) + " -B " + Quote(AzslcBuild.string()) +
+                    " -DCMAKE_BUILD_TYPE=Release -DANTLR_BUILD_CPP_TESTS=OFF" + CxxFlags, Opts) != 0 ||
+            Run("cmake --build " + Quote(AzslcBuild.string()) + " --config Release", Opts) != 0)
+        {
+            return CommandFailed;
+        }
+
+        std::string Includes;
+        const fs::path ShaderRoot = Opts.RepoRoot / "Engine" / "O3DE" / "DarkArisen" / "Assets" / "Shaders";
+        if (fs::exists(ShaderRoot))
+        {
+            for (const auto& Entry : fs::recursive_directory_iterator(ShaderRoot))
+            {
+                if (Entry.is_directory()) Includes += " -I " + Quote(Entry.path().string());
+            }
+        }
+        const fs::path Out = Opts.BuildDir / "shader-check";
+        fs::create_directories(Out);
+        int Checked = 0;
+        for (const auto& Entry : fs::directory_iterator(CheckDir))
+        {
+            if (Entry.path().extension() != ".azsl") continue;
+            std::ifstream Source(Entry.path());
+            std::string Line, Stage, EntryPoint;
+            while (std::getline(Source, Line))
+            {
+                const auto Marker = Line.find("// check:");
+                if (Marker == std::string::npos) continue;
+                std::istringstream Fields(Line.substr(Marker + 9));
+                Fields >> Stage >> EntryPoint;
+                break;
+            }
+            if (Stage.empty() || EntryPoint.empty())
+            {
+                std::cerr << "error: " << Entry.path().filename() << " lacks a '// check: <stage> <entry>' line\n";
+                return LockError;
+            }
+            const std::string Stem = Entry.path().stem().string();
+            const fs::path Pre = Out / (Stem + ".pre.azsl");
+            const fs::path Hlsl = Out / (Stem + ".hlsl");
+            const fs::path GlslangHlsl = Out / (Stem + ".glslang.hlsl");
+            const fs::path Spirv = Out / (Stem + ".spv");
+            if (Run("clang -E -P -x c" + Includes + " " + Quote(Entry.path().string()) + " -o " + Quote(Pre.string()), Opts) != 0 ||
+                Run(Quote(Azslc.string()) + " " + Quote(Pre.string()) + " -o " + Quote(Hlsl.string()), Opts) != 0)
+            {
+                return CommandFailed;
+            }
+            if (!Opts.DryRun)
+            {
+                // glslang's HLSL front end rejects the leading "::" global qualifiers azslc emits (DXC accepts them).
+                std::ifstream In(Hlsl);
+                std::ostringstream Buffer;
+                Buffer << In.rdbuf();
+                std::string Text = Buffer.str();
+                for (std::size_t At = Text.find("::"); At != std::string::npos; At = Text.find("::", At))
+                {
+                    const bool Global = At == 0 || !(std::isalnum(static_cast<unsigned char>(Text[At - 1])) || Text[At - 1] == '_');
+                    if (Global) Text.erase(At, 2);
+                    else At += 2;
+                }
+                std::ofstream(GlslangHlsl) << Text;
+            }
+            if (Run("glslangValidator -D -V -S " + Stage + " -e " + EntryPoint + " " + Quote(GlslangHlsl.string()) + " -o " +
+                        Quote(Spirv.string()), Opts) != 0)
+            {
+                return CommandFailed;
+            }
+            ++Checked;
+        }
+        std::cout << Checked << " shader check(s) compiled AZSL -> HLSL -> SPIR-V\n";
+        return Checked > 0 ? Ok : LockError;
+    }
+
     /**
      * Builds O3DE 2605.0 AzCore from the pinned engine sources plus the dependencies pinned in
      * AzCoreProbe/DEPENDENCIES.lock, then runs the campaign adapter inside AZ::ComponentApplication.
@@ -393,33 +532,9 @@ namespace
         }
         const fs::path ProbeDir = Opts.RepoRoot / "Tools" / "o3de" / "AzCoreProbe";
         const fs::path Deps = Opts.BuildDir / "probe-deps";
-        std::ifstream Stream(ProbeDir / "DEPENDENCIES.lock");
-        std::string Line;
-        while (std::getline(Stream, Line))
+        if (const int Status = FetchPinnedDependencies(ProbeDir / "DEPENDENCIES.lock", Deps, Opts); Status != Ok)
         {
-            if (Line.empty() || Line[0] == '#') continue;
-            std::istringstream Fields(Line);
-            std::string NameAndUrl, Commit;
-            Fields >> NameAndUrl >> Commit;
-            const auto Split = NameAndUrl.find('=');
-            if (Split == std::string::npos || Commit.size() != 40)
-            {
-                std::cerr << "error: malformed probe dependency line: " << Line << "\n";
-                return LockError;
-            }
-            const std::string Name = NameAndUrl.substr(0, Split);
-            const std::string Url = NameAndUrl.substr(Split + 1);
-            const std::string Target = Quote((Deps / Name).string());
-            if (!fs::exists(Deps / Name / ".git") &&
-                Run("git init -q " + Target + " && git -C " + Target + " remote add origin " + Url, Opts) != 0)
-            {
-                return CommandFailed;
-            }
-            if (Run("git -C " + Target + " fetch -q --depth 1 origin " + Commit, Opts) != 0 ||
-                Run("git -C " + Target + " checkout -q --detach " + Commit, Opts) != 0)
-            {
-                return CommandFailed;
-            }
+            return Status;
         }
         const fs::path Build = Opts.BuildDir / "azcore-probe";
         if (Run("cmake -S " + Quote(ProbeDir.string()) + " -B " + Quote(Build.string()) +
@@ -436,7 +551,7 @@ namespace
 
     void PrintUsage()
     {
-        std::cout << "usage: DarkArisenO3DE <doctor|lock|bootstrap|configure|build|test|package|import-glb|probe> [--repo=PATH]\n"
+        std::cout << "usage: DarkArisenO3DE <doctor|lock|bootstrap|configure|build|test|package|import-glb|probe|shader-check> [--repo=PATH]\n"
                      "       [--engine=PATH] [--build-dir=PATH] [--config=profile|debug|release] [--dry-run]\n"
                      "       import-glb --manifest=PATH --glb=PATH [--min-vertices=N]\n"
                      "O3DE_ENGINE_ROOT overrides the default engine location ("
@@ -497,6 +612,7 @@ int main(int ArgumentCount, char** Arguments)
     if (Opts.Command == "package") return CommandPackage(Opts, Lock);
     if (Opts.Command == "import-glb") return CommandImportGlb(Opts);
     if (Opts.Command == "probe") return CommandProbe(Opts, Lock);
+    if (Opts.Command == "shader-check") return CommandShaderCheck(Opts);
     PrintUsage();
     return Usage;
 }

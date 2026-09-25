@@ -1,0 +1,50 @@
+/*
+ * Dark Arisen ocean surface for Atom.
+ *
+ * Must stay numerically identical to DarkArisen::Core::OceanSurface (Core/Source/Ocean.cpp):
+ * gameplay samples the same waves for swimming, buoyancy and boarding, so the hull the player
+ * sees rides exactly the surface it is simulated on. Constants come from
+ * OceanSurface::PackShaderConstants(): 8 floats per wave =
+ *   [dirX, dirY, amplitude, k] [omega, Q, phase, 0]
+ */
+#pragma once
+
+#define DARKARISEN_OCEAN_WAVE_COUNT 8
+
+struct OceanSurfacePoint
+{
+    float3 m_position; // displaced world position (Z up)
+    float3 m_normal;   // unit normal
+};
+
+// waves[2 * i] = (dirX, dirY, amplitude, k), waves[2 * i + 1] = (omega, Q, phase, 0)
+OceanSurfacePoint EvaluateGerstnerOcean(float2 stillXY, float oceanTime, float4 waves[2 * DARKARISEN_OCEAN_WAVE_COUNT])
+{
+    OceanSurfacePoint result;
+    result.m_position = float3(stillXY, 0.0);
+    float3 normal = float3(0.0, 0.0, 1.0);
+
+    [unroll]
+    for (int i = 0; i < DARKARISEN_OCEAN_WAVE_COUNT; ++i)
+    {
+        const float2 direction = waves[2 * i].xy;
+        const float amplitude = waves[2 * i].z;
+        const float k = waves[2 * i].w;
+        const float omega = waves[2 * i + 1].x;
+        const float steepness = waves[2 * i + 1].y;
+        const float phase = waves[2 * i + 1].z;
+
+        const float theta = k * dot(direction, stillXY) - omega * oceanTime + phase;
+        const float c = cos(theta);
+        const float s = sin(theta);
+
+        result.m_position.xy += steepness * amplitude * c * direction;
+        result.m_position.z += amplitude * s;
+
+        const float ka = k * amplitude;
+        normal.xy -= direction * ka * c;
+        normal.z -= steepness * ka * s;
+    }
+    result.m_normal = normalize(normal);
+    return result;
+}

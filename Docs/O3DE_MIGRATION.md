@@ -27,7 +27,7 @@ SOURCE CREATED, IMPORT READY, PARTIAL, BLOCKED, NOT DONE.
 | Sky, clouds, atmosphere, fog | `SkyAtmosphere`, `Stars`, Atom deferred height fog (noise-textured) | no volumetric-cloud system found; storm skies need custom work |
 | Global illumination | `DiffuseProbeGrid` | usable, hardware RT path |
 | Hardware ray tracing | Atom `RayTracing`, `SpecularReflections` features | present; cost must be measured |
-| **Ocean / water** | **no water or ocean Gem** | **custom Atom feature processor required** (FFT or Gerstner ocean, shore foam, underwater, buoyancy queries). Not a fundamental blocker, but the largest single rendering work item. |
+| **Ocean / water** | **no water or ocean Gem** | custom work required. Started: `Core::OceanSurface` (8 Gerstner waves from wind, Pierson-Moskowitz Hs, loop-free, invertible sampling, hull heave/pitch/roll), `OceanComponent`, ship riding the shared sea (VERIFIED on AzCore), and `GerstnerOcean.azsli` compiled by O3DE azslc 1.8.22 to HLSL and by glslang to SPIR-V. Still NOT DONE: Atom render pass/material, shore foam, underwater, reflections, visual acceptance on a GPU. |
 | DLSS / FSR 2+ / XeSS | **none integrated** (only FidelityFX SPD downsampler) | any upscaler is a separate, legally checked integration |
 | Characters/animation | `EMotionFX`, `MotionMatching`, `NvCloth`, `AtomTressFX` | usable |
 | AI navigation | `RecastNavigation` | usable |
@@ -173,6 +173,7 @@ Build/ops/DarkArisenO3DE bootstrap              # clone + verify pinned SHA + LF
 Build/ops/DarkArisenO3DE configure && Build/ops/DarkArisenO3DE build
 Build/ops/DarkArisenO3DE test                   # Core tests always; O3DE tests when configured
 Build/ops/DarkArisenO3DE import-glb --manifest=... --glb=...
-Build/ops/DarkArisenO3DE probe                  # AzCore from pinned sources + campaign runtime probe
+Build/ops/DarkArisenO3DE probe                  # AzCore from pinned sources + campaign/gameplay runtime probes
+Build/ops/DarkArisenO3DE shader-check           # O3DE azslc 1.8.22 + glslang: AZSL -> HLSL -> SPIR-V
 ```
 `O3DE_ENGINE_ROOT` overrides the engine location (`/opt/dark-arisen/o3de`, `C:\DarkArisenEngine\o3de`).

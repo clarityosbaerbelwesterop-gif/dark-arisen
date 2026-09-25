@@ -101,6 +101,7 @@ add_executable(DarkArisenGameplayProbe
     ${GEM}/Source/Combat/CombatantComponent.cpp
     ${GEM}/Source/Combat/EnemyBrainComponent.cpp
     ${GEM}/Source/Ships/ShipVoyageComponent.cpp
+    ${GEM}/Source/World/OceanComponent.cpp
     ${AZF}/AzFramework/API/ApplicationAPI.cpp
     ${AZF}/AzFramework/IO/LocalFileIO.cpp
     ${AZF}/Platform/Common/UnixLike/AzFramework/IO/LocalFileIO_UnixLike.cpp
