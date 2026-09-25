@@ -18,6 +18,12 @@ namespace DarkArisen::Core::DesignLaws
 
     inline constexpr float InteractionPromptRangeMetres = 1.4f;
 
+    /**
+     * Death returns Jake to the last checkpoint after the death beat (mechanics/traversal.md 7.4:
+     * two-second death animation, then respawn at last checkpoint). DesignAuthority: no failure screens.
+     */
+    inline constexpr float DeathToRespawnSeconds = 2.0f;
+
     inline constexpr float RacheTimeScale = 0.30f;
     inline constexpr float RacheMaximumRealSeconds = 5.0f;
 

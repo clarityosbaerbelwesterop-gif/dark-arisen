@@ -16,6 +16,8 @@ namespace DarkArisen
         virtual ~StoryTriggerRequests() = default;
         /** Called by the player's interact input within the 1.4 m prompt range. */
         virtual bool Interact(const AZStd::string& actorId) = 0;
+        /** A body entered the trigger volume (PhysX trigger event, or a swimmer placed inside it). */
+        virtual bool NotifyBodyEntered(AZ::EntityId other) = 0;
     };
     using StoryTriggerRequestBus = AZ::EBus<StoryTriggerRequests>;
 
@@ -34,8 +36,8 @@ namespace DarkArisen
         static void Reflect(AZ::ReflectContext* context);
         static void GetDependentServices(AZ::ComponentDescriptor::DependencyArrayType& dependent);
 
-        /** A body entered the trigger volume (PhysX trigger event); only Jake fires the beat. */
-        bool NotifyBodyEntered(AZ::EntityId other);
+        /** Only Jake fires the beat; interact-only triggers ignore bodies. */
+        bool NotifyBodyEntered(AZ::EntityId other) override;
 
     protected:
         void Activate() override;

@@ -39,6 +39,7 @@ namespace DarkArisen
         Core::SwimPace GetSwimPace() const override { return m_lastPace; }
         void SetBreathTier(Core::BreathTier tier) override { m_breath.SetTier(tier); }
         void ResetForRespawn() override;
+        void RefreshWaterVolumes() override;
 
     protected:
         void Activate() override;

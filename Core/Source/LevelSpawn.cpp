@@ -21,7 +21,9 @@ namespace DarkArisen::Core
             if (Checkpoint >= 0) return Checkpoint;
         }
         const WaterRecoveryState Recovery = State.Opening.RecoveryState;
-        if (Recovery == WaterRecoveryState::Overboard || Recovery == WaterRecoveryState::Swimming)
+        // Until the beach is reached Jake is still in the sea: dying never shortcuts the swim.
+        if (Recovery == WaterRecoveryState::Overboard || Recovery == WaterRecoveryState::Swimming ||
+            Recovery == WaterRecoveryState::OuterReef)
         {
             const int Overboard = Find([](const SpawnPoint& Point) { return Point.Rule == SpawnRule::OpeningOverboard; });
             if (Overboard >= 0) return Overboard;

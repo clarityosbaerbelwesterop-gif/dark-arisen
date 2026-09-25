@@ -76,7 +76,8 @@ probe loads those prefabs, deserialises every Dark Arisen game component with O3
 on the real adapters: family talk, cargo manifest, black sails, three boarders released and defeated,
 Draven, The Taking (Marc and Denise fall, Ethan seized alive), map transition, arrival in the water,
 Outer Reef swim, walk-out at wading depth, beach, camp smoke (chapter-boundary autosave on disk) and
-travel to Driftwood Camp. Result: 38/38. Stand-ins, stated in the probe: transforms, a character
+travel to Driftwood Camp, plus two deaths: drowning in Undertow returns Jake to the overboard arrival,
+swimming again with full vitals; dying after the recovery returns him to the beach checkpoint. Result: 41/41. Stand-ins, stated in the probe: transforms, a character
 controller that integrates velocity over a beach ground profile, point-in-box triggers on the
 materialised trigger colliders, the game entity context and the `LoadLevel` console command.
 Editor loading, Asset Processor output and PhysX behaviour of these prefabs are RUNTIME VERIFY PENDING. No PhysX scene exists in the probe,
@@ -123,7 +124,7 @@ Engine/O3DE/DarkArisen/Assets ──► Asset Processor   │  StoryTriggerCompo
 | Melee sweep, targeting | `CombatComponent::TraceAndResolvePendingHit` | UE-coupled | IMPLEMENTED (PhysX sphere cast) / PhysX RUNTIME VERIFY PENDING; combat adapter VERIFIED on AzCore |
 | Jake movement/input | `JakeCharacter.cpp` | UE-coupled | PARTIAL: input, run/sprint, combat, surface swimming; camera, lock-on, diving NOT DONE |
 | Swimming, currents, breath, drowning | `Components/WaterBreathComponent.cpp`, `Opening/OpeningWaterCurrentVolume.cpp` | engine-independent rules, UE-coupled movement | IMPLEMENTED (Core `BreathModel`, `SwimModel`, design speeds 1/1.5/2 m/s); adapters VERIFIED on AzCore; PhysX trigger volumes RUNTIME VERIFY PENDING; swim stamina values PROVISIONAL (section 6, item 9) |
-| Player death and checkpoint respawn | `AJakeCharacter::RestoreAtCheckpoint` | UE-coupled | NOT DONE in O3DE: `RecoverAtCheckpoint` / `ResetForRespawn` exist but nothing calls them yet |
+| Player death and checkpoint respawn | `AJakeCharacter::RestoreAtCheckpoint` (only reachable through an unplaced trigger) | UE-coupled | IMPLEMENTED: 2 s death beat, checkpoint or legal level spawn, full vitals, back in the water when placed inside a volume, no failure screen; VERIFIED on AzCore (level probe) |
 | Enemy AI (boarders, Holders, Dream Ethan, Draven) | `AI/*`, `Bosses/*`, `DuelingEnemyCharacter` | engine-independent decisions | IMPLEMENTED (Core `EnemyBrain`, phases, telegraphs, boss defeat to story); adapter VERIFIED on AzCore; PhysX movement/line of sight RUNTIME VERIFY PENDING; Draven still lacks distinct moves beyond phases (gap carried over from UE) |
 | La Liberación voyage | `Ship/ShipVoyageComponent.cpp` | engine-independent model | IMPLEMENTED (Core); adapter VERIFIED on AzCore (ownership gate, sailing); buoyancy/collision sweep NOT DONE |
 | Ethan canon guards | scattered validators | engine-independent | IMPLEMENTED: real Ethan can never be hostile, damaged or a boss; `boss.dream_ethan` is separate |
@@ -186,7 +187,14 @@ Engine/O3DE/DarkArisen/Assets ──► Asset Processor   │  StoryTriggerCompo
     volumes 6 × 6 × 4 m; family members use a generated placeholder figure and the cargo manifest a
     placeholder crate (no greybox exists); Jake and the boarders use static bind poses of their skinned
     greyboxes; the follow camera is a child at the Unreal boom length (camera system NOT DONE).
-14. **CI.** PR #52 made the UE jobs unconditional on self-hosted `ue5.8` runners that do not exist, so
+14. **Death was a dead end in Unreal.** `OnCharacterDied` disables input and movement; recovery exists
+    only as an `OpeningEventTrigger` action that no map places. O3DE: `PlayerSpawnComponent` respawns
+    after `DesignLaws::DeathToRespawnSeconds` (traversal.md 7.4) at the checkpoint, never shortcutting
+    the swim (Outer Reef still counts as the sea), and `SwimmerComponent::RefreshWaterVolumes` puts a
+    body placed inside water back into swimming, since trigger events only report crossings.
+15. **Windows.** The first GitHub run on Windows (manual dispatch, 2026-09-25) found the tool tests
+    deleting a directory with a file still open; fixed, and the materialiser closes files before writing.
+16. **CI.** PR #52 made the UE jobs unconditional on self-hosted `ue5.8` runners that do not exist, so
    those jobs can only queue or be cancelled. The new `verify-engine-neutral` job gives real, executed
    C++ evidence on every PR.
 

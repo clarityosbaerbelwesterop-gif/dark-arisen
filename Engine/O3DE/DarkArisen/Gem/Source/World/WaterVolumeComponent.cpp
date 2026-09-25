@@ -24,7 +24,8 @@ namespace DarkArisen
             ->Field("CurrentAcceleration", &WaterVolumeComponent::m_currentAcceleration)
             ->Field("UseOceanSurface", &WaterVolumeComponent::m_useOceanSurface)
             ->Field("SurfaceOffset", &WaterVolumeComponent::m_surfaceOffset)
-            ->Field("ShallowExit", &WaterVolumeComponent::m_shallowExit);
+            ->Field("ShallowExit", &WaterVolumeComponent::m_shallowExit)
+            ->Field("HalfExtents", &WaterVolumeComponent::m_halfExtents);
         if (AZ::EditContext* editContext = serializeContext->GetEditContext())
         {
             editContext->Class<WaterVolumeComponent>("Dark Arisen Water Volume", "Swim water with an optional current.")
@@ -37,7 +38,9 @@ namespace DarkArisen
                 ->DataElement(AZ::Edit::UIHandlers::Default, &WaterVolumeComponent::m_surfaceOffset, "Surface Offset (m)",
                     "Surface above this entity when there is no ocean")
                 ->DataElement(AZ::Edit::UIHandlers::Default, &WaterVolumeComponent::m_shallowExit, "Shallow Exit",
-                    "Leaving towards wadeable ground returns to walking");
+                    "Leaving towards wadeable ground returns to walking")
+                ->DataElement(AZ::Edit::UIHandlers::Default, &WaterVolumeComponent::m_halfExtents, "Half Extents (m)",
+                    "Same box as the trigger collider; used when a swimmer is placed inside");
         }
     }
 
@@ -69,8 +72,20 @@ namespace DarkArisen
         SwimRequestBus::Event(other, &SwimRequests::OnExitedWaterVolume, GetEntityId());
     }
 
+    void WaterVolumeComponent::AppendIfContains(const AZ::Vector3& point, AZStd::vector<WaterVolumeInfo>& volumes) const
+    {
+        AZ::Vector3 center = AZ::Vector3::CreateZero();
+        AZ::TransformBus::EventResult(center, GetEntityId(), &AZ::TransformBus::Events::GetWorldTranslation);
+        const AZ::Vector3 offset = (point - center).GetAbs();
+        if (offset.IsLessEqualThan(m_halfExtents) && !m_halfExtents.IsZero())
+        {
+            volumes.push_back(BuildInfo());
+        }
+    }
+
     void WaterVolumeComponent::Activate()
     {
+        WaterVolumeQueryBus::Handler::BusConnect();
         m_enterHandler = AzPhysics::SimulatedBodyEvents::OnTriggerEnter::Handler(
             [this]([[maybe_unused]] AzPhysics::SimulatedBodyHandle bodyHandle, const AzPhysics::TriggerEvent& event)
             {
@@ -104,6 +119,7 @@ namespace DarkArisen
 
     void WaterVolumeComponent::Deactivate()
     {
+        WaterVolumeQueryBus::Handler::BusDisconnect();
         m_exitHandler.Disconnect();
         m_enterHandler.Disconnect();
     }

@@ -1,5 +1,7 @@
 #include "SwimmerComponent.h"
 
+#include "Story/StoryTriggerComponent.h"
+
 #include <DarkArisen/CombatBus.h>
 #include <DarkArisen/OceanBus.h>
 
@@ -133,6 +135,40 @@ namespace DarkArisen
         m_volumes.clear();
         m_breath.ResetForRespawn();
         m_intent = AZ::Vector2::CreateZero();
+    }
+
+    void SwimmerComponent::RefreshWaterVolumes()
+    {
+        AZ::Vector3 position = AZ::Vector3::CreateZero();
+        AZ::TransformBus::EventResult(position, GetEntityId(), &AZ::TransformBus::Events::GetWorldTranslation);
+        AZStd::vector<WaterVolumeInfo> containing;
+        WaterVolumeQueryBus::Broadcast(&WaterVolumeQueries::AppendIfContains, position, containing);
+        // Volumes no longer containing the body are left; new ones are entered (duplicates are merged).
+        AZStd::vector<AZ::EntityId> stale;
+        for (const WaterVolumeInfo& volume : m_volumes)
+        {
+            const bool still = AZStd::any_of(containing.begin(), containing.end(),
+                [&volume](const WaterVolumeInfo& other) { return other.m_volume == volume.m_volume; });
+            if (!still)
+            {
+                stale.push_back(volume.m_volume);
+            }
+        }
+        for (const AZ::EntityId& volume : stale)
+        {
+            OnExitedWaterVolume(volume);
+        }
+        for (const WaterVolumeInfo& volume : containing)
+        {
+            const bool known = AZStd::any_of(m_volumes.begin(), m_volumes.end(),
+                [&volume](const WaterVolumeInfo& other) { return other.m_volume == volume.m_volume; });
+            OnEnteredWaterVolume(volume);
+            if (!known)
+            {
+                // The volume's story beat (e.g. entering the water) is gated and one-shot, so telling it is safe.
+                StoryTriggerRequestBus::Event(volume.m_volume, &StoryTriggerRequests::NotifyBodyEntered, GetEntityId());
+            }
+        }
     }
 
     void SwimmerComponent::EnterWater()

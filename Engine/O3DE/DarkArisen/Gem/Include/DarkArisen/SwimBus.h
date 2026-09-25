@@ -7,6 +7,7 @@
 #include <AzCore/Math/Vector2.h>
 #include <AzCore/Math/Vector3.h>
 #include <AzCore/RTTI/RTTI.h>
+#include <AzCore/std/containers/vector.h>
 
 #include <DarkArisen/Core/Water.h>
 
@@ -46,7 +47,23 @@ namespace DarkArisen
 
         /** Checkpoint respawn: out of the water, full breath (Unreal RestoreAtCheckpoint parity). */
         virtual void ResetForRespawn() = 0;
+
+        /**
+         * Re-reads which water volumes contain the swimmer after a teleport or respawn: trigger
+         * events only report crossings, so a body placed inside a volume is otherwise never told.
+         */
+        virtual void RefreshWaterVolumes() = 0;
     };
 
     using SwimRequestBus = AZ::EBus<SwimRequests>;
+
+    /** Every active water volume answers containment queries. Broadcast. */
+    class WaterVolumeQueries : public AZ::EBusTraits
+    {
+    public:
+        virtual ~WaterVolumeQueries() = default;
+        virtual void AppendIfContains(const AZ::Vector3& point, AZStd::vector<WaterVolumeInfo>& volumes) const = 0;
+    };
+
+    using WaterVolumeQueryBus = AZ::EBus<WaterVolumeQueries>;
 }

@@ -788,6 +788,7 @@ namespace DarkArisen::Tools
                     Water.Members["UseOceanSurface"] = JsonBool(true);
                     const JsonValue* Shallow = Volume.Find("shallowExit");
                     Water.Members["ShallowExit"] = JsonBool(Shallow && Shallow->Type == JsonValue::Kind::Bool && Shallow->Boolean);
+                    Water.Members["HalfExtents"] = JsonVector(HalfSize);
                     AddGame(Prefab, Entity, WaterVolumeComponentTypeId, "WaterVolumeComponent", std::move(Water));
                     if (const JsonValue* Signal = Volume.Find("signal"))
                     {
@@ -896,9 +897,15 @@ namespace DarkArisen::Tools
         for (const MaterializedFile& File : Result.Files)
         {
             const fs::path Target = RepoRoot / File.RelativePath;
-            std::ifstream Existing(Target, std::ios::binary);
-            const std::string Current = Existing ? std::string((std::istreambuf_iterator<char>(Existing)), std::istreambuf_iterator<char>()) : std::string();
-            const bool Same = Existing && Current == File.Content;
+            bool Exists = false;
+            std::string Current;
+            {
+                // Closed before any write: Windows does not replace files that are still open.
+                std::ifstream Existing(Target, std::ios::binary);
+                Exists = static_cast<bool>(Existing);
+                if (Exists) Current.assign((std::istreambuf_iterator<char>(Existing)), std::istreambuf_iterator<char>());
+            }
+            const bool Same = Exists && Current == File.Content;
             if (Same)
             {
                 continue;

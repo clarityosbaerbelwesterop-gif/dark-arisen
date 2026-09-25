@@ -188,6 +188,10 @@ TEST_CASE("Level spawn: checkpoint, then overboard arrival, then the level arriv
     CHECK_EQ(ResolveSpawn(State, Driftwood), 0);
     State.Opening.RecoveryState = WaterRecoveryState::Overboard;
     CHECK_EQ(ResolveSpawn(State, Driftwood), 1);  // arriving over the rail: in the water, not on the beach
+    State.Opening.RecoveryState = WaterRecoveryState::OuterReef;
+    CHECK_EQ(ResolveSpawn(State, Driftwood), 1);  // dying past the reef does not skip the rest of the swim
+    State.Opening.RecoveryState = WaterRecoveryState::BeachCrawl;
+    CHECK_EQ(ResolveSpawn(State, Driftwood), 0);
     State.Opening.RecoveryState = WaterRecoveryState::Recovered;
     State.SpawnId = "Spawn.Moran.DriftwoodBeach.Recovery";
     CHECK_EQ(ResolveSpawn(State, Driftwood), 2);

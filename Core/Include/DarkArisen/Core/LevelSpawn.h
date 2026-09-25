@@ -24,7 +24,8 @@ namespace DarkArisen::Core
 
     /**
      * Picks where the player enters a level when no map-local transform of this level was saved:
-     * the campaign checkpoint's spawn, then the overboard arrival while Jake is still in the water,
+     * the campaign checkpoint's spawn, then the overboard arrival while Jake is still in the sea
+     * (overboard, swimming or at the Outer Reef),
      * then the level's arrival point. Returns -1 when the level has no legal spawn (fail closed).
      */
     int ResolveSpawn(const CampaignState& State, const std::vector<SpawnPoint>& Points);

@@ -92,7 +92,8 @@ int main()
 
     // End-to-end import with provenance into a scratch repository layout.
     const fs::path Root = fs::temp_directory_path() / "darkarisen-asset-pipeline-test";
-    fs::remove_all(Root);
+    std::error_code Stale;
+    fs::remove_all(Root, Stale);
     const fs::path Glb = Root / "download" / "ship.glb";
     Write(Glb, Release);
     const std::string Manifest = std::string(R"({"assetId":"ship.test.alpha.higgsfield3d.r1","sourceTool":"Higgsfield 3D Jutsu",)") +
@@ -110,8 +111,12 @@ int main()
     Check(fs::exists(Result.Destination) && fs::file_size(Result.Destination) == Release.size(), "GLB copied");
     Check(Result.Sha256 == Sha256Hex(Release), "provenance sha256");
     JsonValue Provenance;
-    std::ifstream ProvenanceStream(Result.ProvenancePath);
-    const std::string ProvenanceText((std::istreambuf_iterator<char>(ProvenanceStream)), std::istreambuf_iterator<char>());
+    std::string ProvenanceText;
+    {
+        // Closed before later imports and the clean-up: Windows cannot replace or delete open files.
+        std::ifstream ProvenanceStream(Result.ProvenancePath);
+        ProvenanceText.assign((std::istreambuf_iterator<char>(ProvenanceStream)), std::istreambuf_iterator<char>());
+    }
     Check(JsonReader::Parse(ProvenanceText, Provenance, Error), "provenance is valid JSON");
     Check(Provenance.Find("provider") && Provenance.Find("provider")->Text == "Higgsfield", "provenance provider");
 
@@ -127,7 +132,8 @@ int main()
     Write(Glb, Release + "x");
     Check(!ImportProviderGlb(Request, Result, Error) && Error.find("size") != std::string::npos, "size mismatch rejected");
 
-    fs::remove_all(Root);
+    std::error_code Ignored;
+    fs::remove_all(Root, Ignored);
     std::cout << (Failures == 0 ? "asset pipeline tests passed\n" : "asset pipeline tests FAILED\n");
     return Failures == 0 ? 0 : 1;
 }

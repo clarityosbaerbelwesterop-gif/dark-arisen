@@ -4,7 +4,12 @@
 #include <AzCore/Serialization/EditContext.h>
 #include <AzCore/Serialization/SerializeContext.h>
 
+#include <DarkArisen/CombatBus.h>
+#include <DarkArisen/SwimBus.h>
+
 #include <DarkArisen/Core/CampaignRuntime.h>
+#include <DarkArisen/Core/Combat.h>
+#include <DarkArisen/Core/DesignLaws.h>
 #include <DarkArisen/Core/LevelSpawn.h>
 
 namespace DarkArisen
@@ -48,12 +53,49 @@ namespace DarkArisen
 
     void PlayerSpawnComponent::Activate()
     {
+        m_deathTimer = -1.0f;
         CampaignNotificationBus::Handler::BusConnect();
+        AZ::TickBus::Handler::BusConnect();
     }
 
     void PlayerSpawnComponent::Deactivate()
     {
+        AZ::TickBus::Handler::BusDisconnect();
         CampaignNotificationBus::Handler::BusDisconnect();
+    }
+
+    void PlayerSpawnComponent::OnTick(const float deltaTime, [[maybe_unused]] AZ::ScriptTimePoint time)
+    {
+        bool dead = false;
+        CombatRequestBus::EventResult(dead, m_player, &CombatRequests::IsDead);
+        if (!dead)
+        {
+            m_deathTimer = -1.0f;
+            return;
+        }
+        if (m_deathTimer < 0.0f)
+        {
+            m_deathTimer = Core::DesignLaws::DeathToRespawnSeconds;  // the death beat plays out first
+            return;
+        }
+        m_deathTimer -= deltaTime;
+        if (m_deathTimer > 0.0f)
+        {
+            return;
+        }
+        CampaignRequests* campaign = CampaignInterface::Get();
+        if (!campaign)
+        {
+            return;
+        }
+        // Out of the water and back to full vitals before the move, so no trigger sees a dead swimmer.
+        SwimRequestBus::Event(m_player, &SwimRequests::ResetForRespawn);
+        CombatRequestBus::Event(m_player, &CombatRequests::RecoverAtCheckpoint, 1.0f, 1.0f);
+        if (!PlacePlayer(campaign->GetCurrentLevelName(), true).empty())
+        {
+            ++m_respawns;
+        }
+        m_deathTimer = -1.0f;
     }
 
     void PlayerSpawnComponent::OnRestoreWorldState(const AZStd::string& levelName)
@@ -61,7 +103,7 @@ namespace DarkArisen
         PlacePlayer(levelName);
     }
 
-    AZStd::string PlayerSpawnComponent::PlacePlayer(const AZStd::string& levelName)
+    AZStd::string PlayerSpawnComponent::PlacePlayer(const AZStd::string& levelName, const bool respawning)
     {
         CampaignRequests* campaign = CampaignInterface::Get();
         if (!campaign)
@@ -70,7 +112,7 @@ namespace DarkArisen
         }
         const Core::CampaignState& state = campaign->GetCampaign().State();
         const Core::PlayerRuntimeSnapshot& saved = state.PlayerRuntime;
-        if (saved.Valid && !saved.SourceLevel.empty() && saved.SourceLevel == levelName.c_str())
+        if (!respawning && saved.Valid && !saved.SourceLevel.empty() && saved.SourceLevel == levelName.c_str())
         {
             return {};  // the combatant restores the saved map-local transform
         }
@@ -91,6 +133,7 @@ namespace DarkArisen
         AZ::Transform anchor = AZ::Transform::CreateIdentity();
         AZ::TransformBus::EventResult(anchor, spawn.m_anchor, &AZ::TransformBus::Events::GetWorldTM);
         AZ::TransformBus::Event(m_player, &AZ::TransformBus::Events::SetWorldTM, anchor);
+        SwimRequestBus::Event(m_player, &SwimRequests::RefreshWaterVolumes);  // placed inside water: swim
         return spawn.m_spawnId;
     }
 }

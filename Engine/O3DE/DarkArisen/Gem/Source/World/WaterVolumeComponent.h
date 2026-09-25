@@ -13,7 +13,9 @@ namespace DarkArisen
      * half). Needs a PhysX trigger collider on the same entity. Story beats such as the water
      * entry or the Outer Reef go on a StoryTriggerComponent on the same entity.
      */
-    class WaterVolumeComponent : public AZ::Component
+    class WaterVolumeComponent
+        : public AZ::Component
+        , protected WaterVolumeQueryBus::Handler
     {
     public:
         AZ_COMPONENT_DECL(WaterVolumeComponent);
@@ -29,6 +31,7 @@ namespace DarkArisen
     protected:
         void Activate() override;
         void Deactivate() override;
+        void AppendIfContains(const AZ::Vector3& point, AZStd::vector<WaterVolumeInfo>& volumes) const override;
 
     private:
         /** m/s^2. ContentSource volumes author cm/s^2. */
@@ -37,6 +40,8 @@ namespace DarkArisen
         /** Surface height above this entity when there is no ocean (enclosed water). */
         float m_surfaceOffset = 0.0f;
         bool m_shallowExit = false;
+        /** Axis-aligned half size matching the trigger collider, for containment queries. */
+        AZ::Vector3 m_halfExtents = AZ::Vector3::CreateZero();
 
         AzPhysics::SimulatedBodyEvents::OnTriggerEnter::Handler m_enterHandler;
         AzPhysics::SimulatedBodyEvents::OnTriggerExit::Handler m_exitHandler;

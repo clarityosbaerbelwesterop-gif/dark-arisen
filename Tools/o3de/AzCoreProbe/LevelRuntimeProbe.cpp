@@ -566,6 +566,25 @@ int main(int argc, char** argv)
     DarkArisen::SwimRequestBus::EventResult(swimming, swimmer, &DarkArisen::SwimRequests::IsSwimming);
     Check(swimming, "Current.A volume: Jake swims");
     Check(campaign->GetOpening().Progress().Location == DarkArisen::Core::OpeningLocation::OpenWater, "entered water signalled");
+
+    // Death in the water: after the two-second death beat Jake is back at the overboard arrival,
+    // swimming again with full vitals (the trigger never re-fires for a body placed inside it).
+    AZ::TransformBus::Event(swimmer, &AZ::TransformBus::Events::SetWorldTranslation, AZ::Vector3(-60.0f, -5.0f, -1.4f));
+    if (DarkArisen::Core::Combatant* body = CombatantOf(swimmer))
+    {
+        body->Health.ApplyDamage(10000.0f, DarkArisen::Core::RallyDamageClass::Environmental);
+    }
+    Tick(level, swimmer, 1.5f);
+    bool dead = false;
+    DarkArisen::CombatRequestBus::EventResult(dead, swimmer, &DarkArisen::CombatRequests::IsDead);
+    Check(dead, "death beat: still down 1.5 s after dying");
+    Tick(level, swimmer, 1.0f);
+    DarkArisen::CombatRequestBus::EventResult(dead, swimmer, &DarkArisen::CombatRequests::IsDead);
+    DarkArisen::SwimRequestBus::EventResult(swimming, swimmer, &DarkArisen::SwimRequests::IsSwimming);
+    float health = 0.0f;
+    DarkArisen::CombatRequestBus::EventResult(health, swimmer, &DarkArisen::CombatRequests::GetHealthFraction);
+    Check(!dead && health == 1.0f && swimming && Position(swimmer).GetDistance(Position(level.Id("Anchor WaterEntry"))) < 3.0f,
+        "respawn at the overboard arrival, full health, swimming again (no failure screen)");
     const AZ::Vector3 waypoints[] = {Position(level.Id("Water Reef.SafeGap")), Position(level.Id("Water Shallows")), AZ::Vector3(-11.0f, 0.0f, 0.0f)};
     for (const AZ::Vector3& waypoint : waypoints)
     {
@@ -599,6 +618,15 @@ int main(int argc, char** argv)
         autosave = autosave || entry.path().extension() == ".dasave";
     }
     Check(autosave, "chapter 1 -> 2 boundary wrote an autosave through O3DE LocalFileIO");
+    // Death after the recovery: back at the beach checkpoint.
+    if (DarkArisen::Core::Combatant* body = CombatantOf(swimmer))
+    {
+        body->Health.ApplyDamage(10000.0f);
+    }
+    Tick(level, swimmer, 2.5f);
+    DarkArisen::CombatRequestBus::EventResult(dead, swimmer, &DarkArisen::CombatRequests::IsDead);
+    Check(!dead && Position(swimmer).GetDistance(Position(level.Id("Anchor Spawn.Moran.DriftwoodBeach.Recovery"))) < 0.5f,
+        "respawn at the Driftwood Beach checkpoint");
     Walk(level, swimmer, Position(level.Id("Beat Route Driftwood Camp")));
     Tick(level, swimmer, 0.2f);
     Check(runtime->HasFact("World.DriftwoodCampReached") && g_requestedLevel == "L_DriftwoodCamp", "camp route: travel to L_DriftwoodCamp");
