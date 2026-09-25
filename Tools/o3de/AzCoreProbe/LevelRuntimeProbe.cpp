@@ -27,12 +27,15 @@
 #include <AzFramework/Entity/GameEntityContextBus.h>
 #include <AzFramework/IO/LocalFileIO.h>
 
+#include <DarkArisen/CameraBus.h>
 #include <DarkArisen/CampaignBus.h>
 #include <DarkArisen/CombatBus.h>
 #include <DarkArisen/OceanBus.h>
 #include <DarkArisen/SwimBus.h>
 #include "Combat/CombatantComponent.h"
 #include "Combat/EnemyBrainComponent.h"
+#include "Player/CameraRigComponent.h"
+#include "Player/LockOnComponent.h"
 #include "Player/PlayerSpawnComponent.h"
 #include "Player/SwimmerComponent.h"
 #include "Story/CampaignSystemComponent.h"
@@ -194,6 +197,8 @@ namespace
         if (type == azrtti_typeid<SwimmerComponent>()) return aznew SwimmerComponent();
         if (type == azrtti_typeid<WaterVolumeComponent>()) return aznew WaterVolumeComponent();
         if (type == azrtti_typeid<OceanComponent>()) return aznew OceanComponent();
+        if (type == azrtti_typeid<CameraRigComponent>()) return aznew CameraRigComponent();
+        if (type == azrtti_typeid<LockOnComponent>()) return aznew LockOnComponent();
         return nullptr;  // JakeInputComponent needs the input system; it is compile-checked instead.
     }
 
@@ -469,6 +474,7 @@ int main(int argc, char** argv)
              DarkArisen::OpeningDirectorComponent::CreateDescriptor(), DarkArisen::MapTransitionComponent::CreateDescriptor(),
              DarkArisen::PlayerSpawnComponent::CreateDescriptor(), DarkArisen::SwimmerComponent::CreateDescriptor(),
              DarkArisen::WaterVolumeComponent::CreateDescriptor(), DarkArisen::OceanComponent::CreateDescriptor(),
+             DarkArisen::CameraRigComponent::CreateDescriptor(), DarkArisen::LockOnComponent::CreateDescriptor(),
              ProbeSupport::ProbeTransformComponent::CreateDescriptor(), ProbeSupport::ProbeCharacterComponent::CreateDescriptor()})
     {
         app.RegisterComponentDescriptor(componentDescriptor);
@@ -494,7 +500,7 @@ int main(int argc, char** argv)
     Check(open("L_HarlowOpening", level), "L_HarlowOpening.prefab parsed");
     std::printf("  %d game components loaded, %d rejected, %d engine components counted\n", level.m_gameComponents,
         level.m_rejectedComponents, level.m_engineComponents);
-    Check(level.m_gameComponents == 16 && level.m_rejectedComponents == 0,
+    Check(level.m_gameComponents == 18 && level.m_rejectedComponents == 0,
         "Harlow: every game component deserialised by O3DE's JSON serializer with no unknown fields");
     {
         // The drawn ocean (material written by the materialiser) and the simulated one are the same sea.
@@ -546,6 +552,24 @@ int main(int argc, char** argv)
     Check(campaign->GetOpening().Progress().RaidState == DarkArisen::Core::OpeningRaidState::FirstEncounter, "boarding encounter running");
     Check(Position(boarders[0]).GetY() > 0.0f && Position(boarders[2]).GetY() < 0.0f,
         "Harlow: port boarders on +Y (left when facing the bow), starboard on -Y");
+
+    // Lock-on and camera: face the bow (+X), lock the best boarder in front, the camera turns to it.
+    AZ::TransformBus::Event(jake, &AZ::TransformBus::Events::SetWorldRotationQuaternion,
+        AZ::Quaternion::CreateRotationZ(AZ::DegToRad(-90.0f)));
+    bool locked = false;
+    DarkArisen::LockOnRequestBus::EventResult(locked, jake, &DarkArisen::LockOnRequests::ToggleLockOn);
+    AZ::EntityId lockTarget;
+    DarkArisen::LockOnRequestBus::EventResult(lockTarget, jake, &DarkArisen::LockOnRequests::GetLockTarget);
+    Check(locked && (lockTarget == boarders[0] || lockTarget == boarders[2]), "lock-on takes the nearest boarder in front of Jake");
+    Tick(level, jake, 1.0f);
+    float cameraYaw = 0.0f;
+    DarkArisen::CameraRigRequestBus::BroadcastResult(cameraYaw, &DarkArisen::CameraRigRequests::GetYawDegrees);
+    const AZ::Vector3 toTarget = Position(lockTarget) - Position(jake);
+    const float expectedYaw = AZ::RadToDeg(AZ::Atan2(toTarget.GetX(), toTarget.GetY()));
+    const AZ::Vector3 cameraPosition = Position(level.Id("Jake Camera"));
+    const float cameraDistance = (cameraPosition - (Position(jake) + AZ::Vector3(0.0f, 0.0f, 0.96f))).GetLength();
+    Check(AZ::GetAbs(cameraYaw - expectedYaw) < 3.0f && cameraDistance > 3.5f && cameraDistance < 3.8f,
+        "camera rig frames the lock target from the 3.6 m boom behind Jake");
     for (const AZ::EntityId& boarder : boarders)
     {
         if (DarkArisen::Core::Combatant* combatant = CombatantOf(boarder))
@@ -555,6 +579,8 @@ int main(int argc, char** argv)
     }
     Tick(level, jake, 0.5f);
     Check(campaign->GetOpening().Progress().RaidState == DarkArisen::Core::OpeningRaidState::DravenAboard, "deck cleared: Draven boards");
+    DarkArisen::LockOnRequestBus::EventResult(locked, jake, &DarkArisen::LockOnRequests::IsLockedOn);
+    Check(!locked, "lock released when the target falls");
     Tick(level, jake, 4.0f);
     Check(campaign->GetOpening().Progress().RaidState == DarkArisen::Core::OpeningRaidState::Taking, "Draven presentation: The Taking starts");
     Tick(level, jake, 17.0f);
@@ -574,7 +600,7 @@ int main(int argc, char** argv)
     Check(open("L_DriftwoodBeach", level), "L_DriftwoodBeach.prefab parsed");
     std::printf("  %d game components loaded, %d rejected, %d engine components counted\n", level.m_gameComponents,
         level.m_rejectedComponents, level.m_engineComponents);
-    Check(level.m_gameComponents == 13 && level.m_rejectedComponents == 0, "Driftwood: every game component deserialised cleanly");
+    Check(level.m_gameComponents == 15 && level.m_rejectedComponents == 0, "Driftwood: every game component deserialised cleanly");
     const AZ::EntityId swimmer = level.Id("Jake");
     Check(Position(swimmer).IsClose(Position(level.Id("Anchor WaterEntry"))), "overboard arrival spawns Jake in the water, not on the beach");
     if (auto* character = ProbeGameEntityContext::Find(swimmer)->FindComponent<ProbeSupport::ProbeCharacterComponent>())
@@ -660,7 +686,7 @@ int main(int argc, char** argv)
     g_requestedLevel.clear();
     UnloadLevel(level);
     Check(open("L_DriftwoodCamp", level), "L_DriftwoodCamp.prefab parsed");
-    Check(level.m_gameComponents == 3 && level.m_rejectedComponents == 0, "Camp: every game component deserialised cleanly");
+    Check(level.m_gameComponents == 5 && level.m_rejectedComponents == 0, "Camp: every game component deserialised cleanly");
     Check(Position(level.Id("Jake")).IsClose(Position(level.Id("Anchor Arrival"))), "camp arrival spawn");
     Check(campaign->GetOpening().Progress().Location == DarkArisen::Core::OpeningLocation::DriftwoodCamp, "vertical slice ends at Driftwood Camp");
 

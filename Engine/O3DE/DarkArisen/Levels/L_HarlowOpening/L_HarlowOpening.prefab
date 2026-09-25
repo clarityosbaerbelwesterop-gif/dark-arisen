@@ -1310,6 +1310,13 @@
                         ]
                     }
                 },
+                "Component_[3597473539462824]": {
+                    "$type": "GenericComponentWrapper",
+                    "Id": 3597473539462824,
+                    "m_template": {
+                        "$type": "{D3F82A57-0B6E-4C91-8A24-5E7F1C9B3D60} LockOnComponent"
+                    }
+                },
                 "Component_[3645169498980036]": {
                     "$type": "EditorLockComponent",
                     "Id": 3645169498980036
@@ -3396,23 +3403,26 @@
                 "Component_[7051599788558098]": {
                     "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
                     "Id": 7051599788558098,
-                    "Parent Entity": "Entity_[2491098248064753]",
+                    "Parent Entity": "ContainerEntity",
                     "Transform Data": {
-                        "Rotate": [
-                            -12,
-                            0,
-                            0
-                        ],
                         "Translate": [
-                            0,
+                            -8.55,
                             -3.6,
-                            1.9
+                            3.86
                         ]
                     }
                 },
                 "Component_[7198923222633637]": {
                     "$type": "EditorEntityIconComponent",
                     "Id": 7198923222633637
+                },
+                "Component_[7282813904201027]": {
+                    "$type": "GenericComponentWrapper",
+                    "Id": 7282813904201027,
+                    "m_template": {
+                        "$type": "{61B9D4E2-3A7C-4F18-9E05-C2D8A4B61F37} CameraRigComponent",
+                        "Target": "Entity_[2491098248064753]"
+                    }
                 },
                 "Component_[7407845956087486]": {
                     "$type": "EditorLockComponent",

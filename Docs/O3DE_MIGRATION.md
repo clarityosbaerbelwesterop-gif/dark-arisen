@@ -76,8 +76,8 @@ probe loads those prefabs, deserialises every Dark Arisen game component with O3
 on the real adapters: family talk, cargo manifest, black sails, three boarders released and defeated,
 Draven, The Taking (Marc and Denise fall, Ethan seized alive), map transition, arrival in the water,
 Outer Reef swim, walk-out at wading depth, beach, camp smoke (chapter-boundary autosave on disk) and
-travel to Driftwood Camp, plus two deaths: drowning in Undertow returns Jake to the overboard arrival,
-swimming again with full vitals; dying after the recovery returns him to the beach checkpoint. Result: 41/41. Stand-ins, stated in the probe: transforms, a character
+travel to Driftwood Camp, lock-on and camera framing on the boarders, plus two deaths: drowning in Undertow returns Jake to the overboard arrival,
+swimming again with full vitals; dying after the recovery returns him to the beach checkpoint. Result: 45/45. Stand-ins, stated in the probe: transforms, a character
 controller that integrates velocity over a beach ground profile, point-in-box triggers on the
 materialised trigger colliders, the game entity context and the `LoadLevel` console command.
 Editor loading, Asset Processor output and PhysX behaviour of these prefabs are RUNTIME VERIFY PENDING.
@@ -130,7 +130,8 @@ Engine/O3DE/DarkArisen/Assets ──► Asset Processor   │  StoryTriggerCompo
 | Opening Ch. 1–2 runtime | `Opening/OpeningRuntimeComponent.cpp` | engine-independent logic | IMPLEMENTED (Core), triggers IMPLEMENTED / RUNTIME VERIFY PENDING |
 | Combat, stamina, health/rally, damage | `Components/*`, `Combat/DamagePipeline.cpp` | engine-independent math | IMPLEMENTED (Core), parity-tested |
 | Melee sweep, targeting | `CombatComponent::TraceAndResolvePendingHit` | UE-coupled | IMPLEMENTED (PhysX sphere cast) / PhysX RUNTIME VERIFY PENDING; combat adapter VERIFIED on AzCore |
-| Jake movement/input | `JakeCharacter.cpp` | UE-coupled | PARTIAL: input, run/sprint, combat, surface swimming; camera, lock-on, diving NOT DONE |
+| Jake movement/input | `JakeCharacter.cpp`, `Config/DefaultInput.ini` | UE-coupled | IMPLEMENTED: Unreal bindings (keyboard/mouse and gamepad), camera-relative run/sprint, jump (520 cm/s), combat actions, surface swimming, quick save/load (F5/F9, slot DarkArisenAlpha); diving, wound locomotion NOT DONE |
+| Camera and lock-on | `CameraBoom`/`FollowCamera`, `ULockOnComponent`, `UCameraStateComponent` | UE-coupled, rules engine-independent | IMPLEMENTED (Core `CameraRig`, `SelectLockTarget`: 3.6 m boom, shoulder offset, Unreal look rates, lock 20 m / keep 25 m / facing 0.35, interpolation 12, Ethan and children never targetable); `CameraRigComponent` (arm shortens on a PhysX ray) and `LockOnComponent` VERIFIED on AzCore; camera modes (anchored, wound sway) NOT DONE |
 | Visible ocean (Atom) | none in Unreal source (no water system shipped in O3DE 2605.0 either) | rendering | IMPLEMENTED: `DarkArisenOcean.materialtype`, forward + depth shaders displacing tiled grids with the gameplay Gerstner waves on `SceneSrg::m_time` (the clock `OceanComponent` now reads); compiles to SPIR-V and DXIL; material waves = live `OceanComponent` surface (level probe); foam, refraction, underwater fog and runtime weather changes on the material NOT DONE; GPU RUNTIME VERIFY PENDING |
 | Swimming, currents, breath, drowning | `Components/WaterBreathComponent.cpp`, `Opening/OpeningWaterCurrentVolume.cpp` | engine-independent rules, UE-coupled movement | IMPLEMENTED (Core `BreathModel`, `SwimModel`, design speeds 1/1.5/2 m/s); adapters VERIFIED on AzCore; PhysX trigger volumes RUNTIME VERIFY PENDING; swim stamina values PROVISIONAL (section 6, item 9) |
 | Player death and checkpoint respawn | `AJakeCharacter::RestoreAtCheckpoint` (only reachable through an unplaced trigger) | UE-coupled | IMPLEMENTED: 2 s death beat, checkpoint or legal level spawn, full vitals, back in the water when placed inside a volume, no failure screen; VERIFIED on AzCore (level probe) |
@@ -203,7 +204,10 @@ Engine/O3DE/DarkArisen/Assets ──► Asset Processor   │  StoryTriggerCompo
     body placed inside water back into swimming, since trigger events only report crossings.
 15. **Windows.** The first GitHub run on Windows (manual dispatch, 2026-09-25) found the tool tests
     deleting a directory with a file still open; fixed, and the materialiser closes files before writing.
-16. **CI.** PR #52 made the UE jobs unconditional on self-hosted `ue5.8` runners that do not exist, so
+16. **O3DE input mapping drifted from Unreal.** The first O3DE input component bound Parry, Interact,
+    Dodge and Rache to other buttons than `DefaultInput.ini` and had no jump, lock-on or quick save;
+    it now follows the Unreal bindings exactly.
+17. **CI.** PR #52 made the UE jobs unconditional on self-hosted `ue5.8` runners that do not exist, so
    those jobs can only queue or be cancelled. The new `verify-engine-neutral` job gives real, executed
    C++ evidence on every PR.
 

@@ -475,6 +475,13 @@
                 "Component_[7326741778714027]": {
                     "$type": "EditorEntityIconComponent",
                     "Id": 7326741778714027
+                },
+                "Component_[7695754299566924]": {
+                    "$type": "GenericComponentWrapper",
+                    "Id": 7695754299566924,
+                    "m_template": {
+                        "$type": "{D3F82A57-0B6E-4C91-8A24-5E7F1C9B3D60} LockOnComponent"
+                    }
                 }
             },
             "Id": "Entity_[3629852434366883]",
@@ -705,23 +712,26 @@
                 "Component_[2407338386884599]": {
                     "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
                     "Id": 2407338386884599,
-                    "Parent Entity": "Entity_[3629852434366883]",
+                    "Parent Entity": "ContainerEntity",
                     "Transform Data": {
-                        "Rotate": [
-                            -12,
-                            0,
-                            0
-                        ],
                         "Translate": [
-                            0,
+                            0.45,
                             -3.6,
-                            1.9
+                            1.66
                         ]
                     }
                 },
                 "Component_[2621168270907527]": {
                     "$type": "EditorEntitySortComponent",
                     "Id": 2621168270907527
+                },
+                "Component_[2706382234869952]": {
+                    "$type": "GenericComponentWrapper",
+                    "Id": 2706382234869952,
+                    "m_template": {
+                        "$type": "{61B9D4E2-3A7C-4F18-9E05-C2D8A4B61F37} CameraRigComponent",
+                        "Target": "Entity_[3629852434366883]"
+                    }
                 },
                 "Component_[2799034985343118]": {
                     "$type": "EditorDisabledCompositionComponent",

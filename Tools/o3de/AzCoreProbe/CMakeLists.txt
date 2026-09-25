@@ -135,6 +135,8 @@ add_executable(DarkArisenLevelProbe
     ${GEM}/Source/Combat/EnemyBrainComponent.cpp
     ${GEM}/Source/Player/SwimmerComponent.cpp
     ${GEM}/Source/Player/PlayerSpawnComponent.cpp
+    ${GEM}/Source/Player/CameraRigComponent.cpp
+    ${GEM}/Source/Player/LockOnComponent.cpp
     ${GEM}/Source/World/OceanComponent.cpp
     ${GEM}/Source/World/WaterVolumeComponent.cpp
     ${AZF}/AzFramework/API/ApplicationAPI.cpp

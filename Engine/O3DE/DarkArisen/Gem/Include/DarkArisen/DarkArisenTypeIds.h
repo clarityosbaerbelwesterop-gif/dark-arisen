@@ -24,6 +24,8 @@ namespace DarkArisen
     inline constexpr const char* PresentationSequenceConfigTypeId = "{E9C4B127-5F83-4A6D-B2E0-8D7A1C3F5E49}";
     inline constexpr const char* FamilyMemberConfigTypeId = "{4B8D2E6A-73C1-4F95-A0B3-6E2C9D1F7A58}";
     inline constexpr const char* SpawnPointConfigTypeId = "{7F3A9C21-B64E-4D08-8E5F-1A6C3B9D2E74}";
+    inline constexpr const char* CameraRigComponentTypeId = "{61B9D4E2-3A7C-4F18-9E05-C2D8A4B61F37}";
+    inline constexpr const char* LockOnComponentTypeId = "{D3F82A57-0B6E-4C91-8A24-5E7F1C9B3D60}";
 
     // Interfaces
     inline constexpr const char* CampaignRequestsTypeId = "{20A14A6C-830D-4C72-A95F-2477D73FF09E}";
@@ -34,4 +36,6 @@ namespace DarkArisen
     inline constexpr const char* OceanRequestsTypeId = "{E6B2D48A-9C07-4F1E-A35B-8D2C6F1E0B93}";
     inline constexpr const char* SwimRequestsTypeId = "{B7D1E5A2-4F93-4C6E-A0B8-2D5C9E7F1A46}";
     inline constexpr const char* PresentationNotificationsTypeId = "{2C5E8A13-F74B-4D96-9A1C-5B3F7E0D8C62}";
+    inline constexpr const char* CameraRigRequestsTypeId = "{8A2E6C14-D95B-4F37-B1E0-4C7A9D2F6E83}";
+    inline constexpr const char* LockOnRequestsTypeId = "{F4C1A7E9-2D63-4B85-9F0A-7E3B5C8D1A26}";
 }

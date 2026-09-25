@@ -9,6 +9,7 @@ set(FILES
     Include/DarkArisen/OceanBus.h
     Include/DarkArisen/SwimBus.h
     Include/DarkArisen/PresentationBus.h
+    Include/DarkArisen/CameraBus.h
     Source/Story/CampaignSystemComponent.h
     Source/Story/CampaignSystemComponent.cpp
     Source/Story/StoryTriggerComponent.h
@@ -31,6 +32,10 @@ set(FILES
     Source/Player/SwimmerComponent.cpp
     Source/Player/PlayerSpawnComponent.h
     Source/Player/PlayerSpawnComponent.cpp
+    Source/Player/CameraRigComponent.h
+    Source/Player/CameraRigComponent.cpp
+    Source/Player/LockOnComponent.h
+    Source/Player/LockOnComponent.cpp
     Source/World/OceanComponent.h
     Source/World/OceanComponent.cpp
     Source/World/WaterVolumeComponent.h

@@ -582,8 +582,9 @@ namespace DarkArisen::Tools
             AddGame(Prefab, Jake, CombatantComponentTypeId, "CombatantComponent", std::move(Combatant));
             AddGame(Prefab, Jake, JakeInputComponentTypeId, "JakeInputComponent");
             AddGame(Prefab, Jake, SwimmerComponentTypeId, "SwimmerComponent");
-            // Follow camera placeholder: a child at the Unreal boom length. Camera system is NOT DONE.
-            const std::string Camera = Prefab.AddEntity("Jake Camera", {0.0, -3.6, 1.9}, {-12.0, 0.0, 0.0}, Jake);
+            AddGame(Prefab, Jake, LockOnComponentTypeId, "LockOnComponent");
+            // Follow camera: its own entity driven by the camera rig (Unreal boom 360 cm, shoulder offset).
+            const std::string Camera = Prefab.AddEntity("Jake Camera", {Where.X + 0.45, Where.Y - 3.6, Where.Z + 1.66});
             JsonValue Configuration = JsonObject();
             Configuration.Members["Field of View"] = JsonNumber(60.0);
             JsonValue Controller = JsonObject();
@@ -591,6 +592,9 @@ namespace DarkArisen::Tools
             JsonValue CameraBody = JsonObject();
             CameraBody.Members["Controller"] = std::move(Controller);
             Prefab.AddComponent(Camera, "{CA11DA46-29FF-4083-B5F6-E02C3A8C3A3D} EditorCameraComponent", std::move(CameraBody));
+            JsonValue Rig = JsonObject();
+            Rig.Members["Target"] = JsonString(Jake);
+            AddGame(Prefab, Camera, CameraRigComponentTypeId, "CameraRigComponent", std::move(Rig));
             return Jake;
         }
 

@@ -23,6 +23,7 @@ add_library(DarkArisenCore STATIC
     Source/Water.cpp
     Source/Presentation.cpp
     Source/LevelSpawn.cpp
+    Source/Camera.cpp
 )
 add_library(DarkArisen::Core ALIAS DarkArisenCore)
 target_include_directories(DarkArisenCore PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Include)
@@ -51,6 +52,7 @@ if(DARKARISEN_CORE_TESTS)
         Tests/OceanTests.cpp
         Tests/WaterTests.cpp
         Tests/PresentationTests.cpp
+        Tests/CameraTests.cpp
         Tests/UnrealParityTests.cpp
     )
     target_link_libraries(DarkArisenCoreTests PRIVATE DarkArisen::Core)

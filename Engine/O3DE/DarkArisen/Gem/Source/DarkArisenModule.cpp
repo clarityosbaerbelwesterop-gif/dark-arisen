@@ -6,6 +6,8 @@
 #include "Combat/CombatantComponent.h"
 #include "Combat/EnemyBrainComponent.h"
 #include "Player/JakeInputComponent.h"
+#include "Player/CameraRigComponent.h"
+#include "Player/LockOnComponent.h"
 #include "Player/PlayerSpawnComponent.h"
 #include "Player/SwimmerComponent.h"
 #include "Ships/ShipVoyageComponent.h"
@@ -39,6 +41,8 @@ namespace DarkArisen
                 OpeningDirectorComponent::CreateDescriptor(),
                 MapTransitionComponent::CreateDescriptor(),
                 PlayerSpawnComponent::CreateDescriptor(),
+                CameraRigComponent::CreateDescriptor(),
+                LockOnComponent::CreateDescriptor(),
             });
         }
 

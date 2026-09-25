@@ -333,6 +333,13 @@
                     "$type": "EditorDisabledCompositionComponent",
                     "Id": 3854709326089224
                 },
+                "Component_[3984568217101881]": {
+                    "$type": "GenericComponentWrapper",
+                    "Id": 3984568217101881,
+                    "m_template": {
+                        "$type": "{D3F82A57-0B6E-4C91-8A24-5E7F1C9B3D60} LockOnComponent"
+                    }
+                },
                 "Component_[446183162258734]": {
                     "$type": "AZ::Render::EditorMeshComponent",
                     "Controller": {
@@ -3020,6 +3027,14 @@
                     "$type": "EditorDisabledCompositionComponent",
                     "Id": 6198380261777361
                 },
+                "Component_[6871651549056495]": {
+                    "$type": "GenericComponentWrapper",
+                    "Id": 6871651549056495,
+                    "m_template": {
+                        "$type": "{61B9D4E2-3A7C-4F18-9E05-C2D8A4B61F37} CameraRigComponent",
+                        "Target": "Entity_[2653912121288285]"
+                    }
+                },
                 "Component_[8375010882693814]": {
                     "$type": "{CA11DA46-29FF-4083-B5F6-E02C3A8C3A3D} EditorCameraComponent",
                     "Controller": {
@@ -3036,17 +3051,12 @@
                 "Component_[8819319741772766]": {
                     "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
                     "Id": 8819319741772766,
-                    "Parent Entity": "Entity_[2653912121288285]",
+                    "Parent Entity": "ContainerEntity",
                     "Transform Data": {
-                        "Rotate": [
-                            -12,
-                            0,
-                            0
-                        ],
                         "Translate": [
-                            0,
+                            -61.55,
                             -3.6,
-                            1.9
+                            0.26
                         ]
                     }
                 }

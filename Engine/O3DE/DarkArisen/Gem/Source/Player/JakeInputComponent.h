@@ -8,9 +8,9 @@
 namespace DarkArisen
 {
     /**
-     * Keyboard/mouse and gamepad control for Jake. Translates input channels into
-     * CombatRequestBus actions and PhysX character velocity. Committed combat actions
-     * cannot be cancelled by movement (Unreal parity).
+     * Keyboard/mouse and gamepad control for Jake, bound as Unreal's DefaultInput.ini. Movement is
+     * camera relative, look input drives the camera rig, and committed combat actions cannot be
+     * cancelled by movement (Unreal parity).
      */
     class JakeInputComponent
         : public AZ::Component
@@ -26,6 +26,10 @@ namespace DarkArisen
         /** UE AJakeCharacter: 330 cm/s run, 600 cm/s sprint. */
         static constexpr float RunSpeedMetresPerSecond = 3.3f;
         static constexpr float SprintSpeedMetresPerSecond = 6.0f;
+        /** UE AJakeCharacter: JumpZVelocity 520 cm/s. */
+        static constexpr float JumpSpeedMetresPerSecond = 5.2f;
+        /** UE AAlphaMenuPlayerController save slot. */
+        static constexpr const char* QuickSlot = "DarkArisenAlpha";
 
     protected:
         void Activate() override;
@@ -38,7 +42,10 @@ namespace DarkArisen
         AZ::Vector2 m_stickMove = AZ::Vector2::CreateZero();
         bool m_sprintHeld = false;
         bool m_wasSwimming = false;
+        AZ::Vector2 m_stickLook = AZ::Vector2::CreateZero();
 
         void Interact() const;
+        void Jump() const;
+        void QuickSave(bool save) const;
     };
 }
