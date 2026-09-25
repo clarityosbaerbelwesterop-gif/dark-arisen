@@ -1,0 +1,11 @@
+# Dark Arisen production engine pin. Never build against a floating ref.
+# Verified 2026-09-23 with: git ls-remote --tags https://github.com/o3de/o3de.git
+repository=https://github.com/o3de/o3de.git
+release=2605.0
+tag=2605.0
+commit=3db6943249d8bd7960b9ed7e9aee310b7668586e
+engine_json_version=2.6.0
+license=Apache-2.0 OR MIT
+verified=2026-09-23
+# O3DE CMake configure downloads prebuilt third-party packages from this host.
+package_server=https://d3t6xeg4fgfoum.cloudfront.net

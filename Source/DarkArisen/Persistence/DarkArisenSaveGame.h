@@ -15,6 +15,8 @@ struct FPlayerRuntimeSnapshot
     GENERATED_BODY()
     UPROPERTY(SaveGame) bool bValid = false;
     UPROPERTY(SaveGame) FName MissionId;
+    /** Legacy snapshots without a source level use the authored arrival spawn. */
+    UPROPERTY(SaveGame) FName SourceLevel;
     UPROPERTY(SaveGame) FTransform Transform = FTransform::Identity;
     UPROPERTY(SaveGame) float HealthFraction = 1.0f;
     UPROPERTY(SaveGame) float StaminaFraction = 1.0f;

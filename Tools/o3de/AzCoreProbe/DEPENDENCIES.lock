@@ -1,0 +1,7 @@
+# Sources for the standalone AzCore probe. O3DE's own package server is not required.
+# Versions follow O3DE 2605.0 cmake/3rdParty/Platform/Linux/BuiltInPackages_linux_x86_64.cmake.
+lua=https://github.com/lua/lua.git 5d708c3f9cae12820e415d4f89c9eacbe2ab964b   # tag v5.4.4 (O3DE: Lua-5.4.4-rev1)
+cityhash=https://github.com/google/cityhash.git f5dc54147fcce12cefd16548c8e760d68ac04226   # O3DE: cityhash-1.1-rev1
+rapidjson=https://github.com/Tencent/rapidjson.git 24b5e7a8b27f42fa16b96fc70aade9106cf7102f   # AzCore 2605.0 needs kParseEscapedApostropheFlag (newer than the 3p recipe commit 6534506e)
+3p-package-source=https://github.com/o3de/3p-package-source.git 70f0b7b5257bf7cf935bf1cfd270e1b53ccead18   # patched RapidXML-1.13-rev1 headers
+# System packages (Ubuntu 24.04): clang, ninja-build, libzstd-dev, zlib1g-dev, libunwind-dev

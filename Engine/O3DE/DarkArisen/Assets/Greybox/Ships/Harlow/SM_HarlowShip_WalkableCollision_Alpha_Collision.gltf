@@ -1,0 +1,93 @@
+{
+ "accessors": [
+  {
+   "bufferView": 0,
+   "componentType": 5126,
+   "count": 24,
+   "max": [
+    12,
+    3.25,
+    3.0999999046325684
+   ],
+   "min": [
+    -14,
+    1.9299999475479126,
+    -3.0999999046325684
+   ],
+   "type": "VEC3"
+  },
+  {
+   "bufferView": 1,
+   "componentType": 5123,
+   "count": 108,
+   "type": "SCALAR"
+  }
+ ],
+ "asset": {
+  "generator": "Dark Arisen offline DCC alpha + DarkArisenO3DE frame conversion",
+  "version": "2.0"
+ },
+ "bufferViews": [
+  {
+   "buffer": 0,
+   "byteLength": 288,
+   "byteOffset": 0,
+   "target": 34962
+  },
+  {
+   "buffer": 0,
+   "byteLength": 216,
+   "byteOffset": 288,
+   "target": 34963
+  }
+ ],
+ "buffers": [
+  {
+   "byteLength": 504,
+   "uri": "data:application/octet-stream;base64,AAAwQT0K9z9mZkZAAABgwT0K9z9mZkZAAABgwT0K9z9mZkbAAAAwQT0K9z9mZkbAAAAwQUjhCkBmZkZAAABgwUjhCkBmZkZAAABgwUjhCkBmZkbAAAAwQUjhCkBmZkbAAACwwAAAEEAAAEBAAABIwQAAEEAAAEBAAABIwQAAEEAAAEDAAACwwAAAEEAAAEDAAACwwAAAUEAAAEBAAABIwQAAUEAAAEBAAABIwQAAUEAAAEDAAACwwAAAUEAAAEDAAABAQQAAEEAzMzNAAADgQAAAEEAzMzNAAADgQAAAEEAzMzPAAABAQQAAEEAzMzPAAABAQc3MPEAzMzNAAADgQM3MPEAzMzNAAADgQM3MPEAzMzPAAABAQc3MPEAzMzPAAAACAAEAAAADAAIABAAFAAYABAAGAAcAAAAFAAQAAAABAAUAAQAGAAUAAQACAAYAAgAHAAYAAgADAAcAAwAEAAcAAwAAAAQACAAKAAkACAALAAoADAANAA4ADAAOAA8ACAANAAwACAAJAA0ACQAOAA0ACQAKAA4ACgAPAA4ACgALAA8ACwAMAA8ACwAIAAwAEAASABEAEAATABIAFAAVABYAFAAWABcAEAAVABQAEAARABUAEQAWABUAEQASABYAEgAXABYAEgATABcAEwAUABcAEwAQABQA"
+  }
+ ],
+ "materials": [
+  {
+   "name": "M_Alpha",
+   "pbrMetallicRoughness": {
+    "baseColorFactor": [
+     0.25,
+     0.25,
+     0.25,
+     1
+    ],
+    "metallicFactor": 0,
+    "roughnessFactor": 0.78
+   }
+  }
+ ],
+ "meshes": [
+  {
+   "name": "SM_HarlowShip_WalkableCollision_Alpha",
+   "primitives": [
+    {
+     "attributes": {
+      "POSITION": 0
+     },
+     "indices": 1,
+     "material": 0
+    }
+   ]
+  }
+ ],
+ "nodes": [
+  {
+   "mesh": 0,
+   "name": "SM_HarlowShip_WalkableCollision_Alpha"
+  }
+ ],
+ "scene": 0,
+ "scenes": [
+  {
+   "nodes": [
+    0
+   ]
+  }
+ ]
+}

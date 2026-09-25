@@ -1,0 +1,43 @@
+# Dark Arisen O3DE adapter sources. Gameplay rules live in /Core (engine-neutral).
+set(FILES
+    Include/DarkArisen/DarkArisenTypeIds.h
+    Include/DarkArisen/AuthoringEnums.h
+    Include/DarkArisen/CampaignBus.h
+    Include/DarkArisen/CombatBus.h
+    Include/DarkArisen/ShipBus.h
+    Include/DarkArisen/EnemyBus.h
+    Include/DarkArisen/OceanBus.h
+    Include/DarkArisen/SwimBus.h
+    Include/DarkArisen/PresentationBus.h
+    Include/DarkArisen/CameraBus.h
+    Source/Story/CampaignSystemComponent.h
+    Source/Story/CampaignSystemComponent.cpp
+    Source/Story/StoryTriggerComponent.h
+    Source/Story/StoryTriggerComponent.cpp
+    Source/Story/OpeningDirectorComponent.h
+    Source/Story/OpeningDirectorComponent.cpp
+    Source/Story/MapTransitionComponent.h
+    Source/Story/MapTransitionComponent.cpp
+    Source/Persistence/SaveSlotStore.h
+    Source/Persistence/SaveSlotStore.cpp
+    Source/Combat/CombatantComponent.h
+    Source/Combat/CombatantComponent.cpp
+    Source/Combat/EnemyBrainComponent.h
+    Source/Combat/EnemyBrainComponent.cpp
+    Source/Ships/ShipVoyageComponent.h
+    Source/Ships/ShipVoyageComponent.cpp
+    Source/Player/JakeInputComponent.h
+    Source/Player/JakeInputComponent.cpp
+    Source/Player/SwimmerComponent.h
+    Source/Player/SwimmerComponent.cpp
+    Source/Player/PlayerSpawnComponent.h
+    Source/Player/PlayerSpawnComponent.cpp
+    Source/Player/CameraRigComponent.h
+    Source/Player/CameraRigComponent.cpp
+    Source/Player/LockOnComponent.h
+    Source/Player/LockOnComponent.cpp
+    Source/World/OceanComponent.h
+    Source/World/OceanComponent.cpp
+    Source/World/WaterVolumeComponent.h
+    Source/World/WaterVolumeComponent.cpp
+)

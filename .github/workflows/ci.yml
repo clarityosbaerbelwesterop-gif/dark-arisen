@@ -6,12 +6,11 @@ on:
   pull_request:
     branches: [develop, main, work/final-alpha-opening-runtime]
     types: [opened, synchronize, reopened, ready_for_review]
+  # Manual runs exercise the GitHub-hosted jobs on any branch (e.g. the O3DE migration branch).
+  workflow_dispatch:
 
 permissions:
   contents: read
-
-env:
-  ENABLE_UE58_RUNNERS: 'true' # Required for the first complete 3D Alpha acceptance.
 
 concurrency:
   group: dark-arisen-ci-${{ github.ref }}
@@ -38,9 +37,82 @@ jobs:
       - name: Reject whitespace errors
         run: git diff --check HEAD^
 
+  verify-engine-neutral:
+    # Runs on GitHub-hosted runners: the gameplay core and O3DE tooling need no engine.
+    name: Engine-neutral core and O3DE tooling (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+      - name: Build and test the engine-neutral core
+        run: |
+          cmake -S Core -B build/core -DCMAKE_BUILD_TYPE=Release
+          cmake --build build/core --config Release
+          ctest --test-dir build/core -C Release --output-on-failure
+      - name: Build and test the O3DE operations tool
+        run: |
+          cmake -S Tools/o3de -B build/ops -DCMAKE_BUILD_TYPE=Release
+          cmake --build build/ops --config Release
+          ctest --test-dir build/ops -C Release --output-on-failure
+      - name: Verify the materialised O3DE levels match ContentSource
+        run: |
+          tool=build/ops/DarkArisenO3DE
+          if [ -f build/ops/Release/DarkArisenO3DE.exe ]; then tool=build/ops/Release/DarkArisenO3DE.exe; fi
+          "$tool" materialize --check
+      - name: Verify the O3DE pin still matches the official tag
+        run: |
+          tool=build/ops/DarkArisenO3DE
+          if [ -f build/ops/Release/DarkArisenO3DE.exe ]; then tool=build/ops/Release/DarkArisenO3DE.exe; fi
+          pinned=$("$tool" lock | sed -n 's/^commit=//p')
+          tag=$("$tool" lock | sed -n 's/^tag=//p')
+          upstream=$(git ls-remote https://github.com/o3de/o3de.git "refs/tags/$tag" | cut -f1)
+          echo "pinned=$pinned upstream=$upstream"
+          test -n "$pinned" && test "$pinned" = "$upstream"
+
+  verify-o3de-framework:
+    # Builds AzCore from the pinned O3DE sources (no O3DE package server) and runs the
+    # Dark Arisen campaign adapter inside a real AZ::ComponentApplication.
+    name: O3DE 2605.0 AzCore runtime probe (Linux)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    needs: verify-engine-neutral
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+      - name: Install toolchain
+        run: sudo apt-get update -q && sudo apt-get install -y -q clang ninja-build libzstd-dev zlib1g-dev libunwind-dev
+      - name: Build the operations tool
+        run: |
+          cmake -S Tools/o3de -B build/ops -DCMAKE_BUILD_TYPE=Release
+          cmake --build build/ops
+      - name: Check out the pinned O3DE engine sources
+        run: |
+          commit=$(build/ops/DarkArisenO3DE lock | sed -n 's/^commit=//p')
+          git init -q "$RUNNER_TEMP/o3de"
+          git -C "$RUNNER_TEMP/o3de" remote add origin https://github.com/o3de/o3de.git
+          GIT_LFS_SKIP_SMUDGE=1 git -C "$RUNNER_TEMP/o3de" fetch -q --depth 1 origin "$commit"
+          GIT_LFS_SKIP_SMUDGE=1 git -C "$RUNNER_TEMP/o3de" checkout -q --detach "$commit"
+      - name: Build AzCore and run the campaign, gameplay and level probes
+        run: build/ops/DarkArisenO3DE probe --engine="$RUNNER_TEMP/o3de" --build-dir="$RUNNER_TEMP/build"
+      - name: Compile Atom shaders with O3DE azslc 1.8.22 and DXC 1.8.2505.1 (SPIR-V and DXIL)
+        run: build/ops/DarkArisenO3DE shader-check --engine="$RUNNER_TEMP/o3de" --build-dir="$RUNNER_TEMP/build"
+
   verify-windows:
     name: Windows UE 5.8 materialise, compile, tests, laws
-    if: env.ENABLE_UE58_RUNNERS == 'true' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
+    # Job conditions are evaluated before runner env exists. Keep UE verification mandatory.
+    # Manual dispatches skip the private UE runners; push and PR gating is unchanged.
+    if: github.event_name != 'workflow_dispatch' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
     needs: verify-static
     runs-on: [self-hosted, Windows, X64, ue5.8, dark-arisen]
     timeout-minutes: 120
@@ -74,7 +146,8 @@ jobs:
 
   verify-linux:
     name: Linux UE 5.8 materialise, compile, tests, laws
-    if: env.ENABLE_UE58_RUNNERS == 'true' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
+    # Manual dispatches skip the private UE runners; push and PR gating is unchanged.
+    if: github.event_name != 'workflow_dispatch' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
     needs: verify-static
     runs-on: [self-hosted, Linux, X64, ue5.8, dark-arisen]
     timeout-minutes: 120

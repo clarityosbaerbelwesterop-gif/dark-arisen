@@ -41,5 +41,13 @@ void AMainStoryMapTransitionActor::HandleMissionChanged(FName ChangedMissionId, 
 void AMainStoryMapTransitionActor::TravelToNextMap()
 {
     if (NextMap.IsNone()) return;
+    UMainStorySubsystem* Story = GetGameInstance()
+        ? GetGameInstance()->GetSubsystem<UMainStorySubsystem>() : nullptr;
+    if (!Story || !Story->CaptureWorldState(GetWorld()))
+    {
+        bTravelQueued = false;
+        UE_LOG(LogTemp, Error, TEXT("Map transition refused: live world state could not be captured."));
+        return;
+    }
     UGameplayStatics::OpenLevel(this, NextMap);
 }

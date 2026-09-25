@@ -1,0 +1,63 @@
+/*
+ * Dark Arisen ocean material: shared by the forward and depth passes so both displace the
+ * surface identically. Wave constants are Core::OceanSurface::PackShaderConstants() for the
+ * level's sea state; the clock is SceneSrg::m_time, the same real elapsed time the gameplay
+ * OceanComponent reads, so the hull and the swimmer ride the surface that is drawn.
+ */
+#pragma once
+
+#include <scenesrg_all.srgi>
+#include <viewsrg_all.srgi>
+#include <Atom/Features/PBR/DefaultObjectSrg.azsli>
+#include <Atom/RPI/ShaderResourceGroups/DefaultDrawSrg.azsli>
+#include <Atom/Features/InstancedTransforms.azsli>
+#include <Atom/Features/SrgSemantics.azsli>
+
+#include "GerstnerOcean.azsli"
+
+ShaderResourceGroup DarkArisenOceanMaterialSrg : SRG_PerMaterial
+{
+    // Two float4 per wave: (dirX, dirY, amplitude, k), (omega, Q, phase, 0).
+    float4 m_wave0;
+    float4 m_wave1;
+    float4 m_wave2;
+    float4 m_wave3;
+    float4 m_wave4;
+    float4 m_wave5;
+    float4 m_wave6;
+    float4 m_wave7;
+    float4 m_wave8;
+    float4 m_wave9;
+    float4 m_wave10;
+    float4 m_wave11;
+    float4 m_wave12;
+    float4 m_wave13;
+    float4 m_wave14;
+    float4 m_wave15;
+    float3 m_deepColor;
+    float3 m_shallowColor;
+    float3 m_skyColor;
+    float m_specularStrength;
+}
+
+OceanSurfacePoint EvaluateMaterialOcean(float2 stillXY)
+{
+    float4 waves[2 * DARKARISEN_OCEAN_WAVE_COUNT] = {
+        DarkArisenOceanMaterialSrg::m_wave0, DarkArisenOceanMaterialSrg::m_wave1, DarkArisenOceanMaterialSrg::m_wave2,
+        DarkArisenOceanMaterialSrg::m_wave3, DarkArisenOceanMaterialSrg::m_wave4, DarkArisenOceanMaterialSrg::m_wave5,
+        DarkArisenOceanMaterialSrg::m_wave6, DarkArisenOceanMaterialSrg::m_wave7, DarkArisenOceanMaterialSrg::m_wave8,
+        DarkArisenOceanMaterialSrg::m_wave9, DarkArisenOceanMaterialSrg::m_wave10, DarkArisenOceanMaterialSrg::m_wave11,
+        DarkArisenOceanMaterialSrg::m_wave12, DarkArisenOceanMaterialSrg::m_wave13, DarkArisenOceanMaterialSrg::m_wave14,
+        DarkArisenOceanMaterialSrg::m_wave15 };
+    return EvaluateGerstnerOcean(stillXY, SceneSrg::m_time, waves);
+}
+
+/** Still-water grid vertex (object space) to the displaced world position and normal. */
+OceanSurfacePoint DisplaceOceanVertex(float3 objectPosition, uint instanceId)
+{
+    const float4x4 objectToWorld = GetObjectToWorldMatrix(instanceId);
+    const float3 still = mul(objectToWorld, float4(objectPosition, 1.0)).xyz;
+    OceanSurfacePoint surface = EvaluateMaterialOcean(still.xy);
+    surface.m_position.z += still.z;  // the tile's still-water level
+    return surface;
+}

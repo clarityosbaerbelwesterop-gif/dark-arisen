@@ -1,0 +1,36 @@
+// Compile check for the standalone Dark Arisen ocean include: AZSL -> HLSL (azslc) -> SPIR-V + DXIL (DXC).
+// check: vs_6_2 MainVS
+// Not a production shader; the production ocean pass binds the same SRG layout.
+#include "GerstnerOcean.azsli"
+
+ShaderResourceGroupSemantic SRG_PerObject
+{
+    FrequencyId = 0;
+};
+
+ShaderResourceGroup OceanSrg : SRG_PerObject
+{
+    float4 m_waves[16]; // 2 * DARKARISEN_OCEAN_WAVE_COUNT (azslc needs a literal)
+    float m_oceanTime;
+    float4x4 m_viewProjection;
+};
+
+struct VSInput
+{
+    float3 m_position : POSITION;
+};
+
+struct VSOutput
+{
+    float4 m_position : SV_Position;
+    float3 m_normal : NORMAL;
+};
+
+VSOutput MainVS(VSInput input)
+{
+    const OceanSurfacePoint surface = EvaluateGerstnerOcean(input.m_position.xy, OceanSrg::m_oceanTime, OceanSrg::m_waves);
+    VSOutput output;
+    output.m_position = mul(OceanSrg::m_viewProjection, float4(surface.m_position, 1.0));
+    output.m_normal = surface.m_normal;
+    return output;
+}
