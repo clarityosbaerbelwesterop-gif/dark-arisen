@@ -92,6 +92,24 @@ namespace DarkArisen::Core
         bool RecordFallAssaultCompleted(std::string_view RegionId);
         bool ClaimHolding(std::string_view HoldingId);
 
+        // Quest journal (Jake's notebook, evidence he read, authored observations).
+        const QuestJournalState& GetJournal() const { return Current.Journal; }
+        const QuestCatalog& GetQuestCatalog() const { return Quests; }
+        /** Registers an authored quest; the journal adopts it as dormant. */
+        bool RegisterQuest(const QuestDefinition& Definition);
+        bool UpdateJournal(const std::function<bool(QuestJournalState&, const QuestCatalog&)>& Mutation);
+
+        // BODY/CRAFT/STANDING, money, services and the chapter ledger.
+        const ProgressionState& GetProgression() const { return Current.Progress; }
+        const SkillCatalog& GetSkillCatalog() const { return Skills; }
+        bool UpdateProgression(const std::function<bool(ProgressionState&, CharacterProgression&, const SkillCatalog&)>& Mutation);
+
+        // Story-relevant living NPC state.
+        const LivingWorldState& GetLivingWorld() const { return Current.LivingWorld; }
+        bool UpdateLivingWorld(const std::function<bool(LivingWorldState&)>& Mutation);
+        /** Transient seat/conversation presence; never saved. */
+        SocialPresence& Social() { return Presence; }
+
         // World capture (called by CampaignWorldServices::CaptureWorld or map travel).
         bool CapturePlayerRuntime(const PlayerRuntimeSnapshot& Snapshot);
         bool CaptureShipVoyage(const ShipVoyageSnapshot& Snapshot);
@@ -114,6 +132,9 @@ namespace DarkArisen::Core
         std::vector<MissionListener> MissionListeners;
         std::vector<FactListener> FactListeners;
         std::string AutosaveError;
+        QuestCatalog Quests;
+        SkillCatalog Skills = SkillCatalog::Canonical();
+        SocialPresence Presence;
 
         MissionRuntime* FindMission(std::string_view MissionId);
         CrewRelationship* FindCrew(std::string_view CrewId);

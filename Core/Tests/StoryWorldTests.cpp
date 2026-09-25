@@ -101,7 +101,7 @@ TEST_CASE("Colonial war: one autonomous tick per region and chapter; strict pars
     CHECK(!ColonialWar::ParseVerb("support").has_value());
 }
 
-TEST_CASE("Colonial war persists in the save (v10) and v9 saves migrate")
+TEST_CASE("Colonial war persists in the save and v9 saves migrate")
 {
     CampaignRuntime Campaign;
     CHECK(DarkArisen::Test::AdvanceUntil(Campaign, "Main.C04.02.BrokenCompact"));
@@ -122,7 +122,7 @@ TEST_CASE("Colonial war persists in the save (v10) and v9 saves migrate")
     Legacy.ColonialWar = ColonialWarState{};
     Errors.clear();
     CHECK(MigrateCampaignState(Legacy, Errors));
-    CHECK_EQ(Legacy.SaveVersion, 10);
+    CHECK_EQ(Legacy.SaveVersion, CampaignState::CurrentVersion);
 
     CampaignState Corrupt = Campaign.State();
     Corrupt.ColonialWar.Regions.at("Rexa").AlbionControl = 140;

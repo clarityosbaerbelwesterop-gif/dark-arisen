@@ -376,6 +376,12 @@ namespace DarkArisen::Core
                 Result.Accepted = true;
                 Result.DocumentTitle = Actor.Title;
                 Result.DocumentBody = Actor.Body;
+                // Jake keeps what he read, verbatim and once; the notebook is the only record.
+                Campaign.UpdateJournal([&](QuestJournalState& State, const QuestCatalog&)
+                {
+                    return QuestJournal::RecordEvidence(State, {Actor.MissionId + "/" + Actor.Name, Actor.MissionId, Actor.Title, Actor.Body,
+                        Campaign.State().WorldRules.TotalWorldMinutes});
+                });
                 if (!Actor.WorldFactOnRead.empty())
                 {
                     Campaign.SetWorldFact(Actor.WorldFactOnRead, true);

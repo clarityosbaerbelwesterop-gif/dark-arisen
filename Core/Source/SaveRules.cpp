@@ -280,6 +280,9 @@ namespace DarkArisen::Core
         ValidateSnapshots(Candidate, OutErrors);
         ValidateCollections(Candidate, OutErrors);
         ColonialWar::Validate(Candidate.ColonialWar, OutErrors);
+        QuestJournal::Validate(Candidate.Journal, OutErrors);
+        Progression::Validate(Candidate.Progress, OutErrors);
+        LivingWorld::Validate(Candidate.LivingWorld, OutErrors);
         return OutErrors.empty();
     }
 
@@ -328,6 +331,14 @@ namespace DarkArisen::Core
             // v9 had no persistent colonial war; the Unreal world subsystem lost it on travel.
             Candidate.ColonialWar = ColonialWarState{};
             Candidate.SaveVersion = 10;
+        }
+        if (Candidate.SaveVersion == 10)
+        {
+            // v10 had no journal, progression economy or living population: authored defaults.
+            Candidate.Journal = QuestJournalState{};
+            Candidate.Progress = ProgressionState{};
+            Candidate.LivingWorld = LivingWorldState{};
+            Candidate.SaveVersion = 11;
         }
         return Candidate.SaveVersion == CampaignState::CurrentVersion;
     }

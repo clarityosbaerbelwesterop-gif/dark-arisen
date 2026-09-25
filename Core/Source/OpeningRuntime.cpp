@@ -58,6 +58,8 @@ namespace DarkArisen::Core
 
     void OpeningRuntime::Journal(const std::string_view Id) const
     {
+        // Persisted before presentation; a repeated observation is already in the notebook.
+        Campaign.UpdateJournal([Id](QuestJournalState& State, const QuestCatalog&) { return QuestJournal::RecordObservation(State, Id); });
         if (Listeners.JournalObservation) Listeners.JournalObservation(Id);
     }
 

@@ -374,6 +374,14 @@ int main(int argc, char** argv)
     Check(levelsPlayed == 27 && missionsCompleted == 27, "chapters 3-10 played from Rexa Harbor to The Wake After");
     Check(!unsupportedActor, "every story character and object stands on materialised ground");
     Check(Runtime().HasFact("Story.MainComplete") && Runtime().HasFact("Story.CreditsReachable"), "Story.MainComplete only after the final mission");
+    {
+        const auto& evidence = Runtime().GetJournal().Evidence;
+        DarkArisen::Core::CampaignState reloaded;
+        std::vector<std::string> errors;
+        const bool decoded = DarkArisen::Core::SaveCodec::Decode(DarkArisen::Core::SaveCodec::Encode(Runtime().State()), reloaded, errors);
+        std::printf("  %zu documents in Jake's notebook\n", evidence.size());
+        Check(!evidence.empty() && decoded && reloaded.Journal == Runtime().GetJournal(), "documents Jake read are kept in the saved notebook");
+    }
 
     // ---- L_Credits.
     g_requestedLevel.clear();
