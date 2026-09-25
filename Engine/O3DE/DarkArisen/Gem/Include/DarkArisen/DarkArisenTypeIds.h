@@ -15,6 +15,8 @@ namespace DarkArisen
     inline constexpr const char* JakeInputComponentTypeId = "{ADB14533-41E7-4192-A2C6-711B7888F20A}";
     inline constexpr const char* EnemyBrainComponentTypeId = "{87EEEB01-C57D-4E8C-B6E1-AB4015B40DD2}";
     inline constexpr const char* OceanComponentTypeId = "{C1A5E0F2-7D34-4B9A-8E26-5F3B9D0A7C18}";
+    inline constexpr const char* SwimmerComponentTypeId = "{3F9C2A71-5B8E-4D06-9E4A-1C7B6D2E8F35}";
+    inline constexpr const char* WaterVolumeComponentTypeId = "{9A4E1D63-2C7F-4B58-8D19-6E3A5F0C2B74}";
 
     // Interfaces
     inline constexpr const char* CampaignRequestsTypeId = "{20A14A6C-830D-4C72-A95F-2477D73FF09E}";
@@ -23,4 +25,5 @@ namespace DarkArisen
     inline constexpr const char* ShipRequestsTypeId = "{5A3977F3-57CE-4D80-8048-89110B7DB968}";
     inline constexpr const char* EnemyNotificationsTypeId = "{4C7E2B91-0D3A-4F6E-9A51-7B2E8C1D3F40}";
     inline constexpr const char* OceanRequestsTypeId = "{E6B2D48A-9C07-4F1E-A35B-8D2C6F1E0B93}";
+    inline constexpr const char* SwimRequestsTypeId = "{B7D1E5A2-4F93-4C6E-A0B8-2D5C9E7F1A46}";
 }

@@ -3,6 +3,7 @@
 #include "Story/StoryTriggerComponent.h"
 
 #include <DarkArisen/CombatBus.h>
+#include <DarkArisen/SwimBus.h>
 
 #include <AzCore/Component/TransformBus.h>
 #include <AzCore/Serialization/EditContext.h>
@@ -79,7 +80,7 @@ namespace DarkArisen
         if (id == Keyboard::ModifierShiftL || id == Gamepad::Button::L3)
         {
             m_sprintHeld = inputChannel.IsActive();
-            CombatRequestBus::Event(self, &CombatRequests::SetSprinting, m_sprintHeld);
+            CombatRequestBus::Event(self, &CombatRequests::SetSprinting, m_sprintHeld && !m_wasSwimming);
             return false;
         }
         if (!pressed)
@@ -106,15 +107,34 @@ namespace DarkArisen
             const Core::Combatant& combatant = handler->GetCombatant();
             committedOrDead = combatant.Health.IsDead() || combatant.Combat.IsActionCommitted();
         });
-        if (committedOrDead)
-        {
-            return;
-        }
         AZ::Vector2 move = m_keyboardMove + m_stickMove;
         if (move.GetLengthSq() > 1.0f)
         {
             move.Normalize();
         }
+        if (committedOrDead)
+        {
+            move = AZ::Vector2::CreateZero();
+        }
+
+        // In the water the swimmer owns movement: stroke direction and pace, no land sprint drain.
+        bool swimming = false;
+        SwimRequestBus::EventResult(swimming, GetEntityId(), &SwimRequests::IsSwimming);
+        if (swimming != m_wasSwimming)
+        {
+            m_wasSwimming = swimming;
+            CombatRequestBus::Event(GetEntityId(), &CombatRequests::SetSprinting, !swimming && m_sprintHeld);
+        }
+        if (swimming)
+        {
+            SwimRequestBus::Event(GetEntityId(), &SwimRequests::SetSwimIntent, move, m_sprintHeld && !committedOrDead);
+            return;
+        }
+        if (committedOrDead)
+        {
+            return;
+        }
+
         const float speed = m_sprintHeld ? SprintSpeedMetresPerSecond : RunSpeedMetresPerSecond;
         const AZ::Vector3 velocity(move.GetX() * speed, move.GetY() * speed, 0.0f);
         Physics::CharacterRequestBus::Event(GetEntityId(), &Physics::CharacterRequests::AddVelocityForTick, velocity);

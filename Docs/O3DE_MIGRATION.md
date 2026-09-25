@@ -60,7 +60,13 @@ A second probe runs the gameplay adapters on entities (`CombatantComponent`, `En
 `ShipVoyageComponent`) with O3DE's real AzFramework physics types, reflection and service resolution:
 boarder telegraph and attack over the buses, parry/deflect, Rache driving `AZ::ITime` to 0.30 and back
 within five real seconds, player capture/restore scoped to its level, real-Ethan hit rejection, ship
-ownership gate and physical sailing on TickBus. Result: 17/17 passed. No PhysX scene exists in the probe,
+ownership gate and physical sailing on TickBus, the shared ocean (ship heave and tilt), and Chapter 1
+swimming: `SwimmerComponent` and `WaterVolumeComponent` with the ContentSource Outer Reef Current.A,
+PhysX character gravity suspended in water and restored on the shallow walk-out, buoyancy on the sampled
+sea, casual stroke losing and sprint beating the current, exhaustion, 30 s breath and 20 drowning damage
+per whole second, breath refill on surfacing. Result: 35/35 passed (2026-09-25). The remaining Gem
+sources (`JakeInputComponent`, `StoryTriggerComponent`, the module) are compiled against the pinned
+engine headers in the same run, so every adapter source is compiler-checked on each PR. No PhysX scene exists in the probe,
 so the melee sweep logs its documented error and hits are resolved directly. The CI job
 `verify-o3de-framework` repeats it on every PR. Findings on the way: O3DE needs its patched RapidXML
 (`isError/getError`), a RapidJSON newer than the 3p recipe commit, and `O3DE_DISABLE_CONDITIONAL_EXPLICIT`
@@ -73,7 +79,7 @@ DX12/Vulkan GPU, network access to the host above, GitHub and git-lfs.
 ContentSource (engine-neutral data)          Core/ (C++20, no engine)
         │                                           │  CampaignRuntime, SaveRules, SaveCodec,
         │                                           │  OpeningRuntime, Combat, ShipVoyage,
-        │                                           │  EntityPolicy, DesignLaws
+        │                                           │  EnemyBrain, Ocean, Water, EntityPolicy
         ▼                                           ▼
 Tools/o3de (native ops + asset ingest)   Engine/O3DE/DarkArisen/Gem  ── thin AZ::Component adapters
         │                                           │  CampaignSystemComponent, SaveSlotStore,
@@ -102,7 +108,9 @@ Engine/O3DE/DarkArisen/Assets ──► Asset Processor   │  StoryTriggerCompo
 | Opening Ch. 1–2 runtime | `Opening/OpeningRuntimeComponent.cpp` | engine-independent logic | IMPLEMENTED (Core), triggers IMPLEMENTED / RUNTIME VERIFY PENDING |
 | Combat, stamina, health/rally, damage | `Components/*`, `Combat/DamagePipeline.cpp` | engine-independent math | IMPLEMENTED (Core), parity-tested |
 | Melee sweep, targeting | `CombatComponent::TraceAndResolvePendingHit` | UE-coupled | IMPLEMENTED (PhysX sphere cast) / PhysX RUNTIME VERIFY PENDING; combat adapter VERIFIED on AzCore |
-| Jake movement/input | `JakeCharacter.cpp` | UE-coupled | PARTIAL: input, run/sprint, combat; camera, swimming, lock-on NOT DONE |
+| Jake movement/input | `JakeCharacter.cpp` | UE-coupled | PARTIAL: input, run/sprint, combat, surface swimming; camera, lock-on, diving NOT DONE |
+| Swimming, currents, breath, drowning | `Components/WaterBreathComponent.cpp`, `Opening/OpeningWaterCurrentVolume.cpp` | engine-independent rules, UE-coupled movement | IMPLEMENTED (Core `BreathModel`, `SwimModel`, design speeds 1/1.5/2 m/s); adapters VERIFIED on AzCore; PhysX trigger volumes RUNTIME VERIFY PENDING; swim stamina values PROVISIONAL (section 6, item 9) |
+| Player death and checkpoint respawn | `AJakeCharacter::RestoreAtCheckpoint` | UE-coupled | NOT DONE in O3DE: `RecoverAtCheckpoint` / `ResetForRespawn` exist but nothing calls them yet |
 | Enemy AI (boarders, Holders, Dream Ethan, Draven) | `AI/*`, `Bosses/*`, `DuelingEnemyCharacter` | engine-independent decisions | IMPLEMENTED (Core `EnemyBrain`, phases, telegraphs, boss defeat to story); adapter VERIFIED on AzCore; PhysX movement/line of sight RUNTIME VERIFY PENDING; Draven still lacks distinct moves beyond phases (gap carried over from UE) |
 | La Liberación voyage | `Ship/ShipVoyageComponent.cpp` | engine-independent model | IMPLEMENTED (Core); adapter VERIFIED on AzCore (ownership gate, sailing); buoyancy/collision sweep NOT DONE |
 | Ethan canon guards | scattered validators | engine-independent | IMPLEMENTED: real Ethan can never be hostile, damaged or a boss; `boss.dream_ethan` is separate |
@@ -137,7 +145,16 @@ Engine/O3DE/DarkArisen/Assets ──► Asset Processor   │  StoryTriggerCompo
    are committed; the `.gltf` files in `ContentSource/Ships` are greybox placeholders without normals/UV.
    The exact GLB revisions must be downloaded from the owner's Higgsfield account, then:
    `DarkArisenO3DE import-glb --manifest=ContentSource/Ships/Harlow/Higgsfield3DSource.json --glb=<file>`.
-8. **CI.** PR #52 made the UE jobs unconditional on self-hosted `ue5.8` runners that do not exist, so
+8. **Drowning over-counted on the breath-out tick (UE reference).** `UWaterBreathComponent` adds the whole
+   tick to drowning time on the tick breath reaches zero, so the first damage arrives up to one tick early
+   and depends on frame rate. Core counts only the overflow (test: identical damage at 30/60/144 Hz).
+9. **Swimming had no design values in UE.** `JakeCharacter` never sets `MaxSwimSpeed`, so UE swam at the
+    engine default 3 m/s (design: 1 / 1.5 / 2 m/s) with no stamina cost, and every `bShallowExit` volume
+    switched to walking on any exit, including seaward into deep water. The port uses the design speeds,
+    walks out only at wading depth, and marks the unspecified numbers PROVISIONAL for a design ruling:
+    water drag 1/s (Current.A 130 cm/s² therefore drifts 1.3 m/s), active stroke 3/s, swim sprint 15/s
+    (land sprint 10/s), 4/s per m/s of opposing current, in-water regen ×0.25, exhaustion until 25 %.
+10. **CI.** PR #52 made the UE jobs unconditional on self-hosted `ue5.8` runners that do not exist, so
    those jobs can only queue or be cancelled. The new `verify-engine-neutral` job gives real, executed
    C++ evidence on every PR.
 

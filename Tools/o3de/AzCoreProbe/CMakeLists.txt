@@ -102,6 +102,8 @@ add_executable(DarkArisenGameplayProbe
     ${GEM}/Source/Combat/EnemyBrainComponent.cpp
     ${GEM}/Source/Ships/ShipVoyageComponent.cpp
     ${GEM}/Source/World/OceanComponent.cpp
+    ${GEM}/Source/World/WaterVolumeComponent.cpp
+    ${GEM}/Source/Player/SwimmerComponent.cpp
     ${AZF}/AzFramework/API/ApplicationAPI.cpp
     ${AZF}/AzFramework/IO/LocalFileIO.cpp
     ${AZF}/Platform/Common/UnixLike/AzFramework/IO/LocalFileIO_UnixLike.cpp
@@ -111,8 +113,21 @@ add_executable(DarkArisenGameplayProbe
     ${AZF}/AzFramework/Physics/ShapeConfiguration.cpp
     ${AZF}/AzFramework/Physics/Collision/CollisionLayers.cpp
     ${AZF}/AzFramework/Physics/CollisionBus.cpp
-    ${AZF}/AzFramework/Physics/SystemBus.cpp)
+    ${AZF}/AzFramework/Physics/SystemBus.cpp
+    ${AZF}/AzFramework/Physics/Common/PhysicsSimulatedBodyEvents.cpp
+    ${AZF}/AzFramework/Physics/Components/SimulatedBodyComponentBus.cpp)
+# PhysX Gem public headers: only the header-only CharacterGameplayRequestBus is used.
 target_include_directories(DarkArisenGameplayProbe PRIVATE ${AZF} ${AZF}/Platform/Linux ${AZF}/Platform/Common
-    ${GEM}/Include ${GEM}/Source)
+    ${GEM}/Include ${GEM}/Source ${O3DE_ENGINE_ROOT}/Gems/PhysX/Core/Code/Include)
 target_link_libraries(DarkArisenGameplayProbe PRIVATE AzCore DarkArisen::Core)
 add_test(NAME DarkArisenGameplayProbe COMMAND DarkArisenGameplayProbe)
+
+# Remaining Gem sources, compiled (not linked) against the pinned engine headers so every adapter is
+# checked on each run: input devices and the module entry point need the full AzFramework and launcher.
+add_library(DarkArisenGemCompileCheck OBJECT
+    ${GEM}/Source/Player/JakeInputComponent.cpp
+    ${GEM}/Source/Story/StoryTriggerComponent.cpp
+    ${GEM}/Source/DarkArisenModule.cpp)
+target_include_directories(DarkArisenGemCompileCheck PRIVATE ${AZF} ${AZF}/Platform/Linux ${AZF}/Platform/Common
+    ${GEM}/Include ${GEM}/Source ${O3DE_ENGINE_ROOT}/Gems/PhysX/Core/Code/Include)
+target_link_libraries(DarkArisenGemCompileCheck PRIVATE AzCore DarkArisen::Core)

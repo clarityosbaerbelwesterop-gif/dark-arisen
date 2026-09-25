@@ -6,6 +6,7 @@ set(FILES
     Include/DarkArisen/ShipBus.h
     Include/DarkArisen/EnemyBus.h
     Include/DarkArisen/OceanBus.h
+    Include/DarkArisen/SwimBus.h
     Source/Story/CampaignSystemComponent.h
     Source/Story/CampaignSystemComponent.cpp
     Source/Story/StoryTriggerComponent.h
@@ -20,6 +21,10 @@ set(FILES
     Source/Ships/ShipVoyageComponent.cpp
     Source/Player/JakeInputComponent.h
     Source/Player/JakeInputComponent.cpp
+    Source/Player/SwimmerComponent.h
+    Source/Player/SwimmerComponent.cpp
     Source/World/OceanComponent.h
     Source/World/OceanComponent.cpp
+    Source/World/WaterVolumeComponent.h
+    Source/World/WaterVolumeComponent.cpp
 )

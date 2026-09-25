@@ -51,6 +51,8 @@ ly_add_target(
         PRIVATE
             AZ::AzGameFramework
             Gem::Atom_AtomBridge.Static
+            # PhysX::CharacterGameplayRequestBus (gravity while swimming); same pattern as O3DE's Multiplayer Gem.
+            Gem::PhysX5.Static
         PUBLIC
             DarkArisen::Core
 )

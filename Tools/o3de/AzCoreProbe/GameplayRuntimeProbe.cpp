@@ -22,6 +22,11 @@
 #include "Ships/ShipVoyageComponent.h"
 #include "Story/CampaignSystemComponent.h"
 #include "World/OceanComponent.h"
+#include "World/WaterVolumeComponent.h"
+#include "Player/SwimmerComponent.h"
+#include <DarkArisen/SwimBus.h>
+#include <AzFramework/Physics/CharacterBus.h>
+#include <PhysX/CharacterGameplayBus.h>
 #include <DarkArisen/OceanBus.h>
 #include <DarkArisen/Core/Ocean.h>
 
@@ -69,11 +74,131 @@ namespace ProbeSupport
 
         AZ::Transform m_world = AZ::Transform::CreateIdentity();
     };
+
+    /**
+     * Stands in for the PhysX character controller and character gameplay components (probe only):
+     * integrates the velocity requested each tick, and records the gravity multiplier. A locked
+     * vertical axis simulates being pinned under wreckage or standing on the seabed.
+     */
+    class ProbeCharacterComponent
+        : public AZ::Component
+        , public Physics::CharacterRequestBus::Handler
+        , public PhysX::CharacterGameplayRequestBus::Handler
+        , public AZ::TickBus::Handler
+    {
+    public:
+        AZ_COMPONENT(ProbeCharacterComponent, "{7C2E9A14-3B6D-4F80-A5C1-9E0D2B4F6A37}");
+        static void Reflect(AZ::ReflectContext* context)
+        {
+            if (auto* serialize = azrtti_cast<AZ::SerializeContext*>(context))
+            {
+                serialize->Class<ProbeCharacterComponent, AZ::Component>()->Version(1);
+            }
+        }
+        static void GetProvidedServices(AZ::ComponentDescriptor::DependencyArrayType& provided)
+        {
+            provided.push_back(AZ_CRC_CE("PhysicsCharacterControllerService"));
+            provided.push_back(AZ_CRC_CE("PhysicsCharacterGameplayService"));
+        }
+        static void GetRequiredServices(AZ::ComponentDescriptor::DependencyArrayType& required)
+        {
+            required.push_back(AZ_CRC_CE("TransformService"));
+        }
+        void Activate() override
+        {
+            Physics::CharacterRequestBus::Handler::BusConnect(GetEntityId());
+            PhysX::CharacterGameplayRequestBus::Handler::BusConnect(GetEntityId());
+            AZ::TickBus::Handler::BusConnect();
+        }
+        void Deactivate() override
+        {
+            AZ::TickBus::Handler::BusDisconnect();
+            PhysX::CharacterGameplayRequestBus::Handler::BusDisconnect();
+            Physics::CharacterRequestBus::Handler::BusDisconnect();
+        }
+        int GetTickOrder() override { return AZ::TICK_LAST; }
+        void OnTick(const float deltaTime, AZ::ScriptTimePoint) override
+        {
+            AZ::Vector3 velocity = m_pending;
+            if (m_lockVertical)
+            {
+                velocity.SetZ(0.0f);
+            }
+            AZ::Vector3 position = AZ::Vector3::CreateZero();
+            AZ::TransformBus::EventResult(position, GetEntityId(), &AZ::TransformBus::Events::GetWorldTranslation);
+            AZ::TransformBus::Event(GetEntityId(), &AZ::TransformBus::Events::SetWorldTranslation, position + velocity * deltaTime);
+            m_velocity = velocity;
+            m_pending = AZ::Vector3::CreateZero();
+        }
+
+        // Physics::CharacterRequests
+        AZ::Vector3 GetBasePosition() const override
+        {
+            AZ::Vector3 position = AZ::Vector3::CreateZero();
+            AZ::TransformBus::EventResult(position, GetEntityId(), &AZ::TransformBus::Events::GetWorldTranslation);
+            return position;
+        }
+        void SetBasePosition(const AZ::Vector3& position) override
+        {
+            AZ::TransformBus::Event(GetEntityId(), &AZ::TransformBus::Events::SetWorldTranslation, position);
+        }
+        AZ::Vector3 GetCenterPosition() const override { return GetBasePosition() + AZ::Vector3(0.0f, 0.0f, 0.9f); }
+        float GetStepHeight() const override { return 0.3f; }
+        void SetStepHeight(float) override {}
+        AZ::Vector3 GetUpDirection() const override { return AZ::Vector3::CreateAxisZ(); }
+        void SetUpDirection(const AZ::Vector3&) override {}
+        float GetSlopeLimitDegrees() const override { return 45.0f; }
+        void SetSlopeLimitDegrees(float) override {}
+        float GetMaximumSpeed() const override { return 0.0f; }
+        void SetMaximumSpeed(float) override {}
+        AZ::Vector3 GetVelocity() const override { return m_velocity; }
+        void AddVelocityForTick(const AZ::Vector3& velocity) override { m_pending += velocity; }
+        void AddVelocityForPhysicsTimestep(const AZ::Vector3& velocity) override { m_pending += velocity; }
+        bool IsPresent() const override { return true; }
+        Physics::Character* GetCharacter() override { return nullptr; }
+
+        // PhysX::CharacterGameplayRequests
+        bool IsOnGround() const override { return m_lockVertical; }
+        float GetGravityMultiplier() const override { return m_gravityMultiplier; }
+        void SetGravityMultiplier(const float multiplier) override { m_gravityMultiplier = multiplier; }
+        float GetGroundDetectionBoxHeight() const override { return 0.05f; }
+        void SetGroundDetectionBoxHeight(float) override {}
+        AZ::Vector3 GetFallingVelocity() const override { return m_fallingVelocity; }
+        void SetFallingVelocity(const AZ::Vector3& velocity) override { m_fallingVelocity = velocity; }
+
+        float m_gravityMultiplier = 1.0f;
+        AZ::Vector3 m_fallingVelocity = AZ::Vector3(0.0f, 0.0f, -3.0f);
+        bool m_lockVertical = false;
+
+    private:
+        AZ::Vector3 m_pending = AZ::Vector3::CreateZero();
+        AZ::Vector3 m_velocity = AZ::Vector3::CreateZero();
+    };
 }
 
 namespace
 {
     int g_failures = 0;
+
+    /** Writes a reflected field the way a prefab would, by its serialized name. */
+    template<class Component, class Value>
+    bool SetReflectedField(AZ::SerializeContext* serialize, Component* component, const char* field, const Value& value)
+    {
+        const AZ::SerializeContext::ClassData* data = serialize ? serialize->FindClassData(azrtti_typeid<Component>()) : nullptr;
+        if (!data)
+        {
+            return false;
+        }
+        for (const AZ::SerializeContext::ClassElement& element : data->m_elements)
+        {
+            if (AZStd::string_view(element.m_name) == field && element.m_typeId == azrtti_typeid<Value>())
+            {
+                *reinterpret_cast<Value*>(reinterpret_cast<char*>(component) + element.m_offset) = value;
+                return true;
+            }
+        }
+        return false;
+    }
 
     void Check(const bool condition, const char* what)
     {
@@ -134,7 +259,9 @@ int main(int argc, char** argv)
     for (const AZ::ComponentDescriptor* componentDescriptor :
          {DarkArisen::CampaignSystemComponent::CreateDescriptor(), DarkArisen::CombatantComponent::CreateDescriptor(),
              DarkArisen::EnemyBrainComponent::CreateDescriptor(), DarkArisen::ShipVoyageComponent::CreateDescriptor(),
-             DarkArisen::OceanComponent::CreateDescriptor(), ProbeSupport::ProbeTransformComponent::CreateDescriptor()})
+             DarkArisen::OceanComponent::CreateDescriptor(), DarkArisen::SwimmerComponent::CreateDescriptor(),
+             DarkArisen::WaterVolumeComponent::CreateDescriptor(), ProbeSupport::ProbeTransformComponent::CreateDescriptor(),
+             ProbeSupport::ProbeCharacterComponent::CreateDescriptor()})
     {
         app.RegisterComponentDescriptor(componentDescriptor);
     }
@@ -297,8 +424,108 @@ int main(int argc, char** argv)
     Check(speed > 0.5f && shipPosition.GetDistance(AZ::Vector3(100.0f, 0.0f, 0.0f)) > 10.0f,
         "ship sails physically over ticks (no teleport, no route skip)");
 
+
+    // ---- Swimming (Chapter 1 "Undertow"): Outer Reef Current.A from ContentSource, calm sea.
+    if (sea)
+    {
+        sea->SetWeather(2.0f, 90.0f, 0.2f);
+    }
+    AZ::Entity* swimmer = MakeEntity("Swimmer", AZ::Vector3(-58.0f, 0.0f, -1.4f));
+    swimmer->CreateComponent<DarkArisen::CombatantComponent>();
+    auto* swimmerCharacter = swimmer->CreateComponent<ProbeSupport::ProbeCharacterComponent>();
+    swimmer->CreateComponent<DarkArisen::SwimmerComponent>();
+    AZ::Entity* currentA = MakeEntity("Current.A", AZ::Vector3(-58.0f, 0.0f, -1.0f));
+    auto* currentVolume = currentA->CreateComponent<DarkArisen::WaterVolumeComponent>();
+    Check(SetReflectedField(serialize, currentVolume, "CurrentAcceleration",
+              AZ::Vector3(static_cast<float>(DarkArisen::Core::CurrentFromCentimetres(130.0)),
+                  static_cast<float>(DarkArisen::Core::CurrentFromCentimetres(15.0)), 0.0f)),
+        "water volume current set through its reflected field");
+    AZ::Entity* shallows = MakeEntity("Shallows", AZ::Vector3(-23.0f, 0.0f, 0.0f));
+    auto* shallowVolume = shallows->CreateComponent<DarkArisen::WaterVolumeComponent>();
+    Check(SetReflectedField(serialize, shallowVolume, "ShallowExit", true), "shallow exit set through its reflected field");
+    for (AZ::Entity* entity : {swimmer, currentA, shallows})
+    {
+        entity->Init();
+        entity->Activate();  // the volumes report the missing PhysX trigger collider (no physics scene here)
+    }
+    Check(swimmer->GetState() == AZ::Entity::State::Active, "swimmer active (combatant + character controller services)");
+    const AZ::EntityId swimmerId = swimmer->GetId();
+    auto swimmerX = [swimmerId]()
+    {
+        AZ::Vector3 position = AZ::Vector3::CreateZero();
+        AZ::TransformBus::EventResult(position, swimmerId, &AZ::TransformBus::Events::GetWorldTranslation);
+        return position;
+    };
+    auto isSwimming = [swimmerId]()
+    {
+        bool swimming = false;
+        DarkArisen::SwimRequestBus::EventResult(swimming, swimmerId, &DarkArisen::SwimRequests::IsSwimming);
+        return swimming;
+    };
+    DarkArisen::Core::Combatant* swimmerModel = nullptr;
+    DarkArisen::CombatRequestBus::Event(swimmerId, [&swimmerModel](DarkArisen::CombatRequests* handler) { swimmerModel = &handler->GetCombatant(); });
+
+    currentVolume->NotifyEntered(swimmerId);
+    Check(isSwimming() && swimmerCharacter->m_gravityMultiplier == 0.0f && swimmerCharacter->m_fallingVelocity.IsZero(),
+        "entering water: swimming, PhysX gravity suspended, falling velocity cleared");
+    Check(swimmerModel && swimmerModel->Stamina.RegenMultiplier < 0.3f, "stamina regen slowed in water");
+
+    DarkArisen::SwimRequestBus::Event(swimmerId, &DarkArisen::SwimRequests::SetSwimIntent, AZ::Vector2(-0.4f, 0.0f), false);
+    const float startX = swimmerX().GetX();
+    Tick(8.0f);
+    Check(swimmerX().GetX() > startX, "casual stroke against Current.A loses ground (design: sometimes impossible)");
+    const AZ::Vector3 floating = swimmerX();
+    const float surface = sea ? static_cast<float>(sea->GetSurface().Sample(floating.GetX(), floating.GetY(), sea->GetOceanTime()).Height) : 0.0f;
+    Check(AZ::GetAbs(floating.GetZ() - (surface + 0.12f - 1.62f)) < 0.25f, "buoyancy floats the body with the eyes above the sampled sea");
+    bool submerged = true;
+    DarkArisen::SwimRequestBus::EventResult(submerged, swimmerId, &DarkArisen::SwimRequests::IsHeadSubmerged);
+    Check(!submerged, "floating swimmer breathes");
+
+    DarkArisen::SwimRequestBus::Event(swimmerId, &DarkArisen::SwimRequests::SetSwimIntent, AZ::Vector2(-1.0f, 0.0f), true);
+    const float sprintStartX = swimmerX().GetX();
+    const float staminaBefore = swimmerModel ? swimmerModel->Stamina.CurrentStamina : 0.0f;
+    Tick(2.0f);
+    DarkArisen::Core::SwimPace pace = DarkArisen::Core::SwimPace::Casual;
+    DarkArisen::SwimRequestBus::EventResult(pace, swimmerId, &DarkArisen::SwimRequests::GetSwimPace);
+    Check(swimmerX().GetX() < sprintStartX && pace == DarkArisen::Core::SwimPace::Sprint, "sprint stroke beats Current.A");
+    // Fighting the current drains even casual strokes, so the sprint runs dry within seconds.
+    Tick(3.0f);
+    DarkArisen::SwimRequestBus::EventResult(pace, swimmerId, &DarkArisen::SwimRequests::GetSwimPace);
+    Check(swimmerModel && swimmerModel->Stamina.CurrentStamina < staminaBefore - 50.0f && pace == DarkArisen::Core::SwimPace::Casual,
+        "swim sprint drains stamina through the combatant and exhausts to casual strokes");
+
+    // Pinned under wreckage: breath runs out, drowning deals environmental damage.
+    DarkArisen::SwimRequestBus::Event(swimmerId, &DarkArisen::SwimRequests::SetSwimIntent, AZ::Vector2::CreateZero(), false);
+    swimmerCharacter->m_lockVertical = true;
+    AZ::TransformBus::Event(swimmerId, &AZ::TransformBus::Events::SetWorldTranslation, AZ::Vector3(-50.0f, 0.0f, -6.0f));
+    const float healthBefore = swimmerModel ? swimmerModel->Health.CurrentHealth : 0.0f;
+    Tick(31.5f);
+    float breath = 1.0f;
+    DarkArisen::SwimRequestBus::EventResult(breath, swimmerId, &DarkArisen::SwimRequests::GetBreathFraction);
+    Check(breath == 0.0f && swimmerModel && AZ::GetAbs(healthBefore - swimmerModel->Health.CurrentHealth - 20.0f) < 0.01f,
+        "30 s bare breath, then 20 drowning damage per whole second");
+    swimmerCharacter->m_lockVertical = false;
+    Tick(4.0f);
+    DarkArisen::SwimRequestBus::EventResult(breath, swimmerId, &DarkArisen::SwimRequests::GetBreathFraction);
+    Check(breath == 1.0f, "surfacing refills breath");
+
+    // Shallows left seaward while still floating: the swimmer keeps swimming.
+    currentVolume->NotifyExited(swimmerId);
+    shallowVolume->NotifyEntered(swimmerId);
+    shallowVolume->NotifyExited(swimmerId);
+    Tick(0.5f);
+    Check(isSwimming(), "leaving the shallows in deep water keeps swimming");
+    // Shallows left towards the beach at standing depth: walk out, gravity and regen restored.
+    shallowVolume->NotifyEntered(swimmerId);
+    swimmerCharacter->m_lockVertical = true;
+    AZ::TransformBus::Event(swimmerId, &AZ::TransformBus::Events::SetWorldTranslation, AZ::Vector3(-12.0f, 0.0f, surface - 0.6f));
+    shallowVolume->NotifyExited(swimmerId);
+    Tick(0.1f);
+    Check(!isSwimming() && swimmerCharacter->m_gravityMultiplier == 1.0f && swimmerModel && swimmerModel->Stamina.RegenMultiplier == 1.0f,
+        "shallow exit at wading depth: walking, gravity and stamina regen restored");
+
     enemyEvents.BusDisconnect();
-    for (AZ::Entity* entity : {ship, ocean, ethan, boarder, jake})
+    for (AZ::Entity* entity : {shallows, currentA, swimmer, ship, ocean, ethan, boarder, jake})
     {
         entity->Deactivate();
         delete entity;

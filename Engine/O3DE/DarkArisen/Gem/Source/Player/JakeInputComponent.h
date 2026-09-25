@@ -37,6 +37,7 @@ namespace DarkArisen
         AZ::Vector2 m_keyboardMove = AZ::Vector2::CreateZero();
         AZ::Vector2 m_stickMove = AZ::Vector2::CreateZero();
         bool m_sprintHeld = false;
+        bool m_wasSwimming = false;
 
         void Interact() const;
     };
