@@ -535,4 +535,3 @@ namespace
         return entity && entity->GetState() == AZ::Entity::State::Active;
     }
 }
-
