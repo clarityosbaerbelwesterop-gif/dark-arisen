@@ -61,6 +61,7 @@ if(DARKARISEN_CORE_TESTS)
         Tests/CameraTests.cpp
         Tests/StoryWorldTests.cpp
         Tests/LivingCampaignTests.cpp
+        Tests/DravenDuelTests.cpp
         Tests/UnrealParityTests.cpp
     )
     target_link_libraries(DarkArisenCoreTests PRIVATE DarkArisen::Core)

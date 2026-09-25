@@ -147,7 +147,8 @@ Engine/O3DE/DarkArisen/Assets ──► Asset Processor   │  StoryTriggerCompo
 | Visible ocean (Atom) | none in Unreal source (no water system shipped in O3DE 2605.0 either) | rendering | IMPLEMENTED: `DarkArisenOcean.materialtype`, forward + depth shaders displacing tiled grids with the gameplay Gerstner waves on `SceneSrg::m_time` (the clock `OceanComponent` now reads); compiles to SPIR-V and DXIL; material waves = live `OceanComponent` surface (level probe); foam, refraction, underwater fog and runtime weather changes on the material NOT DONE; GPU RUNTIME VERIFY PENDING |
 | Swimming, currents, breath, drowning | `Components/WaterBreathComponent.cpp`, `Opening/OpeningWaterCurrentVolume.cpp` | engine-independent rules, UE-coupled movement | IMPLEMENTED (Core `BreathModel`, `SwimModel`, design speeds 1/1.5/2 m/s); adapters VERIFIED on AzCore; PhysX trigger volumes RUNTIME VERIFY PENDING; swim stamina values PROVISIONAL (section 6, item 9) |
 | Player death and checkpoint respawn | `AJakeCharacter::RestoreAtCheckpoint` (only reachable through an unplaced trigger) | UE-coupled | IMPLEMENTED: 2 s death beat, checkpoint or legal level spawn, full vitals, back in the water when placed inside a volume, no failure screen; VERIFIED on AzCore (level probe) |
-| Enemy AI (boarders, Holders, Dream Ethan, Draven) | `AI/*`, `Bosses/*`, `DuelingEnemyCharacter` | engine-independent decisions | IMPLEMENTED (Core `EnemyBrain`, phases, telegraphs, boss defeat to story); adapter VERIFIED on AzCore; PhysX movement/line of sight RUNTIME VERIFY PENDING; Draven still lacks distinct moves beyond phases (gap carried over from UE) |
+| Enemy AI (boarders, Holders, Dream Ethan, Draven) | `AI/*`, `Bosses/*`, `DuelingEnemyCharacter` | engine-independent decisions | IMPLEMENTED (Core `EnemyBrain`, phases, telegraphs, boss defeat to story, authored movesets); adapter VERIFIED on AzCore; PhysX movement/line of sight RUNTIME VERIFY PENDING; see the boss quality audit below |
+| Draven Voss duel | `Bosses/DravenVossBossCharacter.cpp` (phases only) | engine-independent decisions | IMPLEMENTED: 12 authored moves in four stances (officer, pirate, low guard, unarmed) from the combat content of `docs/design/bosses/draven_voss.md`: chains, a feint, an immediate answer to a deflect, a guard counter to a committed attack, a pistol for a kiting Jake, powder bombs every 20 s, a clinch after 3 s in reach, one disarm at a quarter health after which he waits. Hit numbers stay the combat laws' Light/Heavy profiles and the Unreal 520/190/0.65/0.30; every step telegraphs at least 0.25 s; movesets are validated fail-closed. VERIFIED in Core tests and the gameplay probe (stance, pistol, bomb blast, disarm through the Gem adapters). Arena beats (cabin → deck → helm, falling mast, tilting helm), dropped-sword runtime, animations and voice NOT DONE |
 | La Liberación voyage | `Ship/ShipVoyageComponent.cpp` | engine-independent model | IMPLEMENTED (Core); adapter VERIFIED on AzCore (ownership gate, sailing); buoyancy/collision sweep NOT DONE |
 | Ethan canon guards | scattered validators | engine-independent | IMPLEMENTED: real Ethan can never be hostile, damaged or a boss; `boss.dream_ethan` is separate |
 | Chapter 1 levels (Harlow, Driftwood Beach with Outer Reef, Driftwood Camp) | `DarkArisenMaterializeAlphaCommandlet.cpp` | content build | IMPLEMENTED (`materialize`): prefabs, O3DE-frame greybox, PhysX collision manifests, opening director, map transitions, spawn rules; VERIFIED on AzCore (level probe 38/38); Editor/Launcher RUNTIME VERIFY PENDING |
@@ -264,6 +265,22 @@ Engine/O3DE/DarkArisen/Assets ──► Asset Processor   │  StoryTriggerCompo
     available at `BoatWork`, recruited at `RecruitmentConversation`; Big Tom met at `BigTom`, available
     at `WorkEvent`, recruited at `BigTom`; Galleon Cove cleared by taking `HarborControl` (no enemy
     placements are authored for the cove), Esteban available from the harbor records.
+24. **Draven was a boarder with more health (Unreal and first O3DE port).** The Unreal boss only
+    raised cooldown, awareness and poise per phase and light-attacked like every duelist. Core now
+    gives authored movesets to any boss profile (see the Draven row); a moveset that could stall a
+    stance, hide a wind-up, end on a feint or land a sabre beyond reach is rejected at validation.
+25. **An explosion could be deflected.** The Unreal damage pipeline let a deflection window stop every
+    non-critical hit, environmental ones included; no environmental source existed, so it never
+    showed. Core no longer deflects `Environmental` hits (powder bombs, falling masts); blades,
+    bullets and grabs still deflect as before.
+
+### Boss quality audit (2026-09-25)
+
+| Boss | Current behaviour | Verdict |
+|---|---|---|
+| Draven Voss (`boss.draven_voss`) | authored 12-move duel, four stances, three phases | IMPLEMENTED; arena beats and animation NOT DONE |
+| Dream Ethan (`boss.dream_ethan`) | generic brain, three phases, learnable light/heavy rhythm | PARTIAL: `docs/design/bosses/ethan_harlow.md` is the superseded real-Ethan boss and cannot drive a moveset; the dream figure's moves need owner authority |
+| The Nine Who Hold (`boss.herrera` … `boss.thorne`) | the boarder profile (180 health, one phase, light attacks) with each contract's resolution | BLOCKED on design: `Docs/M7_TIER1_BOSS_REGISTER.md` names them and their seats but no repository document authors their fights; not invented here. The moveset system is ready for them |
 
 ## 7. Gates before an engine decision
 

@@ -10,6 +10,7 @@
 #include <AzCore/Math/Vector3.h>
 #include <AzCore/RTTI/TypeInfo.h>
 #include <AzCore/std/smart_ptr/unique_ptr.h>
+#include <AzCore/std/containers/vector.h>
 #include <AzCore/std/string/string.h>
 
 #include <DarkArisen/Core/EnemyBrain.h>
@@ -25,6 +26,7 @@ namespace DarkArisen
         : public AZ::Component
         , protected AZ::TickBus::Handler
         , protected EnemyPopulationRequestBus::Handler
+        , protected CombatNotificationBus::Handler
     {
     public:
         AZ_COMPONENT_DECL(EnemyBrainComponent);
@@ -40,6 +42,7 @@ namespace DarkArisen
         void Deactivate() override;
         void OnTick(float deltaTime, AZ::ScriptTimePoint time) override;
         void CountLivingRankAndFile(int& count) const override;
+        void OnMeleeResolved(const AZ::EntityId& target, bool deflected) override;
 
     private:
         EnemyProfileKind m_profileKind = EnemyProfileKind::Boarder;
@@ -56,7 +59,18 @@ namespace DarkArisen
         AZ::EntityId m_target;
         bool m_defeatResolved = false;
 
+        struct PowderBomb
+        {
+            AZ::Vector3 Position;
+            float FuseRemaining = 0.0f;
+        };
+        AZStd::vector<PowderBomb> m_bombs;
+
         Core::EnemyProfile BuildProfile() const;
+        void Deliver(Core::MoveDelivery delivery, Core::HitKind weight);
+        void TickPowderBombs(float deltaTime);
+        Core::Combatant* TargetCombatant() const;
+        AZ::Vector3 Position(AZ::EntityId entity) const;
         Core::EnemyPerception Perceive();
         bool HasLineOfSight(const AZ::Vector3& from, const AZ::Vector3& to) const;
     };
