@@ -6,6 +6,8 @@ on:
   pull_request:
     branches: [develop, main, work/final-alpha-opening-runtime]
     types: [opened, synchronize, reopened, ready_for_review]
+  # Manual runs exercise the GitHub-hosted jobs on any branch (e.g. the O3DE migration branch).
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -109,7 +111,8 @@ jobs:
   verify-windows:
     name: Windows UE 5.8 materialise, compile, tests, laws
     # Job conditions are evaluated before runner env exists. Keep UE verification mandatory.
-    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    # Manual dispatches skip the private UE runners; push and PR gating is unchanged.
+    if: github.event_name != 'workflow_dispatch' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
     needs: verify-static
     runs-on: [self-hosted, Windows, X64, ue5.8, dark-arisen]
     timeout-minutes: 120
@@ -143,7 +146,8 @@ jobs:
 
   verify-linux:
     name: Linux UE 5.8 materialise, compile, tests, laws
-    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    # Manual dispatches skip the private UE runners; push and PR gating is unchanged.
+    if: github.event_name != 'workflow_dispatch' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
     needs: verify-static
     runs-on: [self-hosted, Linux, X64, ue5.8, dark-arisen]
     timeout-minutes: 120
