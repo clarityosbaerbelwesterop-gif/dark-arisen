@@ -21,6 +21,7 @@ add_library(DarkArisenCore STATIC
     Source/EnemyBrain.cpp
     Source/Ocean.cpp
     Source/Water.cpp
+    Source/Presentation.cpp
 )
 add_library(DarkArisen::Core ALIAS DarkArisenCore)
 target_include_directories(DarkArisenCore PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Include)
@@ -48,6 +49,7 @@ if(DARKARISEN_CORE_TESTS)
         Tests/EnemyBrainTests.cpp
         Tests/OceanTests.cpp
         Tests/WaterTests.cpp
+        Tests/PresentationTests.cpp
         Tests/UnrealParityTests.cpp
     )
     target_link_libraries(DarkArisenCoreTests PRIVATE DarkArisen::Core)

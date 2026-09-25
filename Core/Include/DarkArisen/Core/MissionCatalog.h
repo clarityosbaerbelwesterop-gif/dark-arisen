@@ -42,6 +42,11 @@ namespace DarkArisen::Core
         /** Returns -1 for unknown IDs. */
         static int FindIndex(std::string_view MissionId);
         static bool Validate(std::vector<std::string>& OutErrors);
+        /**
+         * Level that hosts a mission (Unreal FMainStoryMapCatalog names, kept verbatim so saves and
+         * reports line up across engines). Empty for unknown IDs: callers must fail closed.
+         */
+        static std::string_view LevelFor(std::string_view MissionId);
     };
 
     std::string_view ToString(MissionState State);

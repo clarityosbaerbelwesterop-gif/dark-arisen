@@ -1,6 +1,7 @@
 #pragma once
 
-// MD5 (to verify provider ETags) and SHA-256 (provenance identity), RFC 1321 / FIPS 180-4.
+// MD5 (to verify provider ETags), SHA-256 (provenance identity), SHA-1 and CRC-32 (the algorithms O3DE
+// uses for name-based asset UUIDs and product sub-ids). RFC 1321 / FIPS 180-4 / ISO 3309.
 
 #include <array>
 #include <cstdint>
@@ -130,5 +131,59 @@ namespace DarkArisen::Tools
             for (int Byte = 0; Byte < 4; ++Byte)
                 Digest[static_cast<std::size_t>(Word * 4 + Byte)] = static_cast<std::uint8_t>(Words[Word] >> (8 * Byte));
         return ToHex(Digest.data(), Digest.size());
+    }
+
+    inline std::array<std::uint8_t, 20> Sha1(const std::string_view Data)
+    {
+        std::uint32_t H[5] = {0x67452301, 0xEFCDAB89, 0x98BADCFE, 0x10325476, 0xC3D2E1F0};
+        std::string Message(Data);
+        const std::uint64_t BitLength = static_cast<std::uint64_t>(Data.size()) * 8;
+        Message += static_cast<char>(0x80);
+        while (Message.size() % 64 != 56) Message += static_cast<char>(0);
+        for (int Shift = 56; Shift >= 0; Shift -= 8) Message += static_cast<char>((BitLength >> Shift) & 0xFF);
+        const auto Rotate = [](const std::uint32_t Value, const int Bits) { return (Value << Bits) | (Value >> (32 - Bits)); };
+        for (std::size_t Block = 0; Block < Message.size(); Block += 64)
+        {
+            std::uint32_t W[80];
+            for (int Index = 0; Index < 16; ++Index)
+            {
+                W[Index] = 0;
+                for (int Byte = 0; Byte < 4; ++Byte)
+                    W[Index] = (W[Index] << 8) | static_cast<std::uint8_t>(Message[Block + static_cast<std::size_t>(Index * 4 + Byte)]);
+            }
+            for (int Index = 16; Index < 80; ++Index) W[Index] = Rotate(W[Index - 3] ^ W[Index - 8] ^ W[Index - 14] ^ W[Index - 16], 1);
+            std::uint32_t A = H[0], B = H[1], C = H[2], D = H[3], E = H[4];
+            for (int Index = 0; Index < 80; ++Index)
+            {
+                std::uint32_t F = 0;
+                std::uint32_t K = 0;
+                if (Index < 20) { F = (B & C) | (~B & D); K = 0x5A827999; }
+                else if (Index < 40) { F = B ^ C ^ D; K = 0x6ED9EBA1; }
+                else if (Index < 60) { F = (B & C) | (B & D) | (C & D); K = 0x8F1BBCDC; }
+                else { F = B ^ C ^ D; K = 0xCA62C1D6; }
+                const std::uint32_t Temp = Rotate(A, 5) + F + E + K + W[Index];
+                E = D; D = C; C = Rotate(B, 30); B = A; A = Temp;
+            }
+            H[0] += A; H[1] += B; H[2] += C; H[3] += D; H[4] += E;
+        }
+        std::array<std::uint8_t, 20> Digest{};
+        for (int Word = 0; Word < 5; ++Word)
+            for (int Byte = 0; Byte < 4; ++Byte)
+                Digest[static_cast<std::size_t>(Word * 4 + Byte)] = static_cast<std::uint8_t>(H[Word] >> (24 - 8 * Byte));
+        return Digest;
+    }
+
+    /** CRC-32 (zlib polynomial). LowerCase folds ASCII A-Z first, as AZ::Crc32(string_view) does. */
+    inline std::uint32_t Crc32(const std::string_view Data, const bool LowerCase = false)
+    {
+        std::uint32_t Crc = 0xFFFFFFFFu;
+        for (const char Character : Data)
+        {
+            std::uint8_t Byte = static_cast<std::uint8_t>(Character);
+            if (LowerCase && Byte >= 'A' && Byte <= 'Z') Byte = static_cast<std::uint8_t>(Byte + ('a' - 'A'));
+            Crc ^= Byte;
+            for (int Bit = 0; Bit < 8; ++Bit) Crc = (Crc >> 1) ^ (0xEDB88320u & (0u - (Crc & 1u)));
+        }
+        return Crc ^ 0xFFFFFFFFu;
     }
 }

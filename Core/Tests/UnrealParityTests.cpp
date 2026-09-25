@@ -120,3 +120,21 @@ TEST_CASE("Parity: canonical boss registry matches MainStorySubsystem.cpp")
         CHECK(Source.find("TEXT(\"" + std::string(Id) + "\")") != std::string::npos);
     }
 }
+
+TEST_CASE("Parity: mission levels match MainStoryMapCatalog.cpp")
+{
+    const std::string Source = ReadRepoFile("Source/DarkArisen/Story/MainStoryMapCatalog.cpp");
+    CHECK(!Source.empty());
+    const std::regex Entry(R"re(\{TEXT\("(Main\.[^"]+)"\),TEXT\("([^"]+)"\)\})re");
+    std::size_t Count = 0;
+    for (auto It = std::sregex_iterator(Source.begin(), Source.end(), Entry); It != std::sregex_iterator(); ++It, ++Count)
+    {
+        CHECK_EQ(std::string(MissionCatalog::LevelFor((*It)[1].str())), (*It)[2].str());
+    }
+    CHECK_EQ(Count, std::size_t{34});
+    for (const MissionDefinition& Mission : MissionCatalog::Missions())
+    {
+        CHECK(!MissionCatalog::LevelFor(Mission.Id).empty());
+    }
+    CHECK(MissionCatalog::LevelFor("Main.C99.01.Unknown").empty());
+}

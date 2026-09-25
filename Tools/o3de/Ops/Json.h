@@ -1,8 +1,10 @@
 #pragma once
 
-// Minimal strict JSON reader for tooling manifests and glTF chunks.
-// Numbers are kept as double; objects keep key order irrelevant (std::map).
+// Minimal strict JSON reader and deterministic writer for tooling manifests and glTF.
+// Numbers are kept as double; objects are written in key order (std::map), so output is stable.
 
+#include <charconv>
+#include <cmath>
 #include <cstddef>
 #include <map>
 #include <memory>
@@ -273,6 +275,116 @@ namespace DarkArisen::Tools
             }
             Out.Type = JsonValue::Kind::Number;
             return true;
+        }
+    };
+
+    class JsonWriter
+    {
+    public:
+        /** Compact when Indent < 0, otherwise pretty-printed with Indent spaces per level. */
+        static std::string Write(const JsonValue& Value, const int Indent = -1)
+        {
+            std::string Out;
+            WriteValue(Value, Out, Indent, 0);
+            if (Indent >= 0) Out += '\n';
+            return Out;
+        }
+
+        static void AppendString(std::string& Out, const std::string_view Text)
+        {
+            static constexpr char Hex[] = "0123456789abcdef";
+            Out += '"';
+            for (const char Character : Text)
+            {
+                switch (Character)
+                {
+                case '"': Out += "\\\""; break;
+                case '\\': Out += "\\\\"; break;
+                case '\n': Out += "\\n"; break;
+                case '\r': Out += "\\r"; break;
+                case '\t': Out += "\\t"; break;
+                default:
+                    if (static_cast<unsigned char>(Character) < 0x20)
+                    {
+                        Out += "\\u00";
+                        Out += Hex[(Character >> 4) & 0x0F];
+                        Out += Hex[Character & 0x0F];
+                    }
+                    else
+                    {
+                        Out += Character;
+                    }
+                }
+            }
+            Out += '"';
+        }
+
+        /** Integers print without a fraction; everything else uses the shortest round-trip form. */
+        static void AppendNumber(std::string& Out, const double Number)
+        {
+            if (!std::isfinite(Number))
+            {
+                Out += "null";
+                return;
+            }
+            char Buffer[64];
+            std::to_chars_result Result{};
+            if (std::fabs(Number) < 9007199254740992.0 && Number == std::floor(Number))
+                Result = std::to_chars(Buffer, Buffer + sizeof(Buffer), static_cast<long long>(Number));
+            else
+                Result = std::to_chars(Buffer, Buffer + sizeof(Buffer), Number);
+            Out.append(Buffer, Result.ptr);
+        }
+
+    private:
+        static void NewLine(std::string& Out, const int Indent, const int Depth)
+        {
+            if (Indent < 0) return;
+            Out += '\n';
+            Out.append(static_cast<std::size_t>(Indent * Depth), ' ');
+        }
+
+        static void WriteValue(const JsonValue& Value, std::string& Out, const int Indent, const int Depth)
+        {
+            switch (Value.Type)
+            {
+            case JsonValue::Kind::Null: Out += "null"; break;
+            case JsonValue::Kind::Bool: Out += Value.Boolean ? "true" : "false"; break;
+            case JsonValue::Kind::Number: AppendNumber(Out, Value.Number); break;
+            case JsonValue::Kind::String: AppendString(Out, Value.Text); break;
+            case JsonValue::Kind::Array:
+            {
+                Out += '[';
+                bool First = true;
+                for (const JsonValue& Item : Value.Items)
+                {
+                    if (!First) Out += ',';
+                    First = false;
+                    NewLine(Out, Indent, Depth + 1);
+                    WriteValue(Item, Out, Indent, Depth + 1);
+                }
+                if (!Value.Items.empty()) NewLine(Out, Indent, Depth);
+                Out += ']';
+                break;
+            }
+            case JsonValue::Kind::Object:
+            {
+                Out += '{';
+                bool First = true;
+                for (const auto& [Key, Member] : Value.Members)
+                {
+                    if (!First) Out += ',';
+                    First = false;
+                    NewLine(Out, Indent, Depth + 1);
+                    AppendString(Out, Key);
+                    Out += Indent >= 0 ? ": " : ":";
+                    WriteValue(Member, Out, Indent, Depth + 1);
+                }
+                if (!Value.Members.empty()) NewLine(Out, Indent, Depth);
+                Out += '}';
+                break;
+            }
+            }
         }
     };
 }

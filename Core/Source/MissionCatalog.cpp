@@ -107,6 +107,59 @@ namespace DarkArisen::Core
         return OutErrors.empty();
     }
 
+    std::string_view MissionCatalog::LevelFor(const std::string_view MissionId)
+    {
+        struct Entry
+        {
+            std::string_view Mission;
+            std::string_view Level;
+        };
+        static constexpr Entry Levels[] = {
+            {"Main.C01.01.HomeWater", "L_HarlowOpening"},
+            {"Main.C01.02.BlackSails", "L_HarlowOpening"},
+            {"Main.C01.03.TheTaking", "L_HarlowOpening"},
+            {"Main.C01.04.Undertow", "L_DriftwoodBeach"},
+            {"Main.C02.01.ShatteredCoast", "L_DriftwoodBeach"},
+            {"Main.C02.02.AShipToTake", "L_GalleonCove"},
+            {"Main.C02.03.FirstWake", "L_OpenSea_FirstWake"},
+            {"Main.C03.01.RexaHarbor", "L_RexaHarbor"},
+            {"Main.C03.02.SafeRoutes", "L_RexaSafeRoutes"},
+            {"Main.C03.03.TheFirstHolder", "L_CrownCitadelApproach"},
+            {"Main.C04.01.SaltAndIron", "L_SaltAndIron_Blockade"},
+            {"Main.C04.02.BrokenCompact", "L_BrokenCompact"},
+            {"Main.C04.03.HerrerasFall", "L_HerrerasFall"},
+            {"Main.C05.01.WarCurrent", "L_WarCurrent"},
+            {"Main.C05.02.HoldersWake", "L_HoldersWake"},
+            {"Main.C05.03.NoSafeHarbor", "L_NoSafeHarbor"},
+            {"Main.C06.01.HighmooreRoad", "L_HighmooreRoad"},
+            {"Main.C06.02.CrystalPassage", "L_CrystalPassage"},
+            {"Main.C06.03.TheNorthernOath", "L_TheNorthernOath"},
+            {"Main.C07.01.FalseBearings", "L_FalseBearings"},
+            {"Main.C07.02.EthansMarks", "L_EthansMarks"},
+            {"Main.C07.03.ThroughTheNet", "L_ThroughTheNet"},
+            {"Main.C08.01.ThePrisonCourse", "L_ThePrisonCourse"},
+            {"Main.C08.02.BrothersAlive", "L_BrothersAlive"},
+            {"Main.C08.03.HomewardBearing", "L_HomewardBearing"},
+            {"Main.C09.01.EthansGrove", "L_EthansGrove"},
+            {"Main.C09.02.MemoryOfABrother", "L_MemoryOfABrother"},
+            {"Main.C09.03.DreamFight", "L_DreamFight"},
+            {"Main.C09.04.WakingCourse", "L_WakingCourse"},
+            {"Main.C10.01.Armada", "L_Armada"},
+            {"Main.C10.02.BreakTheChain", "L_BreakTheChain"},
+            {"Main.C10.03.BlackDeck", "L_BlackDeck"},
+            {"Main.C10.04.DravenVoss", "L_DravenVoss"},
+            {"Main.C10.05.TheWakeAfter", "L_TheWakeAfter"},
+        };
+        for (const Entry& Candidate : Levels)
+        {
+            if (Candidate.Mission == MissionId)
+            {
+                return Candidate.Level;
+            }
+        }
+        return {};
+    }
+
     std::string_view ToString(const MissionState State)
     {
         switch (State)
