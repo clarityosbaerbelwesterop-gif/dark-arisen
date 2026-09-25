@@ -1,6 +1,7 @@
 #pragma once
 
 #include <DarkArisen/CombatBus.h>
+#include <DarkArisen/EnemyBus.h>
 
 #include <DarkArisen/AuthoringEnums.h>
 
@@ -23,6 +24,7 @@ namespace DarkArisen
     class EnemyBrainComponent
         : public AZ::Component
         , protected AZ::TickBus::Handler
+        , protected EnemyPopulationRequestBus::Handler
     {
     public:
         AZ_COMPONENT_DECL(EnemyBrainComponent);
@@ -37,12 +39,18 @@ namespace DarkArisen
         void Activate() override;
         void Deactivate() override;
         void OnTick(float deltaTime, AZ::ScriptTimePoint time) override;
+        void CountLivingRankAndFile(int& count) const override;
 
     private:
         EnemyProfileKind m_profileKind = EnemyProfileKind::Boarder;
         AZStd::string m_holderBossId;
         AZStd::string m_holderMissionId;
         float m_eyeHeightMetres = 1.6f;
+        /** Story contracts author each Holder's resolution; off keeps the Core profile's. */
+        bool m_overrideResolution = false;
+        AZStd::string m_outcomeKey;
+        AZStd::string m_outcomeValue;
+        bool m_completeMissionOnDefeat = true;
 
         AZStd::unique_ptr<Core::EnemyBrain> m_brain;
         AZ::EntityId m_target;

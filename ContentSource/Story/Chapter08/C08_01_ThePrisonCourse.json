@@ -33,6 +33,6 @@
     {"type":"LocationTrigger","name":"C08_01_BoardPrisonShip","anchor":"BoardingRail","action":"CompleteMission","checkpointId":"Checkpoint.C08.PrisonCourse.Aboard","spawnId":"Spawn.C08.PrisonCourse.PrisonDeck"}
   ],
   "encounterIds": ["Encounter.C08.ArmadaScreen","Encounter.C08.OccupiedPort","Encounter.C08.PrisonShipMooring"],
-  "completionFacts": ["Story.PrisonShipLocated"],
+  "completionFacts": ["Armada.Revealed"],
   "nextMission": "Main.C08.02.BrothersAlive"
 }

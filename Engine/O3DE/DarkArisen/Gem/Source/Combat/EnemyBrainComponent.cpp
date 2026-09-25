@@ -29,7 +29,11 @@ namespace DarkArisen
             ->Field("Profile", &EnemyBrainComponent::m_profileKind)
             ->Field("HolderBossId", &EnemyBrainComponent::m_holderBossId)
             ->Field("HolderMissionId", &EnemyBrainComponent::m_holderMissionId)
-            ->Field("EyeHeight", &EnemyBrainComponent::m_eyeHeightMetres);
+            ->Field("EyeHeight", &EnemyBrainComponent::m_eyeHeightMetres)
+            ->Field("OverrideResolution", &EnemyBrainComponent::m_overrideResolution)
+            ->Field("OutcomeKey", &EnemyBrainComponent::m_outcomeKey)
+            ->Field("OutcomeValue", &EnemyBrainComponent::m_outcomeValue)
+            ->Field("CompleteMissionOnDefeat", &EnemyBrainComponent::m_completeMissionOnDefeat);
 
         if (AZ::EditContext* editContext = serializeContext->GetEditContext())
         {
@@ -47,7 +51,13 @@ namespace DarkArisen
                     "Holder only, e.g. boss.herrera")
                 ->DataElement(AZ::Edit::UIHandlers::Default, &EnemyBrainComponent::m_holderMissionId, "Holder Mission Id",
                     "Holder only, e.g. Main.C04.03.HerrerasFall")
-                ->DataElement(AZ::Edit::UIHandlers::Default, &EnemyBrainComponent::m_eyeHeightMetres, "Eye Height (m)", "");
+                ->DataElement(AZ::Edit::UIHandlers::Default, &EnemyBrainComponent::m_eyeHeightMetres, "Eye Height (m)", "")
+                ->DataElement(AZ::Edit::UIHandlers::Default, &EnemyBrainComponent::m_overrideResolution, "Override Resolution",
+                    "Use the story contract's outcome and completion instead of the profile's")
+                ->DataElement(AZ::Edit::UIHandlers::Default, &EnemyBrainComponent::m_outcomeKey, "Outcome Key", "")
+                ->DataElement(AZ::Edit::UIHandlers::Default, &EnemyBrainComponent::m_outcomeValue, "Outcome Value", "")
+                ->DataElement(AZ::Edit::UIHandlers::Default, &EnemyBrainComponent::m_completeMissionOnDefeat,
+                    "Complete Mission On Defeat", "");
         }
     }
 
@@ -76,6 +86,12 @@ namespace DarkArisen
     void EnemyBrainComponent::Activate()
     {
         Core::EnemyProfile profile = BuildProfile();
+        if (m_overrideResolution)
+        {
+            profile.OutcomeKey = m_outcomeKey.c_str();
+            profile.OutcomeValue = m_outcomeValue.c_str();
+            profile.CompleteMissionOnDefeat = m_completeMissionOnDefeat;
+        }
         std::string error;
         if (!profile.Validate(error))
         {
@@ -86,10 +102,12 @@ namespace DarkArisen
         CombatRequestBus::Event(GetEntityId(), [this](CombatRequests* combat) { m_brain->Configure(combat->GetCombatant()); });
         m_defeatResolved = false;
         AZ::TickBus::Handler::BusConnect();
+        EnemyPopulationRequestBus::Handler::BusConnect();
     }
 
     void EnemyBrainComponent::Deactivate()
     {
+        EnemyPopulationRequestBus::Handler::BusDisconnect();
         AZ::TickBus::Handler::BusDisconnect();
         m_brain.reset();
     }
@@ -217,6 +235,20 @@ namespace DarkArisen
                 AZ_Error("DarkArisen", false, "Boss %s defeated outside its active mission %s; story unchanged.",
                     m_brain->Profile().BossId.c_str(), m_brain->Profile().MissionId.c_str());
             }
+        }
+    }
+
+    void EnemyBrainComponent::CountLivingRankAndFile(int& count) const
+    {
+        if (!m_brain || !m_brain->Profile().BossId.empty())
+        {
+            return;
+        }
+        bool dead = true;
+        CombatRequestBus::Event(GetEntityId(), [&dead](CombatRequests* combat) { dead = combat->IsDead(); });
+        if (!dead)
+        {
+            ++count;
         }
     }
 }

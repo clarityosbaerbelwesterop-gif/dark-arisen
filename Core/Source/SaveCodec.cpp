@@ -257,6 +257,14 @@ namespace DarkArisen::Core
         Out.Record("checkpoint", {State.CheckpointId});
         Out.Record("spawn", {State.SpawnId});
 
+        for (const auto& [RegionId, Region] : State.ColonialWar.Regions)
+        {
+            Out.Record("war.region", {RegionId, Number(Region.ImperialControl), Number(Region.AlbionControl),
+                Number(Region.LiberationStrength), Number(Region.CrimsonThreat), Ordinal(Region.Outcome),
+                Flag(Region.FallAssaultCompleted), Number(Region.LastAutonomousTickChapter)});
+        }
+        for (const std::string& Id : State.ColonialWar.OwnedHoldings) Out.Record("war.holding", {Id});
+
         const OpeningProgress& Opening = State.Opening;
         Out.Record("opening.location", {Ordinal(Opening.Location)});
         Out.Record("opening.raid", {Ordinal(Opening.RaidState)});
@@ -451,6 +459,21 @@ namespace DarkArisen::Core
                 }},
             {"checkpoint", StringScalar(State.CheckpointId)},
             {"spawn", StringScalar(State.SpawnId)},
+            {"war.region", [&](const std::vector<std::string>& F)
+                {
+                    if (!In.Arity(F, 9)) return;
+                    ColonialRegionState Region;
+                    bool Valid = ParseNumber(F[2], Region.ImperialControl) && ParseNumber(F[3], Region.AlbionControl) &&
+                        ParseNumber(F[4], Region.LiberationStrength) && ParseNumber(F[5], Region.CrimsonThreat) &&
+                        ParseOrdinal(F[6], Region.Outcome, RegionalWarOutcome::CrimsonOccupied) &&
+                        ParseBool(F[7], Region.FallAssaultCompleted) && ParseNumber(F[8], Region.LastAutonomousTickChapter);
+                    if (!Valid) In.Fail("invalid war region");
+                    else if (!State.ColonialWar.Regions.emplace(F[1], Region).second) In.Fail("duplicate war region " + F[1]);
+                }},
+            {"war.holding", [&](const std::vector<std::string>& F)
+                {
+                    if (In.Arity(F, 2) && !State.ColonialWar.OwnedHoldings.insert(F[1]).second) In.Fail("duplicate holding " + F[1]);
+                }},
             {"opening.location", OrdinalScalar(Opening.Location, OpeningLocation::RexaHarbor)},
             {"opening.raid", OrdinalScalar(Opening.RaidState, OpeningRaidState::DravenAboard)},
             {"opening.recovery", OrdinalScalar(Opening.RecoveryState, WaterRecoveryState::Recovered)},

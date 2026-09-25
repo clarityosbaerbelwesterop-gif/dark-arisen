@@ -1,5 +1,6 @@
 #pragma once
 
+#include "DarkArisen/Core/ColonialWar.h"
 #include "DarkArisen/Core/MissionCatalog.h"
 
 #include <cstdint>
@@ -185,11 +186,12 @@ namespace DarkArisen::Core
     /**
      * Complete persistent campaign state. Field-for-field port of UDarkArisenSaveGame v9
      * except the quest-journal, progression-economy and living-NPC snapshots, which are not
-     * ported yet (see Docs/O3DE_MIGRATION.md).
+     * ported yet (see Docs/O3DE_MIGRATION.md). Version 10 adds the colonial war, which the
+     * Unreal reference kept on the world and lost on map travel.
      */
     struct CampaignState
     {
-        static constexpr int CurrentVersion = 9;
+        static constexpr int CurrentVersion = 10;
 
         int SaveVersion = CurrentVersion;
         std::string CurrentMission;
@@ -212,6 +214,7 @@ namespace DarkArisen::Core
         std::string CheckpointId;
         std::string SpawnId;
         OpeningProgress Opening;
+        ColonialWarState ColonialWar;
 
         bool operator==(const CampaignState&) const = default;
 

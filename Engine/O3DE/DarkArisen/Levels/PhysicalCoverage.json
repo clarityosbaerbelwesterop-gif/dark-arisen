@@ -1,0 +1,266 @@
+{
+  "covered": 31,
+  "missions": {
+    "Main.C01.01.HomeWater": {
+      "checkpoint": "Spawn.Jake.HarlowOpening",
+      "completion": "StoryTrigger FamilyInteraction on Family marc, Family denise, Family ethan",
+      "entry": "Spawn.Jake.HarlowOpening (Arrival)",
+      "level": "L_HarlowOpening",
+      "next": "Main.C01.02.BlackSails in L_HarlowOpening",
+      "status": "MATERIALISED"
+    },
+    "Main.C01.02.BlackSails": {
+      "checkpoint": "Spawn.Jake.HarlowOpening",
+      "completion": "Opening Director: three boarders defeated, Draven boards, TakingStarted",
+      "entry": "StoryTrigger FleetDetected on Cargo Manifest",
+      "level": "L_HarlowOpening",
+      "next": "Main.C01.03.TheTaking in L_HarlowOpening",
+      "status": "MATERIALISED"
+    },
+    "Main.C01.03.TheTaking": {
+      "checkpoint": "Spawn.Jake.HarlowOpening",
+      "completion": "Opening Director TakingPresentationComplete",
+      "entry": "Opening Director TakingStarted",
+      "level": "L_HarlowOpening",
+      "next": "MapTransition -> L_DriftwoodBeach",
+      "status": "MATERIALISED"
+    },
+    "Main.C01.04.Undertow": {
+      "checkpoint": "Spawn.Moran.DriftwoodBeach.Recovery",
+      "completion": "StoryTrigger RecoveryComplete (beach smoke)",
+      "entry": "WaterEntry (OpeningOverboard)",
+      "level": "L_DriftwoodBeach",
+      "next": "Main.C02.01.ShatteredCoast; MapTransition -> L_DriftwoodCamp",
+      "status": "MATERIALISED"
+    },
+    "Main.C02.01.ShatteredCoast": {
+      "level": "L_DriftwoodBeach",
+      "status": "NOT MATERIALISED"
+    },
+    "Main.C02.02.AShipToTake": {
+      "level": "L_GalleonCove",
+      "status": "NOT MATERIALISED"
+    },
+    "Main.C02.03.FirstWake": {
+      "level": "L_OpenSea_FirstWake",
+      "status": "NOT MATERIALISED"
+    },
+    "Main.C03.01.RexaHarbor": {
+      "checkpoint": "Checkpoint.C03.RexaHarbor.Dock",
+      "completion": "Evidence C03_01_DockLedger",
+      "entry": "DockEntry (Spawn.C03.RexaHarbor.Dock)",
+      "level": "L_RexaHarbor",
+      "next": "Main.C03.02.SafeRoutes in L_RexaSafeRoutes",
+      "status": "MATERIALISED"
+    },
+    "Main.C03.02.SafeRoutes": {
+      "checkpoint": "Checkpoint.C03.SafeRoutes.Departure",
+      "completion": "NavalEncounterGate C03_02_AsterionDefeatGate (1 hostile ship(s) sunk)",
+      "entry": "RexaDeparture (Spawn.C03.SafeRoutes.Departure)",
+      "level": "L_RexaSafeRoutes",
+      "next": "Main.C03.03.TheFirstHolder in L_CrownCitadelApproach",
+      "status": "MATERIALISED"
+    },
+    "Main.C03.03.TheFirstHolder": {
+      "checkpoint": "Checkpoint.C03.FirstHolder.Approach",
+      "completion": "RouteResolution C03_03_Parley | RouteResolution C03_03_MemoryRoute",
+      "entry": "LowerApproach (Spawn.C03.FirstHolder.Approach)",
+      "level": "L_CrownCitadelApproach",
+      "next": "Main.C04.01.SaltAndIron in L_SaltAndIron_Blockade",
+      "status": "MATERIALISED"
+    },
+    "Main.C04.01.SaltAndIron": {
+      "checkpoint": "Checkpoint.C04.SaltAndIron.SeaApproach",
+      "completion": "LocationTrigger C04_01_ContestedShoreReached [PROVISIONAL ship: contract crosses open water without a PlayerShip]",
+      "entry": "SeaApproach (Spawn.C04.SaltAndIron.SeaApproach)",
+      "level": "L_SaltAndIron_Blockade",
+      "next": "Main.C04.02.BrokenCompact in L_BrokenCompact",
+      "status": "MATERIALISED"
+    },
+    "Main.C04.02.BrokenCompact": {
+      "checkpoint": "Checkpoint.C04.BrokenCompact.Entry",
+      "completion": "WarAction C04_02_Support | WarAction C04_02_Break | WarAction C04_02_Liberate | RouteResolution C04_02_Abstain",
+      "entry": "ContestedSettlementEntry (Spawn.C04.BrokenCompact.Entry)",
+      "level": "L_BrokenCompact",
+      "next": "Main.C04.03.HerrerasFall in L_HerrerasFall",
+      "status": "MATERIALISED"
+    },
+    "Main.C04.03.HerrerasFall": {
+      "checkpoint": "Checkpoint.C04.HerrerasFall.Approach",
+      "completion": "Evidence C04_03_HarlowChart",
+      "entry": "FortArchiveApproach (Spawn.C04.HerrerasFall.Approach)",
+      "level": "L_HerrerasFall",
+      "next": "Main.C05.01.WarCurrent in L_WarCurrent",
+      "status": "MATERIALISED"
+    },
+    "Main.C05.01.WarCurrent": {
+      "checkpoint": "Checkpoint.C05.WarCurrent.Berth",
+      "completion": "Evidence C05_01_SealedLetter",
+      "entry": "LaLiberacionBerth (Spawn.C05.WarCurrent.Berth)",
+      "level": "L_WarCurrent",
+      "next": "Main.C05.02.HoldersWake in L_HoldersWake",
+      "status": "MATERIALISED"
+    },
+    "Main.C05.02.HoldersWake": {
+      "checkpoint": "Checkpoint.C05.HoldersWake.Entry",
+      "completion": "Evidence C05_02_NetworkProof",
+      "entry": "SettlementEntry (Spawn.C05.HoldersWake.Entry)",
+      "level": "L_HoldersWake",
+      "next": "Main.C05.03.NoSafeHarbor in L_NoSafeHarbor",
+      "status": "MATERIALISED"
+    },
+    "Main.C05.03.NoSafeHarbor": {
+      "checkpoint": "Checkpoint.C05.NoSafeHarbor.Landing",
+      "completion": "Evidence C05_03_DeepRouteProof",
+      "entry": "KnowledgeLanding (Spawn.C05.NoSafeHarbor.Landing)",
+      "level": "L_NoSafeHarbor",
+      "next": "Main.C06.01.HighmooreRoad in L_HighmooreRoad",
+      "status": "MATERIALISED"
+    },
+    "Main.C06.01.HighmooreRoad": {
+      "checkpoint": "Checkpoint.C06.HighmooreRoad.Approach",
+      "completion": "WarAction C06_01_SecureHolding",
+      "entry": "HoldingApproach (Spawn.C06.HighmooreRoad.Approach)",
+      "level": "L_HighmooreRoad",
+      "next": "Main.C06.02.CrystalPassage in L_CrystalPassage",
+      "status": "MATERIALISED"
+    },
+    "Main.C06.02.CrystalPassage": {
+      "checkpoint": "Checkpoint.C06.CrystalPassage.Courtyard",
+      "completion": "Evidence C06_02_ArchiveReady",
+      "entry": "HoldingCourtyard (Spawn.C06.CrystalPassage.Courtyard)",
+      "level": "L_CrystalPassage",
+      "next": "Main.C06.03.TheNorthernOath in L_TheNorthernOath",
+      "status": "MATERIALISED"
+    },
+    "Main.C06.03.TheNorthernOath": {
+      "checkpoint": "Checkpoint.C06.NorthernOath.IntelligenceRoom",
+      "completion": "Evidence C06_03_Proof",
+      "entry": "IntelligenceRoom (Spawn.C06.NorthernOath.IntelligenceRoom)",
+      "level": "L_TheNorthernOath",
+      "next": "Main.C07.01.FalseBearings in L_FalseBearings",
+      "status": "MATERIALISED"
+    },
+    "Main.C07.01.FalseBearings": {
+      "checkpoint": "Checkpoint.C07.FalseBearings.Alarm",
+      "completion": "LocationTrigger C07_01_AssaultResolved",
+      "entry": "AlarmYard (Spawn.C07.FalseBearings.Alarm)",
+      "level": "L_FalseBearings",
+      "next": "Main.C07.02.EthansMarks in L_EthansMarks",
+      "status": "MATERIALISED"
+    },
+    "Main.C07.02.EthansMarks": {
+      "checkpoint": "Checkpoint.C07.EthansMarks.Sightline",
+      "completion": "Evidence C07_02_PrisonerLedger",
+      "entry": "ConvoySightline (Spawn.C07.EthansMarks.Sightline)",
+      "level": "L_EthansMarks",
+      "next": "Main.C07.03.ThroughTheNet in L_ThroughTheNet",
+      "status": "MATERIALISED"
+    },
+    "Main.C07.03.ThroughTheNet": {
+      "checkpoint": "Checkpoint.C07.ThroughTheNet.Cabin",
+      "completion": "LocationTrigger C07_03_CommitRescue",
+      "entry": "GreatCabinDoor (Spawn.C07.ThroughTheNet.Cabin)",
+      "level": "L_ThroughTheNet",
+      "next": "Main.C08.01.ThePrisonCourse in L_ThePrisonCourse",
+      "status": "MATERIALISED"
+    },
+    "Main.C08.01.ThePrisonCourse": {
+      "checkpoint": "Checkpoint.C08.PrisonCourse.Approach",
+      "completion": "LocationTrigger C08_01_BoardPrisonShip",
+      "entry": "LiberacionApproach (Spawn.C08.PrisonCourse.Approach)",
+      "level": "L_ThePrisonCourse",
+      "next": "Main.C08.02.BrothersAlive in L_BrothersAlive",
+      "status": "MATERIALISED"
+    },
+    "Main.C08.02.BrothersAlive": {
+      "checkpoint": "Checkpoint.C08.BrothersAlive.Deck",
+      "completion": "LocationTrigger C08_02_EthanFreed",
+      "entry": "PrisonDeckEntry (Spawn.C08.BrothersAlive.Deck)",
+      "level": "L_BrothersAlive",
+      "next": "Main.C08.03.HomewardBearing in L_HomewardBearing",
+      "status": "MATERIALISED"
+    },
+    "Main.C08.03.HomewardBearing": {
+      "checkpoint": "Checkpoint.C08.HomewardBearing.Aboard",
+      "completion": "LocationTrigger C08_03_ChapterComplete",
+      "entry": "LiberacionBoarding (Spawn.C08.HomewardBearing.Aboard)",
+      "level": "L_HomewardBearing",
+      "next": "Main.C09.01.EthansGrove in L_EthansGrove",
+      "status": "MATERIALISED"
+    },
+    "Main.C09.01.EthansGrove": {
+      "checkpoint": "Checkpoint.C09.EthansGrove.Trail",
+      "completion": "LocationTrigger C09_01_Rest",
+      "entry": "GroveTrail (Spawn.C09.EthansGrove.Trail)",
+      "level": "L_EthansGrove",
+      "next": "Main.C09.02.MemoryOfABrother in L_MemoryOfABrother",
+      "status": "MATERIALISED"
+    },
+    "Main.C09.02.MemoryOfABrother": {
+      "checkpoint": "Checkpoint.C09.Memory.Start",
+      "completion": "LocationTrigger C09_02_Arena",
+      "entry": "MemoryStart (Spawn.C09.Memory.Start)",
+      "level": "L_MemoryOfABrother",
+      "next": "Main.C09.03.DreamFight in L_DreamFight",
+      "status": "MATERIALISED"
+    },
+    "Main.C09.03.DreamFight": {
+      "checkpoint": "Checkpoint.C09.DreamFight.Entry",
+      "completion": "HolderBoss C09_03_DreamEthan (boss.dream_ethan defeated)",
+      "entry": "ArenaEntry (Spawn.C09.DreamFight.Entry)",
+      "level": "L_DreamFight",
+      "next": "Main.C09.04.WakingCourse in L_WakingCourse",
+      "status": "MATERIALISED"
+    },
+    "Main.C09.04.WakingCourse": {
+      "checkpoint": "Checkpoint.C09.WakingCourse.Wake",
+      "completion": "Evidence C09_04_FinalCourse",
+      "entry": "WakeAtGrove (Spawn.C09.WakingCourse.Wake)",
+      "level": "L_WakingCourse",
+      "next": "Main.C10.01.Armada in L_Armada",
+      "status": "MATERIALISED"
+    },
+    "Main.C10.01.Armada": {
+      "checkpoint": "Checkpoint.C10.Armada.Entry",
+      "completion": "NavalEncounterGate C10_01_Breach (3 hostile ship(s) sunk)",
+      "entry": "LiberacionBattleEntry (Spawn.C10.Armada.Entry)",
+      "level": "L_Armada",
+      "next": "Main.C10.02.BreakTheChain in L_BreakTheChain",
+      "status": "MATERIALISED"
+    },
+    "Main.C10.02.BreakTheChain": {
+      "checkpoint": "Checkpoint.C10.BreakChain.Entry",
+      "completion": "NavalEncounterGate C10_02_BoardFlagship (3 hostile ship(s) sunk)",
+      "entry": "BreachEntry (Spawn.C10.BreakChain.Entry)",
+      "level": "L_BreakTheChain",
+      "next": "Main.C10.03.BlackDeck in L_BlackDeck",
+      "status": "MATERIALISED"
+    },
+    "Main.C10.03.BlackDeck": {
+      "checkpoint": "Checkpoint.C10.BlackDeck.Boarding",
+      "completion": "LocationTrigger C10_03_DravenDoor",
+      "entry": "BoardingRail (Spawn.C10.BlackDeck.Boarding)",
+      "level": "L_BlackDeck",
+      "next": "Main.C10.04.DravenVoss in L_DravenVoss",
+      "status": "MATERIALISED"
+    },
+    "Main.C10.04.DravenVoss": {
+      "checkpoint": "Checkpoint.C10.Draven.Entry",
+      "completion": "HolderBoss C10_04_Draven (boss.draven_voss defeated)",
+      "entry": "ArenaEntry (Spawn.C10.Draven.Entry)",
+      "level": "L_DravenVoss",
+      "next": "Main.C10.05.TheWakeAfter in L_TheWakeAfter",
+      "status": "MATERIALISED"
+    },
+    "Main.C10.05.TheWakeAfter": {
+      "checkpoint": "Checkpoint.C10.WakeAfter.Deck",
+      "completion": "LocationTrigger C10_05_CreditsHandoff",
+      "entry": "QuietDeck (Spawn.C10.WakeAfter.Deck)",
+      "level": "L_TheWakeAfter",
+      "next": "Credits (L_Credits)",
+      "status": "MATERIALISED"
+    }
+  },
+  "total": 34
+}

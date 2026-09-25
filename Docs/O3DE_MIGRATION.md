@@ -82,6 +82,18 @@ controller that integrates velocity over a beach ground profile, point-in-box tr
 materialised trigger colliders, the game entity context and the `LoadLevel` console command.
 Editor loading, Asset Processor output and PhysX behaviour of these prefabs are RUNTIME VERIFY PENDING.
 
+**Chapters 3–10 on the AzCore runtime (VERIFIED, 2026-09-25):** the story probe
+(`DarkArisenStoryProbe`, run by `DarkArisenO3DE probe`) loads all 27 story levels and `L_Credits`
+through the same serializer path and plays them in campaign order from Rexa Harbor: activation at the
+entry, contacts, evidence, duelists (completion refused while any live), Herrera's chart locked until
+he falls, the Rexa war moved by breaking the imperial supply, the Chapter 6 holding claim, hostile
+ships sunk and La Liberación at the naval gates, real Ethan present and never a combatant, Dream
+Ethan resolved without touching real Ethan, a checksummed save before Draven reloaded exactly, Draven
+defeated, The Wake After, `Story.MainComplete`, and the credits roll (O3DE technology, no Unreal).
+Result: 27/27 missions, every map transition to the campaign's next level, 93/93 story characters and
+objects standing on materialised solid ground, 139 checks. Combat outcomes are applied directly
+(lethal damage, hull damage); the fights themselves are covered by the gameplay probe and Core tests.
+
 **Atom shader path (VERIFIED at compile level, 2026-09-25):** `DarkArisenO3DE shader-check` runs the
 Asset Processor's shader chain without the Asset Processor: preprocess with the engine's Atom shader
 include roots, AZSL -> HLSL with O3DE's azslc 1.8.22, then HLSL -> SPIR-V (Vulkan) and DXIL (DX12)
@@ -140,11 +152,15 @@ Engine/O3DE/DarkArisen/Assets ──► Asset Processor   │  StoryTriggerCompo
 | Ethan canon guards | scattered validators | engine-independent | IMPLEMENTED: real Ethan can never be hostile, damaged or a boss; `boss.dream_ethan` is separate |
 | Chapter 1 levels (Harlow, Driftwood Beach with Outer Reef, Driftwood Camp) | `DarkArisenMaterializeAlphaCommandlet.cpp` | content build | IMPLEMENTED (`materialize`): prefabs, O3DE-frame greybox, PhysX collision manifests, opening director, map transitions, spawn rules; VERIFIED on AzCore (level probe 38/38); Editor/Launcher RUNTIME VERIFY PENDING |
 | Opening presentation (black sails, Draven, The Taking) | never wired in Unreal | presentation | IMPLEMENTED as timed beats + subtitles bus (Core `OpeningDirector`); cameras, animation and the not-authored `Cinematic.Opening.JakeOverboard` NOT DONE |
-| Chapter 3–10 physical contracts | `ContentSource/Story/Chapter03..10` (27 JSON) | CONTENT SOURCE | SOURCE CREATED; O3DE prefab materialiser for them NOT DONE |
-| Credits | `ContentSource/Story/Credits/CreditsAuthority.json` | CONTENT SOURCE | SOURCE CREATED; O3DE UI NOT DONE |
+| Chapter 3–10 physical contracts | `ContentSource/Story/Chapter03..10` (27 JSON) + `ContentSource/Naval` | content build | IMPLEMENTED (`materialize`): contracts parsed strictly (unknown fields rejected) and validated fail-closed against the campaign (Core `ValidateStoryContract`); one level per mission with authored geometry, PROVISIONAL walk pads/paths/rafts where ContentSource leaves anchors floating, spawn/checkpoint points, `StoryActorComponent` (location triggers, contacts, evidence, route resolutions, war actions, naval gates), duelists and bosses (`EnemyBrain` with the contract's resolution), La Liberación and hostile ships (`NavalCombatComponent`), real Ethan as a non-combatant, and the map transition to the next mission; VERIFIED on AzCore (story probe: 27/27 missions Rexa Harbor → The Wake After, 93/93 actors on materialised ground); Editor/Launcher RUNTIME VERIFY PENDING |
+| Story actor rules | `Story/MainStory*Actor.cpp`, `NavalEncounterGateActor`, `NavalMissionGateActor` | engine-independent | IMPLEMENTED (Core `StoryActions`, tests) |
+| Naval combat | `Ship/NavalCombatComponent.cpp`, `HostileNavalShip.cpp` | engine-independent math | IMPLEMENTED (Core `NavalCombatant`, broadside side selection; `NavalCombatComponent` with the hostile fire loop); helm broadside input NOT DONE |
+| Colonial war | `ColonialWar/ColonialWarStateSubsystem.cpp` | engine-independent | IMPLEMENTED (Core `ColonialWar`, persisted in save v10; war actions and the Chapter 6 holding claim VERIFIED in the story probe); siege, large battles, retaliation NOT DONE |
+| 34/34 physical coverage | none in Unreal | content build | `Levels/PhysicalCoverage.json` from `materialize`: 31/34 (Chapter 2 routes NOT DONE) |
+| Credits | `ContentSource/Story/Credits/CreditsAuthority.json` | content build | IMPLEMENTED: `L_Credits` with a factual roll (`verifiedTechnologyByEngine.O3DE`, provenance only), starts only after The Wake After (`CreditsComponent`, VERIFIED in the story probe); roll UI NOT DONE |
 | Higgsfield GLB ingest | `Tools/higgsfield/import_3d_jutsu_glb.py` | tooling | IMPLEMENTED natively (`import-glb`), IMPORT READY once the GLBs are supplied |
 | Pixel Streaming | `DarkArisenOps/StreamingOps.cpp` | UE-only | replaced by plan in section 8 |
-| Colonial War, economy, living NPCs, dungeons, Highmoore | many UE subsystems | mixed | NOT DONE |
+| Economy, quest journal, living NPCs, dungeons, Highmoore | many UE subsystems | mixed | NOT DONE |
 
 ## 6. Defects found while porting
 
@@ -210,6 +226,33 @@ Engine/O3DE/DarkArisen/Assets ──► Asset Processor   │  StoryTriggerCompo
 17. **CI.** PR #52 made the UE jobs unconditional on self-hosted `ue5.8` runners that do not exist, so
    those jobs can only queue or be cancelled. The new `verify-engine-neutral` job gives real, executed
    C++ evidence on every PR.
+18. **Chapters 3–10 were not completable in Unreal as authored.** The story commandlet read `verb`,
+    `targetFaction` and `outcomeKey` for every war action, but the Chapter 6 holding claim authors
+    `actionType`/`locationId`, so `Main.C06.01.HighmooreRoad` could never be completed; `C10.01 Armada`
+    and `C10.02 Break The Chain` only complete through `ContentSource/Naval`; the colonial war lived on a
+    world subsystem and was lost on every map travel; entry anchors were read without failing
+    (missing ones spawned Jake at the origin). O3DE: the holding claim is its own action kind, naval
+    contracts are merged into their missions, the war is saved (v10), and every anchor is required.
+19. **Completion facts in ContentSource contradicted the story authority.** Six contracts listed facts
+    the campaign never sets (`Story.PrisonShipLocated`, `Story.EthanRecovered` at C08.02,
+    `Story.EthansGroveReached`, `Story.DreamConfrontationEntered`, `Story.DreamEthanDefeated`) where
+    `MAIN_STORY_AUTHORITY_2026_09.md` §4 and the runtime set `Armada.Revealed`,
+    `Story.EthanSignalUnderstood`, `Story.EthanRecovered` at C08.03, `Story.DravenMotiveKnown`,
+    `Story.GroveVisited` and `Story.DreamResolved`. The contracts now carry the authority's facts.
+    **Owner question:** the C08.02/C08.03 contracts place the prison-deck rescue (captive Ethan, escape)
+    in C08.02 and the return aboard in C08.03, while the authority table describes route marks for
+    C08.02 and the rescue in C08.03. Facts follow the authority; the physical beat split is unchanged.
+20. **Floating story content.** Authored geometry supports only part of each route (glTF set pieces of
+    about 30 m for routes up to 230 m; boxes centred on anchors). The materialiser reads a box's top face
+    as the floor its anchor marks, and adds PROVISIONAL 4 × 4 m pads under unsupported anchors, 4 m path
+    tiles between consecutive anchors (stepped at 25 cm rises) and rafts for people authored on open
+    water. Legs longer than 150 m are sea crossings: `C04.01 Salt and Iron` crosses 1.8 km of water with
+    no ship in its contract, so a PROVISIONAL La Liberación is placed (no water fast travel).
+21. **Standing in the exit during a fight never completed the mission (Unreal and first O3DE port).**
+    Location completion ran only on overlap begin, so a player who reached the exit before the last
+    duelist fell had to leave and re-enter. `StoryActorComponent` now re-checks while Jake waits inside.
+22. **Credits named Unreal.** `CreditsAuthority.json` listed only "Unreal Engine"; it now keeps that
+    for the Unreal build and lists the pinned O3DE release for the O3DE build.
 
 ## 7. Gates before an engine decision
 

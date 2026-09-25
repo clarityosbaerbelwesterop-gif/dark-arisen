@@ -279,6 +279,7 @@ namespace DarkArisen::Core
         ValidateCanon(Candidate, OutErrors);
         ValidateSnapshots(Candidate, OutErrors);
         ValidateCollections(Candidate, OutErrors);
+        ColonialWar::Validate(Candidate.ColonialWar, OutErrors);
         return OutErrors.empty();
     }
 
@@ -321,6 +322,12 @@ namespace DarkArisen::Core
             // v8 player snapshots had no source level; map-local coordinates are untrustworthy.
             Candidate.PlayerRuntime = PlayerRuntimeSnapshot{};
             Candidate.SaveVersion = 9;
+        }
+        if (Candidate.SaveVersion == 9)
+        {
+            // v9 had no persistent colonial war; the Unreal world subsystem lost it on travel.
+            Candidate.ColonialWar = ColonialWarState{};
+            Candidate.SaveVersion = 10;
         }
         return Candidate.SaveVersion == CampaignState::CurrentVersion;
     }

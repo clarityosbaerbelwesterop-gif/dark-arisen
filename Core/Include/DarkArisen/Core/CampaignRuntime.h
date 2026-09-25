@@ -83,6 +83,15 @@ namespace DarkArisen::Core
         bool CompleteDungeon(std::string_view DungeonId);
         bool RecoverTreasure(std::string_view TreasureId);
 
+        // Colonial war (hidden strategic state; physical missions report resolved actions).
+        const ColonialWarState& GetColonialWar() const { return Current.ColonialWar; }
+        bool RegisterWarRegion(std::string_view RegionId, ColonialFaction InitialController);
+        bool RecordWarAction(std::string_view RegionId, WarActionVerb Verb, ColonialFaction TargetFaction, int ControlDelta,
+            int LiberationDelta, int CrimsonDelta);
+        bool RecordAutonomousWarTick(std::string_view RegionId, const AutonomousWarTick& Tick);
+        bool RecordFallAssaultCompleted(std::string_view RegionId);
+        bool ClaimHolding(std::string_view HoldingId);
+
         // World capture (called by CampaignWorldServices::CaptureWorld or map travel).
         bool CapturePlayerRuntime(const PlayerRuntimeSnapshot& Snapshot);
         bool CaptureShipVoyage(const ShipVoyageSnapshot& Snapshot);
@@ -96,6 +105,8 @@ namespace DarkArisen::Core
 
         static const std::vector<std::string_view>& OpeningCrewIds();
         static const std::vector<std::string_view>& CanonicalBossIds();
+        /** Facts completing MissionId sets (empty for an unknown mission). */
+        static std::vector<std::string_view> AuthoredCompletionFacts(std::string_view MissionId);
 
     private:
         CampaignState Current;

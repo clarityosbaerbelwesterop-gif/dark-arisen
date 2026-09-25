@@ -24,4 +24,14 @@ namespace DarkArisen
     };
 
     using EnemyNotificationBus = AZ::EBus<EnemyNotifications>;
+
+    /** Every active enemy brain answers population queries. Broadcast. */
+    class EnemyPopulationRequests : public AZ::EBusTraits
+    {
+    public:
+        virtual ~EnemyPopulationRequests() = default;
+        /** Adds one when this enemy is a living rank-and-file duelist (not a boss). */
+        virtual void CountLivingRankAndFile(int& count) const = 0;
+    };
+    using EnemyPopulationRequestBus = AZ::EBus<EnemyPopulationRequests>;
 }

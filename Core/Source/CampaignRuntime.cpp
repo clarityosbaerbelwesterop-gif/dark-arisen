@@ -546,6 +546,58 @@ namespace DarkArisen::Core
         return true;
     }
 
+    bool CampaignRuntime::RegisterWarRegion(const std::string_view RegionId, const ColonialFaction InitialController)
+    {
+        return CommitValidated([&](CampaignState& Candidate)
+        {
+            return ColonialWar::RegisterRegion(Candidate.ColonialWar, Candidate.CurrentChapter, RegionId, InitialController);
+        });
+    }
+
+    bool CampaignRuntime::RecordWarAction(const std::string_view RegionId, const WarActionVerb Verb, const ColonialFaction TargetFaction,
+        const int ControlDelta, const int LiberationDelta, const int CrimsonDelta)
+    {
+        return CommitValidated([&](CampaignState& Candidate)
+        {
+            return ColonialWar::RecordResolvedWarAction(
+                Candidate.ColonialWar, RegionId, Verb, TargetFaction, ControlDelta, LiberationDelta, CrimsonDelta);
+        });
+    }
+
+    bool CampaignRuntime::RecordAutonomousWarTick(const std::string_view RegionId, const AutonomousWarTick& Tick)
+    {
+        return CommitValidated([&](CampaignState& Candidate)
+        {
+            return ColonialWar::RecordAutonomousChapterTick(Candidate.ColonialWar, Candidate.CurrentChapter, RegionId, Tick);
+        });
+    }
+
+    bool CampaignRuntime::RecordFallAssaultCompleted(const std::string_view RegionId)
+    {
+        return CommitValidated([&](CampaignState& Candidate)
+        {
+            return ColonialWar::RecordFallAssaultCompleted(Candidate.ColonialWar, RegionId);
+        });
+    }
+
+    bool CampaignRuntime::ClaimHolding(const std::string_view HoldingId)
+    {
+        return CommitValidated([&](CampaignState& Candidate) { return ColonialWar::ClaimHolding(Candidate.ColonialWar, HoldingId); });
+    }
+
+    std::vector<std::string_view> CampaignRuntime::AuthoredCompletionFacts(const std::string_view MissionId)
+    {
+        std::vector<std::string_view> Result;
+        for (const CompletionFactRow& Row : CompletionFacts())
+        {
+            if (Row.MissionId == MissionId)
+            {
+                Result.insert(Result.end(), Row.Facts.begin(), Row.Facts.end());
+            }
+        }
+        return Result;
+    }
+
     bool CampaignRuntime::CapturePlayerRuntime(const PlayerRuntimeSnapshot& Snapshot)
     {
         return CommitValidated([&](CampaignState& Candidate)

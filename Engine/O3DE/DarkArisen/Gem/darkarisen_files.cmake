@@ -10,6 +10,7 @@ set(FILES
     Include/DarkArisen/SwimBus.h
     Include/DarkArisen/PresentationBus.h
     Include/DarkArisen/CameraBus.h
+    Include/DarkArisen/NavalBus.h
     Source/Story/CampaignSystemComponent.h
     Source/Story/CampaignSystemComponent.cpp
     Source/Story/StoryTriggerComponent.h
@@ -18,6 +19,10 @@ set(FILES
     Source/Story/OpeningDirectorComponent.cpp
     Source/Story/MapTransitionComponent.h
     Source/Story/MapTransitionComponent.cpp
+    Source/Story/StoryActorComponent.h
+    Source/Story/StoryActorComponent.cpp
+    Source/Story/CreditsComponent.h
+    Source/Story/CreditsComponent.cpp
     Source/Persistence/SaveSlotStore.h
     Source/Persistence/SaveSlotStore.cpp
     Source/Combat/CombatantComponent.h
@@ -26,6 +31,8 @@ set(FILES
     Source/Combat/EnemyBrainComponent.cpp
     Source/Ships/ShipVoyageComponent.h
     Source/Ships/ShipVoyageComponent.cpp
+    Source/Ships/NavalCombatComponent.h
+    Source/Ships/NavalCombatComponent.cpp
     Source/Player/JakeInputComponent.h
     Source/Player/JakeInputComponent.cpp
     Source/Player/SwimmerComponent.h
