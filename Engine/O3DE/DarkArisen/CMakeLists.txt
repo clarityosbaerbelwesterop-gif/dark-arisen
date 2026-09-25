@@ -11,7 +11,7 @@
 if(NOT PROJECT_NAME)
     cmake_minimum_required(VERSION 3.24)
 
-    # Utility function to look for an optional 'engine_finder_cmake_path'setting 
+    # Utility function to look for an optional 'engine_finder_cmake_path'setting
     function(get_engine_finder_cmake_path project_json_file_path path_value)
         if(NOT ${path_value} AND EXISTS "${project_json_file_path}")
             file(READ "${project_json_file_path}" project_json_data)
@@ -21,15 +21,15 @@ if(NOT PROJECT_NAME)
                 set(${path_value} "${engine_finder_cmake_value}" PARENT_SCOPE)
             elseif(json_error AND ${engine_finder_cmake_value} STREQUAL "NOTFOUND")
                 # When the error value is just NOTFOUND that means there is a JSON
-                # parsing error, and not simply a missing key 
+                # parsing error, and not simply a missing key
                 message(WARNING "Unable to read 'engine_finder_cmake_path'.\nError: ${json_error} ${engine_finder_cmake_value}")
             endif()
         endif()
     endfunction()
-    
+
     # Check for optional 'engine_finder_cmake_path' in order of preference
-    # We support per-project customization to make it easier to upgrade 
-    # or revert to a custom EngineFinder.cmake 
+    # We support per-project customization to make it easier to upgrade
+    # or revert to a custom EngineFinder.cmake
     get_engine_finder_cmake_path("${CMAKE_CURRENT_SOURCE_DIR}/user/project.json" engine_finder_cmake_path)
     get_engine_finder_cmake_path("${CMAKE_CURRENT_SOURCE_DIR}/project.json" engine_finder_cmake_path)
     if(NOT engine_finder_cmake_path)

@@ -7,8 +7,8 @@
 #
 #
 # {END_LICENSE}
-# Edits to this file may be lost in upgrades. Instead of changing this file, use 
-# the 'engine_finder_cmake_path' key in your project.json or user/project.json to specify 
+# Edits to this file may be lost in upgrades. Instead of changing this file, use
+# the 'engine_finder_cmake_path' key in your project.json or user/project.json to specify
 # an alternate .cmake file to use instead of this one.
 
 include_guard()
@@ -16,7 +16,7 @@ include_guard()
 set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/project.json)
 
 # Option 1: Use engine manually set in CMAKE_MODULE_PATH
-# CMAKE_MODULE_PATH must contain a path to an engine's cmake folder 
+# CMAKE_MODULE_PATH must contain a path to an engine's cmake folder
 if(CMAKE_MODULE_PATH)
     foreach(module_path ${CMAKE_MODULE_PATH})
         cmake_path(SET module_engine_version_cmake_path "${module_path}/o3deConfigVersion.cmake")
@@ -55,14 +55,14 @@ if(EXISTS "${O3DE_USER_PROJECT_JSON_PATH}")
             endif()
         elseif(json_error AND ${user_project_engine_path} STREQUAL "NOTFOUND")
             # When the value is just NOTFOUND that means there is a JSON
-            # parsing error, and not simply a missing key 
+            # parsing error, and not simply a missing key
             message(FATAL_ERROR "Unable to read 'engine_path' from '${user_project_engine_path}'\nError: ${json-error}")
         endif()
     endif()
 endif()
 
 
-# Option 3: Find a compatible engine registered in ~/.o3de/o3de_manifest.json 
+# Option 3: Find a compatible engine registered in ~/.o3de/o3de_manifest.json
 if(DEFINED ENV{USERPROFILE} AND EXISTS $ENV{USERPROFILE})
     set(manifest_path $ENV{USERPROFILE}/.o3de/o3de_manifest.json) # Windows
 else()
@@ -104,13 +104,13 @@ endif()
 
 # We cannot just run find_package() on the list of engine paths because
 # CMAKE_FIND_PACKAGE_SORT_ORDER sorts based on file name and chooses
-# the first package that returns PACKAGE_VERSION_COMPATIBLE 
+# the first package that returns PACKAGE_VERSION_COMPATIBLE
 set(O3DE_MOST_COMPATIBLE_ENGINE_PATH "")
 set(O3DE_MOST_COMPATIBLE_ENGINE_VERSION "")
-foreach(manifest_engine_path IN LISTS O3DE_ENGINE_PATHS) 
+foreach(manifest_engine_path IN LISTS O3DE_ENGINE_PATHS)
     # Does this engine have a config version cmake file?
     cmake_path(SET version_cmake_path "${manifest_engine_path}/cmake/o3deConfigVersion.cmake")
-    if(NOT EXISTS "${version_cmake_path}") 
+    if(NOT EXISTS "${version_cmake_path}")
         message(VERBOSE "Ignoring '${manifest_engine_path}' because no config version cmake file was found at '${version_cmake_path}'")
         continue()
     endif()
@@ -121,9 +121,9 @@ foreach(manifest_engine_path IN LISTS O3DE_ENGINE_PATHS)
 
     # Follow the version checking convention from find_package(CONFIG)
     if(PACKAGE_VERSION_COMPATIBLE)
-        if(NOT O3DE_MOST_COMPATIBLE_ENGINE_PATH) 
-            set(O3DE_MOST_COMPATIBLE_ENGINE_PATH "${manifest_engine_path}") 
-            set(O3DE_MOST_COMPATIBLE_ENGINE_VERSION ${PACKAGE_VERSION}) 
+        if(NOT O3DE_MOST_COMPATIBLE_ENGINE_PATH)
+            set(O3DE_MOST_COMPATIBLE_ENGINE_PATH "${manifest_engine_path}")
+            set(O3DE_MOST_COMPATIBLE_ENGINE_VERSION ${PACKAGE_VERSION})
             message(VERBOSE "Found compatible engine '${manifest_engine_path}' with version '${PACKAGE_VERSION}'")
         elseif(${PACKAGE_VERSION} VERSION_GREATER ${O3DE_MOST_COMPATIBLE_ENGINE_VERSION})
             set(O3DE_MOST_COMPATIBLE_ENGINE_PATH "${manifest_engine_path}")
@@ -148,7 +148,7 @@ if(O3DE_MOST_COMPATIBLE_ENGINE_PATH)
 endif()
 
 # No compatible engine was found.
-# Read the 'engine' field in project.json or user/project.json for more helpful messages 
+# Read the 'engine' field in project.json or user/project.json for more helpful messages
 if(user_project_json)
     string(JSON user_project_engine ERROR_VARIABLE json_error GET ${user_project_json} engine)
 endif()

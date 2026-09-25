@@ -8,9 +8,9 @@
             // Platform specific overrides can be found in Registry/Platform/<platform>/quality.setreg
             // e.g. iOS overrides go in Registry/Platform/iOS/quality.setreg
             "Groups": {
-                // Each quality setting key (q_general, q_graphics etc.) is accessible as a CVAR 
-                // at runtime.  You can change a quality group level at runtime in the console 
-                // using the key and new level you want to use.  For example, to change the 
+                // Each quality setting key (q_general, q_graphics etc.) is accessible as a CVAR
+                // at runtime.  You can change a quality group level at runtime in the console
+                // using the key and new level you want to use.  For example, to change the
                 // q_general level to 3 at runtime, you can run the following console command:
                 //   q_general 3
                 "q_general": {
@@ -30,9 +30,9 @@
                         // Settings can be specified using an array to assign values to
                         // quality levels. For example if you have 4 quality levels:
                         // "<cvar>": [<low setting>, <medium setting>, <high setting>, <veryhigh setting>]
-                        // "r_skinnedMeshInstanceMemoryPoolSize": [64, 96, 128, 256] 
+                        // "r_skinnedMeshInstanceMemoryPoolSize": [64, 96, 128, 256]
                         // Or you can use a single value for all levels, for example:
-                        // "r_skinnedMeshInstanceMemoryPoolSize": 96 
+                        // "r_skinnedMeshInstanceMemoryPoolSize": 96
                         // Example of how to enable mesh instancing:
                         // "r_meshInstancingEnabled": true,
                         // "r_meshInstancingEnabledForTransparentObjects": true
@@ -43,7 +43,7 @@
                     "Levels": [ "Low", "Medium", "High", "VeryHigh" ],
                     "Settings": {
                         // Shadows console variable settings go here for example:
-                        // The amount of meters to extrude the Obb towards light 
+                        // The amount of meters to extrude the Obb towards light
                         // direction when doing camera frustum overlap tests
                         // "r_shadowCascadeExtrusionAmount": [10, -1, -1, -1]
                     }

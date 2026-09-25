@@ -1,22 +1,22 @@
 {
     "O3DE": {
         "Quality": {
-            // Linux platform specific quality setting overrides go in this file 
+            // Linux platform specific quality setting overrides go in this file
             "Groups": {
                 "q_general": {
-                    "Default": 0 // override the default level for this platform to be low 
+                    "Default": 0 // override the default level for this platform to be low
                 }
-                // Additional custom quality groups overrides go here. 
+                // Additional custom quality groups overrides go here.
             },
             "Devices": {
-                // Device rules for this platform go here 
+                // Device rules for this platform go here
                 // Device rule groups can have whatever name makes sense to you
                 //"Example": {
                 //    "Rules": {
                 //        "ExampleRegexRule": { "DeviceModel": "^ModelRegex$" }
                 //    },
                 //    "Settings": {
-                //        "q_general": 0 
+                //        "q_general": 0
                 //    }
                 //}
             }
