@@ -28,7 +28,9 @@ namespace DarkArisen
         LaLiberacionHelmSecured,
         LaLiberacionHarborCleared,
         BeginFirstWake,
-        ReachRexaHarbor
+        ReachRexaHarbor,
+        /** Safe rest (Driftwood Camp shelter, later camps): the second legal autosave source. */
+        Rest
     };
 
     /** Enemy data profiles from the engine-neutral core. */

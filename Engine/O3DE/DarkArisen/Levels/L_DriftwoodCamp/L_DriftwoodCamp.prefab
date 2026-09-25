@@ -47,6 +47,369 @@
         "Name": "Level"
     },
     "Entities": {
+        "Entity_[118221711826096]": {
+            "Components": {
+                "Component_[2359210620544637]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 2359210620544637
+                },
+                "Component_[262892530124363]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 262892530124363
+                },
+                "Component_[3576881987614135]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 3576881987614135
+                },
+                "Component_[3823215689027182]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 3823215689027182
+                },
+                "Component_[428057300977164]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 428057300977164
+                },
+                "Component_[5279442105715887]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 5279442105715887
+                },
+                "Component_[5406845374789243]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 5406845374789243,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            0,
+                            0,
+                            -1
+                        ]
+                    }
+                },
+                "Component_[5567636011037119]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 5567636011037119
+                },
+                "Component_[7022823919440611]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 7022823919440611
+                },
+                "Component_[7434210565467126]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 7434210565467126,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4,
+                                4,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[8019680520080792]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_400x400x100.azmodel",
+                                "assetId": {
+                                    "guid": "{3F3B8CF0-DE93-5A11-AD57-D71927DC805C}",
+                                    "subId": 270783830
+                                }
+                            }
+                        }
+                    },
+                    "Id": 8019680520080792
+                },
+                "Component_[8694672513168570]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 8694672513168570
+                }
+            },
+            "Id": "Entity_[118221711826096]",
+            "Name": "PROVISIONAL Pad Arrival"
+        },
+        "Entity_[1453118514266743]": {
+            "Components": {
+                "Component_[1358564751392877]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 1358564751392877
+                },
+                "Component_[296501286083229]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 296501286083229,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            1.6,
+                            0.6,
+                            -0.65
+                        ]
+                    }
+                },
+                "Component_[3232186598732482]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 3232186598732482
+                },
+                "Component_[3373106851567343]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 3373106851567343
+                },
+                "Component_[395730751163009]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 395730751163009
+                },
+                "Component_[4396344989713]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 4396344989713
+                },
+                "Component_[4668172797734312]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 4668172797734312,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4,
+                                4,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[4691912991359833]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 4691912991359833
+                },
+                "Component_[5974409271218197]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 5974409271218197
+                },
+                "Component_[6026701789467876]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 6026701789467876
+                },
+                "Component_[6187185896771842]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_400x400x100.azmodel",
+                                "assetId": {
+                                    "guid": "{3F3B8CF0-DE93-5A11-AD57-D71927DC805C}",
+                                    "subId": 270783830
+                                }
+                            }
+                        }
+                    },
+                    "Id": 6187185896771842
+                },
+                "Component_[6860880455477744]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 6860880455477744
+                }
+            },
+            "Id": "Entity_[1453118514266743]",
+            "Name": "PROVISIONAL Pad Fire"
+        },
+        "Entity_[146490588581149]": {
+            "Components": {
+                "Component_[1353711339784719]": {
+                    "$type": "EditorMeshColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        }
+                    },
+                    "Id": 1353711339784719,
+                    "ShapeConfiguration": {
+                        "PhysicsAsset": {
+                            "Asset": {
+                                "assetHint": "assets/greybox/world/moran/driftwoodcamp/sm_driftwoodcamp_alpha_collision.pxmesh",
+                                "assetId": {
+                                    "guid": "{520B9654-F671-5F42-949A-44DBC0ABA3D9}",
+                                    "subId": 2484856126
+                                }
+                            }
+                        }
+                    }
+                },
+                "Component_[1892534813787785]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 1892534813787785
+                },
+                "Component_[2148261348804199]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 2148261348804199
+                },
+                "Component_[3005950264122141]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 3005950264122141
+                },
+                "Component_[4984141528600536]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 4984141528600536
+                },
+                "Component_[6112690910045545]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 6112690910045545
+                },
+                "Component_[7988493264063148]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 7988493264063148
+                },
+                "Component_[8136330354622997]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 8136330354622997
+                },
+                "Component_[8953940208538465]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 8953940208538465
+                },
+                "Component_[966919428655445]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 966919428655445,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            0,
+                            0,
+                            0
+                        ]
+                    }
+                },
+                "Component_[997463378334986]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 997463378334986
+                }
+            },
+            "Id": "Entity_[146490588581149]",
+            "Name": "SM_DriftwoodCamp_Alpha Collision"
+        },
+        "Entity_[1512789323142474]": {
+            "Components": {
+                "Component_[2216018822188255]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 2216018822188255
+                },
+                "Component_[4655099381203982]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 4655099381203982
+                },
+                "Component_[4910363043697644]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 4910363043697644
+                },
+                "Component_[5840123713042895]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 5840123713042895
+                },
+                "Component_[619686033580379]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 619686033580379,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            15.5,
+                            -4.8,
+                            0.8
+                        ]
+                    }
+                },
+                "Component_[6495691698805014]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "InSceneQueries": false,
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Trigger": true
+                    },
+                    "Id": 6495691698805014,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                6,
+                                6,
+                                4
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[652906228306603]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 652906228306603
+                },
+                "Component_[7251640298018072]": {
+                    "$type": "GenericComponentWrapper",
+                    "Id": 7251640298018072,
+                    "m_template": {
+                        "$type": "{EB3DADDE-4839-422C-93FF-C01AE9528C4E} StoryTriggerComponent",
+                        "Argument": "",
+                        "IntegerArgument": 5,
+                        "OneShot": true,
+                        "RequiresInteract": false,
+                        "Signal": 9
+                    }
+                },
+                "Component_[7337683047358813]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 7337683047358813
+                },
+                "Component_[7757884547639491]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 7757884547639491
+                },
+                "Component_[8048049593005271]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 8048049593005271
+                },
+                "Component_[8883132623658650]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 8883132623658650
+                }
+            },
+            "Id": "Entity_[1512789323142474]",
+            "Name": "Beat Route.MirasCove"
+        },
         "Entity_[1547956187695172]": {
             "Components": {
                 "Component_[1571434877750909]": {
@@ -96,71 +459,6 @@
             },
             "Id": "Entity_[1547956187695172]",
             "Name": "Anchor SmokeColumn"
-        },
-        "Entity_[2127606122520145]": {
-            "Components": {
-                "Component_[3243485646842522]": {
-                    "$type": "EditorPendingCompositionComponent",
-                    "Id": 3243485646842522
-                },
-                "Component_[333446160300949]": {
-                    "$type": "EditorEntityIconComponent",
-                    "Id": 333446160300949
-                },
-                "Component_[4144308030702496]": {
-                    "$type": "EditorOnlyEntityComponent",
-                    "Id": 4144308030702496
-                },
-                "Component_[4425710830232014]": {
-                    "$type": "EditorLockComponent",
-                    "Id": 4425710830232014
-                },
-                "Component_[5600611217226184]": {
-                    "$type": "EditorInspectorComponent",
-                    "Id": 5600611217226184
-                },
-                "Component_[580489673610310]": {
-                    "$type": "GenericComponentWrapper",
-                    "Id": 580489673610310,
-                    "m_template": {
-                        "$type": "{8E1B4D72-6C95-4A3F-A7D0-2F9C5B3E6A81} PlayerSpawnComponent",
-                        "Player": "Entity_[3629852434366883]",
-                        "Spawns": [
-                            {
-                                "Anchor": "Entity_[8734302597331562]",
-                                "Rule": 0,
-                                "SpawnId": "Arrival"
-                            }
-                        ]
-                    }
-                },
-                "Component_[6462853454989794]": {
-                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
-                    "Id": 6462853454989794,
-                    "Parent Entity": "ContainerEntity",
-                    "Transform Data": {
-                        "Translate": [
-                            0,
-                            0,
-                            0
-                        ]
-                    }
-                },
-                "Component_[6941899300023018]": {
-                    "$type": "EditorEntitySortComponent",
-                    "Id": 6941899300023018
-                },
-                "Component_[7272028581158751]": {
-                    "$type": "EditorVisibilityComponent",
-                    "Id": 7272028581158751
-                },
-                "Component_[7717969409714989]": {
-                    "$type": "EditorDisabledCompositionComponent",
-                    "Id": 7717969409714989
-                }
-            },
-            "Id": "Entity_[2127606122520145]",
-            "Name": "Camp Director"
         },
         "Entity_[2264954148798928]": {
             "Components": {
@@ -249,54 +547,33 @@
             "Id": "Entity_[2264954148798928]",
             "Name": "Global Sky"
         },
-        "Entity_[254287854373825]": {
+        "Entity_[2594423442874380]": {
             "Components": {
-                "Component_[1314458428793147]": {
-                    "$type": "EditorLockComponent",
-                    "Id": 1314458428793147
-                },
-                "Component_[1439817029164465]": {
-                    "$type": "EditorOnlyEntityComponent",
-                    "Id": 1439817029164465
-                },
-                "Component_[1483949657588087]": {
-                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
-                    "Id": 1483949657588087,
-                    "Parent Entity": "ContainerEntity",
-                    "Transform Data": {
-                        "Translate": [
-                            0,
-                            0,
-                            0
-                        ]
-                    }
-                },
-                "Component_[2700062646190931]": {
-                    "$type": "EditorStaticRigidBodyComponent",
-                    "Id": 2700062646190931
-                },
-                "Component_[2979520913728523]": {
-                    "$type": "EditorInspectorComponent",
-                    "Id": 2979520913728523
-                },
-                "Component_[4241034835575447]": {
+                "Component_[1193841898807089]": {
                     "$type": "EditorPendingCompositionComponent",
-                    "Id": 4241034835575447
+                    "Id": 1193841898807089
                 },
-                "Component_[6055323114220814]": {
-                    "$type": "EditorDisabledCompositionComponent",
-                    "Id": 6055323114220814
+                "Component_[1580422445569910]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_400x400x100.azmodel",
+                                "assetId": {
+                                    "guid": "{3F3B8CF0-DE93-5A11-AD57-D71927DC805C}",
+                                    "subId": 270783830
+                                }
+                            }
+                        }
+                    },
+                    "Id": 1580422445569910
                 },
-                "Component_[7108777052426759]": {
-                    "$type": "EditorEntitySortComponent",
-                    "Id": 7108777052426759
+                "Component_[333162087529725]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 333162087529725
                 },
-                "Component_[7350605564487602]": {
-                    "$type": "EditorVisibilityComponent",
-                    "Id": 7350605564487602
-                },
-                "Component_[8091920646234565]": {
-                    "$type": "EditorMeshColliderComponent",
+                "Component_[395815096567700]": {
+                    "$type": "EditorColliderComponent",
                     "ColliderConfiguration": {
                         "MaterialSlots": {
                             "Slots": [
@@ -304,28 +581,68 @@
                                     "Name": "Entire object"
                                 }
                             ]
-                        }
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
                     },
-                    "Id": 8091920646234565,
+                    "Id": 395815096567700,
                     "ShapeConfiguration": {
-                        "PhysicsAsset": {
-                            "Asset": {
-                                "assetHint": "assets/greybox/world/moran/driftwoodcamp/sm_driftwoodcamp_alpha_collision.pxmesh",
-                                "assetId": {
-                                    "guid": "{520B9654-F671-5F42-949A-44DBC0ABA3D9}",
-                                    "subId": 2484856126
-                                }
-                            }
-                        }
+                        "Box": {
+                            "Configuration": [
+                                4,
+                                4,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
                     }
                 },
-                "Component_[8123183132671352]": {
+                "Component_[4863947009361321]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 4863947009361321
+                },
+                "Component_[5188985117297846]": {
                     "$type": "EditorEntityIconComponent",
-                    "Id": 8123183132671352
+                    "Id": 5188985117297846
+                },
+                "Component_[5668838919603532]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 5668838919603532
+                },
+                "Component_[5728207832555803]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 5728207832555803
+                },
+                "Component_[6064657096592432]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 6064657096592432
+                },
+                "Component_[7379785266915605]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 7379785266915605
+                },
+                "Component_[8483204907484765]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 8483204907484765
+                },
+                "Component_[901192906179921]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 901192906179921,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            3.8,
+                            -1.2,
+                            -0.6
+                        ]
+                    }
                 }
             },
-            "Id": "Entity_[254287854373825]",
-            "Name": "Driftwood Camp Collision"
+            "Id": "Entity_[2594423442874380]",
+            "Name": "PROVISIONAL Pad Shelter"
         },
         "Entity_[263208258606779]": {
             "Components": {
@@ -376,6 +693,1026 @@
             },
             "Id": "Entity_[263208258606779]",
             "Name": "Anchor Route.MirasCove"
+        },
+        "Entity_[3027564512357618]": {
+            "Components": {
+                "Component_[1022513198971873]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 1022513198971873
+                },
+                "Component_[1629449980749444]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 1629449980749444
+                },
+                "Component_[1853744103152697]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 1853744103152697,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            -147.724356
+                        ],
+                        "Translate": [
+                            -0.288999,
+                            -0.593052,
+                            1.8725
+                        ]
+                    }
+                },
+                "Component_[2387885744286414]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 2387885744286414
+                },
+                "Component_[2466457814479413]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 2466457814479413
+                },
+                "Component_[2666769477843790]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetId": {
+                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
+                                    "subId": 269725335
+                                }
+                            }
+                        }
+                    },
+                    "Id": 2666769477843790
+                },
+                "Component_[3753652390911817]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 3753652390911817
+                },
+                "Component_[4595101175469237]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 4595101175469237
+                },
+                "Component_[7142280565580328]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 7142280565580328
+                },
+                "Component_[742435976860428]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 742435976860428,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4.05,
+                                3,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[7425175202199715]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 7425175202199715
+                },
+                "Component_[813370654665661]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 813370654665661
+                }
+            },
+            "Id": "Entity_[3027564512357618]",
+            "Name": "PROVISIONAL Path SmokeColumn to HarlowClue 9"
+        },
+        "Entity_[3029763535613605]": {
+            "Components": {
+                "Component_[1294671993884342]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 1294671993884342
+                },
+                "Component_[1386512196977508]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 1386512196977508
+                },
+                "Component_[1756597820284372]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 1756597820284372,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            -147.724356
+                        ],
+                        "Translate": [
+                            -0.266996,
+                            -0.579156,
+                            2.1175
+                        ]
+                    }
+                },
+                "Component_[2930981095867160]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 2930981095867160
+                },
+                "Component_[3016382249928553]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 3016382249928553,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4.05,
+                                3,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[3575385519189578]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 3575385519189578
+                },
+                "Component_[4796044102913127]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetId": {
+                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
+                                    "subId": 269725335
+                                }
+                            }
+                        }
+                    },
+                    "Id": 4796044102913127
+                },
+                "Component_[4953410699987384]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 4953410699987384
+                },
+                "Component_[5284206213088118]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 5284206213088118
+                },
+                "Component_[6293047014155247]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 6293047014155247
+                },
+                "Component_[680649279376025]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 680649279376025
+                },
+                "Component_[7915509207330715]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 7915509207330715
+                }
+            },
+            "Id": "Entity_[3029763535613605]",
+            "Name": "PROVISIONAL Path SmokeColumn to HarlowClue 8"
+        },
+        "Entity_[3029763535614040]": {
+            "Components": {
+                "Component_[1749699150142414]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 1749699150142414
+                },
+                "Component_[2339659013116862]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 2339659013116862,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            -147.724356
+                        ],
+                        "Translate": [
+                            -0.244994,
+                            -0.565259,
+                            2.3625
+                        ]
+                    }
+                },
+                "Component_[2578912561233578]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 2578912561233578
+                },
+                "Component_[3276102400113073]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 3276102400113073
+                },
+                "Component_[4104875441366324]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 4104875441366324
+                },
+                "Component_[4199521021806433]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetId": {
+                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
+                                    "subId": 269725335
+                                }
+                            }
+                        }
+                    },
+                    "Id": 4199521021806433
+                },
+                "Component_[5404484852942280]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 5404484852942280
+                },
+                "Component_[5643833472967457]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 5643833472967457
+                },
+                "Component_[7341783541270486]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 7341783541270486
+                },
+                "Component_[7522411896543612]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 7522411896543612
+                },
+                "Component_[7544304642779731]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 7544304642779731
+                },
+                "Component_[8867791782255243]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 8867791782255243,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4.05,
+                                3,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                }
+            },
+            "Id": "Entity_[3029763535614040]",
+            "Name": "PROVISIONAL Path SmokeColumn to HarlowClue 7"
+        },
+        "Entity_[3031962558870027]": {
+            "Components": {
+                "Component_[1516514320043581]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 1516514320043581
+                },
+                "Component_[2169590602966855]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 2169590602966855,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4.05,
+                                3,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[3031936086624650]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 3031936086624650
+                },
+                "Component_[3168763624378000]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 3168763624378000
+                },
+                "Component_[384629608962264]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 384629608962264
+                },
+                "Component_[4109568556158866]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 4109568556158866,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            -147.724356
+                        ],
+                        "Translate": [
+                            -0.222992,
+                            -0.551363,
+                            2.6075
+                        ]
+                    }
+                },
+                "Component_[4560143608209109]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetId": {
+                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
+                                    "subId": 269725335
+                                }
+                            }
+                        }
+                    },
+                    "Id": 4560143608209109
+                },
+                "Component_[4708031858670398]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 4708031858670398
+                },
+                "Component_[5492112374666533]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 5492112374666533
+                },
+                "Component_[6596724690498127]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 6596724690498127
+                },
+                "Component_[672363621262298]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 672363621262298
+                },
+                "Component_[7791025477853652]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 7791025477853652
+                }
+            },
+            "Id": "Entity_[3031962558870027]",
+            "Name": "PROVISIONAL Path SmokeColumn to HarlowClue 6"
+        },
+        "Entity_[3031962558870462]": {
+            "Components": {
+                "Component_[2169543203542588]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 2169543203542588
+                },
+                "Component_[3757704862128872]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetId": {
+                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
+                                    "subId": 269725335
+                                }
+                            }
+                        }
+                    },
+                    "Id": 3757704862128872
+                },
+                "Component_[4177508951621630]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 4177508951621630
+                },
+                "Component_[4901572220045455]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 4901572220045455
+                },
+                "Component_[5323078559406939]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 5323078559406939
+                },
+                "Component_[5764954414513421]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 5764954414513421
+                },
+                "Component_[5892621370332135]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 5892621370332135
+                },
+                "Component_[6284100861272042]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 6284100861272042
+                },
+                "Component_[6392261501910899]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 6392261501910899
+                },
+                "Component_[6873812399116543]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 6873812399116543
+                },
+                "Component_[8861459158325542]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 8861459158325542,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4.05,
+                                3,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[8874175722547147]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 8874175722547147,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            -147.724356
+                        ],
+                        "Translate": [
+                            -0.200989,
+                            -0.537467,
+                            2.8525
+                        ]
+                    }
+                }
+            },
+            "Id": "Entity_[3031962558870462]",
+            "Name": "PROVISIONAL Path SmokeColumn to HarlowClue 5"
+        },
+        "Entity_[3034161582126449]": {
+            "Components": {
+                "Component_[3506941440624143]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 3506941440624143
+                },
+                "Component_[3651715686870649]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 3651715686870649
+                },
+                "Component_[3688975945029311]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 3688975945029311,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            -147.724356
+                        ],
+                        "Translate": [
+                            -0.178987,
+                            -0.523571,
+                            3.0975
+                        ]
+                    }
+                },
+                "Component_[3889628712903714]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 3889628712903714,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4.05,
+                                3,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[4766508075836515]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 4766508075836515
+                },
+                "Component_[5147555357886947]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 5147555357886947
+                },
+                "Component_[5871058453721194]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 5871058453721194
+                },
+                "Component_[6305827976657471]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 6305827976657471
+                },
+                "Component_[7423548207340134]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 7423548207340134
+                },
+                "Component_[8520731128556656]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 8520731128556656
+                },
+                "Component_[8790914565824491]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 8790914565824491
+                },
+                "Component_[993304786690604]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetId": {
+                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
+                                    "subId": 269725335
+                                }
+                            }
+                        }
+                    },
+                    "Id": 993304786690604
+                }
+            },
+            "Id": "Entity_[3034161582126449]",
+            "Name": "PROVISIONAL Path SmokeColumn to HarlowClue 4"
+        },
+        "Entity_[3034161582126884]": {
+            "Components": {
+                "Component_[1151881554920830]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 1151881554920830,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            -147.724356
+                        ],
+                        "Translate": [
+                            -0.156985,
+                            -0.509675,
+                            3.3425
+                        ]
+                    }
+                },
+                "Component_[1923074857637564]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 1923074857637564
+                },
+                "Component_[3157413341887466]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 3157413341887466
+                },
+                "Component_[3164240415603726]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 3164240415603726
+                },
+                "Component_[366689695279857]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 366689695279857
+                },
+                "Component_[4145153648095240]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 4145153648095240
+                },
+                "Component_[4982134399895156]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 4982134399895156
+                },
+                "Component_[6392171133503329]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 6392171133503329
+                },
+                "Component_[707644960724115]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 707644960724115
+                },
+                "Component_[758061520079819]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 758061520079819,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4.05,
+                                3,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[7924561880993558]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 7924561880993558
+                },
+                "Component_[8804720938065569]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetId": {
+                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
+                                    "subId": 269725335
+                                }
+                            }
+                        }
+                    },
+                    "Id": 8804720938065569
+                }
+            },
+            "Id": "Entity_[3034161582126884]",
+            "Name": "PROVISIONAL Path SmokeColumn to HarlowClue 3"
+        },
+        "Entity_[3036360605382871]": {
+            "Components": {
+                "Component_[1325541101097184]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 1325541101097184
+                },
+                "Component_[157903690770813]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 157903690770813
+                },
+                "Component_[2748419908018802]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetId": {
+                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
+                                    "subId": 269725335
+                                }
+                            }
+                        }
+                    },
+                    "Id": 2748419908018802
+                },
+                "Component_[2965549579898829]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 2965549579898829,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            -147.724356
+                        ],
+                        "Translate": [
+                            -0.134982,
+                            -0.495778,
+                            3.5875
+                        ]
+                    }
+                },
+                "Component_[3815249253585793]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 3815249253585793
+                },
+                "Component_[3931851229361733]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 3931851229361733
+                },
+                "Component_[5551658899840351]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 5551658899840351
+                },
+                "Component_[5958481940330676]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 5958481940330676
+                },
+                "Component_[7837041085594377]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 7837041085594377
+                },
+                "Component_[804522260951025]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 804522260951025
+                },
+                "Component_[8079067174565970]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 8079067174565970
+                },
+                "Component_[956091776691832]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 956091776691832,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4.05,
+                                3,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                }
+            },
+            "Id": "Entity_[3036360605382871]",
+            "Name": "PROVISIONAL Path SmokeColumn to HarlowClue 2"
+        },
+        "Entity_[3036360605383306]": {
+            "Components": {
+                "Component_[1833108115719962]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 1833108115719962
+                },
+                "Component_[1874896980597079]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 1874896980597079
+                },
+                "Component_[2075326335675215]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 2075326335675215
+                },
+                "Component_[252706477960543]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 252706477960543
+                },
+                "Component_[4476893926972995]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 4476893926972995
+                },
+                "Component_[4744628780026254]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 4744628780026254
+                },
+                "Component_[5002091465775468]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 5002091465775468
+                },
+                "Component_[5162745071511259]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 5162745071511259,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            -147.724356
+                        ],
+                        "Translate": [
+                            -0.11298,
+                            -0.481882,
+                            3.8325
+                        ]
+                    }
+                },
+                "Component_[5792048617661078]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 5792048617661078,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4.05,
+                                3,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[6866549572678904]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetId": {
+                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
+                                    "subId": 269725335
+                                }
+                            }
+                        }
+                    },
+                    "Id": 6866549572678904
+                },
+                "Component_[742435627128875]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 742435627128875
+                },
+                "Component_[7429411469436637]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 7429411469436637
+                }
+            },
+            "Id": "Entity_[3036360605383306]",
+            "Name": "PROVISIONAL Path SmokeColumn to HarlowClue 1"
+        },
+        "Entity_[3038559628639293]": {
+            "Components": {
+                "Component_[1283670602596104]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 1283670602596104
+                },
+                "Component_[1294984526638106]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetId": {
+                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
+                                    "subId": 269725335
+                                }
+                            }
+                        }
+                    },
+                    "Id": 1294984526638106
+                },
+                "Component_[1433218876278617]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 1433218876278617
+                },
+                "Component_[1813554213529600]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 1813554213529600,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4.05,
+                                3,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[184565260573271]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 184565260573271
+                },
+                "Component_[2869452116421477]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 2869452116421477
+                },
+                "Component_[400192804433721]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 400192804433721
+                },
+                "Component_[5020295697703045]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 5020295697703045,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            -147.724356
+                        ],
+                        "Translate": [
+                            -0.090978,
+                            -0.467986,
+                            4.0775
+                        ]
+                    }
+                },
+                "Component_[5606878780063932]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 5606878780063932
+                },
+                "Component_[707249319309453]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 707249319309453
+                },
+                "Component_[7077607910442001]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 7077607910442001
+                },
+                "Component_[8217463610971738]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 8217463610971738
+                }
+            },
+            "Id": "Entity_[3038559628639293]",
+            "Name": "PROVISIONAL Path SmokeColumn to HarlowClue 0"
         },
         "Entity_[3629852434366883]": {
             "Components": {
@@ -486,6 +1823,1698 @@
             },
             "Id": "Entity_[3629852434366883]",
             "Name": "Jake"
+        },
+        "Entity_[3717566875046541]": {
+            "Components": {
+                "Component_[2017929412673403]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 2017929412673403
+                },
+                "Component_[2895591205387155]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 2895591205387155
+                },
+                "Component_[3060732529871831]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 3060732529871831
+                },
+                "Component_[3975780470325070]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 3975780470325070
+                },
+                "Component_[3983985885907348]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_400x400x100.azmodel",
+                                "assetId": {
+                                    "guid": "{3F3B8CF0-DE93-5A11-AD57-D71927DC805C}",
+                                    "subId": 270783830
+                                }
+                            }
+                        }
+                    },
+                    "Id": 3983985885907348
+                },
+                "Component_[4483244191365386]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 4483244191365386,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4,
+                                4,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[5032876585088242]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 5032876585088242
+                },
+                "Component_[5285893409700407]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 5285893409700407,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            -2.2,
+                            -1.8,
+                            -0.7
+                        ]
+                    }
+                },
+                "Component_[5760675430386360]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 5760675430386360
+                },
+                "Component_[6807275838404337]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 6807275838404337
+                },
+                "Component_[7390837805730887]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 7390837805730887
+                },
+                "Component_[8324688937236555]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 8324688937236555
+                }
+            },
+            "Id": "Entity_[3717566875046541]",
+            "Name": "PROVISIONAL Pad HarlowClue"
+        },
+        "Entity_[394754560825472]": {
+            "Components": {
+                "Component_[2963514002313175]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 2963514002313175
+                },
+                "Component_[3242466548347819]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 3242466548347819
+                },
+                "Component_[4382453693506255]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 4382453693506255
+                },
+                "Component_[5775786711188059]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 5775786711188059,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            -9.619728
+                        ],
+                        "Translate": [
+                            13.528123,
+                            -4.465784,
+                            -0.25
+                        ]
+                    }
+                },
+                "Component_[7245759212872974]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 7245759212872974
+                },
+                "Component_[7372824647849080]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetId": {
+                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
+                                    "subId": 269725335
+                                }
+                            }
+                        }
+                    },
+                    "Id": 7372824647849080
+                },
+                "Component_[7502122386994412]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 7502122386994412
+                },
+                "Component_[7874695353274778]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 7874695353274778
+                },
+                "Component_[8306969000349663]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 8306969000349663
+                },
+                "Component_[8355399182444995]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 8355399182444995
+                },
+                "Component_[8601665033949718]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 8601665033949718,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4.05,
+                                3,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[921143624286813]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 921143624286813
+                }
+            },
+            "Id": "Entity_[394754560825472]",
+            "Name": "PROVISIONAL Path HarlowClue to Route.MirasCove 4"
+        },
+        "Entity_[399152607338316]": {
+            "Components": {
+                "Component_[2976593606628742]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 2976593606628742,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            -9.619728
+                        ],
+                        "Translate": [
+                            -0.228123,
+                            -2.134216,
+                            -0.65
+                        ]
+                    }
+                },
+                "Component_[2998860641036875]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 2998860641036875
+                },
+                "Component_[3477867235845884]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 3477867235845884
+                },
+                "Component_[3478703577980654]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 3478703577980654
+                },
+                "Component_[3581485959421088]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 3581485959421088
+                },
+                "Component_[405729965668537]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetId": {
+                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
+                                    "subId": 269725335
+                                }
+                            }
+                        }
+                    },
+                    "Id": 405729965668537
+                },
+                "Component_[4109337440089881]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 4109337440089881
+                },
+                "Component_[6036127982055945]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 6036127982055945
+                },
+                "Component_[6853447812754740]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 6853447812754740
+                },
+                "Component_[8049718960016230]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 8049718960016230
+                },
+                "Component_[8125191739413522]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 8125191739413522
+                },
+                "Component_[8551438732524099]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 8551438732524099,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4.05,
+                                3,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                }
+            },
+            "Id": "Entity_[399152607338316]",
+            "Name": "PROVISIONAL Path HarlowClue to Route.MirasCove 0"
+        },
+        "Entity_[401351630594303]": {
+            "Components": {
+                "Component_[1037216305461072]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 1037216305461072
+                },
+                "Component_[122283015610646]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetId": {
+                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
+                                    "subId": 269725335
+                                }
+                            }
+                        }
+                    },
+                    "Id": 122283015610646
+                },
+                "Component_[25715401645661]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 25715401645661
+                },
+                "Component_[2739228632026365]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 2739228632026365
+                },
+                "Component_[5494320087606129]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 5494320087606129,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            -9.619728
+                        ],
+                        "Translate": [
+                            3.210939,
+                            -2.717108,
+                            -0.55
+                        ]
+                    }
+                },
+                "Component_[5786921863382517]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 5786921863382517
+                },
+                "Component_[6042252804858065]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 6042252804858065
+                },
+                "Component_[6275806361057196]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 6275806361057196
+                },
+                "Component_[6660431806300987]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 6660431806300987
+                },
+                "Component_[7195069944195670]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 7195069944195670
+                },
+                "Component_[8458687570350857]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 8458687570350857
+                },
+                "Component_[940189931410292]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 940189931410292,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4.05,
+                                3,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                }
+            },
+            "Id": "Entity_[401351630594303]",
+            "Name": "PROVISIONAL Path HarlowClue to Route.MirasCove 1"
+        },
+        "Entity_[401351630594738]": {
+            "Components": {
+                "Component_[1209262437708952]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 1209262437708952
+                },
+                "Component_[1235427828715035]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 1235427828715035
+                },
+                "Component_[1945776006868659]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 1945776006868659
+                },
+                "Component_[2835731455814507]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 2835731455814507
+                },
+                "Component_[3472130670729234]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 3472130670729234
+                },
+                "Component_[4080987957072170]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 4080987957072170,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4.05,
+                                3,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[4595886452925991]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 4595886452925991
+                },
+                "Component_[4639537836959127]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 4639537836959127,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            -9.619728
+                        ],
+                        "Translate": [
+                            6.65,
+                            -3.3,
+                            -0.45
+                        ]
+                    }
+                },
+                "Component_[6845462227897460]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetId": {
+                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
+                                    "subId": 269725335
+                                }
+                            }
+                        }
+                    },
+                    "Id": 6845462227897460
+                },
+                "Component_[7581569662650039]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 7581569662650039
+                },
+                "Component_[7764121539364817]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 7764121539364817
+                },
+                "Component_[7964832722315438]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 7964832722315438
+                }
+            },
+            "Id": "Entity_[401351630594738]",
+            "Name": "PROVISIONAL Path HarlowClue to Route.MirasCove 2"
+        },
+        "Entity_[403550653850725]": {
+            "Components": {
+                "Component_[1848909108678284]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 1848909108678284,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            -9.619728
+                        ],
+                        "Translate": [
+                            10.089061,
+                            -3.882892,
+                            -0.35
+                        ]
+                    }
+                },
+                "Component_[23899120487024]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 23899120487024
+                },
+                "Component_[3051814923439276]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 3051814923439276
+                },
+                "Component_[4217248828380738]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 4217248828380738
+                },
+                "Component_[5186915109843617]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 5186915109843617
+                },
+                "Component_[6236249534615966]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 6236249534615966
+                },
+                "Component_[7025283943352606]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 7025283943352606
+                },
+                "Component_[7326095147599959]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 7326095147599959
+                },
+                "Component_[7975013940787183]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetId": {
+                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
+                                    "subId": 269725335
+                                }
+                            }
+                        }
+                    },
+                    "Id": 7975013940787183
+                },
+                "Component_[8558091394085251]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 8558091394085251
+                },
+                "Component_[8797838033540113]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 8797838033540113,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4.05,
+                                3,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[8888349335063712]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 8888349335063712
+                }
+            },
+            "Id": "Entity_[403550653850725]",
+            "Name": "PROVISIONAL Path HarlowClue to Route.MirasCove 3"
+        },
+        "Entity_[425993120479481]": {
+            "Components": {
+                "Component_[1128051180651940]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 1128051180651940,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            0,
+                            0,
+                            0
+                        ]
+                    }
+                },
+                "Component_[1712013483806559]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 1712013483806559
+                },
+                "Component_[186912808570982]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 186912808570982
+                },
+                "Component_[3766361190280311]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/world/moran/driftwoodcamp/sm_driftwoodcamp_alpha.azmodel",
+                                "assetId": {
+                                    "guid": "{74F48E87-61B0-5E3C-9446-018D0710ECBA}",
+                                    "subId": 275489098
+                                }
+                            }
+                        }
+                    },
+                    "Id": 3766361190280311
+                },
+                "Component_[4349472494858842]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 4349472494858842
+                },
+                "Component_[4711619352922420]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 4711619352922420
+                },
+                "Component_[5628558467970888]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 5628558467970888
+                },
+                "Component_[6082251782131432]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 6082251782131432
+                },
+                "Component_[620020186438633]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 620020186438633
+                },
+                "Component_[8377415266537995]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 8377415266537995
+                }
+            },
+            "Id": "Entity_[425993120479481]",
+            "Name": "SM_DriftwoodCamp_Alpha"
+        },
+        "Entity_[4272635359050870]": {
+            "Components": {
+                "Component_[2394160811061305]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 2394160811061305
+                },
+                "Component_[2831720425886377]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 2831720425886377
+                },
+                "Component_[2920059151681920]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 2920059151681920
+                },
+                "Component_[2923888945700722]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 2923888945700722
+                },
+                "Component_[313483302922201]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetId": {
+                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
+                                    "subId": 269725335
+                                }
+                            }
+                        }
+                    },
+                    "Id": 313483302922201
+                },
+                "Component_[3173100904091150]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 3173100904091150
+                },
+                "Component_[488068337088038]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 488068337088038,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            -147.724356
+                        ],
+                        "Translate": [
+                            -0.48702,
+                            -0.718118,
+                            -0.3325
+                        ]
+                    }
+                },
+                "Component_[5053341602339363]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 5053341602339363,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4.05,
+                                3,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[6594850815838598]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 6594850815838598
+                },
+                "Component_[7684966665348244]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 7684966665348244
+                },
+                "Component_[85078828602795]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 85078828602795
+                },
+                "Component_[956504669743900]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 956504669743900
+                }
+            },
+            "Id": "Entity_[4272635359050870]",
+            "Name": "PROVISIONAL Path SmokeColumn to HarlowClue 18"
+        },
+        "Entity_[4274834382306857]": {
+            "Components": {
+                "Component_[168733434107454]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 168733434107454
+                },
+                "Component_[2816862204487697]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetId": {
+                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
+                                    "subId": 269725335
+                                }
+                            }
+                        }
+                    },
+                    "Id": 2816862204487697
+                },
+                "Component_[2884064041620216]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 2884064041620216
+                },
+                "Component_[3099761657099748]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 3099761657099748
+                },
+                "Component_[4589082135022529]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 4589082135022529
+                },
+                "Component_[5323198865068806]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 5323198865068806
+                },
+                "Component_[6473566373519899]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 6473566373519899,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4.05,
+                                3,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[6849534150043502]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 6849534150043502,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            -147.724356
+                        ],
+                        "Translate": [
+                            -0.509022,
+                            -0.732014,
+                            -0.5775
+                        ]
+                    }
+                },
+                "Component_[6987914241060483]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 6987914241060483
+                },
+                "Component_[8212269383721713]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 8212269383721713
+                },
+                "Component_[8646306385270618]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 8646306385270618
+                },
+                "Component_[8777892196101836]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 8777892196101836
+                }
+            },
+            "Id": "Entity_[4274834382306857]",
+            "Name": "PROVISIONAL Path SmokeColumn to HarlowClue 19"
+        },
+        "Entity_[4279232428820136]": {
+            "Components": {
+                "Component_[249759350307659]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 249759350307659
+                },
+                "Component_[2866747643433783]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 2866747643433783,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            -147.724356
+                        ],
+                        "Translate": [
+                            -0.355006,
+                            -0.634741,
+                            1.1375
+                        ]
+                    }
+                },
+                "Component_[3102543215401620]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetId": {
+                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
+                                    "subId": 269725335
+                                }
+                            }
+                        }
+                    },
+                    "Id": 3102543215401620
+                },
+                "Component_[4184497768344074]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 4184497768344074,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4.05,
+                                3,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[4570951717249147]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 4570951717249147
+                },
+                "Component_[5613452503682546]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 5613452503682546
+                },
+                "Component_[6341251348980664]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 6341251348980664
+                },
+                "Component_[6956883506158158]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 6956883506158158
+                },
+                "Component_[7385652733743089]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 7385652733743089
+                },
+                "Component_[7971413724325191]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 7971413724325191
+                },
+                "Component_[815824096421523]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 815824096421523
+                },
+                "Component_[8186550330574039]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 8186550330574039
+                }
+            },
+            "Id": "Entity_[4279232428820136]",
+            "Name": "PROVISIONAL Path SmokeColumn to HarlowClue 12"
+        },
+        "Entity_[4281431452076123]": {
+            "Components": {
+                "Component_[1193611932507978]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 1193611932507978
+                },
+                "Component_[1336636428210991]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 1336636428210991
+                },
+                "Component_[1769414115377731]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 1769414115377731
+                },
+                "Component_[1773722512239618]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 1773722512239618,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4.05,
+                                3,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[1877370311384857]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 1877370311384857
+                },
+                "Component_[194641245332803]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 194641245332803
+                },
+                "Component_[6228741785959116]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetId": {
+                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
+                                    "subId": 269725335
+                                }
+                            }
+                        }
+                    },
+                    "Id": 6228741785959116
+                },
+                "Component_[652155547292127]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 652155547292127
+                },
+                "Component_[6552711390888779]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 6552711390888779
+                },
+                "Component_[7030072826223494]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 7030072826223494
+                },
+                "Component_[7175306166235408]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 7175306166235408
+                },
+                "Component_[8665855758365279]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 8665855758365279,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            -147.724356
+                        ],
+                        "Translate": [
+                            -0.377008,
+                            -0.648637,
+                            0.8925
+                        ]
+                    }
+                }
+            },
+            "Id": "Entity_[4281431452076123]",
+            "Name": "PROVISIONAL Path SmokeColumn to HarlowClue 13"
+        },
+        "Entity_[4281431452076558]": {
+            "Components": {
+                "Component_[1554144307152225]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 1554144307152225
+                },
+                "Component_[1613084859893133]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 1613084859893133
+                },
+                "Component_[2468640726395580]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 2468640726395580
+                },
+                "Component_[250352402598393]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 250352402598393
+                },
+                "Component_[388601418538980]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 388601418538980,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4.05,
+                                3,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[4080413544312193]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 4080413544312193,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            -147.724356
+                        ],
+                        "Translate": [
+                            -0.311001,
+                            -0.606948,
+                            1.6275
+                        ]
+                    }
+                },
+                "Component_[5097173197652678]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 5097173197652678
+                },
+                "Component_[5506115532055661]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 5506115532055661
+                },
+                "Component_[7101922376227653]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 7101922376227653
+                },
+                "Component_[7109308599790283]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 7109308599790283
+                },
+                "Component_[8189037725206054]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetId": {
+                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
+                                    "subId": 269725335
+                                }
+                            }
+                        }
+                    },
+                    "Id": 8189037725206054
+                },
+                "Component_[8973826934848512]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 8973826934848512
+                }
+            },
+            "Id": "Entity_[4281431452076558]",
+            "Name": "PROVISIONAL Path SmokeColumn to HarlowClue 10"
+        },
+        "Entity_[4283630475332545]": {
+            "Components": {
+                "Component_[1286215442384193]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 1286215442384193
+                },
+                "Component_[2398628776597431]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 2398628776597431
+                },
+                "Component_[2924043650288524]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 2924043650288524
+                },
+                "Component_[3458907366748140]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 3458907366748140,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            -147.724356
+                        ],
+                        "Translate": [
+                            -0.333004,
+                            -0.620844,
+                            1.3825
+                        ]
+                    }
+                },
+                "Component_[3601376894933583]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetId": {
+                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
+                                    "subId": 269725335
+                                }
+                            }
+                        }
+                    },
+                    "Id": 3601376894933583
+                },
+                "Component_[4114334829893120]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 4114334829893120
+                },
+                "Component_[4125301015207601]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 4125301015207601,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4.05,
+                                3,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[6530064440758690]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 6530064440758690
+                },
+                "Component_[6664356388181475]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 6664356388181475
+                },
+                "Component_[861799772592062]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 861799772592062
+                },
+                "Component_[8655345343514640]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 8655345343514640
+                },
+                "Component_[971384013505086]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 971384013505086
+                }
+            },
+            "Id": "Entity_[4283630475332545]",
+            "Name": "PROVISIONAL Path SmokeColumn to HarlowClue 11"
+        },
+        "Entity_[4283630475332980]": {
+            "Components": {
+                "Component_[1591706078004887]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 1591706078004887
+                },
+                "Component_[1837893280746821]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 1837893280746821,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            -147.724356
+                        ],
+                        "Translate": [
+                            -0.443015,
+                            -0.690325,
+                            0.1575
+                        ]
+                    }
+                },
+                "Component_[316621900094329]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 316621900094329
+                },
+                "Component_[3672053161954120]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 3672053161954120
+                },
+                "Component_[3819540197615525]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 3819540197615525
+                },
+                "Component_[4544386255212881]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 4544386255212881
+                },
+                "Component_[5323730912538573]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 5323730912538573
+                },
+                "Component_[553307822009753]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 553307822009753
+                },
+                "Component_[643414711402816]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 643414711402816,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4.05,
+                                3,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[7067215486833916]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 7067215486833916
+                },
+                "Component_[848352764468634]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 848352764468634
+                },
+                "Component_[8977638176624474]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetId": {
+                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
+                                    "subId": 269725335
+                                }
+                            }
+                        }
+                    },
+                    "Id": 8977638176624474
+                }
+            },
+            "Id": "Entity_[4283630475332980]",
+            "Name": "PROVISIONAL Path SmokeColumn to HarlowClue 16"
+        },
+        "Entity_[4285829498588967]": {
+            "Components": {
+                "Component_[1374113676976214]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 1374113676976214
+                },
+                "Component_[1780809544157837]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 1780809544157837
+                },
+                "Component_[2071039710733765]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 2071039710733765
+                },
+                "Component_[2248996829069455]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 2248996829069455,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4.05,
+                                3,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[2372495225761672]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 2372495225761672
+                },
+                "Component_[2977312319155548]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 2977312319155548
+                },
+                "Component_[3296105979746240]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 3296105979746240
+                },
+                "Component_[4228200043292285]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetId": {
+                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
+                                    "subId": 269725335
+                                }
+                            }
+                        }
+                    },
+                    "Id": 4228200043292285
+                },
+                "Component_[5848694860313111]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 5848694860313111
+                },
+                "Component_[6227181213226194]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 6227181213226194
+                },
+                "Component_[6682579813754594]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 6682579813754594
+                },
+                "Component_[8529297897754410]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 8529297897754410,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            -147.724356
+                        ],
+                        "Translate": [
+                            -0.465018,
+                            -0.704222,
+                            -0.0875
+                        ]
+                    }
+                }
+            },
+            "Id": "Entity_[4285829498588967]",
+            "Name": "PROVISIONAL Path SmokeColumn to HarlowClue 17"
+        },
+        "Entity_[4285829498589402]": {
+            "Components": {
+                "Component_[122816922289274]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 122816922289274,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4.05,
+                                3,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[1905802669698177]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 1905802669698177
+                },
+                "Component_[3289320188865187]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 3289320188865187
+                },
+                "Component_[3588204390368040]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 3588204390368040
+                },
+                "Component_[3933992431898626]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 3933992431898626
+                },
+                "Component_[5239585833210532]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetId": {
+                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
+                                    "subId": 269725335
+                                }
+                            }
+                        }
+                    },
+                    "Id": 5239585833210532
+                },
+                "Component_[5250670629410110]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 5250670629410110
+                },
+                "Component_[5877469784898839]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 5877469784898839
+                },
+                "Component_[6059692435323335]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 6059692435323335,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            -147.724356
+                        ],
+                        "Translate": [
+                            -0.399011,
+                            -0.662533,
+                            0.6475
+                        ]
+                    }
+                },
+                "Component_[6066105070272203]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 6066105070272203
+                },
+                "Component_[6912649284365179]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 6912649284365179
+                },
+                "Component_[8524930720564327]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 8524930720564327
+                }
+            },
+            "Id": "Entity_[4285829498589402]",
+            "Name": "PROVISIONAL Path SmokeColumn to HarlowClue 14"
+        },
+        "Entity_[4288028521845389]": {
+            "Components": {
+                "Component_[2000517253696047]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 2000517253696047
+                },
+                "Component_[2134245326557532]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetId": {
+                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
+                                    "subId": 269725335
+                                }
+                            }
+                        }
+                    },
+                    "Id": 2134245326557532
+                },
+                "Component_[2400826351041654]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 2400826351041654
+                },
+                "Component_[2906540392716783]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 2906540392716783,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            -147.724356
+                        ],
+                        "Translate": [
+                            -0.421013,
+                            -0.676429,
+                            0.4025
+                        ]
+                    }
+                },
+                "Component_[2954522898510208]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 2954522898510208
+                },
+                "Component_[5624075793811506]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 5624075793811506,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4.05,
+                                3,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[6539816702761407]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 6539816702761407
+                },
+                "Component_[6602831874346153]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 6602831874346153
+                },
+                "Component_[6930351037527187]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 6930351037527187
+                },
+                "Component_[7553078316015219]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 7553078316015219
+                },
+                "Component_[7845518310367642]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 7845518310367642
+                },
+                "Component_[967486080209563]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 967486080209563
+                }
+            },
+            "Id": "Entity_[4288028521845389]",
+            "Name": "PROVISIONAL Path SmokeColumn to HarlowClue 15"
         },
         "Entity_[4448255928013002]": {
             "Components": {
@@ -703,6 +3732,276 @@
             "Id": "Entity_[5429024600107231]",
             "Name": "Anchor HarlowClue"
         },
+        "Entity_[5688028145535790]": {
+            "Components": {
+                "Component_[1804487523290107]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 1804487523290107
+                },
+                "Component_[2774971791322136]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 2774971791322136
+                },
+                "Component_[5012917708458804]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 5012917708458804,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            1.6,
+                            0.6,
+                            4.2
+                        ]
+                    }
+                },
+                "Component_[5187483179745351]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_400x400x100.azmodel",
+                                "assetId": {
+                                    "guid": "{3F3B8CF0-DE93-5A11-AD57-D71927DC805C}",
+                                    "subId": 270783830
+                                }
+                            }
+                        }
+                    },
+                    "Id": 5187483179745351
+                },
+                "Component_[593533907186070]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 593533907186070
+                },
+                "Component_[6047037451262159]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 6047037451262159
+                },
+                "Component_[6776539450549060]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 6776539450549060
+                },
+                "Component_[6847021596946105]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 6847021596946105
+                },
+                "Component_[7196712799947401]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 7196712799947401,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4,
+                                4,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[7480078272097450]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 7480078272097450
+                },
+                "Component_[7610156604757206]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 7610156604757206
+                },
+                "Component_[922709092952888]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 922709092952888
+                }
+            },
+            "Id": "Entity_[5688028145535790]",
+            "Name": "PROVISIONAL Pad SmokeColumn"
+        },
+        "Entity_[7733406321115665]": {
+            "Components": {
+                "Component_[1278761982418547]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 1278761982418547
+                },
+                "Component_[2145781741985793]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 2145781741985793
+                },
+                "Component_[2306324976158481]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 2306324976158481
+                },
+                "Component_[5123062863210186]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 5123062863210186
+                },
+                "Component_[6884755192605366]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 6884755192605366
+                },
+                "Component_[7579018797482698]": {
+                    "$type": "GenericComponentWrapper",
+                    "Id": 7579018797482698,
+                    "m_template": {
+                        "$type": "{8E1B4D72-6C95-4A3F-A7D0-2F9C5B3E6A81} PlayerSpawnComponent",
+                        "Player": "Entity_[3629852434366883]",
+                        "Spawns": [
+                            {
+                                "Anchor": "Entity_[8734302597331562]",
+                                "Rule": 0,
+                                "SpawnId": "Spawn.Moran.DriftwoodCamp.Arrival"
+                            },
+                            {
+                                "Anchor": "Entity_[8734302597331562]",
+                                "Rule": 2,
+                                "SpawnId": "Spawn.Moran.DriftwoodCamp.Arrival"
+                            }
+                        ]
+                    }
+                },
+                "Component_[7619163319501214]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 7619163319501214,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            0,
+                            0,
+                            0
+                        ]
+                    }
+                },
+                "Component_[7689652239685652]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 7689652239685652
+                },
+                "Component_[8221842861567790]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 8221842861567790
+                },
+                "Component_[8837204360573724]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 8837204360573724
+                },
+                "Component_[965174284679893]": {
+                    "$type": "GenericComponentWrapper",
+                    "Id": 965174284679893,
+                    "m_template": {
+                        "$type": "{C4A7F2B9-1E36-4D8C-9F05-3B6E8A1D7C24} MapTransitionComponent",
+                        "Fact": "World.MirasCoveReached",
+                        "NextLevel": "L_MirasCove"
+                    }
+                }
+            },
+            "Id": "Entity_[7733406321115665]",
+            "Name": "Moran Director"
+        },
+        "Entity_[7781999144872450]": {
+            "Components": {
+                "Component_[140034011040309]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 140034011040309,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            3.8,
+                            -1.2,
+                            0.4
+                        ]
+                    }
+                },
+                "Component_[1707803055966546]": {
+                    "$type": "GenericComponentWrapper",
+                    "Id": 1707803055966546,
+                    "m_template": {
+                        "$type": "{EB3DADDE-4839-422C-93FF-C01AE9528C4E} StoryTriggerComponent",
+                        "Argument": "",
+                        "IntegerArgument": 0,
+                        "OneShot": false,
+                        "RequiresInteract": true,
+                        "Signal": 20
+                    }
+                },
+                "Component_[1826376499565749]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 1826376499565749
+                },
+                "Component_[3079869477207146]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 3079869477207146
+                },
+                "Component_[4073881223943820]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 4073881223943820
+                },
+                "Component_[4615709047102791]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 4615709047102791
+                },
+                "Component_[6750704604898448]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 6750704604898448,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                1,
+                                1,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[692398773179913]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 692398773179913
+                },
+                "Component_[7009775347941441]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 7009775347941441
+                },
+                "Component_[7122063922241661]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 7122063922241661
+                },
+                "Component_[7792853110315768]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 7792853110315768
+                },
+                "Component_[8790810749309481]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 8790810749309481
+                }
+            },
+            "Id": "Entity_[7781999144872450]",
+            "Name": "Camp Shelter"
+        },
         "Entity_[8140410063692946]": {
             "Components": {
                 "Component_[2356533637962007]": {
@@ -770,70 +4069,102 @@
             "Id": "Entity_[8140410063692946]",
             "Name": "Jake Camera"
         },
-        "Entity_[8217206182504309]": {
+        "Entity_[8694781057063653]": {
             "Components": {
-                "Component_[1347271487173938]": {
-                    "$type": "EditorInspectorComponent",
-                    "Id": 1347271487173938
-                },
-                "Component_[1358649540020700]": {
-                    "$type": "EditorLockComponent",
-                    "Id": 1358649540020700
-                },
-                "Component_[1789982362471852]": {
+                "Component_[3606035518252998]": {
                     "$type": "EditorEntitySortComponent",
-                    "Id": 1789982362471852
+                    "Id": 3606035518252998
                 },
-                "Component_[2974477729161824]": {
+                "Component_[4511349553901822]": {
                     "$type": "EditorPendingCompositionComponent",
-                    "Id": 2974477729161824
+                    "Id": 4511349553901822
                 },
-                "Component_[4438888487622363]": {
-                    "$type": "EditorDisabledCompositionComponent",
-                    "Id": 4438888487622363
+                "Component_[4901377873291148]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 4901377873291148
                 },
-                "Component_[4947731566849269]": {
+                "Component_[5890980784823619]": {
                     "$type": "EditorVisibilityComponent",
-                    "Id": 4947731566849269
+                    "Id": 5890980784823619
                 },
-                "Component_[5134667960797912]": {
-                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
-                    "Id": 5134667960797912,
-                    "Parent Entity": "ContainerEntity",
-                    "Transform Data": {
-                        "Translate": [
-                            0,
-                            0,
-                            0
-                        ]
-                    }
+                "Component_[5996332717771393]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 5996332717771393
                 },
-                "Component_[602244444072310]": {
-                    "$type": "EditorOnlyEntityComponent",
-                    "Id": 602244444072310
-                },
-                "Component_[7903236066078651]": {
+                "Component_[6224989548628945]": {
                     "$type": "AZ::Render::EditorMeshComponent",
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/world/moran/driftwoodcamp/sm_driftwoodcamp_alpha.azmodel",
+                                "assetHint": "assets/greybox/placeholders/sm_block_400x400x100.azmodel",
                                 "assetId": {
-                                    "guid": "{74F48E87-61B0-5E3C-9446-018D0710ECBA}",
-                                    "subId": 275489098
+                                    "guid": "{3F3B8CF0-DE93-5A11-AD57-D71927DC805C}",
+                                    "subId": 270783830
                                 }
                             }
                         }
                     },
-                    "Id": 7903236066078651
+                    "Id": 6224989548628945
                 },
-                "Component_[8318333138971615]": {
+                "Component_[6370036125560494]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 6370036125560494,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            15.5,
+                            -4.8,
+                            -0.2
+                        ]
+                    }
+                },
+                "Component_[6672968416075739]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 6672968416075739,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4,
+                                4,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[6911479254729656]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 6911479254729656
+                },
+                "Component_[7812310344465946]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 7812310344465946
+                },
+                "Component_[8146618783035313]": {
                     "$type": "EditorEntityIconComponent",
-                    "Id": 8318333138971615
+                    "Id": 8146618783035313
+                },
+                "Component_[8307842552240292]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 8307842552240292
                 }
             },
-            "Id": "Entity_[8217206182504309]",
-            "Name": "Driftwood Camp"
+            "Id": "Entity_[8694781057063653]",
+            "Name": "PROVISIONAL Pad Route.MirasCove"
         },
         "Entity_[8734302597331562]": {
             "Components": {

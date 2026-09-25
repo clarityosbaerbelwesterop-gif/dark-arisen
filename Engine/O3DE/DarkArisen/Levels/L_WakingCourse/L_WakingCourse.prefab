@@ -1800,6 +1800,103 @@
             "Id": "Entity_[5142633060143969]",
             "Name": "Anchor GroveExit"
         },
+        "Entity_[5342728441491382]": {
+            "Components": {
+                "Component_[1275003360022996]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 1275003360022996
+                },
+                "Component_[2326161259099975]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 2326161259099975,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4,
+                                4,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[2853588456287957]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_400x400x100.azmodel",
+                                "assetId": {
+                                    "guid": "{3F3B8CF0-DE93-5A11-AD57-D71927DC805C}",
+                                    "subId": 270783830
+                                }
+                            }
+                        }
+                    },
+                    "Id": 2853588456287957
+                },
+                "Component_[3076421567771610]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 3076421567771610
+                },
+                "Component_[5470927424339517]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 5470927424339517
+                },
+                "Component_[5571722059259536]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 5571722059259536
+                },
+                "Component_[5965338668780350]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 5965338668780350
+                },
+                "Component_[6587718075948946]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 6587718075948946,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            18,
+                            -7,
+                            -0.2
+                        ]
+                    }
+                },
+                "Component_[7130499687553418]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 7130499687553418
+                },
+                "Component_[7896170321175845]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 7896170321175845
+                },
+                "Component_[8999683125379663]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 8999683125379663
+                },
+                "Component_[938870616312024]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 938870616312024
+                }
+            },
+            "Id": "Entity_[5342728441491382]",
+            "Name": "PROVISIONAL Pad RealEthan"
+        },
         "Entity_[5818516326533246]": {
             "Components": {
                 "Component_[1123569488361103]": {
@@ -2068,6 +2165,103 @@
             },
             "Id": "Entity_[5883737327331947]",
             "Name": "C09_04_RealEthan"
+        },
+        "Entity_[5963709410970261]": {
+            "Components": {
+                "Component_[2013675374143559]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 2013675374143559,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4,
+                                4,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[2699347423493669]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 2699347423493669
+                },
+                "Component_[3434437136667274]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 3434437136667274
+                },
+                "Component_[375998673205136]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 375998673205136
+                },
+                "Component_[3801985829256404]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 3801985829256404
+                },
+                "Component_[3803959739325263]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 3803959739325263
+                },
+                "Component_[4900574085467096]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 4900574085467096
+                },
+                "Component_[5857312884504722]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 5857312884504722,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            15,
+                            5,
+                            -0.2
+                        ]
+                    }
+                },
+                "Component_[6308878238236629]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_400x400x100.azmodel",
+                                "assetId": {
+                                    "guid": "{3F3B8CF0-DE93-5A11-AD57-D71927DC805C}",
+                                    "subId": 270783830
+                                }
+                            }
+                        }
+                    },
+                    "Id": 6308878238236629
+                },
+                "Component_[6886797924830426]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 6886797924830426
+                },
+                "Component_[7374681621081150]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 7374681621081150
+                },
+                "Component_[8002059550529853]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 8002059550529853
+                }
+            },
+            "Id": "Entity_[5963709410970261]",
+            "Name": "PROVISIONAL Pad JakeRest"
         },
         "Entity_[6037594266656784]": {
             "Components": {

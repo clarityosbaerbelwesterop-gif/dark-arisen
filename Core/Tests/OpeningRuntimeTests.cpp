@@ -112,6 +112,7 @@ TEST_CASE("Opening: full Moran route to Rexa Harbor, including save/load mid-rou
     CHECK(Opening.SignalReachedLocation(OpeningLocation::DriftwoodCamp));
     CHECK(Opening.SignalReachedLocation(OpeningLocation::MirasCove));
     CHECK(!Opening.SignalCrewMet("crew.esteban"));
+    CHECK(!Opening.SignalReachedLocation(OpeningLocation::MangroveShallows)); // one-way route: Mira first
     CHECK(Opening.SignalCrewMet("crew.mira"));
     CHECK(Opening.SignalCrewRecruitmentAvailable("crew.mira"));
     CHECK(Opening.SignalCrewRecruited("crew.mira"));
@@ -126,6 +127,7 @@ TEST_CASE("Opening: full Moran route to Rexa Harbor, including save/load mid-rou
     CHECK(Resumed.Progress().Location == OpeningLocation::MirasCove);
 
     CHECK(Resumed.SignalReachedLocation(OpeningLocation::MangroveShallows));
+    CHECK(!Resumed.SignalReachedLocation(OpeningLocation::KoasTradingPost)); // Big Tom first
     CHECK(Resumed.SignalCrewMet("crew.big_tom"));
     CHECK(Resumed.SignalCrewRecruitmentAvailable("crew.big_tom"));
     CHECK(Resumed.SignalCrewRecruited("crew.big_tom"));

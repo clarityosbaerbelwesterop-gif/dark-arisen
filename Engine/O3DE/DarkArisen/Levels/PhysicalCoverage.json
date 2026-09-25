@@ -1,5 +1,5 @@
 {
-  "covered": 31,
+  "covered": 34,
   "missions": {
     "Main.C01.01.HomeWater": {
       "checkpoint": "Spawn.Jake.HarlowOpening",
@@ -34,16 +34,28 @@
       "status": "MATERIALISED"
     },
     "Main.C02.01.ShatteredCoast": {
+      "checkpoint": "Spawn.Moran.DriftwoodBeach.Recovery",
+      "completion": "StoryTrigger GalleonCoveCleared on Harbor Control in L_GalleonCove, walked via L_DriftwoodCamp, L_MirasCove (Mira met/available/recruited), L_MangroveShallows (Big Tom), L_KoaTradingPost",
+      "entry": "StoryTrigger RecoveryComplete (activates after Undertow)",
       "level": "L_DriftwoodBeach",
-      "status": "NOT MATERIALISED"
+      "next": "Main.C02.02.AShipToTake in L_GalleonCove",
+      "status": "MATERIALISED"
     },
     "Main.C02.02.AShipToTake": {
+      "checkpoint": "Spawn.Moran.GalleonCove.Approach",
+      "completion": "Gangway LaLiberacionBoarded, Helm LaLiberacionHelmSecured (core crew recruited), La Liberacion through Harbor Exit (LaLiberacionHarborCleared)",
+      "entry": "StoryTrigger GalleonCoveCleared (activates)",
       "level": "L_GalleonCove",
-      "status": "NOT MATERIALISED"
+      "next": "MapTransition -> L_OpenSea_FirstWake",
+      "status": "MATERIALISED"
     },
     "Main.C02.03.FirstWake": {
+      "checkpoint": "Spawn.FirstWake.Helm",
+      "completion": "La Liberacion sails 4.5 km to Rexa Approach (ReachRexaHarbor); no water fast travel",
+      "entry": "StoryTrigger BeginFirstWake at the Galleon Cove harbor exit",
       "level": "L_OpenSea_FirstWake",
-      "status": "NOT MATERIALISED"
+      "next": "MapTransition -> L_RexaHarbor (Main.C03.01.RexaHarbor)",
+      "status": "MATERIALISED"
     },
     "Main.C03.01.RexaHarbor": {
       "checkpoint": "Checkpoint.C03.RexaHarbor.Dock",

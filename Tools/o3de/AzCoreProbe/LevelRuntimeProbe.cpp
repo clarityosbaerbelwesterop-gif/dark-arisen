@@ -42,6 +42,8 @@ int main(int argc, char** argv)
              DarkArisen::PlayerSpawnComponent::CreateDescriptor(), DarkArisen::SwimmerComponent::CreateDescriptor(),
              DarkArisen::WaterVolumeComponent::CreateDescriptor(), DarkArisen::OceanComponent::CreateDescriptor(),
              DarkArisen::CameraRigComponent::CreateDescriptor(), DarkArisen::LockOnComponent::CreateDescriptor(),
+             DarkArisen::StoryActorComponent::CreateDescriptor(), DarkArisen::NavalCombatComponent::CreateDescriptor(),
+             DarkArisen::ShipVoyageComponent::CreateDescriptor(), DarkArisen::CreditsComponent::CreateDescriptor(),
              ProbeSupport::ProbeTransformComponent::CreateDescriptor(), ProbeSupport::ProbeCharacterComponent::CreateDescriptor()})
     {
         app.RegisterComponentDescriptor(componentDescriptor);
@@ -253,9 +255,127 @@ int main(int argc, char** argv)
     g_requestedLevel.clear();
     UnloadLevel(level);
     Check(open("L_DriftwoodCamp", level), "L_DriftwoodCamp.prefab parsed");
-    Check(level.m_gameComponents == 5 && level.m_rejectedComponents == 0, "Camp: every game component deserialised cleanly");
+    Check(level.m_rejectedComponents == 0, "Camp: every game component deserialised cleanly");
     Check(Position(level.Id("Jake")).IsClose(Position(level.Id("Anchor Arrival"))), "camp arrival spawn");
-    Check(campaign->GetOpening().Progress().Location == DarkArisen::Core::OpeningLocation::DriftwoodCamp, "vertical slice ends at Driftwood Camp");
+    Check(campaign->GetOpening().Progress().Location == DarkArisen::Core::OpeningLocation::DriftwoodCamp, "Jake reached Driftwood Camp");
+
+    // ---- Chapter 2: Driftwood Camp -> Mira's Cove -> Mangrove Shallows -> Koa -> Galleon Cove -> First Wake -> Rexa.
+    using DarkArisen::Core::OpeningLocation;
+    const auto use = [](const AZ::EntityId& target)
+    {
+        bool accepted = false;
+        DarkArisen::StoryTriggerRequestBus::EventResult(accepted, target, &DarkArisen::StoryTriggerRequests::Interact,
+            AZStd::string(DarkArisen::Core::EntityPolicy::JakeId.data(), DarkArisen::Core::EntityPolicy::JakeId.size()));
+        return accepted;
+    };
+    const auto travel = [&](const char* next, LoadedLevel& current)
+    {
+        const bool requested = g_requestedLevel == next;
+        g_requestedLevel.clear();
+        UnloadLevel(current);
+        return requested && open(next, current) && current.m_rejectedComponents == 0;
+    };
+    AZ::EntityId walker = level.Id("Jake");
+    Check(use(level.Id("Camp Shelter")), "Driftwood Camp: rest at the shelter (legal autosave)");
+    Walk(level, walker, Position(level.Id("Beat Route.MirasCove")));
+    Tick(level, walker, 0.2f);
+    Check(travel("L_MirasCove", level), "camp route: travel to L_MirasCove, level parsed cleanly");
+
+    walker = level.Id("Jake");
+    Check(Position(walker).IsClose(Position(level.Id("Anchor Arrival"))), "Mira's Cove arrival spawn");
+    Check(!runtime->IsCrewMet("crew.mira"), "arriving in Mira's Cove does not recruit Mira");
+    Walk(level, walker, Position(level.Id("Beat Route.Mangroves")));
+    Tick(level, walker, 0.2f);
+    Check(g_requestedLevel.empty() && campaign->GetOpening().Progress().Location == OpeningLocation::MirasCove,
+        "the one-way route does not leave Mira behind");
+    Walk(level, walker, Position(level.Id("Anchor Arrival")));
+    Check(!use(level.Id("Mira Recruitment Conversation")), "Mira cannot be recruited before she is met");
+    Walk(level, walker, Position(level.Id("Mira")));
+    Check(use(level.Id("Mira")) && runtime->IsCrewMet("crew.mira"), "Mira met");
+    Walk(level, walker, Position(level.Id("Mira Boat Work")));
+    Check(use(level.Id("Mira Boat Work")) && runtime->IsCrewAvailable("crew.mira"), "boat work: Mira will sail with Jake");
+    Walk(level, walker, Position(level.Id("Mira Recruitment Conversation")));
+    Check(use(level.Id("Mira Recruitment Conversation")) && runtime->IsCrewRecruited("crew.mira"), "Mira recruited");
+    Walk(level, walker, Position(level.Id("Beat Route.Mangroves")));
+    Tick(level, walker, 0.2f);
+    Check(travel("L_MangroveShallows", level), "travel to L_MangroveShallows, level parsed cleanly");
+
+    walker = level.Id("Jake");
+    Walk(level, walker, Position(level.Id("Big Tom")));
+    Check(use(level.Id("Big Tom")) && !use(level.Id("Big Tom Joins")), "Big Tom met; he does not join before the work");
+    Walk(level, walker, Position(level.Id("Big Tom Work Event")));
+    Check(use(level.Id("Big Tom Work Event")), "work event with Big Tom");
+    Walk(level, walker, Position(level.Id("Big Tom Joins")));
+    Check(use(level.Id("Big Tom Joins")) && runtime->IsCrewRecruited("crew.big_tom"), "Big Tom recruited");
+    Walk(level, walker, Position(level.Id("Beat Route.Koa")));
+    Tick(level, walker, 0.2f);
+    Check(travel("L_KoaTradingPost", level), "travel to L_KoaTradingPost, level parsed cleanly");
+
+    walker = level.Id("Jake");
+    Check(level.Id("Koa").IsValid(), "Koa at the trading post counter");
+    Walk(level, walker, Position(level.Id("Beat Route.GalleonCove")));
+    Tick(level, walker, 0.2f);
+    Check(travel("L_GalleonCove", level), "travel to L_GalleonCove, level parsed cleanly");
+
+    walker = level.Id("Jake");
+    Walk(level, walker, Position(level.Id("Harbor Control")));
+    Check(use(level.Id("Harbor Control")) && runtime->GetMissionState("Main.C02.01.ShatteredCoast") == DarkArisen::Core::MissionState::Completed &&
+            runtime->GetMissionState("Main.C02.02.AShipToTake") == DarkArisen::Core::MissionState::Active,
+        "harbor control taken: Shattered Coast complete, A Ship to Take active");
+    Walk(level, walker, Position(level.Id("Esteban")));
+    Check(use(level.Id("Esteban")), "Esteban met");
+    Walk(level, walker, Position(level.Id("Harbor Control Crew Records")));
+    Check(use(level.Id("Harbor Control Crew Records")) && runtime->IsCrewAvailable("crew.esteban"), "Esteban free to sign on");
+    Walk(level, walker, Position(level.Id("La Liberacion Gangway")));
+    Tick(level, walker, 0.1f);
+    Check(campaign->GetOpening().Progress().LaLiberacionBoarded, "Jake boards La Liberacion at the prize berth");
+    Walk(level, walker, Position(level.Id("La Liberacion Helm")));
+    Check(!use(level.Id("La Liberacion Helm")), "helm refused before the core crew is complete");
+    Walk(level, walker, Position(level.Id("Esteban Signs On")));
+    Check(use(level.Id("Esteban Signs On")) && runtime->AreOpeningCrewRecruited(), "Esteban signs on: Mira, Big Tom and Esteban aboard");
+    Walk(level, walker, Position(level.Id("La Liberacion Helm")));
+    Check(use(level.Id("La Liberacion Helm")), "Jake takes the helm");
+    // Sailing out: La Liberacion carries Jake through the harbor exit.
+    const AZ::EntityId prize = level.Id("La Liberacion");
+    const AZ::Vector3 exit = Position(level.Id("Harbor Exit"));
+    for (int step = 1; step <= 40 && g_requestedLevel.empty(); ++step)
+    {
+        const AZ::Vector3 ship = Position(prize).Lerp(exit, 0.1f);
+        const AZ::Vector3 carried = Position(walker) + (ship - Position(prize));
+        AZ::TransformBus::Event(prize, &AZ::TransformBus::Events::SetWorldTranslation, ship);
+        AZ::TransformBus::Event(walker, &AZ::TransformBus::Events::SetWorldTranslation, carried);
+        Tick(level, walker, 0.1f);
+    }
+    Tick(level, walker, 3.0f);
+    Check(runtime->GetMissionState("Main.C02.02.AShipToTake") == DarkArisen::Core::MissionState::Completed && runtime->HasFact(DarkArisen::Core::Facts::LaLiberacionOwned),
+        "La Liberacion clears Moran's harbor under her own movement: A Ship to Take complete");
+    Check(travel("L_OpenSea_FirstWake", level), "travel to L_OpenSea_FirstWake, level parsed cleanly");
+
+    walker = level.Id("Jake");
+    Tick(level, walker, 0.2f);
+    Check(runtime->GetMissionState("Main.C02.03.FirstWake") == DarkArisen::Core::MissionState::Active, "First Wake begins at the harbor exit");
+    const AZ::EntityId brig = level.Id("La Liberacion");
+    const AZ::Vector3 rexa = Position(level.Id("Rexa Approach"));
+    const float distance = (rexa - Position(brig)).GetLength();
+    Check(distance >= 4500.0f, "Rexa lies the authored 4.5 km of open sea away (no water fast travel)");
+    int legs = 0;
+    while (g_requestedLevel.empty() && legs < 2000)
+    {
+        const AZ::Vector3 heading = (rexa - Position(brig)).GetNormalizedSafe();
+        const AZ::Vector3 ship = Position(brig) + heading * 5.0f;  // 5 m per sailing step
+        AZ::TransformBus::Event(walker, &AZ::TransformBus::Events::SetWorldTranslation, Position(walker) + (ship - Position(brig)));
+        AZ::TransformBus::Event(brig, &AZ::TransformBus::Events::SetWorldTranslation, ship);
+        Tick(level, walker, 1.0f / 30.0f);
+        ++legs;
+    }
+    Tick(level, walker, 3.0f);
+    Check(runtime->GetMissionState("Main.C02.03.FirstWake") == DarkArisen::Core::MissionState::Completed && runtime->HasFact("World.RexaEntered") &&
+            runtime->State().CurrentChapter == 3 && legs * 5.0f >= 4400.0f,
+        "sailed into Rexa: First Wake complete, Chapter 3 begins");
+    Check(travel("L_RexaHarbor", level), "travel to L_RexaHarbor, level parsed cleanly");
+    walker = level.Id("Jake");
+    Tick(level, walker, 0.2f);
+    Check(runtime->GetMissionState("Main.C03.01.RexaHarbor") == DarkArisen::Core::MissionState::Active, "Rexa Harbor: Chapter 3 starts on the dock");
 
     UnloadLevel(level);
     systemEntity->Deactivate();

@@ -3271,6 +3271,103 @@
             "Id": "Entity_[7060504945817059]",
             "Name": "Global Sky"
         },
+        "Entity_[748851023257118]": {
+            "Components": {
+                "Component_[1070814610578370]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 1070814610578370
+                },
+                "Component_[232691226848054]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 232691226848054
+                },
+                "Component_[439651862771763]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 439651862771763
+                },
+                "Component_[4483230713274727]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 4483230713274727
+                },
+                "Component_[6475356419641715]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 6475356419641715,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            65.5,
+                            -13.2,
+                            -0.05
+                        ]
+                    }
+                },
+                "Component_[7046818057197575]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 7046818057197575
+                },
+                "Component_[707313114041323]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 707313114041323
+                },
+                "Component_[7299781520279006]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 7299781520279006,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4,
+                                4,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[7981414005603391]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 7981414005603391
+                },
+                "Component_[8285839954973696]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_400x400x100.azmodel",
+                                "assetId": {
+                                    "guid": "{3F3B8CF0-DE93-5A11-AD57-D71927DC805C}",
+                                    "subId": 270783830
+                                }
+                            }
+                        }
+                    },
+                    "Id": 8285839954973696
+                },
+                "Component_[8835311705754676]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 8835311705754676
+                },
+                "Component_[914117361586197]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 914117361586197
+                }
+            },
+            "Id": "Entity_[748851023257118]",
+            "Name": "PROVISIONAL Pad CargoRecords"
+        },
         "Entity_[8052547805967688]": {
             "Components": {
                 "Component_[4259223955212891]": {

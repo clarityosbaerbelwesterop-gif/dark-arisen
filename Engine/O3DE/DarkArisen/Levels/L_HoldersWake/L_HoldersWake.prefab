@@ -8741,6 +8741,103 @@
             "Id": "Entity_[6020629866157175]",
             "Name": "PROVISIONAL Pad BackRouteEnemyB"
         },
+        "Entity_[6022828889413162]": {
+            "Components": {
+                "Component_[2352192421570379]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 2352192421570379
+                },
+                "Component_[3533125581500788]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 3533125581500788
+                },
+                "Component_[4054678591729704]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 4054678591729704
+                },
+                "Component_[4161719792268168]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 4161719792268168
+                },
+                "Component_[4197431751057847]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_400x400x100.azmodel",
+                                "assetId": {
+                                    "guid": "{3F3B8CF0-DE93-5A11-AD57-D71927DC805C}",
+                                    "subId": 270783830
+                                }
+                            }
+                        }
+                    },
+                    "Id": 4197431751057847
+                },
+                "Component_[505066490771673]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 505066490771673,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4,
+                                4,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[5701384265909407]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 5701384265909407
+                },
+                "Component_[6886540715949990]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 6886540715949990
+                },
+                "Component_[6953021322304154]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 6953021322304154
+                },
+                "Component_[7252119996387881]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 7252119996387881
+                },
+                "Component_[7350326314324068]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 7350326314324068,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            93,
+                            6.5,
+                            0
+                        ]
+                    }
+                },
+                "Component_[8050025051194310]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 8050025051194310
+                }
+            },
+            "Id": "Entity_[6022828889413162]",
+            "Name": "PROVISIONAL Pad BackRouteEnemyA"
+        },
         "Entity_[6255498218986195]": {
             "Components": {
                 "Component_[1281338141971092]": {
@@ -9975,312 +10072,6 @@
             },
             "Id": "Entity_[7296274387814379]",
             "Name": "PROVISIONAL Path NetworkProof to KnowledgeRouteExit 8"
-        },
-        "Entity_[7308978542723356]": {
-            "Components": {
-                "Component_[1258976458992701]": {
-                    "$type": "EditorLockComponent",
-                    "Id": 1258976458992701
-                },
-                "Component_[1553616308907361]": {
-                    "$type": "EditorInspectorComponent",
-                    "Id": 1553616308907361
-                },
-                "Component_[186460238566691]": {
-                    "$type": "EditorOnlyEntityComponent",
-                    "Id": 186460238566691
-                },
-                "Component_[3102633808787641]": {
-                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
-                    "Id": 3102633808787641,
-                    "Parent Entity": "ContainerEntity",
-                    "Transform Data": {
-                        "Rotate": [
-                            0,
-                            0,
-                            -23.629378
-                        ],
-                        "Translate": [
-                            169.832315,
-                            11.198362,
-                            -0.016667
-                        ]
-                    }
-                },
-                "Component_[3351294066412489]": {
-                    "$type": "EditorPendingCompositionComponent",
-                    "Id": 3351294066412489
-                },
-                "Component_[3399033783485188]": {
-                    "$type": "EditorVisibilityComponent",
-                    "Id": 3399033783485188
-                },
-                "Component_[4133974467861388]": {
-                    "$type": "EditorColliderComponent",
-                    "ColliderConfiguration": {
-                        "MaterialSlots": {
-                            "Slots": [
-                                {
-                                    "Name": "Entire object"
-                                }
-                            ]
-                        },
-                        "Position": [
-                            0,
-                            0,
-                            0.5
-                        ]
-                    },
-                    "Id": 4133974467861388,
-                    "ShapeConfiguration": {
-                        "Box": {
-                            "Configuration": [
-                                4.05,
-                                3,
-                                1
-                            ]
-                        },
-                        "ShapeType": 1
-                    }
-                },
-                "Component_[4157469547022158]": {
-                    "$type": "EditorEntityIconComponent",
-                    "Id": 4157469547022158
-                },
-                "Component_[6363585466577205]": {
-                    "$type": "EditorEntitySortComponent",
-                    "Id": 6363585466577205
-                },
-                "Component_[6539680066720718]": {
-                    "$type": "AZ::Render::EditorMeshComponent",
-                    "Controller": {
-                        "Configuration": {
-                            "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
-                                "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
-                                }
-                            }
-                        }
-                    },
-                    "Id": 6539680066720718
-                },
-                "Component_[6772731968962472]": {
-                    "$type": "EditorDisabledCompositionComponent",
-                    "Id": 6772731968962472
-                },
-                "Component_[7752984011569077]": {
-                    "$type": "EditorStaticRigidBodyComponent",
-                    "Id": 7752984011569077
-                }
-            },
-            "Id": "Entity_[7308978542723356]",
-            "Name": "PROVISIONAL Path SafeRoomDoor to NetworkProof 0"
-        },
-        "Entity_[7308978542723791]": {
-            "Components": {
-                "Component_[1243927319032500]": {
-                    "$type": "EditorOnlyEntityComponent",
-                    "Id": 1243927319032500
-                },
-                "Component_[1330068390508586]": {
-                    "$type": "EditorLockComponent",
-                    "Id": 1330068390508586
-                },
-                "Component_[2101280123710475]": {
-                    "$type": "EditorColliderComponent",
-                    "ColliderConfiguration": {
-                        "MaterialSlots": {
-                            "Slots": [
-                                {
-                                    "Name": "Entire object"
-                                }
-                            ]
-                        },
-                        "Position": [
-                            0,
-                            0,
-                            0.5
-                        ]
-                    },
-                    "Id": 2101280123710475,
-                    "ShapeConfiguration": {
-                        "Box": {
-                            "Configuration": [
-                                4.05,
-                                3,
-                                1
-                            ]
-                        },
-                        "ShapeType": 1
-                    }
-                },
-                "Component_[2782885350633633]": {
-                    "$type": "EditorEntityIconComponent",
-                    "Id": 2782885350633633
-                },
-                "Component_[4153359644638792]": {
-                    "$type": "EditorStaticRigidBodyComponent",
-                    "Id": 4153359644638792
-                },
-                "Component_[4391100835567950]": {
-                    "$type": "EditorPendingCompositionComponent",
-                    "Id": 4391100835567950
-                },
-                "Component_[4480835418936662]": {
-                    "$type": "EditorEntitySortComponent",
-                    "Id": 4480835418936662
-                },
-                "Component_[4683356520445907]": {
-                    "$type": "EditorVisibilityComponent",
-                    "Id": 4683356520445907
-                },
-                "Component_[5839797614024188]": {
-                    "$type": "EditorInspectorComponent",
-                    "Id": 5839797614024188
-                },
-                "Component_[6809860065577185]": {
-                    "$type": "AZ::Render::EditorMeshComponent",
-                    "Controller": {
-                        "Configuration": {
-                            "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
-                                "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
-                                }
-                            }
-                        }
-                    },
-                    "Id": 6809860065577185
-                },
-                "Component_[7891389324501310]": {
-                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
-                    "Id": 7891389324501310,
-                    "Parent Entity": "ContainerEntity",
-                    "Transform Data": {
-                        "Rotate": [
-                            0,
-                            0,
-                            -23.629378
-                        ],
-                        "Translate": [
-                            172,
-                            10.25,
-                            0.15
-                        ]
-                    }
-                },
-                "Component_[8147229836048945]": {
-                    "$type": "EditorDisabledCompositionComponent",
-                    "Id": 8147229836048945
-                }
-            },
-            "Id": "Entity_[7308978542723791]",
-            "Name": "PROVISIONAL Path SafeRoomDoor to NetworkProof 1"
-        },
-        "Entity_[7311177565979778]": {
-            "Components": {
-                "Component_[1567799481964952]": {
-                    "$type": "EditorInspectorComponent",
-                    "Id": 1567799481964952
-                },
-                "Component_[1910166271173605]": {
-                    "$type": "EditorEntityIconComponent",
-                    "Id": 1910166271173605
-                },
-                "Component_[2266796853882895]": {
-                    "$type": "EditorVisibilityComponent",
-                    "Id": 2266796853882895
-                },
-                "Component_[3546457133520893]": {
-                    "$type": "EditorDisabledCompositionComponent",
-                    "Id": 3546457133520893
-                },
-                "Component_[3647430083222535]": {
-                    "$type": "EditorColliderComponent",
-                    "ColliderConfiguration": {
-                        "MaterialSlots": {
-                            "Slots": [
-                                {
-                                    "Name": "Entire object"
-                                }
-                            ]
-                        },
-                        "Position": [
-                            0,
-                            0,
-                            0.5
-                        ]
-                    },
-                    "Id": 3647430083222535,
-                    "ShapeConfiguration": {
-                        "Box": {
-                            "Configuration": [
-                                4.05,
-                                3,
-                                1
-                            ]
-                        },
-                        "ShapeType": 1
-                    }
-                },
-                "Component_[385998454000789]": {
-                    "$type": "AZ::Render::EditorMeshComponent",
-                    "Controller": {
-                        "Configuration": {
-                            "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
-                                "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
-                                }
-                            }
-                        }
-                    },
-                    "Id": 385998454000789
-                },
-                "Component_[5323143152421194]": {
-                    "$type": "EditorPendingCompositionComponent",
-                    "Id": 5323143152421194
-                },
-                "Component_[5657203301868498]": {
-                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
-                    "Id": 5657203301868498,
-                    "Parent Entity": "ContainerEntity",
-                    "Transform Data": {
-                        "Rotate": [
-                            0,
-                            0,
-                            -23.629378
-                        ],
-                        "Translate": [
-                            174.167685,
-                            9.301638,
-                            0.316667
-                        ]
-                    }
-                },
-                "Component_[6928832105655120]": {
-                    "$type": "EditorOnlyEntityComponent",
-                    "Id": 6928832105655120
-                },
-                "Component_[7238442352147098]": {
-                    "$type": "EditorEntitySortComponent",
-                    "Id": 7238442352147098
-                },
-                "Component_[7485111703175828]": {
-                    "$type": "EditorStaticRigidBodyComponent",
-                    "Id": 7485111703175828
-                },
-                "Component_[8924976252670206]": {
-                    "$type": "EditorLockComponent",
-                    "Id": 8924976252670206
-                }
-            },
-            "Id": "Entity_[7311177565979778]",
-            "Name": "PROVISIONAL Path SafeRoomDoor to NetworkProof 2"
         },
         "Entity_[7397076419237330]": {
             "Components": {

@@ -970,29 +970,6 @@ namespace DarkArisen::Tools
             return Prefab.Write();
         }
 
-        std::string BuildCamp(Session& Work)
-        {
-            const std::string Layout = "ContentSource/World/Moran/DriftwoodCamp/DriftwoodCamp_Layout.json";
-            PrefabBuilder Prefab("L_DriftwoodCamp");
-            AddEnvironment(Work, Prefab);
-            const std::string Mesh = "ContentSource/World/Moran/DriftwoodCamp/SM_DriftwoodCamp_Alpha.gltf";
-            AddStaticMesh(Prefab, "Driftwood Camp", {}, Work.RenderModel(Mesh));
-            AddMeshCollider(Prefab, Prefab.AddEntity("Driftwood Camp Collision", {}), Work.CollisionMesh(Mesh));
-            const std::string Arrival = AnchorEntity(Work, Prefab, Layout, "Arrival");
-            for (const char* Key : {"Shelter", "Fire", "SmokeColumn", "HarlowClue", "Route.MirasCove"})
-            {
-                AnchorEntity(Work, Prefab, Layout, Key);
-            }
-            const std::string Jake = AddJake(Work, Prefab, Work.World(Layout, "Arrival"));
-            const std::string Director = Prefab.AddEntity("Camp Director", {});
-            JsonValue Spawns = JsonArray();
-            Spawns.Items.push_back(SpawnPoint("Arrival", Arrival, Core::SpawnRule::Arrival));
-            JsonValue SpawnFields = JsonObject();
-            SpawnFields.Members["Player"] = JsonString(Jake);
-            SpawnFields.Members["Spawns"] = std::move(Spawns);
-            AddGame(Prefab, Director, PlayerSpawnComponentTypeId, "PlayerSpawnComponent", std::move(SpawnFields));
-            return Prefab.Write();
-        }
         // ----------------------------------------------------------------------------- story (chapters 3-10)
 
         // PROVISIONAL greybox scaffolding sizes (ContentSource gives these a point, not a size).
@@ -1003,6 +980,7 @@ namespace DarkArisen::Tools
         constexpr double ProvisionalTileLength = 4.0;      // path tile length (one shared mesh)
         constexpr double MaxWalkLegMetres = 150.0;         // longer consecutive-anchor legs are sea crossings
         constexpr double SeaLevelTolerance = 0.5;          // anchors this close to z = 0 in seafaring missions are on the water
+        constexpr double SupportTolerance = 0.5;           // an anchor stands on ground whose top is within this height
         constexpr double LocationTriggerHalfExtentCm[3] = {260.0, 260.0, 180.0};  // UE AMainStoryLocationTriggerActor
         constexpr double TriggerSinkMetres = 0.5;           // trigger boxes reach below the floor the anchor marks
         constexpr Vec3d EvidenceSize{0.8, 0.6, 0.5};
@@ -1038,7 +1016,7 @@ namespace DarkArisen::Tools
             for (const Footprint& Area : Ground)
             {
                 if (Point.X >= Area.Min.X && Point.X <= Area.Max.X && Point.Y >= Area.Min.Y && Point.Y <= Area.Max.Y &&
-                    Point.Z >= Area.Top - 0.5 && Point.Z <= Area.Top + 1.5)
+                    Point.Z >= Area.Top - SupportTolerance && Point.Z <= Area.Top + SupportTolerance)
                 {
                     return true;
                 }
@@ -1101,6 +1079,69 @@ namespace DarkArisen::Tools
             {
                 AddBoxCollider(Prefab, Entity, Size, false, {0.0, 0.0, Size.Z / 2.0});
             }
+        }
+
+        struct RouteAnchor
+        {
+            std::string Name;
+            Vec3d At;
+            /** On open water: no pad or path; a raft only when someone or something is authored there. */
+            bool OnWater = false;
+            bool NeedsRaft = false;
+        };
+
+        /**
+         * PROVISIONAL ground for anchors the authored geometry leaves floating: 4 x 4 m pads, fixed 4 m
+         * path tiles between consecutive land anchors (stepped at 25 cm rises, one shared mesh), and
+         * rafts for people authored on open water. Legs over 150 m are sea crossings and get no path.
+         */
+        int AddProvisionalGround(Session& Work, PrefabBuilder& Prefab, const std::vector<RouteAnchor>& Route, const std::vector<Footprint>& Ground)
+        {
+            int Provisional = 0;
+            const Vec3d Pad{ProvisionalPadSize, ProvisionalPadSize, ProvisionalPathDepth};
+            std::vector<const RouteAnchor*> Land;
+            for (const RouteAnchor& Anchor : Route)
+            {
+                if (Anchor.NeedsRaft)
+                {
+                    AddBlock(Work, Prefab, "PROVISIONAL Raft " + Anchor.Name, Anchor.At, Pad, 0.0, true);
+                    ++Provisional;
+                }
+                if (Anchor.OnWater) continue;
+                Land.push_back(&Anchor);
+                if (!Supported(Ground, Anchor.At))
+                {
+                    AddBlock(Work, Prefab, "PROVISIONAL Pad " + Anchor.Name, Anchor.At, Pad, 0.0, true);
+                    ++Provisional;
+                }
+            }
+            for (std::size_t Index = 1; Index < Land.size(); ++Index)
+            {
+                const Vec3d& From = Land[Index - 1]->At;
+                const Vec3d& To = Land[Index]->At;
+                const double Dx = To.X - From.X;
+                const double Dy = To.Y - From.Y;
+                const double Length = std::hypot(Dx, Dy);
+                if (Length < ProvisionalPadSize || Length > MaxWalkLegMetres) continue;
+                if (Supported(Ground, From) && Supported(Ground, To) && Supported(Ground, {(From.X + To.X) / 2.0, (From.Y + To.Y) / 2.0, (From.Z + To.Z) / 2.0}))
+                {
+                    continue; // authored geometry already carries this leg
+                }
+                const int Tiles = std::max(static_cast<int>(std::ceil(Length / ProvisionalTileLength)),
+                    static_cast<int>(std::ceil(std::abs(To.Z - From.Z) / ProvisionalStepRise)));
+                const double Yaw = std::atan2(Dy, Dx) * 180.0 / 3.14159265358979323846;
+                const double Usable = std::max(0.0, Length - ProvisionalTileLength);
+                for (int Tile = 0; Tile < Tiles; ++Tile)
+                {
+                    const double Along = ProvisionalTileLength / 2.0 + (Tiles > 1 ? Usable * Tile / (Tiles - 1) : Usable / 2.0);
+                    const double T = Along / Length;
+                    const Vec3d Center{From.X + Dx * T, From.Y + Dy * T, From.Z + (To.Z - From.Z) * (Tile + 0.5) / Tiles};
+                    AddBlock(Work, Prefab, "PROVISIONAL Path " + Land[Index - 1]->Name + " to " + Land[Index]->Name + " " + std::to_string(Tile),
+                        Center, {ProvisionalTileLength + 0.05, ProvisionalPathWidth, ProvisionalPathDepth}, Yaw, true);
+                    ++Provisional;
+                }
+            }
+            return Provisional;
         }
 
         void AddStoryActorComponent(PrefabBuilder& Prefab, const std::string& Entity, const Core::StoryActorSpec& Actor)
@@ -1240,8 +1281,6 @@ namespace DarkArisen::Tools
                     ShipAnchors.insert(Actor.Anchor);
                 }
             }
-            int Provisional = 0;
-            std::vector<std::pair<std::string, Vec3d>> Land;
             std::set<std::string> PeopleAndObjects;
             for (const Core::StoryActorSpec& Actor : Contract.Actors)
             {
@@ -1251,54 +1290,13 @@ namespace DarkArisen::Tools
                     PeopleAndObjects.insert(Actor.Anchor);
                 }
             }
+            std::vector<RouteAnchor> Route;
             for (const auto& [Name, Point] : Contract.Anchors)
             {
                 const bool SeaLevel = Seafaring && (ShipAnchors.count(Name) || std::abs(Point[2]) / 100.0 < SeaLevelTolerance);
-                if (!SeaLevel)
-                {
-                    Land.emplace_back(Name, World(Point));
-                }
-                else if (PeopleAndObjects.count(Name) && !ShipAnchors.count(Name))
-                {
-                    // Someone or something authored on open water (a skiff, a bearing hail): a raft to reach.
-                    AddBlock(Work, Prefab, "PROVISIONAL Raft " + Name, World(Point), {ProvisionalPadSize, ProvisionalPadSize, ProvisionalPathDepth}, 0.0, true);
-                    ++Provisional;
-                }
+                Route.push_back({Name, World(Point), SeaLevel, SeaLevel && PeopleAndObjects.count(Name) && !ShipAnchors.count(Name)});
             }
-            for (const auto& [Name, At] : Land)
-            {
-                if (!Supported(Ground, At))
-                {
-                    AddBlock(Work, Prefab, "PROVISIONAL Pad " + Name, At, {ProvisionalPadSize, ProvisionalPadSize, ProvisionalPathDepth}, 0.0, true);
-                    ++Provisional;
-                }
-            }
-            {
-                // Fixed 4 m tiles (one shared mesh); more, overlapping tiles where the rise needs steps.
-                for (std::size_t Index = 1; Index < Land.size(); ++Index)
-                {
-                    const Vec3d& From = Land[Index - 1].second;
-                    const Vec3d& To = Land[Index].second;
-                    const double Dx = To.X - From.X;
-                    const double Dy = To.Y - From.Y;
-                    const double Length = std::hypot(Dx, Dy);
-                    if (Length < ProvisionalPadSize || Length > MaxWalkLegMetres) continue;
-                    const int Tiles = std::max(static_cast<int>(std::ceil(Length / ProvisionalTileLength)),
-                        static_cast<int>(std::ceil(std::abs(To.Z - From.Z) / ProvisionalStepRise)));
-                    const double Yaw = std::atan2(Dy, Dx) * 180.0 / 3.14159265358979323846;
-                    const double Usable = std::max(0.0, Length - ProvisionalTileLength);
-                    for (int Tile = 0; Tile < Tiles; ++Tile)
-                    {
-                        const double Along = ProvisionalTileLength / 2.0 + (Tiles > 1 ? Usable * Tile / (Tiles - 1) : Usable / 2.0);
-                        const double T = Along / Length;
-                        const Vec3d Center{From.X + Dx * T, From.Y + Dy * T, From.Z + (To.Z - From.Z) * (Tile + 0.5) / Tiles};
-                        AddBlock(Work, Prefab, "PROVISIONAL Path " + Land[Index - 1].first + " to " + Land[Index].first + " " + std::to_string(Tile),
-                            Center, {ProvisionalTileLength + 0.05, ProvisionalPathWidth, ProvisionalPathDepth}, Yaw, true);
-                        ++Provisional;
-                    }
-                }
-            }
-            (void)Provisional;
+            AddProvisionalGround(Work, Prefab, Route, Ground);
 
             // Anchors as entities: spawn points and the travel exit use them.
             std::map<std::string, std::string> AnchorEntities;
@@ -1518,6 +1516,264 @@ namespace DarkArisen::Tools
             return Prefab.Write();
         }
 
+        // ----------------------------------------------------------------------------- Chapter 2: Moran to Rexa
+
+        // PROVISIONAL authoring defaults for Chapter 2 beats (the layouts give points, not sizes).
+        constexpr Vec3d InteractMarkerSize{1.0, 1.0, 1.0};
+        constexpr Vec3d HarborExitVolume{10.0, 40.0, 12.0};     // band across the harbor mouth La Liberacion sails through
+        constexpr Vec3d ShipArrivalVolume{120.0, 120.0, 20.0};  // Rexa approach, reached under sail
+
+        std::vector<std::pair<std::string, Vec3d>> LayoutAnchors(Session& Work, const std::string& Layout)
+        {
+            std::vector<std::pair<std::string, Vec3d>> Out;
+            const JsonValue* Root = Work.Json(Layout);
+            const JsonValue* Anchors = Root ? Root->Find("anchors") : nullptr;
+            if (!Anchors || !Anchors->IsObject() || Anchors->Order.empty())
+            {
+                Work.Error(Layout + ": anchors missing");
+                return Out;
+            }
+            for (const std::string& Key : Anchors->Order) Out.emplace_back(Key, Work.World(Layout, Key));
+            return Out;
+        }
+
+        /** Greybox set piece at the origin with collision; its footprint carries the walkable ground. */
+        std::vector<Footprint> AddSetPiece(Session& Work, PrefabBuilder& Prefab, const std::string& Name, const std::string& Mesh)
+        {
+            AddStaticMesh(Prefab, Name, {}, Work.RenderModel(Mesh));
+            AddMeshCollider(Prefab, Prefab.AddEntity(Name + " Collision", {}), Work.CollisionMesh(Mesh));
+            std::vector<Footprint> Ground;
+            Footprint Area;
+            if (GltfFootprint(Work, Mesh, {}, Area)) Ground.push_back(Area);
+            return Ground;
+        }
+
+        /** A person to talk to (placeholder figure, capsule for the 1.4 m interact query). */
+        std::string AddPerson(Session& Work, PrefabBuilder& Prefab, const std::string& Name, const Vec3d& At)
+        {
+            const std::string Entity = Prefab.AddEntity(Name, At);
+            Prefab.AddComponent(Entity, "AZ::Render::EditorMeshComponent",
+                MeshComponent(Work.GeneratedModel("SM_Placeholder_Figure", MakePlaceholderFigureGltf(FamilyFigureHeight, FamilyFigureRadius, "SM_Placeholder_Figure"))));
+            AddCapsuleCollider(Prefab, Entity, FamilyFigureHeight, FamilyFigureRadius);
+            return Entity;
+        }
+
+        /** Something to use at an authored anchor: an invisible solid 1 m block the interact query finds. */
+        std::string AddInteraction(PrefabBuilder& Prefab, const std::string& Name, const Vec3d& At)
+        {
+            const std::string Entity = Prefab.AddEntity(Name, At);
+            AddBoxCollider(Prefab, Entity, InteractMarkerSize, false, {0.0, 0.0, InteractMarkerSize.Z / 2.0});
+            return Entity;
+        }
+
+        void AddSignal(PrefabBuilder& Prefab, const std::string& Entity, const StorySignal Signal, const std::string& Argument = {},
+            const int IntegerArgument = 0, const bool RequiresInteract = true, const bool OneShot = true)
+        {
+            JsonValue Fields = StoryTrigger(Signal, Argument, IntegerArgument, RequiresInteract);
+            Fields.Members["OneShot"] = JsonBool(OneShot);
+            AddGame(Prefab, Entity, StoryTriggerComponentTypeId, "StoryTriggerComponent", std::move(Fields));
+        }
+
+        /** Walking into the next area of the one-way Moran route, then travelling there. */
+        void AddRouteExit(Session& Work, PrefabBuilder& Prefab, const std::string& Layout, const std::string& Anchor,
+            const Core::OpeningLocation Next, const std::string& Fact, const std::string& NextLevel, const std::string& Director)
+        {
+            const std::string Route = Prefab.AddEntity("Beat " + Anchor, Work.World(Layout, Anchor));
+            AddBoxCollider(Prefab, Route, BeatVolumeSize, true);
+            AddSignal(Prefab, Route, StorySignal::ReachedLocation, {}, static_cast<int>(Next), false);
+            JsonValue Transition = JsonObject();
+            Transition.Members["Fact"] = JsonString(Fact);
+            Transition.Members["NextLevel"] = JsonString(NextLevel);
+            AddGame(Prefab, Director, MapTransitionComponentTypeId, "MapTransitionComponent", std::move(Transition));
+        }
+
+        void AddArrivalSpawn(PrefabBuilder& Prefab, const std::string& Director, const std::string& Jake, const std::string& SpawnId,
+            const std::string& AnchorEntity)
+        {
+            JsonValue Spawns = JsonArray();
+            Spawns.Items.push_back(SpawnPoint(SpawnId, AnchorEntity, Core::SpawnRule::Arrival));
+            Spawns.Items.push_back(SpawnPoint(SpawnId, AnchorEntity, Core::SpawnRule::Checkpoint));
+            JsonValue SpawnFields = JsonObject();
+            SpawnFields.Members["Player"] = JsonString(Jake);
+            SpawnFields.Members["Spawns"] = std::move(Spawns);
+            AddGame(Prefab, Director, PlayerSpawnComponentTypeId, "PlayerSpawnComponent", std::move(SpawnFields));
+        }
+
+        /** Environment, set piece, anchors, PROVISIONAL ground and Jake at the arrival anchor. */
+        struct MoranScene
+        {
+            std::map<std::string, std::string> Anchors;
+            std::string Jake;
+            std::string Director;
+        };
+
+        MoranScene BeginMoranScene(Session& Work, PrefabBuilder& Prefab, const std::string& Layout, const std::string& Mesh,
+            const std::string& Arrival, const std::string& SpawnId, const bool Sea)
+        {
+            MoranScene Scene;
+            AddEnvironment(Work, Prefab);
+            if (Sea) AddSea(Work, Prefab);
+            const std::vector<Footprint> Ground = AddSetPiece(Work, Prefab, Stem(Mesh), Mesh);
+            std::vector<RouteAnchor> Route;
+            for (const auto& [Name, At] : LayoutAnchors(Work, Layout))
+            {
+                const bool OnWater = Sea && At.Z < SeaLevelTolerance && At.Z > -SeaLevelTolerance;
+                Route.push_back({Name, At, OnWater, false});
+                Scene.Anchors[Name] = Prefab.AddEntity("Anchor " + Name, At);
+            }
+            AddProvisionalGround(Work, Prefab, Route, Ground);
+            Scene.Jake = AddJake(Work, Prefab, Work.World(Layout, Arrival));
+            Scene.Director = Prefab.AddEntity("Moran Director", {});
+            AddArrivalSpawn(Prefab, Scene.Director, Scene.Jake, SpawnId, Scene.Anchors[Arrival]);
+            return Scene;
+        }
+
+        std::string BuildCamp(Session& Work)
+        {
+            const std::string Layout = "ContentSource/World/Moran/DriftwoodCamp/DriftwoodCamp_Layout.json";
+            PrefabBuilder Prefab("L_DriftwoodCamp");
+            const MoranScene Scene = BeginMoranScene(Work, Prefab, Layout, "ContentSource/World/Moran/DriftwoodCamp/SM_DriftwoodCamp_Alpha.gltf",
+                "Arrival", "Spawn.Moran.DriftwoodCamp.Arrival", false);
+            // First safe rest after the raid (MORAN_OPENING_WORLD_AUTHORITY 3.1): the second legal autosave.
+            AddSignal(Prefab, AddInteraction(Prefab, "Camp Shelter", Work.World(Layout, "Shelter")), StorySignal::Rest, {}, 0, true, false);
+            AddRouteExit(Work, Prefab, Layout, "Route.MirasCove", Core::OpeningLocation::MirasCove, "World.MirasCoveReached", "L_MirasCove",
+                Scene.Director);
+            return Prefab.Write();
+        }
+
+        std::string BuildMirasCove(Session& Work)
+        {
+            const std::string Layout = "ContentSource/World/Moran/MirasCove/MirasCove_Layout.json";
+            PrefabBuilder Prefab("L_MirasCove");
+            const MoranScene Scene = BeginMoranScene(Work, Prefab, Layout, "ContentSource/World/Moran/MirasCove/SM_MirasCove_Alpha.gltf",
+                "Arrival", "Spawn.Moran.MirasCove.Arrival", false);
+            // met -> available -> recruited at the three authored anchors; arrival alone never recruits.
+            AddSignal(Prefab, AddPerson(Work, Prefab, "Mira", Work.World(Layout, "Mira")), StorySignal::CrewMet, "crew.mira");
+            AddSignal(Prefab, AddInteraction(Prefab, "Mira Boat Work", Work.World(Layout, "BoatWork")), StorySignal::CrewRecruitmentAvailable, "crew.mira");
+            AddSignal(Prefab, AddInteraction(Prefab, "Mira Recruitment Conversation", Work.World(Layout, "RecruitmentConversation")),
+                StorySignal::CrewRecruited, "crew.mira");
+            AddRouteExit(Work, Prefab, Layout, "Route.Mangroves", Core::OpeningLocation::MangroveShallows, "World.MangroveShallowsReached",
+                "L_MangroveShallows", Scene.Director);
+            return Prefab.Write();
+        }
+
+        std::string BuildMangroves(Session& Work)
+        {
+            const std::string Layout = "ContentSource/World/Moran/Mangroves/Mangroves_Layout.json";
+            PrefabBuilder Prefab("L_MangroveShallows");
+            const MoranScene Scene = BeginMoranScene(Work, Prefab, Layout, "ContentSource/World/Moran/Mangroves/SM_MangrovesRoute_Alpha.gltf",
+                "Entry", "Spawn.Moran.MangroveShallows.Entry", false);
+            const Vec3d Tom = Work.World(Layout, "BigTom");
+            AddSignal(Prefab, AddPerson(Work, Prefab, "Big Tom", Tom), StorySignal::CrewMet, "crew.big_tom");
+            AddSignal(Prefab, AddInteraction(Prefab, "Big Tom Work Event", Work.World(Layout, "WorkEvent")), StorySignal::CrewRecruitmentAvailable,
+                "crew.big_tom");
+            // The layout authors no separate conversation point for Tom: he joins where he stands, after the work.
+            AddSignal(Prefab, AddInteraction(Prefab, "Big Tom Joins", Tom), StorySignal::CrewRecruited, "crew.big_tom");
+            AddRouteExit(Work, Prefab, Layout, "Route.Koa", Core::OpeningLocation::KoasTradingPost, "World.KoasTradingPostReached",
+                "L_KoaTradingPost", Scene.Director);
+            return Prefab.Write();
+        }
+
+        std::string BuildKoa(Session& Work)
+        {
+            const std::string Layout = "ContentSource/World/Moran/Koa/KoaTradingPost_Layout.json";
+            PrefabBuilder Prefab("L_KoaTradingPost");
+            const MoranScene Scene = BeginMoranScene(Work, Prefab, Layout, "ContentSource/World/Moran/Koa/SM_KoaTradingPost_Alpha.gltf",
+                "Arrival", "Spawn.Moran.KoasTradingPost.Arrival", false);
+            AddPerson(Work, Prefab, "Koa", Work.World(Layout, "Koa.Counter"));  // services: economy port pending
+            AddRouteExit(Work, Prefab, Layout, "Route.GalleonCove", Core::OpeningLocation::GalleonCove, "World.GalleonCoveReached",
+                "L_GalleonCove", Scene.Director);
+            return Prefab.Write();
+        }
+
+        std::string AddLaLiberacion(Session& Work, PrefabBuilder& Prefab, const std::string& Name, const Vec3d& At)
+        {
+            const std::string Mesh = "ContentSource/Ships/LaLiberacion/SM_LaLiberacion_Alpha.gltf";
+            const std::string Ship = Prefab.AddEntity(Name, At);
+            Prefab.AddComponent(Ship, "AZ::Render::EditorMeshComponent", MeshComponent(Work.RenderModel(Mesh)));
+            AddMeshCollider(Prefab, Ship, Work.CollisionMesh(Mesh));
+            AddGame(Prefab, Ship, ShipVoyageComponentTypeId, "ShipVoyageComponent");
+            JsonValue Guns = JsonObject();
+            Guns.Members["PlayerAligned"] = JsonBool(true);
+            AddGame(Prefab, Ship, NavalCombatComponentTypeId, "NavalCombatComponent", std::move(Guns));
+            return Ship;
+        }
+
+        std::string BuildGalleonCove(Session& Work)
+        {
+            const std::string Layout = "ContentSource/World/Moran/GalleonCove/GalleonCove_Layout.json";
+            PrefabBuilder Prefab("L_GalleonCove");
+            const MoranScene Scene = BeginMoranScene(Work, Prefab, Layout, "ContentSource/World/Moran/GalleonCove/SM_GalleonCove_Alpha.gltf",
+                "Approach", "Spawn.Moran.GalleonCove.Approach", true);
+            // Taking the harbor control post clears the cove and frees Esteban to sign on.
+            AddSignal(Prefab, AddInteraction(Prefab, "Harbor Control", Work.World(Layout, "HarborControl")), StorySignal::GalleonCoveCleared);
+            AddSignal(Prefab, AddInteraction(Prefab, "Harbor Control Crew Records", Work.World(Layout, "HarborControl")),
+                StorySignal::CrewRecruitmentAvailable, "crew.esteban");
+            const Vec3d Esteban = Work.World(Layout, "Esteban");
+            AddSignal(Prefab, AddPerson(Work, Prefab, "Esteban", Esteban), StorySignal::CrewMet, "crew.esteban");
+            AddSignal(Prefab, AddInteraction(Prefab, "Esteban Signs On", Esteban), StorySignal::CrewRecruited, "crew.esteban");
+            AddLaLiberacion(Work, Prefab, "La Liberacion", Work.World(Layout, "ImpoundBerth"));
+            const std::string Gangway = Prefab.AddEntity("La Liberacion Gangway", Work.World(Layout, "LaLiberacionBoarding"));
+            AddBoxCollider(Prefab, Gangway, BeatVolumeSize, true);
+            AddSignal(Prefab, Gangway, StorySignal::LaLiberacionBoarded, {}, 0, false);
+            AddSignal(Prefab, AddInteraction(Prefab, "La Liberacion Helm", Work.World(Layout, "Helm")), StorySignal::LaLiberacionHelmSecured);
+            // A Ship to Take ends only once La Liberacion clears the harbor under her own movement.
+            const std::string Exit = Prefab.AddEntity("Harbor Exit", Work.World(Layout, "HarborExit"));
+            AddBoxCollider(Prefab, Exit, HarborExitVolume, true);
+            AddSignal(Prefab, Exit, StorySignal::LaLiberacionHarborCleared, {}, 0, false);
+            JsonValue Transition = JsonObject();
+            Transition.Members["MissionId"] = JsonString("Main.C02.02.AShipToTake");
+            Transition.Members["NextLevel"] = JsonString(std::string(Core::MissionCatalog::LevelFor("Main.C02.03.FirstWake")));
+            AddGame(Prefab, Scene.Director, MapTransitionComponentTypeId, "MapTransitionComponent", std::move(Transition));
+
+            Work.Cover("Main.C02.01.ShatteredCoast", "L_DriftwoodBeach", "StoryTrigger RecoveryComplete (activates after Undertow)",
+                "StoryTrigger GalleonCoveCleared on Harbor Control in L_GalleonCove, walked via L_DriftwoodCamp, L_MirasCove "
+                "(Mira met/available/recruited), L_MangroveShallows (Big Tom), L_KoaTradingPost",
+                "Spawn.Moran.DriftwoodBeach.Recovery", "Main.C02.02.AShipToTake in L_GalleonCove");
+            Work.Cover("Main.C02.02.AShipToTake", "L_GalleonCove", "StoryTrigger GalleonCoveCleared (activates)",
+                "Gangway LaLiberacionBoarded, Helm LaLiberacionHelmSecured (core crew recruited), La Liberacion through Harbor Exit "
+                "(LaLiberacionHarborCleared)",
+                "Spawn.Moran.GalleonCove.Approach", "MapTransition -> L_OpenSea_FirstWake");
+            return Prefab.Write();
+        }
+
+        std::string BuildFirstWake(Session& Work)
+        {
+            const std::string Route = "ContentSource/World/OpenSea/FirstWake_Route.json";
+            const JsonValue* Root = Work.Json(Route);
+            const JsonValue* FastTravel = Root ? Root->Find("fastTravel") : nullptr;
+            if (!FastTravel || FastTravel->Type != JsonValue::Kind::Bool || FastTravel->Boolean)
+            {
+                Work.Error(Route + ": First Wake must declare fastTravel false");
+            }
+            PrefabBuilder Prefab("L_OpenSea_FirstWake");
+            AddEnvironment(Work, Prefab);
+            AddSea(Work, Prefab);
+            std::map<std::string, std::string> Anchors;
+            for (const auto& [Name, At] : LayoutAnchors(Work, Route)) Anchors[Name] = Prefab.AddEntity("Anchor " + Name, At);
+            const Vec3d Start = Work.World(Route, "GalleonCove.HarborExit");
+            AddLaLiberacion(Work, Prefab, "La Liberacion", Start);
+            const std::string Jake = AddJake(Work, Prefab, {Start.X, Start.Y, Start.Z + WeatherDeckHeight});
+            const std::string Director = Prefab.AddEntity("First Wake Director", {});
+            const std::string Deck = Prefab.AddEntity("Anchor La Liberacion Deck", {Start.X, Start.Y, Start.Z + WeatherDeckHeight});
+            AddArrivalSpawn(Prefab, Director, Jake, "Spawn.FirstWake.Helm", Deck);
+            // Jake takes the helm outside the cove; Rexa is reached only by sailing the authored distance.
+            const std::string Departure = Prefab.AddEntity("First Wake Departure", Start);
+            AddBoxCollider(Prefab, Departure, HarborExitVolume, true);
+            AddSignal(Prefab, Departure, StorySignal::BeginFirstWake, {}, 0, false);
+            const std::string Arrival = Prefab.AddEntity("Rexa Approach", Work.World(Route, "RexaHarbor.Approach"));
+            AddBoxCollider(Prefab, Arrival, ShipArrivalVolume, true);
+            AddSignal(Prefab, Arrival, StorySignal::ReachRexaHarbor, {}, 0, false);
+            JsonValue Transition = JsonObject();
+            Transition.Members["MissionId"] = JsonString("Main.C02.03.FirstWake");
+            Transition.Members["NextLevel"] = JsonString(std::string(Core::MissionCatalog::LevelFor("Main.C03.01.RexaHarbor")));
+            AddGame(Prefab, Director, MapTransitionComponentTypeId, "MapTransitionComponent", std::move(Transition));
+            Work.Cover("Main.C02.03.FirstWake", "L_OpenSea_FirstWake", "StoryTrigger BeginFirstWake at the Galleon Cove harbor exit",
+                "La Liberacion sails 4.5 km to Rexa Approach (ReachRexaHarbor); no water fast travel", "Spawn.FirstWake.Helm",
+                "MapTransition -> L_RexaHarbor (Main.C03.01.RexaHarbor)");
+            return Prefab.Write();
+        }
+
         /** Every ContentSource/Story contract, validated against the campaign (fails closed). */
         bool LoadStoryContracts(Session& Work, const fs::path& Repo, std::vector<Core::StoryMissionContract>& Out)
         {
@@ -1566,7 +1822,9 @@ namespace DarkArisen::Tools
         try
         {
             const std::pair<const char*, std::string (*)(Session&)> Levels[] = {
-                {"L_HarlowOpening", &BuildHarlow}, {"L_DriftwoodBeach", &BuildDriftwood}, {"L_DriftwoodCamp", &BuildCamp}};
+                {"L_HarlowOpening", &BuildHarlow}, {"L_DriftwoodBeach", &BuildDriftwood}, {"L_DriftwoodCamp", &BuildCamp},
+                {"L_MirasCove", &BuildMirasCove}, {"L_MangroveShallows", &BuildMangroves}, {"L_KoaTradingPost", &BuildKoa},
+                {"L_GalleonCove", &BuildGalleonCove}, {"L_OpenSea_FirstWake", &BuildFirstWake}};
             for (const auto& [Name, Build] : Levels)
             {
                 std::string Prefab = Build(Work);
@@ -1611,6 +1869,11 @@ namespace DarkArisen::Tools
                 Entry.Members["status"] = JsonString("MATERIALISED");
                 Missions.Members[std::string(Mission.Id)] = std::move(Entry);
                 ++Covered;
+            }
+            if (Covered != Core::MissionCatalog::MissionCount)
+            {
+                Work.Error("physical coverage " + std::to_string(Covered) + "/" + std::to_string(Core::MissionCatalog::MissionCount) +
+                    ": every campaign mission needs a materialised level contract");
             }
             JsonValue Coverage = JsonObject();
             Coverage.Members["covered"] = JsonNumber(Covered);

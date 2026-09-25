@@ -97,6 +97,103 @@
             "Id": "Entity_[1043899117066389]",
             "Name": "Anchor CrewWitness"
         },
+        "Entity_[1120549826773806]": {
+            "Components": {
+                "Component_[1248266644546659]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 1248266644546659
+                },
+                "Component_[3106877937949286]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 3106877937949286
+                },
+                "Component_[3244836026354147]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 3244836026354147
+                },
+                "Component_[4098597522638351]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 4098597522638351
+                },
+                "Component_[4525453308584492]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_400x400x100.azmodel",
+                                "assetId": {
+                                    "guid": "{3F3B8CF0-DE93-5A11-AD57-D71927DC805C}",
+                                    "subId": 270783830
+                                }
+                            }
+                        }
+                    },
+                    "Id": 4525453308584492
+                },
+                "Component_[4631137906273913]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 4631137906273913
+                },
+                "Component_[4885561667837931]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 4885561667837931
+                },
+                "Component_[494053604846704]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 494053604846704
+                },
+                "Component_[6369999267472418]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 6369999267472418,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4,
+                                4,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[6851580184752234]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 6851580184752234
+                },
+                "Component_[7285250196060735]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 7285250196060735
+                },
+                "Component_[7552850897065663]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 7552850897065663,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            18,
+                            -4.5,
+                            0.2
+                        ]
+                    }
+                }
+            },
+            "Id": "Entity_[1120549826773806]",
+            "Name": "PROVISIONAL Pad EthanCopy"
+        },
         "Entity_[1285405216679344]": {
             "Components": {
                 "Component_[105022841260355]": {
@@ -1435,6 +1532,103 @@
             },
             "Id": "Entity_[2622357668296378]",
             "Name": "Sun"
+        },
+        "Entity_[2757116479597115]": {
+            "Components": {
+                "Component_[2451396125061055]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 2451396125061055
+                },
+                "Component_[2495080331765656]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_400x400x100.azmodel",
+                                "assetId": {
+                                    "guid": "{3F3B8CF0-DE93-5A11-AD57-D71927DC805C}",
+                                    "subId": 270783830
+                                }
+                            }
+                        }
+                    },
+                    "Id": 2495080331765656
+                },
+                "Component_[2642922801734583]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 2642922801734583
+                },
+                "Component_[2776975251730507]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 2776975251730507
+                },
+                "Component_[2942140022583308]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 2942140022583308
+                },
+                "Component_[4874392853778557]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 4874392853778557
+                },
+                "Component_[4958565605872314]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 4958565605872314
+                },
+                "Component_[5538888662042287]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 5538888662042287
+                },
+                "Component_[6097788434758883]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 6097788434758883
+                },
+                "Component_[6337298410633326]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 6337298410633326
+                },
+                "Component_[7847599278071931]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 7847599278071931,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            18,
+                            4.5,
+                            0.2
+                        ]
+                    }
+                },
+                "Component_[934194991154678]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 934194991154678,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4,
+                                4,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                }
+            },
+            "Id": "Entity_[2757116479597115]",
+            "Name": "PROVISIONAL Pad FamilyChart"
         },
         "Entity_[2829682189244199]": {
             "Components": {

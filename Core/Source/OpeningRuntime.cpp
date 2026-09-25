@@ -277,6 +277,13 @@ namespace DarkArisen::Core
         {
             return false;
         }
+        // The Moran route is walked one way: nobody who can only be met here may be left behind, or
+        // A Ship to Take could never reach the helm with its core crew.
+        if ((Current.Location == OpeningLocation::MirasCove && !Campaign.IsCrewRecruited("crew.mira")) ||
+            (Current.Location == OpeningLocation::MangroveShallows && !Campaign.IsCrewRecruited("crew.big_tom")))
+        {
+            return false;
+        }
         static constexpr std::string_view LocationFacts[] = {"", "", "", "World.DriftwoodBeachReached",
             "World.DriftwoodCampReached", "World.MirasCoveReached", "World.MangroveShallowsReached",
             "World.KoasTradingPostReached", "World.GalleonCoveReached", "", "", ""};

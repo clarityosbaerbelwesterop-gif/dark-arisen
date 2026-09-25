@@ -5285,6 +5285,103 @@
             "Id": "Entity_[4637304246071269]",
             "Name": "PROVISIONAL Path AssassinObserver to LetterDrop 10"
         },
+        "Entity_[4848127838558986]": {
+            "Components": {
+                "Component_[1277029982235046]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 1277029982235046
+                },
+                "Component_[1628817112775240]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 1628817112775240,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            33,
+                            -2.5,
+                            0.3
+                        ]
+                    }
+                },
+                "Component_[2048597738772005]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 2048597738772005
+                },
+                "Component_[5042284156211212]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 5042284156211212
+                },
+                "Component_[5254588234679554]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 5254588234679554
+                },
+                "Component_[6165985405037730]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 6165985405037730
+                },
+                "Component_[6830008015080171]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_400x400x100.azmodel",
+                                "assetId": {
+                                    "guid": "{3F3B8CF0-DE93-5A11-AD57-D71927DC805C}",
+                                    "subId": 270783830
+                                }
+                            }
+                        }
+                    },
+                    "Id": 6830008015080171
+                },
+                "Component_[7381584957091344]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 7381584957091344
+                },
+                "Component_[8070163693644075]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 8070163693644075
+                },
+                "Component_[828860757049397]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 828860757049397,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4,
+                                4,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[8289360682413596]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 8289360682413596
+                },
+                "Component_[936132219958319]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 936132219958319
+                }
+            },
+            "Id": "Entity_[4848127838558986]",
+            "Name": "PROVISIONAL Pad LetterDrop"
+        },
         "Entity_[5492219839474488]": {
             "Components": {
                 "Component_[2985693781081585]": {

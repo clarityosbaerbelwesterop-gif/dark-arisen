@@ -156,7 +156,8 @@ Engine/O3DE/DarkArisen/Assets ──► Asset Processor   │  StoryTriggerCompo
 | Story actor rules | `Story/MainStory*Actor.cpp`, `NavalEncounterGateActor`, `NavalMissionGateActor` | engine-independent | IMPLEMENTED (Core `StoryActions`, tests) |
 | Naval combat | `Ship/NavalCombatComponent.cpp`, `HostileNavalShip.cpp` | engine-independent math | IMPLEMENTED (Core `NavalCombatant`, broadside side selection; `NavalCombatComponent` with the hostile fire loop); helm broadside input NOT DONE |
 | Colonial war | `ColonialWar/ColonialWarStateSubsystem.cpp` | engine-independent | IMPLEMENTED (Core `ColonialWar`, persisted in save v10; war actions and the Chapter 6 holding claim VERIFIED in the story probe); siege, large battles, retaliation NOT DONE |
-| 34/34 physical coverage | none in Unreal | content build | `Levels/PhysicalCoverage.json` from `materialize`: 31/34 (Chapter 2 routes NOT DONE) |
+| Chapter 2 route (Driftwood Camp → Mira's Cove → Mangrove Shallows → Koa's Trading Post → Galleon Cove → First Wake → Rexa) | `BuildMoranAndRexa` (maps without transitions or crew beats) | content build | IMPLEMENTED (`materialize`): six levels on the layouts, rest at the camp shelter, Mira and Big Tom met → available → recruited at their authored anchors (arrival never recruits), Koa placed (services pending the economy port), harbor control, Esteban, La Liberación at the prize berth, gangway, helm (core crew required), harbor exit under sail, First Wake over the authored 4.5 km (no water fast travel) into Rexa; VERIFIED on AzCore (level probe, Harlow → Rexa Harbor, 75 checks) |
+| 34/34 physical coverage | none in Unreal | content build | VERIFIED: `Levels/PhysicalCoverage.json` 34/34 (level, entry, completion, checkpoint, next route per mission); `materialize` fails below 34 |
 | Credits | `ContentSource/Story/Credits/CreditsAuthority.json` | content build | IMPLEMENTED: `L_Credits` with a factual roll (`verifiedTechnologyByEngine.O3DE`, provenance only), starts only after The Wake After (`CreditsComponent`, VERIFIED in the story probe); roll UI NOT DONE |
 | Higgsfield GLB ingest | `Tools/higgsfield/import_3d_jutsu_glb.py` | tooling | IMPLEMENTED natively (`import-glb`), IMPORT READY once the GLBs are supplied |
 | Pixel Streaming | `DarkArisenOps/StreamingOps.cpp` | UE-only | replaced by plan in section 8 |
@@ -253,6 +254,13 @@ Engine/O3DE/DarkArisen/Assets ──► Asset Processor   │  StoryTriggerCompo
     duelist fell had to leave and re-enter. `StoryActorComponent` now re-checks while Jake waits inside.
 22. **Credits named Unreal.** `CreditsAuthority.json` listed only "Unreal Engine"; it now keeps that
     for the Unreal build and lists the pinned O3DE release for the O3DE build.
+23. **The one-way Moran route could strand the crew.** Mira can only be met in Mira's Cove and Big Tom
+    only stands in the Mangrove Shallows, but Core let Jake walk on without recruiting them; the route
+    has no way back, so A Ship to Take could never reach the helm. Leaving either place now requires
+    its crew member recruited (Core, tested). Authoring mapping, PROVISIONAL: Mira met at `Mira`,
+    available at `BoatWork`, recruited at `RecruitmentConversation`; Big Tom met at `BigTom`, available
+    at `WorkEvent`, recruited at `BigTom`; Galleon Cove cleared by taking `HarborControl` (no enemy
+    placements are authored for the cove), Esteban available from the harbor records.
 
 ## 7. Gates before an engine decision
 

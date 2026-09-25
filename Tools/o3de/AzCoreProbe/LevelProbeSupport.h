@@ -47,6 +47,7 @@
 
 #include <DarkArisen/Core/CampaignRuntime.h>
 #include <DarkArisen/Core/Combat.h>
+#include <DarkArisen/Core/EntityPolicy.h>
 #include <DarkArisen/Core/Facts.h>
 #include <DarkArisen/Core/Ocean.h>
 #include <DarkArisen/Core/OpeningRuntime.h>
