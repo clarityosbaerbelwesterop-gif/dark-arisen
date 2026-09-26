@@ -144,22 +144,6 @@ namespace DarkArisen::Tools::Art
             Out.Box(Wood, {Hub.X - 0.2, Hub.Y - 0.12, Hub.Z - Radius - 0.62}, {Hub.X - 0.02, Hub.Y + 0.12, Hub.Z + 0.1});
         }
 
-        void Cannon(Mesh& Out, const V3& At, double Side)
-        {
-            const Material& Wood = Mat(M::TimberDark);
-            const double Y = At.Y;
-            // carriage cheeks and axles
-            Out.Box(Wood, {At.X - 0.42, Y - 0.55 * Side - 0.3, At.Z}, {At.X - 0.30, Y - 0.55 * Side + 0.3, At.Z + 0.42});
-            Out.Box(Wood, {At.X + 0.30, Y - 0.55 * Side - 0.3, At.Z}, {At.X + 0.42, Y - 0.55 * Side + 0.3, At.Z + 0.42});
-            for (const double Dy : {-0.25, 0.25})
-            {
-                Out.Tube(Wood, {At.X - 0.5, Y - 0.55 * Side + Dy, At.Z + 0.12}, {At.X + 0.5, Y - 0.55 * Side + Dy, At.Z + 0.12}, 0.13, 0.13, 10);
-            }
-            // barrel pointing outboard
-            Out.Tube(Mat(M::Iron), {At.X, Y - 1.25 * Side, At.Z + 0.5}, {At.X, Y + 0.75 * Side, At.Z + 0.52}, 0.2, 0.13, 12);
-            Out.Tube(Mat(M::Iron), {At.X, Y + 0.66 * Side, At.Z + 0.52}, {At.X, Y + 0.78 * Side, At.Z + 0.52}, 0.16, 0.16, 12);
-        }
-
         /** Square sail hanging from a yard at Top (z), Width across, Drop deep, bellied forward (+X) when set. */
         void SquareSail(Mesh& Out, const Material& Canvas, double X, double Top, double WidthTop, double WidthFoot, double Drop, double Belly)
         {
@@ -185,6 +169,22 @@ namespace DarkArisen::Tools::Art
         {
             Out.Tube(Mat(M::Rope), A, B, Radius, Radius, 4, false);
         }
+    }
+
+    void Cannon(Mesh& Out, const V3& At, const double Side)
+    {
+        const Material& Wood = Mat(M::TimberDark);
+        const double Y = At.Y;
+        // carriage cheeks and axles
+        Out.Box(Wood, {At.X - 0.42, Y - 0.55 * Side - 0.3, At.Z}, {At.X - 0.30, Y - 0.55 * Side + 0.3, At.Z + 0.42});
+        Out.Box(Wood, {At.X + 0.30, Y - 0.55 * Side - 0.3, At.Z}, {At.X + 0.42, Y - 0.55 * Side + 0.3, At.Z + 0.42});
+        for (const double Dy : {-0.25, 0.25})
+        {
+            Out.Tube(Wood, {At.X - 0.5, Y - 0.55 * Side + Dy, At.Z + 0.12}, {At.X + 0.5, Y - 0.55 * Side + Dy, At.Z + 0.12}, 0.13, 0.13, 10);
+        }
+        // barrel pointing outboard
+        Out.Tube(Mat(M::Iron), {At.X, Y - 1.25 * Side, At.Z + 0.5}, {At.X, Y + 0.75 * Side, At.Z + 0.52}, 0.2, 0.13, 12);
+        Out.Tube(Mat(M::Iron), {At.X, Y + 0.66 * Side, At.Z + 0.52}, {At.X, Y + 0.78 * Side, At.Z + 0.52}, 0.16, 0.16, 12);
     }
 
     Mesh BuildShip(const ShipSpec& S, Mesh* Collision)
