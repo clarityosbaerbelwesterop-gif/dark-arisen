@@ -772,4 +772,198 @@ namespace DarkArisen::Tools::Art
         }
         return Out;
     }
+
+    namespace
+    {
+        /** Quad wound so that its front faces Outward. */
+        void QuadOut(Mesh& Out, const Material& Mt, const V3& A, const V3& B, const V3& C, const V3& D, const V3& Outward)
+        {
+            if (Dot(Cross(B - A, D - A), Outward) >= 0.0) Out.Quad(Mt, A, B, C, D);
+            else Out.Quad(Mt, B, A, D, C);
+        }
+
+        /** Sentry box (garita): corbelled round turret with a dome, standing out from a wall top. */
+        void Garita(Mesh& Out, const V3& Base, double Radius)
+        {
+            Out.Loft(Mat(M::Stone), {Ellipse(Base.X, Base.Y, Base.Z - 1.2, Radius * 0.25, Radius * 0.25, 14),
+                                        Ellipse(Base.X, Base.Y, Base.Z - 0.6, Radius * 0.7, Radius * 0.7, 14),
+                                        Ellipse(Base.X, Base.Y, Base.Z, Radius, Radius, 14)},
+                true);
+            Out.Loft(Mat(M::Plaster), {Ellipse(Base.X, Base.Y, Base.Z, Radius, Radius, 14), Ellipse(Base.X, Base.Y, Base.Z + 2.0, Radius, Radius, 14)}, true);
+            Out.Loft(Mat(M::StoneDark), {Ellipse(Base.X, Base.Y, Base.Z + 1.95, Radius + 0.08, Radius + 0.08, 14),
+                                            Ellipse(Base.X, Base.Y, Base.Z + 2.12, Radius + 0.08, Radius + 0.08, 14)},
+                true);
+            Ellipsoid(Out, Mat(M::Stone), {Base.X, Base.Y, Base.Z + 2.1}, {Radius, Radius, Radius * 0.85}, 5, 14, Pi / 2.0, 0.0);
+            Out.Tube(Mat(M::StoneDark), {Base.X, Base.Y, Base.Z + 2.1 + Radius * 0.8}, {Base.X, Base.Y, Base.Z + 2.55 + Radius * 0.8}, 0.08, 0.03, 8);
+            for (int I = 0; I < 3; ++I)
+            {
+                const double A = 2.0 * Pi * I / 3.0 + Pi / 2.0;
+                const V3 N{Cos(A), Sin(A), 0};
+                const V3 C = Base + N * (Radius + 0.01) + V3{0, 0, 1.1};
+                const V3 Side{-N.Y * 0.06, N.X * 0.06, 0};
+                QuadOut(Out, Mat(M::Glass), C - Side - V3{0, 0, 0.35}, C + Side - V3{0, 0, 0.35}, C + Side + V3{0, 0, 0.35}, C - Side + V3{0, 0, 0.35}, N);
+            }
+        }
+
+        /** Curtain wall of length L along local X, thickness T, height H, standing on z = 0. */
+        void CurtainWall(Mesh& Out, double L, double T, double H, bool Gate, std::uint32_t Seed, std::vector<V3>& Garitas)
+        {
+            const double Hl = L / 2.0, Ht = T / 2.0;
+            const double Batter = std::min(0.4, T * 0.14);
+            const double Cordon = std::max(1.6, H - 1.35);
+            const double Top = Ht - Batter;
+            const Material& Stone = Mat(M::Stone);
+            // battered scarp, both long faces, square ends
+            for (const double S : {1.0, -1.0})
+            {
+                QuadOut(Out, Stone, {-Hl, S * Ht, 0}, {Hl, S * Ht, 0}, {Hl, S * Top, Cordon}, {-Hl, S * Top, Cordon}, {0, S, 0.2});
+                QuadOut(Out, Stone, {S * Hl, -Ht, 0}, {S * Hl, Ht, 0}, {S * Hl, Top, Cordon}, {S * Hl, -Top, Cordon}, {S, 0, 0});
+                // plinth course
+                QuadOut(Out, Mat(M::StoneDark), {-Hl - 0.02, S * (Ht + 0.08), 0}, {Hl + 0.02, S * (Ht + 0.08), 0}, {Hl + 0.02, S * (Ht + 0.08), 0.55},
+                    {-Hl - 0.02, S * (Ht + 0.08), 0.55}, {0, S, 0});
+            }
+            // cordon, rampart walk and embrasured parapets
+            Out.Box(Mat(M::StoneDark), {-Hl - 0.04, -Top - 0.12, Cordon - 0.1}, {Hl + 0.04, Top + 0.12, Cordon + 0.15});
+            Out.Box(Mat(M::Paving), {-Hl, -Top + 0.6, Cordon + 0.15}, {Hl, Top - 0.6, Cordon + 0.2});
+            const double Merlon = 1.8, Gap = 0.8;
+            const int Count = std::max(1, static_cast<int>((L + Gap) / (Merlon + Gap)));
+            const double Used = Count * Merlon + (Count - 1) * Gap;
+            for (const double S : {1.0, -1.0})
+            {
+                const double Y0 = S > 0 ? Top - 0.6 : -Top, Y1 = S > 0 ? Top : -Top + 0.6;
+                Out.Box(Stone, {-Hl, Y0, Cordon + 0.15}, {Hl, Y1, Cordon + 0.55});
+                for (int I = 0; I < Count; ++I)
+                {
+                    const double X0 = -Used / 2.0 + I * (Merlon + Gap);
+                    Out.Box(Stone, {X0, Y0, Cordon + 0.55}, {X0 + Merlon, Y1, H});
+                    Out.Box(Mat(M::StoneDark), {X0 - 0.03, Y0 - 0.03, H - 0.08}, {X0 + Merlon + 0.03, Y1 + 0.03, H + 0.02});
+                }
+            }
+            // sentry boxes on the outer (+Y) corners, one per corner where walls meet
+            for (const double X : {-Hl + 0.2, Hl - 0.2})
+            {
+                const V3 Local{X, Ht + 0.15, Cordon + 0.15};
+                const V3 World = Out.Top().Point(Local);
+                bool Taken = false;
+                for (const V3& G : Garitas) Taken = Taken || Length(G - World) < 4.0;
+                if (Taken) continue;
+                Garitas.push_back(World);
+                Garita(Out, Local, 0.62);
+            }
+            if (Gate)
+            {
+                // false gate on the outer face: stone surround, timber leaves, lanterns
+                const double W = 1.4, Hg = 3.4;
+                const double Y = Ht + 0.06;
+                Out.Box(Mat(M::StoneDark), {-W - 0.55, Y - 0.1, 0}, {-W, Y + 0.25, Hg + 0.5});
+                Out.Box(Mat(M::StoneDark), {W, Y - 0.1, 0}, {W + 0.55, Y + 0.25, Hg + 0.5});
+                Out.Box(Mat(M::StoneDark), {-W - 0.7, Y - 0.1, Hg}, {W + 0.7, Y + 0.3, Hg + 0.75});
+                QuadOut(Out, Mat(M::TimberDark), {-W, Y, 0}, {W, Y, 0}, {W, Y, Hg}, {-W, Y, Hg}, {0, 1, 0});
+                for (int I = -3; I <= 3; ++I) Out.Box(Mat(M::Iron), {I * 0.4 - 0.02, Y, 0.2}, {I * 0.4 + 0.02, Y + 0.03, Hg - 0.2});
+                for (const double X : {-W - 0.9, W + 0.9})
+                {
+                    Out.Box(Mat(M::Iron), {X - 0.03, Y, 2.6}, {X + 0.03, Y + 0.35, 2.66});
+                    Out.Box(Mat(M::Brass), {X - 0.12, Y + 0.25, 2.2}, {X + 0.12, Y + 0.49, 2.6});
+                }
+                // flag over the gate
+                Out.Tube(Mat(M::TimberDark), {0, Top - 0.3, Cordon + 0.2}, {0, Top - 0.3, Cordon + 7.0}, 0.07, 0.05, 8);
+                std::vector<Ring> Flag;
+                Rng R(Seed);
+                const double Wave = R.Range(4.0, 6.0);
+                for (int I = 0; I <= 6; ++I)
+                {
+                    const double T = I / 6.0;
+                    const double Y2 = Top - 0.3 + 0.18 * Sin(T * Wave);
+                    Flag.push_back({{0.06 + 2.2 * T, Y2, Cordon + 6.9}, {0.06 + 2.2 * T, Y2, Cordon + 5.5}});
+                }
+                Out.Loft(Mat(M::Sash), Flag, false);
+                Out.Loft(Mat(M::Sash), Flag, false, true);
+            }
+        }
+
+        /** Gun platform: dressed stone with a paved top, guns towards +Y, steps on -Y. */
+        void GunPlatform(Mesh& Out, const V3& Min, const V3& Max, std::uint32_t Seed)
+        {
+            Out.Box(Mat(M::Stone), Min, {Max.X, Max.Y, Max.Z - 0.12});
+            Out.Box(Mat(M::Paving), {Min.X - 0.05, Min.Y - 0.05, Max.Z - 0.12}, {Max.X + 0.05, Max.Y + 0.05, Max.Z});
+            const double Sx = Max.X - Min.X, Sy = Max.Y - Min.Y;
+            if (Sx >= 3.0 && Sy >= 3.0)
+            {
+                const int Guns = std::max(1, static_cast<int>(Sx / 2.4));
+                for (int I = 0; I < Guns; ++I)
+                {
+                    const double X = Min.X + Sx * (I + 0.5) / Guns;
+                    Cannon(Out, {X, Max.Y - 1.6, Max.Z}, 1.0);
+                }
+                Rng R(Seed);
+                Barrel(Out, {Min.X + 0.6, Min.Y + 0.7, Max.Z}, 0.85, 0.3);
+                Crate(Out, {Max.X - 1.3, Min.Y + 0.3, Max.Z}, {Max.X - 0.4, Min.Y + 1.0, Max.Z + 0.6});
+                const double Balls = R.Range(0.0, 1.0) > 0.5 ? 1.0 : -1.0;
+                for (int I = 0; I < 5; ++I)
+                {
+                    Ellipsoid(Out, Mat(M::Iron), {(Min.X + Max.X) / 2.0 + Balls * (0.5 + 0.22 * I), Min.Y + 0.6, Max.Z + 0.1}, {0.1, 0.1, 0.1}, 4, 8);
+                }
+            }
+            // steps up from the courtyard side (visual; the greybox block carries the collision)
+            const int Steps = std::max(1, static_cast<int>((Max.Z - Min.Z) / 0.3));
+            for (int I = 0; I < Steps; ++I)
+            {
+                const double Z = Min.Z + (Max.Z - Min.Z) * (I + 1) / (Steps + 1);
+                Out.Box(Mat(M::StoneDark), {Min.X + Sx * 0.3, Min.Y - 0.3 * (Steps - I), Min.Z}, {Min.X + Sx * 0.7, Min.Y - 0.3 * (Steps - I - 1), Z});
+            }
+        }
+    }
+
+    Mesh DressFort(const std::string& Name, const std::vector<std::pair<V3, V3>>& Boxes)
+    {
+        Mesh Out(Name);
+        std::uint32_t Seed = HashString(Name);
+        // the longest wall carries the gate and the flag
+        double Longest = 0.0;
+        V3 Centre;
+        int Walls = 0;
+        for (const auto& [Min, Max] : Boxes)
+        {
+            Longest = std::max(Longest, std::max(Max.X - Min.X, Max.Y - Min.Y));
+            if (Max.Z - Min.Z >= 3.0)
+            {
+                Centre = Centre + (Min + Max) * 0.5;
+                ++Walls;
+            }
+        }
+        if (Walls > 0) Centre = Centre * (1.0 / Walls);  // walls face away from the compound's middle
+        bool GateDone = false;
+        std::vector<V3> Garitas;
+        for (const auto& [Min, Max] : Boxes)
+        {
+            ++Seed;
+            const double Sx = Max.X - Min.X, Sy = Max.Y - Min.Y, Sz = Max.Z - Min.Z;
+            const double Long = std::max(Sx, Sy), Short = std::min(Sx, Sy);
+            if (Sz >= 3.0 && Long >= 2.5 * Short)
+            {
+                const bool Gate = !GateDone && Long == Longest && Long >= 12.0;
+                GateDone = GateDone || Gate;
+                const V3 C{(Min.X + Max.X) / 2.0, (Min.Y + Max.Y) / 2.0, Min.Z};
+                Xf Facing;
+                if (Sx >= Sy) Facing = C.Y >= Centre.Y ? Xf{} : Xf::RotateZ(Pi);
+                else Facing = Xf::RotateZ(C.X >= Centre.X ? -Pi / 2.0 : Pi / 2.0);
+                Out.Push(Xf::Translate(C) * Facing);
+                CurtainWall(Out, Long, Short, Sz, Gate, Seed, Garitas);
+                Out.Pop();
+            }
+            else if (Sz < 2.2)
+            {
+                GunPlatform(Out, Min, Max, Seed);
+            }
+            else
+            {
+                // bastion block: scarp, cordon, parapet and a sentry box on each outer corner
+                const V3 C{(Min.X + Max.X) / 2.0, (Min.Y + Max.Y) / 2.0, Min.Z};
+                Out.Push(Xf::Translate(C));
+                CurtainWall(Out, Sx, Sy, Sz, false, Seed, Garitas);
+                Out.Pop();
+            }
+        }
+        return Out;
+    }
 }

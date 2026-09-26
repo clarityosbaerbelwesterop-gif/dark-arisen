@@ -33,6 +33,8 @@ namespace DarkArisen::Tools::Art
     void Barrel(Mesh& Out, const V3& At, double Height, double Radius);
     void Crate(Mesh& Out, const V3& Min, const V3& Max);
     double SegmentDistance(double Px, double Py, double Ax, double Ay, double Bx, double By);
+    /** Carriage gun at At (on its deck), barrel pointing to Side * +Y. */
+    void Cannon(Mesh& Out, const V3& At, double Side);
 
     // ------------------------------------------------------------------ ships
 
@@ -82,4 +84,10 @@ namespace DarkArisen::Tools::Art
     Mesh BuildRexaWarehouses(Mesh* Collision);
     /** Generic dressing of a greybox made of boxes (source-frame min/max pairs already in world frame). */
     Mesh DressBoxes(const std::string& Name, const std::vector<std::pair<V3, V3>>& Boxes);
+    /**
+     * Colonial stone fort over the same boxes: battered curtain walls with a cordon, embrasured
+     * parapets and a rampart walk, sentry boxes (garitas) at the wall ends, a false gate, gun
+     * platforms with carriage guns, a flag. Volumes stay inside the greybox, so its collision holds.
+     */
+    Mesh DressFort(const std::string& Name, const std::vector<std::pair<V3, V3>>& Boxes);
 }

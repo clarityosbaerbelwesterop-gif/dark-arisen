@@ -463,7 +463,11 @@ namespace DarkArisen::Tools::Art
         if (const auto Found = Generated.find(Model); Found != Generated.end()) return Found->second;
         const std::vector<std::pair<V3, V3>> Boxes = ReadBoxes(Gltf);
         if (Boxes.empty()) return {};
-        return Generated[Model] = Emit(Model, WriteGltf(DressBoxes(Model, Boxes), Generator));
+        // Chapter 3-5 compounds (forts, citadel, blockade batteries, war harbours) share one walled
+        // greybox; they are dressed as colonial stone forts, everything else generically.
+        const bool Fort = SourceRelative.find("/World/War/") != std::string_view::npos ||
+            SourceRelative.find("/World/Story/") != std::string_view::npos || SourceRelative.find("Citadel") != std::string_view::npos;
+        return Generated[Model] = Emit(Model, WriteGltf(Fort ? DressFort(Model, Boxes) : DressBoxes(Model, Boxes), Generator));
     }
 
     std::string Kit::DressTerrain(const std::string_view Name, const std::string_view GreyboxGltf, const std::vector<std::pair<double, double>>& KeepClear)
