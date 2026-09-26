@@ -37,7 +37,9 @@
 
 #include <cstdio>
 #include <filesystem>
+#include <algorithm>
 #include <string>
+#include <vector>
 
 #include "ProbeSupport.h"
 
@@ -70,6 +72,34 @@ namespace
         std::printf("[%s] %s\n", condition ? " ok " : "FAIL", what);
         g_failures += condition ? 0 : 1;
     }
+
+    struct DravenListener : DarkArisen::EnemyNotificationBus::Handler
+    {
+        std::vector<std::string> moves;
+        std::vector<int> stances;
+        int shotsHit = 0;
+        int bombsThrown = 0;
+        int bombsDetonated = 0;
+        int disarms = 0;
+        const DarkArisen::Core::HealthModel* jakeHealth = nullptr;
+        float healthAtThrow = 0.0f;
+        float blastDamage = 0.0f;
+        void OnMoveStarted(const AZStd::string& moveId) override { moves.emplace_back(moveId.c_str()); }
+        void OnStanceChanged(int stance) override { stances.push_back(stance); }
+        void OnPistolFired(bool hit) override { shotsHit += hit ? 1 : 0; }
+        void OnPowderBombThrown(const AZ::Vector3&, float) override
+        {
+            ++bombsThrown;
+            healthAtThrow = jakeHealth ? jakeHealth->CurrentHealth : 0.0f;
+        }
+        void OnPowderBombDetonated(const AZ::Vector3&) override
+        {
+            ++bombsDetonated;
+            blastDamage = jakeHealth ? healthAtThrow - jakeHealth->CurrentHealth : 0.0f;
+        }
+        void OnTargetDisarmed() override { ++disarms; }
+        bool Used(const char* id) const { return std::find(moves.begin(), moves.end(), id) != moves.end(); }
+    };
 
     struct EnemyListener : DarkArisen::EnemyNotificationBus::Handler
     {
@@ -239,6 +269,46 @@ int main(int argc, char** argv)
     Check(ethanModel && !DarkArisen::Core::ResolveMeleeHit(*jakeModel, *ethanModel, DarkArisen::Core::HitKind::Critical).Resolved,
         "real Ethan entity rejects every hostile hit");
 
+    // Draven through the same adapters: an authored duel, not a boarder with more health.
+    boarder->Deactivate();
+    jakeModel->Health.MaxHealth = 5000.0f; // the probe watches his moves, not Jake's survival
+    jakeModel->Health.ResetForRespawn(1.0f);
+    AZ::Vector3 jakeAt = AZ::Vector3::CreateZero();
+    AZ::TransformBus::EventResult(jakeAt, jake->GetId(), &AZ::TransformBus::Events::GetWorldTranslation);
+    AZ::Entity* draven = MakeEntity("Draven Voss", jakeAt + AZ::Vector3(0.0f, 7.0f, 0.0f));
+    draven->CreateComponent<DarkArisen::CombatantComponent>();
+    auto* dravenBrain = draven->CreateComponent<DarkArisen::EnemyBrainComponent>();
+    Check(SetReflectedField(serialize, dravenBrain, "Profile", DarkArisen::EnemyProfileKind::DravenVoss), "Draven profile set through its reflected field");
+    draven->Init();
+    draven->Activate();
+    DravenListener dravenEvents;
+    dravenEvents.BusConnect(draven->GetId());
+    DarkArisen::Core::Combatant* dravenModel = nullptr;
+    DarkArisen::CombatRequestBus::Event(draven->GetId(), [&](DarkArisen::CombatRequests* h) { dravenModel = &h->GetCombatant(); });
+    Check(dravenModel && dravenModel->Health.MaxHealth == 520.0f, "Draven configured by the Core profile (520 health, Unreal parity)");
+    dravenModel->Health.ApplyDamage(520.0f * 0.40f);
+    const float beforeShot = jakeModel->Health.CurrentHealth;
+    Tick(3.0f);
+    Check(!dravenEvents.stances.empty() && dravenEvents.stances.front() == static_cast<int>(DarkArisen::Core::BossStance::Pirate),
+        "wounded Draven announces the pirate stance over EnemyNotificationBus");
+    Check(dravenEvents.Used("draven.pistol_shot") && dravenEvents.shotsHit >= 1 && jakeModel->Health.CurrentHealth < beforeShot,
+        "Jake keeps his distance: Draven draws and the shot lands through the damage pipeline");
+    dravenEvents.jakeHealth = &jakeModel->Health;
+    Tick(20.0f);
+    Check(dravenEvents.bombsThrown >= 1 && dravenEvents.bombsDetonated >= 1, "powder bomb thrown at Jake's feet and detonated after its fuse");
+    Check(AZ::GetAbs(dravenEvents.blastDamage - 42.0f) < 0.01f, "Jake stood in the marked zone: the blast costs him one heavy hit (42)");
+    AZ::TransformBus::Event(draven->GetId(), &AZ::TransformBus::Events::SetWorldTranslation, jakeAt + AZ::Vector3(0.0f, 1.5f, 0.0f));
+    dravenModel->Health.ApplyDamage(dravenModel->Health.CurrentHealth - 520.0f * 0.24f);
+    Tick(4.0f);
+    Check(dravenEvents.stances.back() == static_cast<int>(DarkArisen::Core::BossStance::Unarmed) && dravenEvents.disarms == 1,
+        "at a quarter health the man drops his weapons and takes Jake's sword once");
+    std::printf("  Draven moves seen:");
+    for (const std::string& move : dravenEvents.moves) std::printf(" %s", move.c_str());
+    std::printf("\n");
+    dravenEvents.BusDisconnect();
+    draven->Deactivate();
+    delete draven;
+
     // The level's sea: one OceanComponent registers the shared surface.
     AZ::Entity* ocean = aznew AZ::Entity("Ocean");
     auto* oceanComponent = ocean->CreateComponent<DarkArisen::OceanComponent>();
@@ -394,7 +464,10 @@ int main(int argc, char** argv)
     enemyEvents.BusDisconnect();
     for (AZ::Entity* entity : {shallows, currentA, swimmer, ship, ocean, ethan, boarder, jake})
     {
-        entity->Deactivate();
+        if (entity->GetState() == AZ::Entity::State::Active)
+        {
+            entity->Deactivate();
+        }
         delete entity;
     }
     systemEntity->Deactivate();

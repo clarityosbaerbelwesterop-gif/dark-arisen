@@ -23,6 +23,8 @@ namespace DarkArisen::Tools
         std::string Text;
         std::vector<JsonValue> Items;
         std::map<std::string, JsonValue> Members;
+        /** Object keys in document order (Members is sorted); filled by the reader only. */
+        std::vector<std::string> Order;
 
         const JsonValue* Find(const std::string& Key) const
         {
@@ -142,6 +144,7 @@ namespace DarkArisen::Tools
                 {
                     return false;
                 }
+                Out.Order.push_back(Key);
                 if (!Out.Members.emplace(std::move(Key), std::move(Value)).second)
                 {
                     return Fail("duplicate object key");

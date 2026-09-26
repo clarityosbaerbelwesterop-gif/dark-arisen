@@ -257,6 +257,74 @@ namespace DarkArisen::Core
         Out.Record("checkpoint", {State.CheckpointId});
         Out.Record("spawn", {State.SpawnId});
 
+        for (const auto& [RegionId, Region] : State.ColonialWar.Regions)
+        {
+            Out.Record("war.region", {RegionId, Number(Region.ImperialControl), Number(Region.AlbionControl),
+                Number(Region.LiberationStrength), Number(Region.CrimsonThreat), Ordinal(Region.Outcome),
+                Flag(Region.FallAssaultCompleted), Number(Region.LastAutonomousTickChapter)});
+        }
+        for (const std::string& Id : State.ColonialWar.OwnedHoldings) Out.Record("war.holding", {Id});
+
+        const QuestJournalState& Journal = State.Journal;
+        for (const auto& [Id, Quest] : Journal.Quests)
+        {
+            Out.Record("journal.quest", {Id, Ordinal(Quest.Lifecycle), Ordinal(Quest.ActivationTrigger), Number(Quest.ActivationGameMinute),
+                Number(Quest.ExpirationGameMinute), Number(Quest.ResolutionGameMinute), Quest.OutcomeId});
+        }
+        for (const JournalEntry& Entry : Journal.Entries)
+        {
+            Out.Record("journal.entry", {Entry.EntryId, Entry.QuestId, Entry.JakeText, Entry.Directions, Number(Entry.GameMinute),
+                Number(Entry.Sequence), Flag(Entry.Distorted), Flag(Entry.Correction)});
+        }
+        Out.Record("journal.next", {Number(Journal.NextSequence)});
+        for (const EvidenceRecord& Record : Journal.Evidence)
+        {
+            Out.Record("journal.evidence", {Record.EvidenceId, Record.MissionId, Record.Title, Record.Body, Number(Record.GameMinute)});
+        }
+        for (const std::string& Id : Journal.Observations) Out.Record("journal.observation", {Id});
+
+        const ProgressionState& Progress = State.Progress;
+        Out.Record("progress.body", {Number(Progress.MaximumHealth), Number(Progress.MaximumStamina), Number(Progress.MaximumPosture),
+            Number(Progress.CarryKilograms)});
+        Out.Record("progress.marks", {Number(Progress.MarksEarned), Number(Progress.MarksSpent)});
+        Out.Record("progress.wallet", {Number(Progress.Wallet.Doubloons), Number(Progress.Wallet.Pounds), Number(Progress.Wallet.SilverMarks)});
+        const std::pair<const char*, const std::set<std::string, std::less<>>*> ProgressSets[] = {
+            {"draught", &Progress.PhysiciansDraughtSources}, {"pearl", &Progress.DeepWaterPearlSources},
+            {"deflection", &Progress.NamedDeflectionSources}, {"carry", &Progress.CarryMilestones},
+            {"mark_source", &Progress.AwardedMarkSources}, {"teacher", &Progress.TeachersMet},
+            {"scene", &Progress.CompletedTeachingScenes}, {"flag", &Progress.WorldFlags}, {"node", &Progress.LearnedNodes},
+            {"exclusive", &Progress.ChosenExclusiveGroups}, {"overheard", &Progress.OverheardConversations},
+            {"legendary", &Progress.PaidLegendaryWork}, {"reconstruction", &Progress.PaidReconstructionProjects},
+            {"service", &Progress.PurchasedServices}};
+        for (const auto& [Name, Set] : ProgressSets)
+        {
+            for (const std::string& Id : *Set) Out.Record("progress.set", {Name, Id});
+        }
+        for (const auto& [Context, Greeting] : Progress.Greetings) Out.Record("progress.greeting", {Context, Ordinal(Greeting)});
+        for (const auto& [Context, Greeting] : Progress.GreetingBeforeWary) Out.Record("progress.greeting_before_wary", {Context, Ordinal(Greeting)});
+        for (const auto& [Context, Chapters] : Progress.WaryChaptersRemaining) Out.Record("progress.wary", {Context, Number(Chapters)});
+        Out.Record("progress.ledger", {Number(Progress.PendingLedger.HoldingIncome), Number(Progress.PendingLedger.ArmyUpkeep),
+            Number(Progress.PendingLedger.GarrisonUpkeep), Number(Progress.PendingLedger.ConstructionDraw), Number(Progress.LastResolvedLedgerChapter)});
+        for (const int Chapter : Progress.PaidCrewShareChapters) Out.Record("progress.crew_share", {Number(Chapter)});
+
+        Out.Record("npc.clock", {Number(State.LivingWorld.LastSimulatedGameMinute)});
+        for (const auto& [Id, Npc] : State.LivingWorld.Records)
+        {
+            Out.Record("npc.record", {Id, Npc.CommunityId, Npc.ScheduleAnchorId, Number(Npc.PersonalReputation), Number(Npc.SpecificTrust),
+                Ordinal(Npc.Mood), Flag(Npc.Alive), Flag(Npc.Available)});
+        }
+        for (const auto& [Id, Npc] : State.LivingWorld.Records)
+        {
+            for (const NpcMemory& Memory : Npc.Memories)
+            {
+                Out.Record("npc.memory", {Id, Memory.EventId, Ordinal(Memory.Kind), Ordinal(Memory.Emotion), Number(Memory.OriginalWeight),
+                    Number(Memory.EffectiveWeight), Number(Memory.OccurredAtGameMinute), Number(Memory.DecayPerGameDay), Memory.SourceNpcId,
+                    Flag(Memory.Permanent)});
+            }
+            for (const NpcConnection& Connection : Npc.Connections) Out.Record("npc.connection", {Id, Connection.OtherNpcId, Ordinal(Connection.Kind)});
+            for (const std::string& Interaction : Npc.ResolvedInteractions) Out.Record("npc.resolved", {Id, Interaction});
+        }
+
         const OpeningProgress& Opening = State.Opening;
         Out.Record("opening.location", {Ordinal(Opening.Location)});
         Out.Record("opening.raid", {Ordinal(Opening.RaidState)});
@@ -451,6 +519,180 @@ namespace DarkArisen::Core
                 }},
             {"checkpoint", StringScalar(State.CheckpointId)},
             {"spawn", StringScalar(State.SpawnId)},
+            {"war.region", [&](const std::vector<std::string>& F)
+                {
+                    if (!In.Arity(F, 9)) return;
+                    ColonialRegionState Region;
+                    bool Valid = ParseNumber(F[2], Region.ImperialControl) && ParseNumber(F[3], Region.AlbionControl) &&
+                        ParseNumber(F[4], Region.LiberationStrength) && ParseNumber(F[5], Region.CrimsonThreat) &&
+                        ParseOrdinal(F[6], Region.Outcome, RegionalWarOutcome::CrimsonOccupied) &&
+                        ParseBool(F[7], Region.FallAssaultCompleted) && ParseNumber(F[8], Region.LastAutonomousTickChapter);
+                    if (!Valid) In.Fail("invalid war region");
+                    else if (!State.ColonialWar.Regions.emplace(F[1], Region).second) In.Fail("duplicate war region " + F[1]);
+                }},
+            {"war.holding", [&](const std::vector<std::string>& F)
+                {
+                    if (In.Arity(F, 2) && !State.ColonialWar.OwnedHoldings.insert(F[1]).second) In.Fail("duplicate holding " + F[1]);
+                }},
+            {"journal.quest", [&](const std::vector<std::string>& F)
+                {
+                    if (!In.Arity(F, 8)) return;
+                    QuestRuntimeState Quest;
+                    const bool Valid = ParseOrdinal(F[2], Quest.Lifecycle, QuestLifecycle::Unavailable) &&
+                        ParseOrdinal(F[3], Quest.ActivationTrigger, QuestActivationTrigger::Absence) && ParseNumber(F[4], Quest.ActivationGameMinute) &&
+                        ParseNumber(F[5], Quest.ExpirationGameMinute) && ParseNumber(F[6], Quest.ResolutionGameMinute);
+                    Quest.OutcomeId = F[7];
+                    if (!Valid) In.Fail("invalid journal quest");
+                    else if (!State.Journal.Quests.emplace(F[1], Quest).second) In.Fail("duplicate journal quest " + F[1]);
+                }},
+            {"journal.entry", [&](const std::vector<std::string>& F)
+                {
+                    if (!In.Arity(F, 9)) return;
+                    JournalEntry Entry{F[1], F[2], F[3], F[4]};
+                    if (!ParseNumber(F[5], Entry.GameMinute) || !ParseNumber(F[6], Entry.Sequence) || !ParseBool(F[7], Entry.Distorted) ||
+                        !ParseBool(F[8], Entry.Correction))
+                    {
+                        In.Fail("invalid journal entry");
+                    }
+                    else State.Journal.Entries.push_back(std::move(Entry));
+                }},
+            {"journal.next", NumberScalar(State.Journal.NextSequence)},
+            {"journal.evidence", [&](const std::vector<std::string>& F)
+                {
+                    if (!In.Arity(F, 6)) return;
+                    EvidenceRecord Record{F[1], F[2], F[3], F[4]};
+                    if (!ParseNumber(F[5], Record.GameMinute)) In.Fail("invalid evidence record");
+                    else State.Journal.Evidence.push_back(std::move(Record));
+                }},
+            {"journal.observation", ListItem(State.Journal.Observations)},
+            {"progress.body", [&](const std::vector<std::string>& F)
+                {
+                    ProgressionState& P = State.Progress;
+                    if (In.Scalar(F[0]) && In.Arity(F, 5) && !(ParseNumber(F[1], P.MaximumHealth) && ParseNumber(F[2], P.MaximumStamina) &&
+                            ParseNumber(F[3], P.MaximumPosture) && ParseNumber(F[4], P.CarryKilograms)))
+                    {
+                        In.Fail("invalid progression body");
+                    }
+                }},
+            {"progress.marks", [&](const std::vector<std::string>& F)
+                {
+                    if (In.Scalar(F[0]) && In.Arity(F, 3) && !(ParseNumber(F[1], State.Progress.MarksEarned) && ParseNumber(F[2], State.Progress.MarksSpent)))
+                    {
+                        In.Fail("invalid marks");
+                    }
+                }},
+            {"progress.wallet", [&](const std::vector<std::string>& F)
+                {
+                    CurrencyWallet& W = State.Progress.Wallet;
+                    if (In.Scalar(F[0]) && In.Arity(F, 4) && !(ParseNumber(F[1], W.Doubloons) && ParseNumber(F[2], W.Pounds) && ParseNumber(F[3], W.SilverMarks)))
+                    {
+                        In.Fail("invalid wallet");
+                    }
+                }},
+            {"progress.set", [&](const std::vector<std::string>& F)
+                {
+                    if (!In.Arity(F, 3)) return;
+                    ProgressionState& P = State.Progress;
+                    const std::map<std::string, std::set<std::string, std::less<>>*, std::less<>> Sets = {{"draught", &P.PhysiciansDraughtSources},
+                        {"pearl", &P.DeepWaterPearlSources}, {"deflection", &P.NamedDeflectionSources}, {"carry", &P.CarryMilestones},
+                        {"mark_source", &P.AwardedMarkSources}, {"teacher", &P.TeachersMet}, {"scene", &P.CompletedTeachingScenes},
+                        {"flag", &P.WorldFlags}, {"node", &P.LearnedNodes}, {"exclusive", &P.ChosenExclusiveGroups},
+                        {"overheard", &P.OverheardConversations}, {"legendary", &P.PaidLegendaryWork},
+                        {"reconstruction", &P.PaidReconstructionProjects}, {"service", &P.PurchasedServices}};
+                    const auto Set = Sets.find(F[1]);
+                    if (Set == Sets.end()) In.Fail("unknown progression set " + F[1]);
+                    else if (!Set->second->insert(F[2]).second) In.Fail("duplicate progression entry " + F[2]);
+                }},
+            {"progress.greeting", [&](const std::vector<std::string>& F)
+                {
+                    GreetingState Greeting{};
+                    if (In.Arity(F, 3) && (!ParseOrdinal(F[2], Greeting, GreetingState::Wary) || !State.Progress.Greetings.emplace(F[1], Greeting).second))
+                    {
+                        In.Fail("invalid greeting");
+                    }
+                }},
+            {"progress.greeting_before_wary", [&](const std::vector<std::string>& F)
+                {
+                    GreetingState Greeting{};
+                    if (In.Arity(F, 3) &&
+                        (!ParseOrdinal(F[2], Greeting, GreetingState::Wary) || !State.Progress.GreetingBeforeWary.emplace(F[1], Greeting).second))
+                    {
+                        In.Fail("invalid greeting memory");
+                    }
+                }},
+            {"progress.wary", [&](const std::vector<std::string>& F)
+                {
+                    int Chapters = 0;
+                    if (In.Arity(F, 3) && (!ParseNumber(F[2], Chapters) || !State.Progress.WaryChaptersRemaining.emplace(F[1], Chapters).second))
+                    {
+                        In.Fail("invalid wary memory");
+                    }
+                }},
+            {"progress.ledger", [&](const std::vector<std::string>& F)
+                {
+                    ChapterLedger& L = State.Progress.PendingLedger;
+                    if (In.Scalar(F[0]) && In.Arity(F, 6) && !(ParseNumber(F[1], L.HoldingIncome) && ParseNumber(F[2], L.ArmyUpkeep) &&
+                            ParseNumber(F[3], L.GarrisonUpkeep) && ParseNumber(F[4], L.ConstructionDraw) &&
+                            ParseNumber(F[5], State.Progress.LastResolvedLedgerChapter)))
+                    {
+                        In.Fail("invalid ledger");
+                    }
+                }},
+            {"progress.crew_share", [&](const std::vector<std::string>& F)
+                {
+                    int Chapter = 0;
+                    if (In.Arity(F, 2) && (!ParseNumber(F[1], Chapter) || !State.Progress.PaidCrewShareChapters.insert(Chapter).second))
+                    {
+                        In.Fail("invalid crew share");
+                    }
+                }},
+            {"npc.clock", NumberScalar(State.LivingWorld.LastSimulatedGameMinute)},
+            {"npc.record", [&](const std::vector<std::string>& F)
+                {
+                    if (!In.Arity(F, 9)) return;
+                    NpcRecord Npc;
+                    Npc.CommunityId = F[2];
+                    Npc.ScheduleAnchorId = F[3];
+                    if (!(ParseNumber(F[4], Npc.PersonalReputation) && ParseNumber(F[5], Npc.SpecificTrust) && ParseOrdinal(F[6], Npc.Mood, NpcMood::Excited) &&
+                            ParseBool(F[7], Npc.Alive) && ParseBool(F[8], Npc.Available)))
+                    {
+                        In.Fail("invalid NPC record");
+                    }
+                    else if (!State.LivingWorld.Records.emplace(F[1], std::move(Npc)).second) In.Fail("duplicate NPC " + F[1]);
+                }},
+            {"npc.memory", [&](const std::vector<std::string>& F)
+                {
+                    if (!In.Arity(F, 11)) return;
+                    const auto Npc = State.LivingWorld.Records.find(F[1]);
+                    NpcMemory Memory;
+                    Memory.EventId = F[2];
+                    Memory.SourceNpcId = F[9];
+                    if (Npc == State.LivingWorld.Records.end() || !(ParseOrdinal(F[3], Memory.Kind, NpcMemoryKind::CulturalReputation) &&
+                            ParseOrdinal(F[4], Memory.Emotion, NpcMemoryEmotion::Positive) && ParseNumber(F[5], Memory.OriginalWeight) &&
+                            ParseNumber(F[6], Memory.EffectiveWeight) && ParseNumber(F[7], Memory.OccurredAtGameMinute) &&
+                            ParseNumber(F[8], Memory.DecayPerGameDay) && ParseBool(F[10], Memory.Permanent)))
+                    {
+                        In.Fail("invalid NPC memory");
+                    }
+                    else Npc->second.Memories.push_back(std::move(Memory));
+                }},
+            {"npc.connection", [&](const std::vector<std::string>& F)
+                {
+                    if (!In.Arity(F, 4)) return;
+                    const auto Npc = State.LivingWorld.Records.find(F[1]);
+                    NpcConnection Connection{F[2]};
+                    if (Npc == State.LivingWorld.Records.end() || !ParseOrdinal(F[3], Connection.Kind, NpcConnectionKind::Community))
+                    {
+                        In.Fail("invalid NPC connection");
+                    }
+                    else Npc->second.Connections.push_back(std::move(Connection));
+                }},
+            {"npc.resolved", [&](const std::vector<std::string>& F)
+                {
+                    if (!In.Arity(F, 3)) return;
+                    const auto Npc = State.LivingWorld.Records.find(F[1]);
+                    if (Npc == State.LivingWorld.Records.end() || !Npc->second.ResolvedInteractions.insert(F[2]).second) In.Fail("invalid NPC interaction");
+                }},
             {"opening.location", OrdinalScalar(Opening.Location, OpeningLocation::RexaHarbor)},
             {"opening.raid", OrdinalScalar(Opening.RaidState, OpeningRaidState::DravenAboard)},
             {"opening.recovery", OrdinalScalar(Opening.RecoveryState, WaterRecoveryState::Recovered)},

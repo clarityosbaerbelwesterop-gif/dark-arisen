@@ -196,6 +196,8 @@ namespace DarkArisen::Core
         const bool ChapterBoundary = Current.CurrentChapter > PreviousChapter || MissionId == "Main.C10.05.TheWakeAfter";
         if (ChapterBoundary)
         {
+            // Wary greetings recover by chapter progression only.
+            for (int Chapter = PreviousChapter; Chapter < Current.CurrentChapter; ++Chapter) Progression::AdvanceSocialChapter(Current.Progress);
             if (World.NotifyChapterBoundary)
             {
                 World.NotifyChapterBoundary(Current.CurrentChapter);
@@ -544,6 +546,86 @@ namespace DarkArisen::Core
             AddFact(Facts::StateTreasuresComplete);
         }
         return true;
+    }
+
+    bool CampaignRuntime::RegisterWarRegion(const std::string_view RegionId, const ColonialFaction InitialController)
+    {
+        return CommitValidated([&](CampaignState& Candidate)
+        {
+            return ColonialWar::RegisterRegion(Candidate.ColonialWar, Candidate.CurrentChapter, RegionId, InitialController);
+        });
+    }
+
+    bool CampaignRuntime::RecordWarAction(const std::string_view RegionId, const WarActionVerb Verb, const ColonialFaction TargetFaction,
+        const int ControlDelta, const int LiberationDelta, const int CrimsonDelta)
+    {
+        return CommitValidated([&](CampaignState& Candidate)
+        {
+            return ColonialWar::RecordResolvedWarAction(
+                Candidate.ColonialWar, RegionId, Verb, TargetFaction, ControlDelta, LiberationDelta, CrimsonDelta);
+        });
+    }
+
+    bool CampaignRuntime::RecordAutonomousWarTick(const std::string_view RegionId, const AutonomousWarTick& Tick)
+    {
+        return CommitValidated([&](CampaignState& Candidate)
+        {
+            return ColonialWar::RecordAutonomousChapterTick(Candidate.ColonialWar, Candidate.CurrentChapter, RegionId, Tick);
+        });
+    }
+
+    bool CampaignRuntime::RecordFallAssaultCompleted(const std::string_view RegionId)
+    {
+        return CommitValidated([&](CampaignState& Candidate)
+        {
+            return ColonialWar::RecordFallAssaultCompleted(Candidate.ColonialWar, RegionId);
+        });
+    }
+
+    bool CampaignRuntime::ClaimHolding(const std::string_view HoldingId)
+    {
+        return CommitValidated([&](CampaignState& Candidate) { return ColonialWar::ClaimHolding(Candidate.ColonialWar, HoldingId); });
+    }
+
+    bool CampaignRuntime::RegisterQuest(const QuestDefinition& Definition)
+    {
+        QuestCatalog Candidate = Quests;
+        if (!Candidate.Register(Definition)) return false;
+        const bool Adopted = CommitValidated([&](CampaignState& State)
+        {
+            QuestJournal::AdoptCatalog(State.Journal, Candidate);
+            return true;
+        });
+        if (Adopted) Quests = std::move(Candidate);
+        return Adopted;
+    }
+
+    bool CampaignRuntime::UpdateJournal(const std::function<bool(QuestJournalState&, const QuestCatalog&)>& Mutation)
+    {
+        return Mutation && CommitValidated([&](CampaignState& Candidate) { return Mutation(Candidate.Journal, Quests); });
+    }
+
+    bool CampaignRuntime::UpdateProgression(const std::function<bool(ProgressionState&, CharacterProgression&, const SkillCatalog&)>& Mutation)
+    {
+        return Mutation && CommitValidated([&](CampaignState& Candidate) { return Mutation(Candidate.Progress, Candidate.Progression, Skills); });
+    }
+
+    bool CampaignRuntime::UpdateLivingWorld(const std::function<bool(LivingWorldState&)>& Mutation)
+    {
+        return Mutation && CommitValidated([&](CampaignState& Candidate) { return Mutation(Candidate.LivingWorld); });
+    }
+
+    std::vector<std::string_view> CampaignRuntime::AuthoredCompletionFacts(const std::string_view MissionId)
+    {
+        std::vector<std::string_view> Result;
+        for (const CompletionFactRow& Row : CompletionFacts())
+        {
+            if (Row.MissionId == MissionId)
+            {
+                Result.insert(Result.end(), Row.Facts.begin(), Row.Facts.end());
+            }
+        }
+        return Result;
     }
 
     bool CampaignRuntime::CapturePlayerRuntime(const PlayerRuntimeSnapshot& Snapshot)

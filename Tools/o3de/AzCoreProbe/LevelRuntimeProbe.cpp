@@ -11,440 +11,7 @@
 // the materialised trigger colliders), the game entity context (activate/deactivate) and the
 // level system ("LoadLevel" console command). Rendering components are counted, not run.
 
-#include <AzCore/Component/ComponentApplication.h>
-#include <AzCore/Component/ComponentApplicationBus.h>
-#include <AzCore/Component/Entity.h>
-#include <AzCore/Component/EntityIdSerializer.h>
-#include <AzCore/Console/IConsole.h>
-#include <AzCore/IO/FileIO.h>
-#include <AzCore/JSON/document.h>
-#include <AzCore/Math/Aabb.h>
-#include <AzCore/Math/Quaternion.h>
-#include <AzCore/Serialization/Json/JsonSerialization.h>
-#include <AzCore/Serialization/Json/JsonSerializationResult.h>
-#include <AzCore/Serialization/SerializeContext.h>
-#include <AzFramework/API/ApplicationAPI.h>
-#include <AzFramework/Entity/GameEntityContextBus.h>
-#include <AzFramework/IO/LocalFileIO.h>
-
-#include <DarkArisen/CameraBus.h>
-#include <DarkArisen/CampaignBus.h>
-#include <DarkArisen/CombatBus.h>
-#include <DarkArisen/OceanBus.h>
-#include <DarkArisen/SwimBus.h>
-#include "Combat/CombatantComponent.h"
-#include "Combat/EnemyBrainComponent.h"
-#include "Player/CameraRigComponent.h"
-#include "Player/LockOnComponent.h"
-#include "Player/PlayerSpawnComponent.h"
-#include "Player/SwimmerComponent.h"
-#include "Story/CampaignSystemComponent.h"
-#include "Story/MapTransitionComponent.h"
-#include "Story/OpeningDirectorComponent.h"
-#include "Story/StoryTriggerComponent.h"
-#include "World/OceanComponent.h"
-#include "World/WaterVolumeComponent.h"
-
-#include <DarkArisen/Core/CampaignRuntime.h>
-#include <DarkArisen/Core/Combat.h>
-#include <DarkArisen/Core/Facts.h>
-#include <DarkArisen/Core/Ocean.h>
-#include <DarkArisen/Core/OpeningRuntime.h>
-
-#include "ProbeSupport.h"
-
-#include <cstdio>
-#include <filesystem>
-#include <fstream>
-#include <iterator>
-#include <string>
-
-namespace
-{
-    int g_failures = 0;
-    AZStd::string g_requestedLevel;
-
-    void Check(const bool condition, const char* what)
-    {
-        std::printf("[%s] %s\n", condition ? " ok " : "FAIL", what);
-        if (!condition)
-        {
-            ++g_failures;
-        }
-    }
-
-    /** Level system stand-in: the campaign's TravelToLevel issues "LoadLevel <name>". */
-    void LoadLevel(const AZ::ConsoleCommandContainer& arguments)
-    {
-        g_requestedLevel = arguments.empty() ? "" : AZStd::string(arguments.back());
-    }
-}
-AZ_CONSOLEFREEFUNC(LoadLevel, AZ::ConsoleFunctorFlags::Null, "Probe level loader");
-
-namespace
-{
-    /** Game entity context stand-in: Start Active off entities are activated on request. */
-    class ProbeGameEntityContext : public AzFramework::GameEntityContextRequestBus::Handler
-    {
-    public:
-        ProbeGameEntityContext() { BusConnect(); }
-        ~ProbeGameEntityContext() override { BusDisconnect(); }
-
-        static AZ::Entity* Find(const AZ::EntityId& id)
-        {
-            AZ::Entity* entity = nullptr;
-            AZ::ComponentApplicationBus::BroadcastResult(entity, &AZ::ComponentApplicationRequests::FindEntity, id);
-            return entity;
-        }
-        void ActivateGameEntity(const AZ::EntityId& id) override
-        {
-            if (AZ::Entity* entity = Find(id); entity && entity->GetState() == AZ::Entity::State::Init)
-            {
-                entity->Activate();
-            }
-        }
-        void DeactivateGameEntity(const AZ::EntityId& id) override
-        {
-            if (AZ::Entity* entity = Find(id); entity && entity->GetState() == AZ::Entity::State::Active)
-            {
-                entity->Deactivate();
-            }
-        }
-        AzFramework::EntityContextId GetGameEntityContextId() override { return AzFramework::EntityContextId::CreateNull(); }
-        AzFramework::EntityContext* GetGameEntityContextInstance() override { return nullptr; }
-        AZ::Entity* CreateGameEntity(const char*) override { return nullptr; }
-        AzFramework::BehaviorEntity CreateGameEntityForBehaviorContext(const char*) override { return {}; }
-        void AddGameEntity(AZ::Entity*) override {}
-        void DestroyGameEntity(const AZ::EntityId&) override {}
-        void DestroyGameEntityAndDescendants(const AZ::EntityId&) override {}
-        bool LoadFromStream(AZ::IO::GenericStream&, bool) override { return false; }
-        void ResetGameContext() override {}
-        AZStd::string GetEntityName(const AZ::EntityId& id) override
-        {
-            AZ::Entity* entity = Find(id);
-            return entity ? entity->GetName() : AZStd::string();
-        }
-    };
-
-    /** Prefab entity references ("Entity_[n]") resolved to the probe's runtime entity ids. */
-    class AliasMapper : public AZ::JsonEntityIdSerializer::JsonEntityIdMapper
-    {
-    public:
-        AZ_RTTI(AliasMapper, "{3D1F8B62-9E47-4C05-A2B8-6F0E1C9D7A43}", AZ::JsonEntityIdSerializer::JsonEntityIdMapper);
-        AZStd::unordered_map<AZStd::string, AZ::EntityId> m_aliases;
-
-        AZ::JsonSerializationResult::Result MapJsonToId(
-            AZ::EntityId& outputValue, const rapidjson::Value& inputValue, AZ::JsonDeserializerContext& context) override
-        {
-            namespace JSR = AZ::JsonSerializationResult;
-            if (!inputValue.IsString())
-            {
-                return context.Report(JSR::Tasks::ReadField, JSR::Outcomes::Invalid, "entity reference is not an alias string");
-            }
-            const AZStd::string alias(inputValue.GetString(), inputValue.GetStringLength());
-            if (alias.empty())
-            {
-                outputValue.SetInvalid();
-                return context.Report(JSR::Tasks::ReadField, JSR::Outcomes::Success, "empty reference");
-            }
-            const auto found = m_aliases.find(alias);
-            if (found == m_aliases.end())
-            {
-                return context.Report(JSR::Tasks::ReadField, JSR::Outcomes::Missing, "reference to an entity not in the prefab");
-            }
-            outputValue = found->second;
-            return context.Report(JSR::Tasks::ReadField, JSR::Outcomes::Success, "mapped");
-        }
-        AZ::JsonSerializationResult::Result MapIdToJson(rapidjson::Value&, const AZ::EntityId&, AZ::JsonSerializerContext& context) override
-        {
-            return context.Report(AZ::JsonSerializationResult::Tasks::WriteValue, AZ::JsonSerializationResult::Outcomes::Unsupported, "load only");
-        }
-    };
-
-    struct TriggerVolume
-    {
-        AZ::EntityId m_entity;
-        AZ::Aabb m_box = AZ::Aabb::CreateNull();
-        bool m_inside = false;
-    };
-
-    struct LoadedLevel
-    {
-        AZStd::string m_name;
-        AZStd::vector<AZ::Entity*> m_entities;
-        AZStd::unordered_map<AZStd::string, AZ::EntityId> m_byName;
-        AZStd::vector<TriggerVolume> m_triggers;
-        int m_gameComponents = 0;
-        int m_rejectedComponents = 0;
-        int m_engineComponents = 0;
-
-        AZ::EntityId Id(const char* name) const
-        {
-            const auto found = m_byName.find(name);
-            return found == m_byName.end() ? AZ::EntityId() : found->second;
-        }
-    };
-
-    AZ::Component* CreateGameComponent(const AZ::Uuid& type)
-    {
-        using namespace DarkArisen;
-        if (type == azrtti_typeid<CombatantComponent>()) return aznew CombatantComponent();
-        if (type == azrtti_typeid<EnemyBrainComponent>()) return aznew EnemyBrainComponent();
-        if (type == azrtti_typeid<StoryTriggerComponent>()) return aznew StoryTriggerComponent();
-        if (type == azrtti_typeid<OpeningDirectorComponent>()) return aznew OpeningDirectorComponent();
-        if (type == azrtti_typeid<MapTransitionComponent>()) return aznew MapTransitionComponent();
-        if (type == azrtti_typeid<PlayerSpawnComponent>()) return aznew PlayerSpawnComponent();
-        if (type == azrtti_typeid<SwimmerComponent>()) return aznew SwimmerComponent();
-        if (type == azrtti_typeid<WaterVolumeComponent>()) return aznew WaterVolumeComponent();
-        if (type == azrtti_typeid<OceanComponent>()) return aznew OceanComponent();
-        if (type == azrtti_typeid<CameraRigComponent>()) return aznew CameraRigComponent();
-        if (type == azrtti_typeid<LockOnComponent>()) return aznew LockOnComponent();
-        return nullptr;  // JakeInputComponent needs the input system; it is compile-checked instead.
-    }
-
-    AZ::Vector3 ReadVector(const rapidjson::Value& object, const char* name, const AZ::Vector3& fallback = AZ::Vector3::CreateZero())
-    {
-        const auto member = object.FindMember(name);
-        if (member == object.MemberEnd() || !member->value.IsArray() || member->value.Size() != 3)
-        {
-            return fallback;
-        }
-        const auto& array = member->value;
-        return AZ::Vector3(array[0].GetFloat(), array[1].GetFloat(), array[2].GetFloat());
-    }
-
-    bool LoadPrefab(const std::filesystem::path& file, const char* levelName, AZ::SerializeContext* serialize, LoadedLevel& level)
-    {
-        level = {};
-        level.m_name = levelName;
-        std::ifstream stream(file, std::ios::binary);
-        const std::string text((std::istreambuf_iterator<char>(stream)), std::istreambuf_iterator<char>());
-        rapidjson::Document document;
-        document.Parse(text.c_str());
-        if (document.HasParseError() || !document.HasMember("Entities"))
-        {
-            std::printf("cannot parse %s\n", file.string().c_str());
-            return false;
-        }
-        AliasMapper mapper;
-        const rapidjson::Value& entities = document["Entities"];
-        for (auto it = entities.MemberBegin(); it != entities.MemberEnd(); ++it)
-        {
-            mapper.m_aliases[it->name.GetString()] = AZ::Entity::MakeId();
-        }
-        AZ::JsonDeserializerSettings settings;
-        settings.m_serializeContext = serialize;
-        settings.m_metadata.Add(static_cast<AZ::JsonEntityIdSerializer::JsonEntityIdMapper*>(&mapper));
-        AZStd::string problems;
-        settings.m_reporting = [&problems](AZStd::string_view message, AZ::JsonSerializationResult::ResultCode result, AZStd::string_view path)
-        {
-            if (result.GetOutcome() > AZ::JsonSerializationResult::Outcomes::PartialDefaults ||
-                result.GetOutcome() == AZ::JsonSerializationResult::Outcomes::Skipped ||
-                result.GetOutcome() == AZ::JsonSerializationResult::Outcomes::PartialSkip)
-            {
-                problems += AZStd::string::format("  %.*s: %.*s\n", AZ_STRING_ARG(path), AZ_STRING_ARG(message));
-            }
-            return result;
-        };
-
-        AZStd::vector<AZ::Entity*> inactive;
-        for (auto it = entities.MemberBegin(); it != entities.MemberEnd(); ++it)
-        {
-            const rapidjson::Value& source = it->value;
-            const AZ::EntityId id = mapper.m_aliases[it->name.GetString()];
-            auto* entity = aznew AZ::Entity(id, source["Name"].GetString());
-            level.m_byName[source["Name"].GetString()] = id;
-            AZ::Vector3 translate = AZ::Vector3::CreateZero();
-            AZ::Vector3 rotate = AZ::Vector3::CreateZero();
-            bool trigger = false;
-            AZ::Vector3 triggerSize = AZ::Vector3::CreateZero();
-            AZ::Vector3 triggerOffset = AZ::Vector3::CreateZero();
-            const rapidjson::Value& components = source["Components"];
-            for (auto comp = components.MemberBegin(); comp != components.MemberEnd(); ++comp)
-            {
-                const rapidjson::Value& body = comp->value;
-                const AZStd::string type = body["$type"].GetString();
-                if (type.ends_with("TransformComponent"))
-                {
-                    if (body.HasMember("Transform Data"))
-                    {
-                        translate = ReadVector(body["Transform Data"], "Translate");
-                        rotate = ReadVector(body["Transform Data"], "Rotate");
-                    }
-                }
-                else if (type == "EditorCharacterControllerComponent")
-                {
-                    entity->CreateComponent<ProbeSupport::ProbeCharacterComponent>();
-                    ++level.m_engineComponents;
-                }
-                else if (type == "EditorColliderComponent")
-                {
-                    const rapidjson::Value& collider = body["ColliderConfiguration"];
-                    if (collider.HasMember("Trigger") && collider["Trigger"].GetBool())
-                    {
-                        trigger = true;
-                        triggerSize = ReadVector(body["ShapeConfiguration"]["Box"], "Configuration");
-                        triggerOffset = ReadVector(collider, "Position");
-                    }
-                    ++level.m_engineComponents;
-                }
-                else if (type == "GenericComponentWrapper")
-                {
-                    const rapidjson::Value& templ = body["m_template"];
-                    const AZStd::string templateType = templ["$type"].GetString();
-                    const AZ::Uuid typeId(templateType.substr(0, 38).c_str());
-                    AZ::Component* component = CreateGameComponent(typeId);
-                    if (!component)
-                    {
-                        ++level.m_engineComponents;  // counted: compiled elsewhere, not run here
-                        continue;
-                    }
-                    rapidjson::Document fields;
-                    fields.CopyFrom(templ, fields.GetAllocator());
-                    fields.RemoveMember("$type");
-                    problems.clear();
-                    const auto result = AZ::JsonSerialization::Load(component, typeId, fields, settings);
-                    const bool clean = result.GetProcessing() == AZ::JsonSerializationResult::Processing::Completed && problems.empty() &&
-                        result.GetOutcome() != AZ::JsonSerializationResult::Outcomes::Skipped &&
-                        result.GetOutcome() != AZ::JsonSerializationResult::Outcomes::PartialSkip &&
-                        result.GetOutcome() <= AZ::JsonSerializationResult::Outcomes::PartialDefaults;
-                    if (!clean)
-                    {
-                        ++level.m_rejectedComponents;
-                        std::printf("rejected %s on %s:\n%s", templateType.c_str(), entity->GetName().c_str(), problems.c_str());
-                        delete component;
-                        continue;
-                    }
-                    entity->AddComponent(component);
-                    ++level.m_gameComponents;
-                }
-                else
-                {
-                    ++level.m_engineComponents;
-                }
-            }
-            auto* transform = entity->CreateComponent<ProbeSupport::ProbeTransformComponent>();
-            transform->m_world = AZ::Transform::CreateFromQuaternionAndTranslation(
-                AZ::Quaternion::CreateFromEulerDegreesXYZ(rotate), translate);
-            if (trigger)
-            {
-                const AZ::Vector3 center = translate + triggerOffset;
-                level.m_triggers.push_back({id, AZ::Aabb::CreateCenterHalfExtents(center, triggerSize * 0.5f), false});
-            }
-            entity->Init();
-            level.m_entities.push_back(entity);
-            if (source.HasMember("IsRuntimeActive") && !source["IsRuntimeActive"].GetBool())
-            {
-                inactive.push_back(entity);
-            }
-        }
-        for (AZ::Entity* entity : level.m_entities)
-        {
-            if (AZStd::find(inactive.begin(), inactive.end(), entity) == inactive.end())
-            {
-                entity->Activate();
-            }
-        }
-        return true;
-    }
-
-    void UnloadLevel(LoadedLevel& level)
-    {
-        for (AZ::Entity* entity : level.m_entities)
-        {
-            if (entity->GetState() == AZ::Entity::State::Active)
-            {
-                entity->Deactivate();
-            }
-        }
-        for (AZ::Entity* entity : level.m_entities)
-        {
-            delete entity;
-        }
-        level = {};
-    }
-
-    AZ::Vector3 Position(const AZ::EntityId& id)
-    {
-        AZ::Vector3 position = AZ::Vector3::CreateZero();
-        AZ::TransformBus::EventResult(position, id, &AZ::TransformBus::Events::GetWorldTranslation);
-        return position;
-    }
-
-    /** PhysX trigger stand-in: the player's base point entering or leaving a materialised trigger box. */
-    void UpdateTriggers(LoadedLevel& level, const AZ::EntityId& player)
-    {
-        const AZ::Vector3 point = Position(player);
-        for (TriggerVolume& trigger : level.m_triggers)
-        {
-            const bool inside = trigger.m_box.Contains(point);
-            if (inside == trigger.m_inside)
-            {
-                continue;
-            }
-            trigger.m_inside = inside;
-            AZ::Entity* entity = ProbeGameEntityContext::Find(trigger.m_entity);
-            if (!entity || entity->GetState() != AZ::Entity::State::Active)
-            {
-                continue;
-            }
-            if (auto* water = entity->FindComponent<DarkArisen::WaterVolumeComponent>())
-            {
-                inside ? water->NotifyEntered(player) : water->NotifyExited(player);
-            }
-            if (auto* story = entity->FindComponent<DarkArisen::StoryTriggerComponent>(); story && inside)
-            {
-                story->NotifyBodyEntered(player);
-            }
-        }
-    }
-
-    void Tick(LoadedLevel& level, const AZ::EntityId& player, const float seconds)
-    {
-        const int frames = static_cast<int>(seconds * 60.0f + 0.5f);
-        for (int frame = 0; frame < frames && g_requestedLevel.empty(); ++frame)
-        {
-            AZ::TickBus::ExecuteQueuedEvents();
-            AZ::TickBus::Broadcast(&AZ::TickEvents::OnTick, 1.0f / 60.0f, AZ::ScriptTimePoint());
-            if (player.IsValid())
-            {
-                UpdateTriggers(level, player);
-            }
-        }
-    }
-
-    /** Walks the player in 0.25 m steps (land movement stand-in), updating triggers on the way. */
-    void Walk(LoadedLevel& level, const AZ::EntityId& player, const AZ::Vector3& target)
-    {
-        for (int step = 0; step < 4000 && g_requestedLevel.empty(); ++step)
-        {
-            const AZ::Vector3 position = Position(player);
-            AZ::Vector3 delta = target - position;
-            delta.SetZ(0.0f);
-            if (delta.GetLength() < 0.2f)
-            {
-                break;
-            }
-            AZ::Vector3 next = position + delta.GetNormalized() * AZ::GetMin(0.25f, delta.GetLength());
-            next.SetZ(target.GetZ());
-            AZ::TransformBus::Event(player, &AZ::TransformBus::Events::SetWorldTranslation, next);
-            Tick(level, player, 1.0f / 60.0f);
-        }
-    }
-
-    DarkArisen::Core::Combatant* CombatantOf(const AZ::EntityId& id)
-    {
-        DarkArisen::Core::Combatant* combatant = nullptr;
-        DarkArisen::CombatRequestBus::Event(id, [&combatant](DarkArisen::CombatRequests* handler) { combatant = &handler->GetCombatant(); });
-        return combatant;
-    }
-
-    bool IsActive(const AZ::EntityId& id)
-    {
-        AZ::Entity* entity = ProbeGameEntityContext::Find(id);
-        return entity && entity->GetState() == AZ::Entity::State::Active;
-    }
-}
+#include "LevelProbeSupport.h"
 
 int main(int argc, char** argv)
 {
@@ -475,6 +42,8 @@ int main(int argc, char** argv)
              DarkArisen::PlayerSpawnComponent::CreateDescriptor(), DarkArisen::SwimmerComponent::CreateDescriptor(),
              DarkArisen::WaterVolumeComponent::CreateDescriptor(), DarkArisen::OceanComponent::CreateDescriptor(),
              DarkArisen::CameraRigComponent::CreateDescriptor(), DarkArisen::LockOnComponent::CreateDescriptor(),
+             DarkArisen::StoryActorComponent::CreateDescriptor(), DarkArisen::NavalCombatComponent::CreateDescriptor(),
+             DarkArisen::ShipVoyageComponent::CreateDescriptor(), DarkArisen::CreditsComponent::CreateDescriptor(),
              ProbeSupport::ProbeTransformComponent::CreateDescriptor(), ProbeSupport::ProbeCharacterComponent::CreateDescriptor()})
     {
         app.RegisterComponentDescriptor(componentDescriptor);
@@ -686,9 +255,127 @@ int main(int argc, char** argv)
     g_requestedLevel.clear();
     UnloadLevel(level);
     Check(open("L_DriftwoodCamp", level), "L_DriftwoodCamp.prefab parsed");
-    Check(level.m_gameComponents == 5 && level.m_rejectedComponents == 0, "Camp: every game component deserialised cleanly");
+    Check(level.m_rejectedComponents == 0, "Camp: every game component deserialised cleanly");
     Check(Position(level.Id("Jake")).IsClose(Position(level.Id("Anchor Arrival"))), "camp arrival spawn");
-    Check(campaign->GetOpening().Progress().Location == DarkArisen::Core::OpeningLocation::DriftwoodCamp, "vertical slice ends at Driftwood Camp");
+    Check(campaign->GetOpening().Progress().Location == DarkArisen::Core::OpeningLocation::DriftwoodCamp, "Jake reached Driftwood Camp");
+
+    // ---- Chapter 2: Driftwood Camp -> Mira's Cove -> Mangrove Shallows -> Koa -> Galleon Cove -> First Wake -> Rexa.
+    using DarkArisen::Core::OpeningLocation;
+    const auto use = [](const AZ::EntityId& target)
+    {
+        bool accepted = false;
+        DarkArisen::StoryTriggerRequestBus::EventResult(accepted, target, &DarkArisen::StoryTriggerRequests::Interact,
+            AZStd::string(DarkArisen::Core::EntityPolicy::JakeId.data(), DarkArisen::Core::EntityPolicy::JakeId.size()));
+        return accepted;
+    };
+    const auto travel = [&](const char* next, LoadedLevel& current)
+    {
+        const bool requested = g_requestedLevel == next;
+        g_requestedLevel.clear();
+        UnloadLevel(current);
+        return requested && open(next, current) && current.m_rejectedComponents == 0;
+    };
+    AZ::EntityId walker = level.Id("Jake");
+    Check(use(level.Id("Camp Shelter")), "Driftwood Camp: rest at the shelter (legal autosave)");
+    Walk(level, walker, Position(level.Id("Beat Route.MirasCove")));
+    Tick(level, walker, 0.2f);
+    Check(travel("L_MirasCove", level), "camp route: travel to L_MirasCove, level parsed cleanly");
+
+    walker = level.Id("Jake");
+    Check(Position(walker).IsClose(Position(level.Id("Anchor Arrival"))), "Mira's Cove arrival spawn");
+    Check(!runtime->IsCrewMet("crew.mira"), "arriving in Mira's Cove does not recruit Mira");
+    Walk(level, walker, Position(level.Id("Beat Route.Mangroves")));
+    Tick(level, walker, 0.2f);
+    Check(g_requestedLevel.empty() && campaign->GetOpening().Progress().Location == OpeningLocation::MirasCove,
+        "the one-way route does not leave Mira behind");
+    Walk(level, walker, Position(level.Id("Anchor Arrival")));
+    Check(!use(level.Id("Mira Recruitment Conversation")), "Mira cannot be recruited before she is met");
+    Walk(level, walker, Position(level.Id("Mira")));
+    Check(use(level.Id("Mira")) && runtime->IsCrewMet("crew.mira"), "Mira met");
+    Walk(level, walker, Position(level.Id("Mira Boat Work")));
+    Check(use(level.Id("Mira Boat Work")) && runtime->IsCrewAvailable("crew.mira"), "boat work: Mira will sail with Jake");
+    Walk(level, walker, Position(level.Id("Mira Recruitment Conversation")));
+    Check(use(level.Id("Mira Recruitment Conversation")) && runtime->IsCrewRecruited("crew.mira"), "Mira recruited");
+    Walk(level, walker, Position(level.Id("Beat Route.Mangroves")));
+    Tick(level, walker, 0.2f);
+    Check(travel("L_MangroveShallows", level), "travel to L_MangroveShallows, level parsed cleanly");
+
+    walker = level.Id("Jake");
+    Walk(level, walker, Position(level.Id("Big Tom")));
+    Check(use(level.Id("Big Tom")) && !use(level.Id("Big Tom Joins")), "Big Tom met; he does not join before the work");
+    Walk(level, walker, Position(level.Id("Big Tom Work Event")));
+    Check(use(level.Id("Big Tom Work Event")), "work event with Big Tom");
+    Walk(level, walker, Position(level.Id("Big Tom Joins")));
+    Check(use(level.Id("Big Tom Joins")) && runtime->IsCrewRecruited("crew.big_tom"), "Big Tom recruited");
+    Walk(level, walker, Position(level.Id("Beat Route.Koa")));
+    Tick(level, walker, 0.2f);
+    Check(travel("L_KoaTradingPost", level), "travel to L_KoaTradingPost, level parsed cleanly");
+
+    walker = level.Id("Jake");
+    Check(level.Id("Koa").IsValid(), "Koa at the trading post counter");
+    Walk(level, walker, Position(level.Id("Beat Route.GalleonCove")));
+    Tick(level, walker, 0.2f);
+    Check(travel("L_GalleonCove", level), "travel to L_GalleonCove, level parsed cleanly");
+
+    walker = level.Id("Jake");
+    Walk(level, walker, Position(level.Id("Harbor Control")));
+    Check(use(level.Id("Harbor Control")) && runtime->GetMissionState("Main.C02.01.ShatteredCoast") == DarkArisen::Core::MissionState::Completed &&
+            runtime->GetMissionState("Main.C02.02.AShipToTake") == DarkArisen::Core::MissionState::Active,
+        "harbor control taken: Shattered Coast complete, A Ship to Take active");
+    Walk(level, walker, Position(level.Id("Esteban")));
+    Check(use(level.Id("Esteban")), "Esteban met");
+    Walk(level, walker, Position(level.Id("Harbor Control Crew Records")));
+    Check(use(level.Id("Harbor Control Crew Records")) && runtime->IsCrewAvailable("crew.esteban"), "Esteban free to sign on");
+    Walk(level, walker, Position(level.Id("La Liberacion Gangway")));
+    Tick(level, walker, 0.1f);
+    Check(campaign->GetOpening().Progress().LaLiberacionBoarded, "Jake boards La Liberacion at the prize berth");
+    Walk(level, walker, Position(level.Id("La Liberacion Helm")));
+    Check(!use(level.Id("La Liberacion Helm")), "helm refused before the core crew is complete");
+    Walk(level, walker, Position(level.Id("Esteban Signs On")));
+    Check(use(level.Id("Esteban Signs On")) && runtime->AreOpeningCrewRecruited(), "Esteban signs on: Mira, Big Tom and Esteban aboard");
+    Walk(level, walker, Position(level.Id("La Liberacion Helm")));
+    Check(use(level.Id("La Liberacion Helm")), "Jake takes the helm");
+    // Sailing out: La Liberacion carries Jake through the harbor exit.
+    const AZ::EntityId prize = level.Id("La Liberacion");
+    const AZ::Vector3 exit = Position(level.Id("Harbor Exit"));
+    for (int step = 1; step <= 40 && g_requestedLevel.empty(); ++step)
+    {
+        const AZ::Vector3 ship = Position(prize).Lerp(exit, 0.1f);
+        const AZ::Vector3 carried = Position(walker) + (ship - Position(prize));
+        AZ::TransformBus::Event(prize, &AZ::TransformBus::Events::SetWorldTranslation, ship);
+        AZ::TransformBus::Event(walker, &AZ::TransformBus::Events::SetWorldTranslation, carried);
+        Tick(level, walker, 0.1f);
+    }
+    Tick(level, walker, 3.0f);
+    Check(runtime->GetMissionState("Main.C02.02.AShipToTake") == DarkArisen::Core::MissionState::Completed && runtime->HasFact(DarkArisen::Core::Facts::LaLiberacionOwned),
+        "La Liberacion clears Moran's harbor under her own movement: A Ship to Take complete");
+    Check(travel("L_OpenSea_FirstWake", level), "travel to L_OpenSea_FirstWake, level parsed cleanly");
+
+    walker = level.Id("Jake");
+    Tick(level, walker, 0.2f);
+    Check(runtime->GetMissionState("Main.C02.03.FirstWake") == DarkArisen::Core::MissionState::Active, "First Wake begins at the harbor exit");
+    const AZ::EntityId brig = level.Id("La Liberacion");
+    const AZ::Vector3 rexa = Position(level.Id("Rexa Approach"));
+    const float distance = (rexa - Position(brig)).GetLength();
+    Check(distance >= 4500.0f, "Rexa lies the authored 4.5 km of open sea away (no water fast travel)");
+    int legs = 0;
+    while (g_requestedLevel.empty() && legs < 2000)
+    {
+        const AZ::Vector3 heading = (rexa - Position(brig)).GetNormalizedSafe();
+        const AZ::Vector3 ship = Position(brig) + heading * 5.0f;  // 5 m per sailing step
+        AZ::TransformBus::Event(walker, &AZ::TransformBus::Events::SetWorldTranslation, Position(walker) + (ship - Position(brig)));
+        AZ::TransformBus::Event(brig, &AZ::TransformBus::Events::SetWorldTranslation, ship);
+        Tick(level, walker, 1.0f / 30.0f);
+        ++legs;
+    }
+    Tick(level, walker, 3.0f);
+    Check(runtime->GetMissionState("Main.C02.03.FirstWake") == DarkArisen::Core::MissionState::Completed && runtime->HasFact("World.RexaEntered") &&
+            runtime->State().CurrentChapter == 3 && legs * 5.0f >= 4400.0f,
+        "sailed into Rexa: First Wake complete, Chapter 3 begins");
+    Check(travel("L_RexaHarbor", level), "travel to L_RexaHarbor, level parsed cleanly");
+    walker = level.Id("Jake");
+    Tick(level, walker, 0.2f);
+    Check(runtime->GetMissionState("Main.C03.01.RexaHarbor") == DarkArisen::Core::MissionState::Active, "Rexa Harbor: Chapter 3 starts on the dock");
 
     UnloadLevel(level);
     systemEntity->Deactivate();

@@ -1,0 +1,4344 @@
+{
+    "ContainerEntity": {
+        "Components": {
+            "Component_[1807480149460059]": {
+                "$type": "EditorDisabledCompositionComponent",
+                "Id": 1807480149460059
+            },
+            "Component_[295898184595829]": {
+                "$type": "EditorVisibilityComponent",
+                "Id": 295898184595829
+            },
+            "Component_[3667599268345951]": {
+                "$type": "EditorEntityIconComponent",
+                "Id": 3667599268345951
+            },
+            "Component_[4956510804932086]": {
+                "$type": "EditorOnlyEntityComponent",
+                "Id": 4956510804932086
+            },
+            "Component_[531585893252323]": {
+                "$type": "EditorPrefabComponent",
+                "Id": 531585893252323
+            },
+            "Component_[5582356342658904]": {
+                "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                "Id": 5582356342658904,
+                "Parent Entity": ""
+            },
+            "Component_[5725322512823986]": {
+                "$type": "EditorInspectorComponent",
+                "Id": 5725322512823986
+            },
+            "Component_[6145348234959404]": {
+                "$type": "EditorEntitySortComponent",
+                "Id": 6145348234959404
+            },
+            "Component_[8063322746863328]": {
+                "$type": "EditorPendingCompositionComponent",
+                "Id": 8063322746863328
+            },
+            "Component_[878589348002396]": {
+                "$type": "EditorLockComponent",
+                "Id": 878589348002396
+            }
+        },
+        "Id": "ContainerEntity",
+        "Name": "Level"
+    },
+    "Entities": {
+        "Entity_[1435091402141269]": {
+            "Components": {
+                "Component_[1068034818250032]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 1068034818250032
+                },
+                "Component_[1154424589837261]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_7000x600x850.azmodel",
+                                "assetId": {
+                                    "guid": "{BA6F9C93-3074-539B-BD51-B75943AE3762}",
+                                    "subId": 270350464
+                                }
+                            }
+                        }
+                    },
+                    "Id": 1154424589837261
+                },
+                "Component_[2270849312749690]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 2270849312749690,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            42,
+                            26,
+                            -7.3
+                        ]
+                    }
+                },
+                "Component_[2886809528606306]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 2886809528606306
+                },
+                "Component_[32756202850431]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            4.25
+                        ]
+                    },
+                    "Id": 32756202850431,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                70,
+                                6,
+                                8.5
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[4823656929379943]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 4823656929379943
+                },
+                "Component_[4988991564541656]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 4988991564541656
+                },
+                "Component_[5064124399110886]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 5064124399110886
+                },
+                "Component_[5400423743304757]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 5400423743304757
+                },
+                "Component_[8093925249073394]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 8093925249073394
+                },
+                "Component_[8636908310174653]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 8636908310174653
+                },
+                "Component_[929533845364780]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 929533845364780
+                }
+            },
+            "Id": "Entity_[1435091402141269]",
+            "Name": "Geometry MastBoundary"
+        },
+        "Entity_[1820748079550524]": {
+            "Components": {
+                "Component_[1769679712785545]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 1769679712785545
+                },
+                "Component_[1918892602264688]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 1918892602264688,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4,
+                                4,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[2070778977712413]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 2070778977712413
+                },
+                "Component_[3997459772260201]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 3997459772260201
+                },
+                "Component_[4492437846487393]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 4492437846487393
+                },
+                "Component_[522639166549464]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 522639166549464
+                },
+                "Component_[5543160271024906]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 5543160271024906
+                },
+                "Component_[5950000185754796]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 5950000185754796
+                },
+                "Component_[6368092224284501]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 6368092224284501,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            108,
+                            0,
+                            0.2
+                        ]
+                    }
+                },
+                "Component_[6692858729866343]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 6692858729866343
+                },
+                "Component_[7727284951378965]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 7727284951378965
+                },
+                "Component_[7918055007748202]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_400x400x100.azmodel",
+                                "assetId": {
+                                    "guid": "{3F3B8CF0-DE93-5A11-AD57-D71927DC805C}",
+                                    "subId": 270783830
+                                }
+                            }
+                        }
+                    },
+                    "Id": 7918055007748202
+                }
+            },
+            "Id": "Entity_[1820748079550524]",
+            "Name": "PROVISIONAL Pad AftermathThreshold"
+        },
+        "Entity_[1950401341711266]": {
+            "Components": {
+                "Component_[1160899745721985]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 1160899745721985
+                },
+                "Component_[2783530966932725]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 2783530966932725,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            108,
+                            0,
+                            1.2
+                        ]
+                    }
+                },
+                "Component_[3126743017143500]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 3126743017143500
+                },
+                "Component_[3214726913802296]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 3214726913802296
+                },
+                "Component_[4241620409708989]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 4241620409708989
+                },
+                "Component_[4742654530857642]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 4742654530857642
+                },
+                "Component_[4795384923986793]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 4795384923986793
+                },
+                "Component_[5479756998722695]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 5479756998722695
+                },
+                "Component_[5923344569371893]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 5923344569371893
+                }
+            },
+            "Id": "Entity_[1950401341711266]",
+            "Name": "Anchor AftermathThreshold"
+        },
+        "Entity_[2594259017524086]": {
+            "Components": {
+                "Component_[1110234107748733]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 1110234107748733
+                },
+                "Component_[1840052457526714]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 1840052457526714
+                },
+                "Component_[1929881431320820]": {
+                    "$type": "GenericComponentWrapper",
+                    "Id": 1929881431320820,
+                    "m_template": {
+                        "$type": "{61B9D4E2-3A7C-4F18-9E05-C2D8A4B61F37} CameraRigComponent",
+                        "Target": "Entity_[2939953214992559]"
+                    }
+                },
+                "Component_[2574239176231278]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 2574239176231278
+                },
+                "Component_[2627151805206199]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 2627151805206199
+                },
+                "Component_[4151270993047931]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 4151270993047931,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            0.45,
+                            -3.6,
+                            1.66
+                        ]
+                    }
+                },
+                "Component_[6761827054546403]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 6761827054546403
+                },
+                "Component_[7999321965512141]": {
+                    "$type": "{CA11DA46-29FF-4083-B5F6-E02C3A8C3A3D} EditorCameraComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "Field of View": 60
+                        }
+                    },
+                    "Id": 7999321965512141
+                },
+                "Component_[8021115272069451]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 8021115272069451
+                },
+                "Component_[8186280042922252]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 8186280042922252
+                },
+                "Component_[8696728475918255]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 8696728475918255
+                }
+            },
+            "Id": "Entity_[2594259017524086]",
+            "Name": "Jake Camera"
+        },
+        "Entity_[2618941583947554]": {
+            "Components": {
+                "Component_[1574205094209028]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 1574205094209028,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4.05,
+                                3,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[2416181471707237]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 2416181471707237
+                },
+                "Component_[3875935634229382]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetId": {
+                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
+                                    "subId": 269725335
+                                }
+                            }
+                        }
+                    },
+                    "Id": 3875935634229382
+                },
+                "Component_[4372887805257665]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 4372887805257665
+                },
+                "Component_[5030399719168537]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 5030399719168537
+                },
+                "Component_[5571401778515878]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 5571401778515878
+                },
+                "Component_[5679270055676459]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 5679270055676459
+                },
+                "Component_[570882650479072]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 570882650479072
+                },
+                "Component_[5763570858601613]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 5763570858601613
+                },
+                "Component_[6372594124798061]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 6372594124798061
+                },
+                "Component_[8155292369624417]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 8155292369624417,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            32.4,
+                            0,
+                            -0.227273
+                        ]
+                    }
+                },
+                "Component_[875127233433308]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 875127233433308
+                }
+            },
+            "Id": "Entity_[2618941583947554]",
+            "Name": "PROVISIONAL Path ArenaEntry to BlackDeckCenter 8"
+        },
+        "Entity_[2618941583947989]": {
+            "Components": {
+                "Component_[1820247106125479]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 1820247106125479
+                },
+                "Component_[3069116694181696]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetId": {
+                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
+                                    "subId": 269725335
+                                }
+                            }
+                        }
+                    },
+                    "Id": 3069116694181696
+                },
+                "Component_[3205721271653750]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 3205721271653750
+                },
+                "Component_[3707007757384775]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 3707007757384775
+                },
+                "Component_[4841464604648789]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 4841464604648789
+                },
+                "Component_[5455270736076415]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 5455270736076415
+                },
+                "Component_[6319869126202923]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 6319869126202923
+                },
+                "Component_[6565441149247234]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 6565441149247234
+                },
+                "Component_[6604916148553076]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 6604916148553076
+                },
+                "Component_[6688949886042931]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 6688949886042931,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            36.2,
+                            0,
+                            -0.136364
+                        ]
+                    }
+                },
+                "Component_[6820651161005427]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 6820651161005427
+                },
+                "Component_[8951161364462878]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 8951161364462878,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4.05,
+                                3,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                }
+            },
+            "Id": "Entity_[2618941583947989]",
+            "Name": "PROVISIONAL Path ArenaEntry to BlackDeckCenter 9"
+        },
+        "Entity_[2621140607203976]": {
+            "Components": {
+                "Component_[2183626238642937]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 2183626238642937
+                },
+                "Component_[3047527106313716]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 3047527106313716,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            24.8,
+                            0,
+                            -0.409091
+                        ]
+                    }
+                },
+                "Component_[3618570803251414]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 3618570803251414
+                },
+                "Component_[3998928479885513]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 3998928479885513,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4.05,
+                                3,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[5431151264779864]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 5431151264779864
+                },
+                "Component_[5582963078212667]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 5582963078212667
+                },
+                "Component_[5934574280281732]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 5934574280281732
+                },
+                "Component_[6185415322494991]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 6185415322494991
+                },
+                "Component_[6200655489632120]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 6200655489632120
+                },
+                "Component_[6710466608661383]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetId": {
+                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
+                                    "subId": 269725335
+                                }
+                            }
+                        }
+                    },
+                    "Id": 6710466608661383
+                },
+                "Component_[8261138605427990]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 8261138605427990
+                },
+                "Component_[8802146591789802]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 8802146591789802
+                }
+            },
+            "Id": "Entity_[2621140607203976]",
+            "Name": "PROVISIONAL Path ArenaEntry to BlackDeckCenter 6"
+        },
+        "Entity_[2621140607204411]": {
+            "Components": {
+                "Component_[1989861515977880]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 1989861515977880,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4.05,
+                                3,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[430214718858559]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 430214718858559
+                },
+                "Component_[4546948295879581]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 4546948295879581
+                },
+                "Component_[4971392482112301]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 4971392482112301,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            28.6,
+                            0,
+                            -0.318182
+                        ]
+                    }
+                },
+                "Component_[5070552175286962]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 5070552175286962
+                },
+                "Component_[6911326632663828]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 6911326632663828
+                },
+                "Component_[7801955009499858]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetId": {
+                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
+                                    "subId": 269725335
+                                }
+                            }
+                        }
+                    },
+                    "Id": 7801955009499858
+                },
+                "Component_[8065081538473961]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 8065081538473961
+                },
+                "Component_[8210889493386513]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 8210889493386513
+                },
+                "Component_[8331893521518336]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 8331893521518336
+                },
+                "Component_[881196303539365]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 881196303539365
+                },
+                "Component_[8938099506227873]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 8938099506227873
+                }
+            },
+            "Id": "Entity_[2621140607204411]",
+            "Name": "PROVISIONAL Path ArenaEntry to BlackDeckCenter 7"
+        },
+        "Entity_[2623339630460398]": {
+            "Components": {
+                "Component_[166406642470971]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 166406642470971
+                },
+                "Component_[2390323054503261]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 2390323054503261
+                },
+                "Component_[3876221805168150]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetId": {
+                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
+                                    "subId": 269725335
+                                }
+                            }
+                        }
+                    },
+                    "Id": 3876221805168150
+                },
+                "Component_[4241048721183241]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 4241048721183241
+                },
+                "Component_[4896856197921525]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 4896856197921525
+                },
+                "Component_[4927223535743089]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 4927223535743089,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            17.2,
+                            0,
+                            -0.590909
+                        ]
+                    }
+                },
+                "Component_[5254601746192893]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 5254601746192893
+                },
+                "Component_[5504105899339344]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 5504105899339344
+                },
+                "Component_[5958866724903028]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 5958866724903028,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4.05,
+                                3,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[701044780365654]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 701044780365654
+                },
+                "Component_[784730976538065]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 784730976538065
+                },
+                "Component_[8788980451968172]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 8788980451968172
+                }
+            },
+            "Id": "Entity_[2623339630460398]",
+            "Name": "PROVISIONAL Path ArenaEntry to BlackDeckCenter 4"
+        },
+        "Entity_[2623339630460833]": {
+            "Components": {
+                "Component_[185851577948995]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 185851577948995
+                },
+                "Component_[3021099722970079]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 3021099722970079
+                },
+                "Component_[3563655619813706]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 3563655619813706
+                },
+                "Component_[3687732147740162]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 3687732147740162,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4.05,
+                                3,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[4247413998690585]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 4247413998690585
+                },
+                "Component_[4414893085294982]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 4414893085294982
+                },
+                "Component_[5243963588127948]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetId": {
+                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
+                                    "subId": 269725335
+                                }
+                            }
+                        }
+                    },
+                    "Id": 5243963588127948
+                },
+                "Component_[538150598800144]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 538150598800144
+                },
+                "Component_[7405342029796419]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 7405342029796419
+                },
+                "Component_[7794927177921631]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 7794927177921631,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            21,
+                            0,
+                            -0.5
+                        ]
+                    }
+                },
+                "Component_[8659697559816523]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 8659697559816523
+                },
+                "Component_[998033627616559]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 998033627616559
+                }
+            },
+            "Id": "Entity_[2623339630460833]",
+            "Name": "PROVISIONAL Path ArenaEntry to BlackDeckCenter 5"
+        },
+        "Entity_[2625538653716820]": {
+            "Components": {
+                "Component_[1773853571736942]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetId": {
+                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
+                                    "subId": 269725335
+                                }
+                            }
+                        }
+                    },
+                    "Id": 1773853571736942
+                },
+                "Component_[3098160424904917]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 3098160424904917
+                },
+                "Component_[4012218739855342]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 4012218739855342
+                },
+                "Component_[5314967393456484]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 5314967393456484
+                },
+                "Component_[5600863224068125]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 5600863224068125
+                },
+                "Component_[5925346822800089]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 5925346822800089,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            9.6,
+                            0,
+                            -0.772727
+                        ]
+                    }
+                },
+                "Component_[7951580550261699]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 7951580550261699
+                },
+                "Component_[7953097923825557]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 7953097923825557
+                },
+                "Component_[8073940121270121]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 8073940121270121
+                },
+                "Component_[830268149713224]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 830268149713224
+                },
+                "Component_[8367164238002156]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 8367164238002156,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4.05,
+                                3,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[8808276501164737]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 8808276501164737
+                }
+            },
+            "Id": "Entity_[2625538653716820]",
+            "Name": "PROVISIONAL Path ArenaEntry to BlackDeckCenter 2"
+        },
+        "Entity_[2625538653717255]": {
+            "Components": {
+                "Component_[1191770307587263]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 1191770307587263
+                },
+                "Component_[1765541882133719]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetId": {
+                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
+                                    "subId": 269725335
+                                }
+                            }
+                        }
+                    },
+                    "Id": 1765541882133719
+                },
+                "Component_[2879933478253606]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 2879933478253606
+                },
+                "Component_[3177090412315156]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 3177090412315156
+                },
+                "Component_[4039025714824452]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 4039025714824452,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            13.4,
+                            0,
+                            -0.681818
+                        ]
+                    }
+                },
+                "Component_[4924948265629065]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 4924948265629065
+                },
+                "Component_[6165058705831481]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 6165058705831481,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4.05,
+                                3,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[6444794051268486]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 6444794051268486
+                },
+                "Component_[7115604317003400]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 7115604317003400
+                },
+                "Component_[8716172525107112]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 8716172525107112
+                },
+                "Component_[8892754237607147]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 8892754237607147
+                },
+                "Component_[9002587644366906]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 9002587644366906
+                }
+            },
+            "Id": "Entity_[2625538653717255]",
+            "Name": "PROVISIONAL Path ArenaEntry to BlackDeckCenter 3"
+        },
+        "Entity_[2627737676973242]": {
+            "Components": {
+                "Component_[1316445900866365]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 1316445900866365
+                },
+                "Component_[2097834981057205]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 2097834981057205
+                },
+                "Component_[307782258794490]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 307782258794490,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            2,
+                            0,
+                            -0.954545
+                        ]
+                    }
+                },
+                "Component_[4610275064409702]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 4610275064409702
+                },
+                "Component_[4685023704508076]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 4685023704508076
+                },
+                "Component_[6510393774812647]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 6510393774812647
+                },
+                "Component_[6675728409974360]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 6675728409974360
+                },
+                "Component_[6798422627381069]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetId": {
+                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
+                                    "subId": 269725335
+                                }
+                            }
+                        }
+                    },
+                    "Id": 6798422627381069
+                },
+                "Component_[6884536169489407]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 6884536169489407,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4.05,
+                                3,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[773462839765106]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 773462839765106
+                },
+                "Component_[7948829334851504]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 7948829334851504
+                },
+                "Component_[812999953937890]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 812999953937890
+                }
+            },
+            "Id": "Entity_[2627737676973242]",
+            "Name": "PROVISIONAL Path ArenaEntry to BlackDeckCenter 0"
+        },
+        "Entity_[2627737676973677]": {
+            "Components": {
+                "Component_[1108281622082781]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 1108281622082781
+                },
+                "Component_[1571685633774644]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 1571685633774644
+                },
+                "Component_[1589732264304048]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 1589732264304048
+                },
+                "Component_[2108445982104949]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetId": {
+                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
+                                    "subId": 269725335
+                                }
+                            }
+                        }
+                    },
+                    "Id": 2108445982104949
+                },
+                "Component_[3027309602802735]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 3027309602802735
+                },
+                "Component_[3297482720758442]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 3297482720758442
+                },
+                "Component_[3807860931858462]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 3807860931858462
+                },
+                "Component_[3895841684018744]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 3895841684018744
+                },
+                "Component_[4444188972619175]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 4444188972619175,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4.05,
+                                3,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[5536087705055538]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 5536087705055538,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            5.8,
+                            0,
+                            -0.863636
+                        ]
+                    }
+                },
+                "Component_[6268491666873722]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 6268491666873722
+                },
+                "Component_[8769501634141765]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 8769501634141765
+                }
+            },
+            "Id": "Entity_[2627737676973677]",
+            "Name": "PROVISIONAL Path ArenaEntry to BlackDeckCenter 1"
+        },
+        "Entity_[2939953214992559]": {
+            "Components": {
+                "Component_[1772252767560430]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 1772252767560430
+                },
+                "Component_[1773580113951757]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 1773580113951757
+                },
+                "Component_[2346192145909094]": {
+                    "$type": "{3BA7C3CB-C471-4230-8EC9-9EC4C529436F} EditorCharacterGameplayComponent",
+                    "Id": 2346192145909094
+                },
+                "Component_[289388789637626]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 289388789637626
+                },
+                "Component_[3192204195794792]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 3192204195794792
+                },
+                "Component_[3726266327201319]": {
+                    "$type": "GenericComponentWrapper",
+                    "Id": 3726266327201319,
+                    "m_template": {
+                        "$type": "{ADB14533-41E7-4192-A2C6-711B7888F20A} JakeInputComponent"
+                    }
+                },
+                "Component_[3796675559646079]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 3796675559646079
+                },
+                "Component_[4235276553583709]": {
+                    "$type": "GenericComponentWrapper",
+                    "Id": 4235276553583709,
+                    "m_template": {
+                        "$type": "{F78D1ADA-EFCC-4F70-BBF5-13DB7B1CFDDC} CombatantComponent",
+                        "CombatantId": "character.jake",
+                        "RallyEnabled": true
+                    }
+                },
+                "Component_[4320596737287173]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/characters/jake/sk_jake_alpha_bindpose.azmodel",
+                                "assetId": {
+                                    "guid": "{BC8B88D8-23A6-5D92-B4B0-583548F206EE}",
+                                    "subId": 279915574
+                                }
+                            }
+                        }
+                    },
+                    "Id": 4320596737287173
+                },
+                "Component_[4988741538065346]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 4988741538065346,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            0,
+                            0,
+                            0
+                        ]
+                    }
+                },
+                "Component_[5571503628206778]": {
+                    "$type": "GenericComponentWrapper",
+                    "Id": 5571503628206778,
+                    "m_template": {
+                        "$type": "{D3F82A57-0B6E-4C91-8A24-5E7F1C9B3D60} LockOnComponent"
+                    }
+                },
+                "Component_[5631506608044149]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 5631506608044149
+                },
+                "Component_[6130392275806080]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 6130392275806080
+                },
+                "Component_[7845918197136590]": {
+                    "$type": "GenericComponentWrapper",
+                    "Id": 7845918197136590,
+                    "m_template": {
+                        "$type": "{3F9C2A71-5B8E-4D06-9E4A-1C7B6D2E8F35} SwimmerComponent"
+                    }
+                },
+                "Component_[8336419737439882]": {
+                    "$type": "EditorCharacterControllerComponent",
+                    "Id": 8336419737439882,
+                    "ShapeConfig": {
+                        "Capsule": {
+                            "Height": 1.92,
+                            "Radius": 0.42
+                        },
+                        "ShapeType": 2
+                    }
+                },
+                "Component_[975998599135946]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 975998599135946
+                }
+            },
+            "Id": "Entity_[2939953214992559]",
+            "Name": "Jake"
+        },
+        "Entity_[346592250421970]": {
+            "Components": {
+                "Component_[124652394126339]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 124652394126339
+                },
+                "Component_[238600533975504]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 238600533975504
+                },
+                "Component_[2876300375384479]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 2876300375384479
+                },
+                "Component_[3365765870909913]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 3365765870909913
+                },
+                "Component_[5640251112072202]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 5640251112072202
+                },
+                "Component_[6009486380496111]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 6009486380496111
+                },
+                "Component_[7126320092380831]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 7126320092380831,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            78,
+                            0,
+                            1
+                        ]
+                    }
+                },
+                "Component_[7788886665034499]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 7788886665034499
+                },
+                "Component_[7892236936010566]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 7892236936010566
+                }
+            },
+            "Id": "Entity_[346592250421970]",
+            "Name": "Anchor DravenSpawn"
+        },
+        "Entity_[3757799295564808]": {
+            "Components": {
+                "Component_[1288410773855770]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 1288410773855770
+                },
+                "Component_[1342542002718495]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 1342542002718495
+                },
+                "Component_[1587509447939497]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 1587509447939497
+                },
+                "Component_[2475174623896820]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 2475174623896820
+                },
+                "Component_[2904118171033158]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 2904118171033158
+                },
+                "Component_[3788468351635368]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 3788468351635368
+                },
+                "Component_[5694781127862987]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 5694781127862987
+                },
+                "Component_[7333024816206820]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 7333024816206820,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            0,
+                            0,
+                            0
+                        ]
+                    }
+                },
+                "Component_[7504308498560776]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 7504308498560776
+                },
+                "Component_[8183677149167040]": {
+                    "$type": "GenericComponentWrapper",
+                    "Id": 8183677149167040,
+                    "m_template": {
+                        "$type": "{5B64F7E8-4E53-4048-BBBD-FE020A8CD270} StoryActorComponent",
+                        "Action": 0,
+                        "CheckpointId": "Checkpoint.C10.Draven.Entry",
+                        "Kind": 0,
+                        "MissionId": "Main.C10.04.DravenVoss",
+                        "SpawnId": "Spawn.C10.Draven.Entry"
+                    }
+                },
+                "Component_[8962450123460697]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "InSceneQueries": false,
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            1.3
+                        ],
+                        "Trigger": true
+                    },
+                    "Id": 8962450123460697,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                5.2,
+                                5.2,
+                                3.6
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[8997974769020454]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 8997974769020454
+                }
+            },
+            "Id": "Entity_[3757799295564808]",
+            "Name": "C10_04_Entry"
+        },
+        "Entity_[399685050805920]": {
+            "Components": {
+                "Component_[2141638132524360]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 2141638132524360
+                },
+                "Component_[3385513054481257]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 3385513054481257
+                },
+                "Component_[3699901571521749]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 3699901571521749
+                },
+                "Component_[4612860374844398]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 4612860374844398
+                },
+                "Component_[5021913029619393]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 5021913029619393
+                },
+                "Component_[5627019344088093]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 5627019344088093
+                },
+                "Component_[5916708540073316]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 5916708540073316
+                },
+                "Component_[8335414059316953]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 8335414059316953,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            42,
+                            -26,
+                            1.2
+                        ]
+                    }
+                },
+                "Component_[8553321696878531]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 8553321696878531
+                }
+            },
+            "Id": "Entity_[399685050805920]",
+            "Name": "Anchor QuarterSide"
+        },
+        "Entity_[4098245664663272]": {
+            "Components": {
+                "Component_[1112502212300024]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 1112502212300024
+                },
+                "Component_[3110590561252610]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 3110590561252610
+                },
+                "Component_[4890199065769671]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 4890199065769671
+                },
+                "Component_[5762839965691408]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 5762839965691408
+                },
+                "Component_[6482702498359066]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 6482702498359066,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            0,
+                            0,
+                            0
+                        ]
+                    }
+                },
+                "Component_[6774724999887122]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 6774724999887122
+                },
+                "Component_[7453894374144861]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 7453894374144861
+                },
+                "Component_[7937827469117653]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 7937827469117653
+                },
+                "Component_[8562347087432262]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 8562347087432262
+                }
+            },
+            "Id": "Entity_[4098245664663272]",
+            "Name": "Anchor ArenaEntry"
+        },
+        "Entity_[4643334064800531]": {
+            "Components": {
+                "Component_[1180493243991057]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 1180493243991057
+                },
+                "Component_[1756876156673696]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 1756876156673696
+                },
+                "Component_[1842394475253746]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 1842394475253746
+                },
+                "Component_[2970512880827472]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 2970512880827472
+                },
+                "Component_[37145504143854]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 37145504143854
+                },
+                "Component_[3744748028621587]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 3744748028621587
+                },
+                "Component_[4203475910134876]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 4203475910134876
+                },
+                "Component_[5763158550628604]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 5763158550628604,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            42,
+                            26,
+                            1.2
+                        ]
+                    }
+                },
+                "Component_[7920253604886887]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 7920253604886887
+                }
+            },
+            "Id": "Entity_[4643334064800531]",
+            "Name": "Anchor MastSide"
+        },
+        "Entity_[4654658727083536]": {
+            "Components": {
+                "Component_[4127131822193614]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 4127131822193614
+                },
+                "Component_[5277357170961659]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 5277357170961659
+                },
+                "Component_[5621817429235314]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 5621817429235314
+                },
+                "Component_[6350715786161208]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 6350715786161208
+                },
+                "Component_[6943622844144983]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 6943622844144983
+                },
+                "Component_[6977016830188471]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 6977016830188471,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            42,
+                            0,
+                            1
+                        ]
+                    }
+                },
+                "Component_[7068916836520139]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 7068916836520139
+                },
+                "Component_[7395117170923633]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 7395117170923633
+                },
+                "Component_[7979778649877959]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 7979778649877959
+                }
+            },
+            "Id": "Entity_[4654658727083536]",
+            "Name": "Anchor BlackDeckCenter"
+        },
+        "Entity_[478855947165392]": {
+            "Components": {
+                "Component_[1380514105544039]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 1380514105544039
+                },
+                "Component_[2066779259792401]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 2066779259792401
+                },
+                "Component_[206705518597207]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 206705518597207,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            21.501434
+                        ],
+                        "Translate": [
+                            106.139183,
+                            -0.733049,
+                            0.2
+                        ]
+                    }
+                },
+                "Component_[2236112663241834]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 2236112663241834,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4.05,
+                                3,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[2277441811227563]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 2277441811227563
+                },
+                "Component_[2816701133350994]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 2816701133350994
+                },
+                "Component_[2904790049693939]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 2904790049693939
+                },
+                "Component_[461156207331288]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 461156207331288
+                },
+                "Component_[6058109156788215]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 6058109156788215
+                },
+                "Component_[8151299494333422]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 8151299494333422
+                },
+                "Component_[8250017176936628]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetId": {
+                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
+                                    "subId": 269725335
+                                }
+                            }
+                        }
+                    },
+                    "Id": 8250017176936628
+                },
+                "Component_[8461457882147931]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 8461457882147931
+                }
+            },
+            "Id": "Entity_[478855947165392]",
+            "Name": "PROVISIONAL Path QuarterSide to AftermathThreshold 17"
+        },
+        "Entity_[481054970421379]": {
+            "Components": {
+                "Component_[1384743004232720]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 1384743004232720
+                },
+                "Component_[1858107703541644]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 1858107703541644
+                },
+                "Component_[2873212230661054]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 2873212230661054
+                },
+                "Component_[3326317685651777]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 3326317685651777
+                },
+                "Component_[3911032274019308]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 3911032274019308,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            21.501434
+                        ],
+                        "Translate": [
+                            102.47575,
+                            -2.17622,
+                            0.2
+                        ]
+                    }
+                },
+                "Component_[4192540537418679]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 4192540537418679
+                },
+                "Component_[4219856096308815]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetId": {
+                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
+                                    "subId": 269725335
+                                }
+                            }
+                        }
+                    },
+                    "Id": 4219856096308815
+                },
+                "Component_[5140609421213246]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 5140609421213246
+                },
+                "Component_[6154437073160704]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 6154437073160704
+                },
+                "Component_[8159654073938609]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 8159654073938609,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4.05,
+                                3,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[8569067172398498]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 8569067172398498
+                },
+                "Component_[8703359119821283]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 8703359119821283
+                }
+            },
+            "Id": "Entity_[481054970421379]",
+            "Name": "PROVISIONAL Path QuarterSide to AftermathThreshold 16"
+        },
+        "Entity_[481054970421814]": {
+            "Components": {
+                "Component_[1613397443391184]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 1613397443391184
+                },
+                "Component_[2186941137564645]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 2186941137564645
+                },
+                "Component_[3051473530355558]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 3051473530355558
+                },
+                "Component_[320892801533611]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetId": {
+                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
+                                    "subId": 269725335
+                                }
+                            }
+                        }
+                    },
+                    "Id": 320892801533611
+                },
+                "Component_[3704339176171484]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 3704339176171484
+                },
+                "Component_[4144203313766850]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 4144203313766850
+                },
+                "Component_[4562728469843179]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 4562728469843179
+                },
+                "Component_[4905732379029964]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 4905732379029964
+                },
+                "Component_[6999424318963042]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 6999424318963042
+                },
+                "Component_[8173258407543535]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 8173258407543535
+                },
+                "Component_[8785023049062389]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 8785023049062389,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4.05,
+                                3,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[8968839172353160]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 8968839172353160,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            21.501434
+                        ],
+                        "Translate": [
+                            98.812317,
+                            -3.61939,
+                            0.2
+                        ]
+                    }
+                }
+            },
+            "Id": "Entity_[481054970421814]",
+            "Name": "PROVISIONAL Path QuarterSide to AftermathThreshold 15"
+        },
+        "Entity_[483253993677801]": {
+            "Components": {
+                "Component_[2062523347396191]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 2062523347396191
+                },
+                "Component_[2191572197224651]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 2191572197224651
+                },
+                "Component_[2605079244239818]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 2605079244239818
+                },
+                "Component_[2737520754322562]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 2737520754322562,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4.05,
+                                3,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[3288837623116697]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 3288837623116697
+                },
+                "Component_[4133731982981039]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 4133731982981039
+                },
+                "Component_[4443848711637836]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetId": {
+                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
+                                    "subId": 269725335
+                                }
+                            }
+                        }
+                    },
+                    "Id": 4443848711637836
+                },
+                "Component_[4778160763600579]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 4778160763600579
+                },
+                "Component_[8149499404860099]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 8149499404860099
+                },
+                "Component_[8581990086648070]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 8581990086648070
+                },
+                "Component_[8586773477967248]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 8586773477967248
+                },
+                "Component_[8865526590441183]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 8865526590441183,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            21.501434
+                        ],
+                        "Translate": [
+                            95.148883,
+                            -5.062561,
+                            0.2
+                        ]
+                    }
+                }
+            },
+            "Id": "Entity_[483253993677801]",
+            "Name": "PROVISIONAL Path QuarterSide to AftermathThreshold 14"
+        },
+        "Entity_[483253993678236]": {
+            "Components": {
+                "Component_[1918856513562814]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 1918856513562814,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            21.501434
+                        ],
+                        "Translate": [
+                            91.48545,
+                            -6.505732,
+                            0.2
+                        ]
+                    }
+                },
+                "Component_[2306772483695816]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 2306772483695816
+                },
+                "Component_[5238046649449012]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 5238046649449012
+                },
+                "Component_[6777004681050145]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 6777004681050145
+                },
+                "Component_[6888948147351676]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 6888948147351676
+                },
+                "Component_[720385010853771]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 720385010853771,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4.05,
+                                3,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[7274163050860750]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 7274163050860750
+                },
+                "Component_[7491954122404961]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetId": {
+                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
+                                    "subId": 269725335
+                                }
+                            }
+                        }
+                    },
+                    "Id": 7491954122404961
+                },
+                "Component_[7884960265750705]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 7884960265750705
+                },
+                "Component_[8399916799425450]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 8399916799425450
+                },
+                "Component_[8474954749353174]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 8474954749353174
+                },
+                "Component_[8678575362490195]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 8678575362490195
+                }
+            },
+            "Id": "Entity_[483253993678236]",
+            "Name": "PROVISIONAL Path QuarterSide to AftermathThreshold 13"
+        },
+        "Entity_[485453016934223]": {
+            "Components": {
+                "Component_[1505551050172061]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 1505551050172061
+                },
+                "Component_[2207063177345627]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 2207063177345627
+                },
+                "Component_[2642222752894293]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 2642222752894293
+                },
+                "Component_[272255540020797]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 272255540020797
+                },
+                "Component_[361902283806390]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetId": {
+                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
+                                    "subId": 269725335
+                                }
+                            }
+                        }
+                    },
+                    "Id": 361902283806390
+                },
+                "Component_[511552239041513]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 511552239041513
+                },
+                "Component_[5866745523678321]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 5866745523678321
+                },
+                "Component_[7186348387610224]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 7186348387610224
+                },
+                "Component_[7397454756634580]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 7397454756634580,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4.05,
+                                3,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[7489178041718924]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 7489178041718924
+                },
+                "Component_[7497824690211345]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 7497824690211345,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            21.501434
+                        ],
+                        "Translate": [
+                            87.822017,
+                            -7.948903,
+                            0.2
+                        ]
+                    }
+                },
+                "Component_[7801813513217782]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 7801813513217782
+                }
+            },
+            "Id": "Entity_[485453016934223]",
+            "Name": "PROVISIONAL Path QuarterSide to AftermathThreshold 12"
+        },
+        "Entity_[485453016934658]": {
+            "Components": {
+                "Component_[2818181041503413]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 2818181041503413
+                },
+                "Component_[2893590471773780]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 2893590471773780
+                },
+                "Component_[335851826286407]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 335851826286407
+                },
+                "Component_[4129115297578850]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 4129115297578850
+                },
+                "Component_[4525033936603798]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 4525033936603798
+                },
+                "Component_[4617037394031934]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 4617037394031934,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4.05,
+                                3,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[5158035966619807]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 5158035966619807
+                },
+                "Component_[5505633198375059]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 5505633198375059,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            21.501434
+                        ],
+                        "Translate": [
+                            84.158583,
+                            -9.392073,
+                            0.2
+                        ]
+                    }
+                },
+                "Component_[6822798269256551]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 6822798269256551
+                },
+                "Component_[764986500669011]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 764986500669011
+                },
+                "Component_[7753569836006688]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetId": {
+                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
+                                    "subId": 269725335
+                                }
+                            }
+                        }
+                    },
+                    "Id": 7753569836006688
+                },
+                "Component_[8155834248834443]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 8155834248834443
+                }
+            },
+            "Id": "Entity_[485453016934658]",
+            "Name": "PROVISIONAL Path QuarterSide to AftermathThreshold 11"
+        },
+        "Entity_[487652040190645]": {
+            "Components": {
+                "Component_[1652694530102061]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 1652694530102061
+                },
+                "Component_[1901325240970785]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 1901325240970785
+                },
+                "Component_[2154358858817670]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 2154358858817670
+                },
+                "Component_[2521680930486411]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 2521680930486411
+                },
+                "Component_[2790256668040100]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 2790256668040100,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4.05,
+                                3,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[4169319639944633]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 4169319639944633
+                },
+                "Component_[436986974155388]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 436986974155388
+                },
+                "Component_[5767691934904038]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetId": {
+                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
+                                    "subId": 269725335
+                                }
+                            }
+                        }
+                    },
+                    "Id": 5767691934904038
+                },
+                "Component_[617656508752461]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 617656508752461
+                },
+                "Component_[7102806144555200]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 7102806144555200
+                },
+                "Component_[7708925149883653]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 7708925149883653
+                },
+                "Component_[7887145333543873]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 7887145333543873,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            21.501434
+                        ],
+                        "Translate": [
+                            80.49515,
+                            -10.835244,
+                            0.2
+                        ]
+                    }
+                }
+            },
+            "Id": "Entity_[487652040190645]",
+            "Name": "PROVISIONAL Path QuarterSide to AftermathThreshold 10"
+        },
+        "Entity_[5274417980543473]": {
+            "Components": {
+                "Component_[1317163079842357]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 1317163079842357
+                },
+                "Component_[1767767325657511]": {
+                    "$type": "GenericComponentWrapper",
+                    "Id": 1767767325657511,
+                    "m_template": {
+                        "$type": "{8E1B4D72-6C95-4A3F-A7D0-2F9C5B3E6A81} PlayerSpawnComponent",
+                        "Player": "Entity_[2939953214992559]",
+                        "Spawns": [
+                            {
+                                "Anchor": "Entity_[4098245664663272]",
+                                "Rule": 0,
+                                "SpawnId": "Spawn.C10.Draven.Entry"
+                            },
+                            {
+                                "Anchor": "Entity_[4098245664663272]",
+                                "Rule": 2,
+                                "SpawnId": "Spawn.C10.Draven.Entry"
+                            }
+                        ]
+                    }
+                },
+                "Component_[1774574509983611]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 1774574509983611
+                },
+                "Component_[3724401092830168]": {
+                    "$type": "GenericComponentWrapper",
+                    "Id": 3724401092830168,
+                    "m_template": {
+                        "$type": "{C4A7F2B9-1E36-4D8C-9F05-3B6E8A1D7C24} MapTransitionComponent",
+                        "MissionId": "Main.C10.04.DravenVoss",
+                        "NextLevel": "L_TheWakeAfter"
+                    }
+                },
+                "Component_[5890537551971089]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 5890537551971089
+                },
+                "Component_[6149796156564797]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 6149796156564797
+                },
+                "Component_[6347515236625132]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 6347515236625132
+                },
+                "Component_[6476115558337585]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 6476115558337585,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            0,
+                            0,
+                            0
+                        ]
+                    }
+                },
+                "Component_[7102165980297872]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 7102165980297872
+                },
+                "Component_[8454762604786761]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 8454762604786761
+                },
+                "Component_[9000208602180758]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 9000208602180758
+                }
+            },
+            "Id": "Entity_[5274417980543473]",
+            "Name": "Story Director"
+        },
+        "Entity_[5376153140907644]": {
+            "Components": {
+                "Component_[1426681964333225]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 1426681964333225,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            21.501434
+                        ],
+                        "Translate": [
+                            73.168283,
+                            -13.721585,
+                            0.2
+                        ]
+                    }
+                },
+                "Component_[14629792011636]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 14629792011636
+                },
+                "Component_[1552287960420209]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 1552287960420209
+                },
+                "Component_[4166839896808092]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 4166839896808092,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4.05,
+                                3,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[443683440166841]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 443683440166841
+                },
+                "Component_[4927056674897043]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 4927056674897043
+                },
+                "Component_[575102194020269]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 575102194020269
+                },
+                "Component_[6042672574041630]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 6042672574041630
+                },
+                "Component_[727509563825829]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 727509563825829
+                },
+                "Component_[7691106606154238]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetId": {
+                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
+                                    "subId": 269725335
+                                }
+                            }
+                        }
+                    },
+                    "Id": 7691106606154238
+                },
+                "Component_[8102862375921720]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 8102862375921720
+                },
+                "Component_[8931670884583077]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 8931670884583077
+                }
+            },
+            "Id": "Entity_[5376153140907644]",
+            "Name": "PROVISIONAL Path QuarterSide to AftermathThreshold 8"
+        },
+        "Entity_[5378352164163631]": {
+            "Components": {
+                "Component_[1488495366411642]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 1488495366411642
+                },
+                "Component_[2167405506819771]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 2167405506819771,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4.05,
+                                3,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[2741681759482008]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 2741681759482008
+                },
+                "Component_[4331779852395294]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 4331779852395294
+                },
+                "Component_[4861069153566700]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 4861069153566700
+                },
+                "Component_[5325384123744486]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 5325384123744486
+                },
+                "Component_[6273351176746993]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetId": {
+                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
+                                    "subId": 269725335
+                                }
+                            }
+                        }
+                    },
+                    "Id": 6273351176746993
+                },
+                "Component_[6779528288471246]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 6779528288471246,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            21.501434
+                        ],
+                        "Translate": [
+                            76.831717,
+                            -12.278415,
+                            0.2
+                        ]
+                    }
+                },
+                "Component_[6785894048277795]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 6785894048277795
+                },
+                "Component_[6977185848947409]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 6977185848947409
+                },
+                "Component_[7610616628322209]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 7610616628322209
+                },
+                "Component_[7847582511496900]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 7847582511496900
+                }
+            },
+            "Id": "Entity_[5378352164163631]",
+            "Name": "PROVISIONAL Path QuarterSide to AftermathThreshold 9"
+        },
+        "Entity_[5380551187420488]": {
+            "Components": {
+                "Component_[150997944400377]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 150997944400377
+                },
+                "Component_[3139499519473528]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 3139499519473528
+                },
+                "Component_[4027824121325236]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 4027824121325236
+                },
+                "Component_[4465376635648988]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 4465376635648988,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4.05,
+                                3,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[4613362252842469]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 4613362252842469
+                },
+                "Component_[4619457933998821]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 4619457933998821
+                },
+                "Component_[503292429134001]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 503292429134001
+                },
+                "Component_[5330399063910637]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 5330399063910637
+                },
+                "Component_[5892313240303209]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 5892313240303209,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            21.501434
+                        ],
+                        "Translate": [
+                            58.51455,
+                            -19.494268,
+                            0.2
+                        ]
+                    }
+                },
+                "Component_[6734830737669214]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 6734830737669214
+                },
+                "Component_[6849519474542035]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 6849519474542035
+                },
+                "Component_[8524751936290366]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetId": {
+                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
+                                    "subId": 269725335
+                                }
+                            }
+                        }
+                    },
+                    "Id": 8524751936290366
+                }
+            },
+            "Id": "Entity_[5380551187420488]",
+            "Name": "PROVISIONAL Path QuarterSide to AftermathThreshold 4"
+        },
+        "Entity_[5382750210676475]": {
+            "Components": {
+                "Component_[1499685839722195]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetId": {
+                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
+                                    "subId": 269725335
+                                }
+                            }
+                        }
+                    },
+                    "Id": 1499685839722195
+                },
+                "Component_[1638069140442720]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 1638069140442720,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            21.501434
+                        ],
+                        "Translate": [
+                            62.177983,
+                            -18.051097,
+                            0.2
+                        ]
+                    }
+                },
+                "Component_[2412017557975812]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 2412017557975812
+                },
+                "Component_[3072017942458538]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 3072017942458538
+                },
+                "Component_[3317716152157613]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 3317716152157613
+                },
+                "Component_[3994739086443891]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 3994739086443891
+                },
+                "Component_[4206101464493310]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 4206101464493310
+                },
+                "Component_[4538523256086794]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 4538523256086794
+                },
+                "Component_[6378510501590520]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 6378510501590520
+                },
+                "Component_[6865047517149815]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 6865047517149815
+                },
+                "Component_[725405998764516]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 725405998764516
+                },
+                "Component_[878678996784157]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 878678996784157,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4.05,
+                                3,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                }
+            },
+            "Id": "Entity_[5382750210676475]",
+            "Name": "PROVISIONAL Path QuarterSide to AftermathThreshold 5"
+        },
+        "Entity_[5382750210676910]": {
+            "Components": {
+                "Component_[1149063322493213]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 1149063322493213
+                },
+                "Component_[2405250529077598]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 2405250529077598
+                },
+                "Component_[3818696531360884]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 3818696531360884
+                },
+                "Component_[4307414875276213]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetId": {
+                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
+                                    "subId": 269725335
+                                }
+                            }
+                        }
+                    },
+                    "Id": 4307414875276213
+                },
+                "Component_[4709753667885498]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 4709753667885498
+                },
+                "Component_[4798138760880248]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 4798138760880248
+                },
+                "Component_[4883999645098226]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 4883999645098226,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            21.501434
+                        ],
+                        "Translate": [
+                            65.841417,
+                            -16.607927,
+                            0.2
+                        ]
+                    }
+                },
+                "Component_[5519206394198000]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 5519206394198000
+                },
+                "Component_[5655513132615658]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 5655513132615658
+                },
+                "Component_[5774447689865959]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 5774447689865959,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4.05,
+                                3,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[6236131739285637]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 6236131739285637
+                },
+                "Component_[947314385114991]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 947314385114991
+                }
+            },
+            "Id": "Entity_[5382750210676910]",
+            "Name": "PROVISIONAL Path QuarterSide to AftermathThreshold 6"
+        },
+        "Entity_[5384949233932897]": {
+            "Components": {
+                "Component_[1208693020725990]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 1208693020725990
+                },
+                "Component_[2604984870077891]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 2604984870077891,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4.05,
+                                3,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[4564844542127366]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 4564844542127366,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            21.501434
+                        ],
+                        "Translate": [
+                            69.50485,
+                            -15.164756,
+                            0.2
+                        ]
+                    }
+                },
+                "Component_[4676660780658825]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 4676660780658825
+                },
+                "Component_[5646808613437899]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 5646808613437899
+                },
+                "Component_[5741556819751712]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 5741556819751712
+                },
+                "Component_[6125815208246908]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 6125815208246908
+                },
+                "Component_[612719926047801]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetId": {
+                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
+                                    "subId": 269725335
+                                }
+                            }
+                        }
+                    },
+                    "Id": 612719926047801
+                },
+                "Component_[6127751062009454]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 6127751062009454
+                },
+                "Component_[6757285412490905]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 6757285412490905
+                },
+                "Component_[7970878433408948]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 7970878433408948
+                },
+                "Component_[8081282428446610]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 8081282428446610
+                }
+            },
+            "Id": "Entity_[5384949233932897]",
+            "Name": "PROVISIONAL Path QuarterSide to AftermathThreshold 7"
+        },
+        "Entity_[5384949233933332]": {
+            "Components": {
+                "Component_[2614353696167501]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 2614353696167501,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            21.501434
+                        ],
+                        "Translate": [
+                            43.860817,
+                            -25.266951,
+                            0.2
+                        ]
+                    }
+                },
+                "Component_[2629054790553089]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 2629054790553089
+                },
+                "Component_[2959062390624504]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 2959062390624504,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4.05,
+                                3,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[3447165086786527]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 3447165086786527
+                },
+                "Component_[5160893389042740]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 5160893389042740
+                },
+                "Component_[5732547272540553]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 5732547272540553
+                },
+                "Component_[5974573361512146]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 5974573361512146
+                },
+                "Component_[7462679738124541]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 7462679738124541
+                },
+                "Component_[8228246542784352]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 8228246542784352
+                },
+                "Component_[8326979857616069]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 8326979857616069
+                },
+                "Component_[8392785166414705]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 8392785166414705
+                },
+                "Component_[8470207014458610]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetId": {
+                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
+                                    "subId": 269725335
+                                }
+                            }
+                        }
+                    },
+                    "Id": 8470207014458610
+                }
+            },
+            "Id": "Entity_[5384949233933332]",
+            "Name": "PROVISIONAL Path QuarterSide to AftermathThreshold 0"
+        },
+        "Entity_[5387148257189319]": {
+            "Components": {
+                "Component_[1362497465962067]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 1362497465962067
+                },
+                "Component_[1387176217599085]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 1387176217599085
+                },
+                "Component_[1498880117673928]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetId": {
+                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
+                                    "subId": 269725335
+                                }
+                            }
+                        }
+                    },
+                    "Id": 1498880117673928
+                },
+                "Component_[2312457863425862]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 2312457863425862,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4.05,
+                                3,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[3660724334667655]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 3660724334667655
+                },
+                "Component_[3746404859881418]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 3746404859881418
+                },
+                "Component_[3964059355099183]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 3964059355099183
+                },
+                "Component_[5411376309046571]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 5411376309046571,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            21.501434
+                        ],
+                        "Translate": [
+                            47.52425,
+                            -23.82378,
+                            0.2
+                        ]
+                    }
+                },
+                "Component_[5687922544287803]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 5687922544287803
+                },
+                "Component_[6710977968966687]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 6710977968966687
+                },
+                "Component_[8481242633209630]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 8481242633209630
+                },
+                "Component_[8659228137796508]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 8659228137796508
+                }
+            },
+            "Id": "Entity_[5387148257189319]",
+            "Name": "PROVISIONAL Path QuarterSide to AftermathThreshold 1"
+        },
+        "Entity_[5387148257189754]": {
+            "Components": {
+                "Component_[1199590561380244]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 1199590561380244
+                },
+                "Component_[1276650470366101]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetId": {
+                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
+                                    "subId": 269725335
+                                }
+                            }
+                        }
+                    },
+                    "Id": 1276650470366101
+                },
+                "Component_[2108571743578853]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 2108571743578853
+                },
+                "Component_[2464102814660367]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 2464102814660367
+                },
+                "Component_[2783381242961149]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 2783381242961149
+                },
+                "Component_[2869080171859966]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 2869080171859966
+                },
+                "Component_[3555735047991370]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 3555735047991370
+                },
+                "Component_[4779656069035672]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 4779656069035672
+                },
+                "Component_[5652779579386578]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 5652779579386578,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            21.501434
+                        ],
+                        "Translate": [
+                            51.187683,
+                            -22.38061,
+                            0.2
+                        ]
+                    }
+                },
+                "Component_[7126138066432592]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 7126138066432592
+                },
+                "Component_[7436847824552346]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 7436847824552346
+                },
+                "Component_[7475755586816775]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 7475755586816775,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4.05,
+                                3,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                }
+            },
+            "Id": "Entity_[5387148257189754]",
+            "Name": "PROVISIONAL Path QuarterSide to AftermathThreshold 2"
+        },
+        "Entity_[5389347280445741]": {
+            "Components": {
+                "Component_[1025880884380535]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 1025880884380535,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4.05,
+                                3,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[2101645700593642]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 2101645700593642
+                },
+                "Component_[2337366699267790]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 2337366699267790
+                },
+                "Component_[2431774981729375]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 2431774981729375
+                },
+                "Component_[4414711318140642]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 4414711318140642,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            21.501434
+                        ],
+                        "Translate": [
+                            54.851117,
+                            -20.937439,
+                            0.2
+                        ]
+                    }
+                },
+                "Component_[4500391815612565]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 4500391815612565
+                },
+                "Component_[6934935091656904]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 6934935091656904
+                },
+                "Component_[7212255033776026]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 7212255033776026
+                },
+                "Component_[766367591992484]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 766367591992484
+                },
+                "Component_[8311253686014112]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 8311253686014112
+                },
+                "Component_[8410670024385069]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 8410670024385069
+                },
+                "Component_[935816549513125]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetId": {
+                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
+                                    "subId": 269725335
+                                }
+                            }
+                        }
+                    },
+                    "Id": 935816549513125
+                }
+            },
+            "Id": "Entity_[5389347280445741]",
+            "Name": "PROVISIONAL Path QuarterSide to AftermathThreshold 3"
+        },
+        "Entity_[5954611182757254]": {
+            "Components": {
+                "Component_[1200255800019097]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 1200255800019097
+                },
+                "Component_[1253194501211088]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 1253194501211088
+                },
+                "Component_[2699319335142035]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 2699319335142035,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4,
+                                4,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[3916301071220996]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 3916301071220996
+                },
+                "Component_[4100734764614523]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 4100734764614523
+                },
+                "Component_[4157995321711145]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_400x400x100.azmodel",
+                                "assetId": {
+                                    "guid": "{3F3B8CF0-DE93-5A11-AD57-D71927DC805C}",
+                                    "subId": 270783830
+                                }
+                            }
+                        }
+                    },
+                    "Id": 4157995321711145
+                },
+                "Component_[5747350683888438]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 5747350683888438,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            0,
+                            0,
+                            -1
+                        ]
+                    }
+                },
+                "Component_[611082895889769]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 611082895889769
+                },
+                "Component_[6527994735689410]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 6527994735689410
+                },
+                "Component_[6592434916323934]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 6592434916323934
+                },
+                "Component_[8344734926428502]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 8344734926428502
+                },
+                "Component_[8588625172125804]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 8588625172125804
+                }
+            },
+            "Id": "Entity_[5954611182757254]",
+            "Name": "PROVISIONAL Pad ArenaEntry"
+        },
+        "Entity_[6334868271105796]": {
+            "Components": {
+                "Component_[1041611292913224]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 1041611292913224
+                },
+                "Component_[1140471189286762]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 1140471189286762,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            -76.130997,
+                            -0.847,
+                            -15.81
+                        ],
+                        "Translate": [
+                            0,
+                            0,
+                            13.487043
+                        ]
+                    }
+                },
+                "Component_[2754909212057102]": {
+                    "$type": "AZ::Render::EditorDirectionalLightComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "CameraEntityId": "",
+                            "Intensity": 1,
+                            "ShadowFilterMethod": 1
+                        }
+                    },
+                    "Id": 2754909212057102
+                },
+                "Component_[3337170640981138]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 3337170640981138
+                },
+                "Component_[4068046996325794]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 4068046996325794
+                },
+                "Component_[5789442787705728]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 5789442787705728
+                },
+                "Component_[6509010459149783]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 6509010459149783
+                },
+                "Component_[6620336683711565]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 6620336683711565
+                },
+                "Component_[7557551079151237]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 7557551079151237
+                },
+                "Component_[8205668943908886]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 8205668943908886
+                }
+            },
+            "Id": "Entity_[6334868271105796]",
+            "Name": "Sun"
+        },
+        "Entity_[6935161390748543]": {
+            "Components": {
+                "Component_[2746209239676390]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 2746209239676390
+                },
+                "Component_[2976696436815596]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 2976696436815596
+                },
+                "Component_[3322073442611834]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 3322073442611834
+                },
+                "Component_[4204520140954147]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 4204520140954147
+                },
+                "Component_[4395811941623761]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 4395811941623761
+                },
+                "Component_[5266208604173252]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 5266208604173252
+                },
+                "Component_[5309653853048481]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 5309653853048481
+                },
+                "Component_[6361719164778526]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 6361719164778526
+                },
+                "Component_[6477290447060430]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 6477290447060430,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            42,
+                            0,
+                            -2
+                        ]
+                    }
+                },
+                "Component_[724834050384827]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            1.5
+                        ]
+                    },
+                    "Id": 724834050384827,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                98,
+                                76,
+                                3
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[8551166456579313]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_9800x7600x300.azmodel",
+                                "assetId": {
+                                    "guid": "{2767710F-EBE9-540F-9FD2-F7285EB56FE8}",
+                                    "subId": 275593684
+                                }
+                            }
+                        }
+                    },
+                    "Id": 8551166456579313
+                },
+                "Component_[8896208613175192]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 8896208613175192
+                }
+            },
+            "Id": "Entity_[6935161390748543]",
+            "Name": "Geometry BlackDeckArena"
+        },
+        "Entity_[7299855613679630]": {
+            "Components": {
+                "Component_[1101503402692023]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 1101503402692023
+                },
+                "Component_[2538987483982771]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 2538987483982771
+                },
+                "Component_[3052015751767533]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 3052015751767533
+                },
+                "Component_[3678004061757592]": {
+                    "$type": "{3BA7C3CB-C471-4230-8EC9-9EC4C529436F} EditorCharacterGameplayComponent",
+                    "Id": 3678004061757592
+                },
+                "Component_[3794911484034366]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 3794911484034366
+                },
+                "Component_[4089220278229816]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 4089220278229816
+                },
+                "Component_[4677240636610010]": {
+                    "$type": "GenericComponentWrapper",
+                    "Id": 4677240636610010,
+                    "m_template": {
+                        "$type": "{87EEEB01-C57D-4E8C-B6E1-AB4015B40DD2} EnemyBrainComponent",
+                        "CompleteMissionOnDefeat": true,
+                        "OutcomeKey": "Draven.Outcome",
+                        "OutcomeValue": "Defeated",
+                        "OverrideResolution": true,
+                        "Profile": 3
+                    }
+                },
+                "Component_[5193971421134372]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 5193971421134372
+                },
+                "Component_[5336875469094171]": {
+                    "$type": "GenericComponentWrapper",
+                    "Id": 5336875469094171,
+                    "m_template": {
+                        "$type": "{F78D1ADA-EFCC-4F70-BBF5-13DB7B1CFDDC} CombatantComponent",
+                        "CombatantId": "boss.draven_voss"
+                    }
+                },
+                "Component_[5846811996200938]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 5846811996200938
+                },
+                "Component_[6176388134568992]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 6176388134568992,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            78,
+                            0,
+                            1
+                        ]
+                    }
+                },
+                "Component_[6538819768011332]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 6538819768011332
+                },
+                "Component_[7627800145753875]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_placeholder_figure.azmodel",
+                                "assetId": {
+                                    "guid": "{D5684B6A-9686-573D-8846-71268A3B2E15}",
+                                    "subId": 279670800
+                                }
+                            }
+                        }
+                    },
+                    "Id": 7627800145753875
+                },
+                "Component_[8063133016427688]": {
+                    "$type": "EditorCharacterControllerComponent",
+                    "Id": 8063133016427688,
+                    "ShapeConfig": {
+                        "Capsule": {
+                            "Height": 1.92,
+                            "Radius": 0.42
+                        },
+                        "ShapeType": 2
+                    }
+                }
+            },
+            "Id": "Entity_[7299855613679630]",
+            "Name": "C10_04_Draven"
+        },
+        "Entity_[7738290743212356]": {
+            "Components": {
+                "Component_[2996681801446434]": {
+                    "$type": "AZ::Render::EditorHDRiSkyboxComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "CubemapAsset": {
+                                "assetHint": "lightingpresets/highcontrast/goegap_4k_skyboxcm.exr.streamingimage",
+                                "assetId": {
+                                    "guid": "{215E47FD-D181-5832-B1AB-91673ABF6399}",
+                                    "subId": 1000
+                                }
+                            }
+                        }
+                    },
+                    "Id": 2996681801446434
+                },
+                "Component_[3890050058017423]": {
+                    "$type": "AZ::Render::EditorImageBasedLightComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "diffuseImageAsset": {
+                                "assetHint": "lightingpresets/highcontrast/goegap_4k_iblglobalcm_ibldiffuse.exr.streamingimage",
+                                "assetId": {
+                                    "guid": "{3FD09945-D0F2-55C8-B9AF-B2FD421FE3BE}",
+                                    "subId": 3000
+                                }
+                            },
+                            "specularImageAsset": {
+                                "assetHint": "lightingpresets/highcontrast/goegap_4k_iblglobalcm_iblspecular.exr.streamingimage",
+                                "assetId": {
+                                    "guid": "{3FD09945-D0F2-55C8-B9AF-B2FD421FE3BE}",
+                                    "subId": 2000
+                                }
+                            }
+                        }
+                    },
+                    "Id": 3890050058017423
+                },
+                "Component_[423942363860741]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 423942363860741
+                },
+                "Component_[5274704706235747]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 5274704706235747
+                },
+                "Component_[5476704187650339]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 5476704187650339,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            0,
+                            0,
+                            0
+                        ]
+                    }
+                },
+                "Component_[5492786280684111]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 5492786280684111
+                },
+                "Component_[5532395321970244]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 5532395321970244
+                },
+                "Component_[5668354528321638]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 5668354528321638
+                },
+                "Component_[6122076235041682]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 6122076235041682
+                },
+                "Component_[6134725200006199]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 6134725200006199
+                },
+                "Component_[8705271347002779]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 8705271347002779
+                }
+            },
+            "Id": "Entity_[7738290743212356]",
+            "Name": "Global Sky"
+        },
+        "Entity_[7744488502521544]": {
+            "Components": {
+                "Component_[1825130129163692]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 1825130129163692
+                },
+                "Component_[265713308898806]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 265713308898806,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            42,
+                            -26,
+                            -7.3
+                        ]
+                    }
+                },
+                "Component_[3288883952798224]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 3288883952798224
+                },
+                "Component_[3313447763558146]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 3313447763558146
+                },
+                "Component_[5021962337026265]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 5021962337026265
+                },
+                "Component_[5156233439801502]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 5156233439801502
+                },
+                "Component_[5784563126556009]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_7000x600x850.azmodel",
+                                "assetId": {
+                                    "guid": "{BA6F9C93-3074-539B-BD51-B75943AE3762}",
+                                    "subId": 270350464
+                                }
+                            }
+                        }
+                    },
+                    "Id": 5784563126556009
+                },
+                "Component_[5925318780219049]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 5925318780219049
+                },
+                "Component_[6172440912238486]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 6172440912238486
+                },
+                "Component_[6974640990271812]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 6974640990271812
+                },
+                "Component_[8157413614432187]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 8157413614432187
+                },
+                "Component_[8888379961137875]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            4.25
+                        ]
+                    },
+                    "Id": 8888379961137875,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                70,
+                                6,
+                                8.5
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                }
+            },
+            "Id": "Entity_[7744488502521544]",
+            "Name": "Geometry QuarterBoundary"
+        },
+        "Entity_[942688573083655]": {
+            "Components": {
+                "Component_[1036942671390053]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 1036942671390053
+                },
+                "Component_[1454955163355513]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 1454955163355513
+                },
+                "Component_[2003170606950757]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 2003170606950757
+                },
+                "Component_[2583677786917681]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 2583677786917681
+                },
+                "Component_[3071431425901677]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 3071431425901677
+                },
+                "Component_[3157311644589022]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 3157311644589022
+                },
+                "Component_[3272000381461843]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 3272000381461843
+                },
+                "Component_[3370371760739817]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 3370371760739817,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            40,
+                            0,
+                            -0.045455
+                        ]
+                    }
+                },
+                "Component_[450305028245044]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 450305028245044
+                },
+                "Component_[7748486413372920]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 7748486413372920
+                },
+                "Component_[8660903466766172]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 8660903466766172,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4.05,
+                                3,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[899346233393598]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetId": {
+                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
+                                    "subId": 269725335
+                                }
+                            }
+                        }
+                    },
+                    "Id": 899346233393598
+                }
+            },
+            "Id": "Entity_[942688573083655]",
+            "Name": "PROVISIONAL Path ArenaEntry to BlackDeckCenter 10"
+        }
+    }
+}

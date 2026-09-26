@@ -26,6 +26,9 @@ namespace DarkArisen
     inline constexpr const char* SpawnPointConfigTypeId = "{7F3A9C21-B64E-4D08-8E5F-1A6C3B9D2E74}";
     inline constexpr const char* CameraRigComponentTypeId = "{61B9D4E2-3A7C-4F18-9E05-C2D8A4B61F37}";
     inline constexpr const char* LockOnComponentTypeId = "{D3F82A57-0B6E-4C91-8A24-5E7F1C9B3D60}";
+    inline constexpr const char* StoryActorComponentTypeId = "{5B64F7E8-4E53-4048-BBBD-FE020A8CD270}";
+    inline constexpr const char* NavalCombatComponentTypeId = "{C4CBD06B-914D-4382-A801-83CA1E5340CD}";
+    inline constexpr const char* CreditsComponentTypeId = "{6E48D6AB-C09C-45A7-A157-52FE4EC20CDF}";
 
     // Interfaces
     inline constexpr const char* CampaignRequestsTypeId = "{20A14A6C-830D-4C72-A95F-2477D73FF09E}";
@@ -33,9 +36,12 @@ namespace DarkArisen
     inline constexpr const char* CombatRequestsTypeId = "{98E7A02E-1A6F-4B43-A1E0-EE1C8C2AE434}";
     inline constexpr const char* ShipRequestsTypeId = "{5A3977F3-57CE-4D80-8048-89110B7DB968}";
     inline constexpr const char* EnemyNotificationsTypeId = "{4C7E2B91-0D3A-4F6E-9A51-7B2E8C1D3F40}";
+    inline constexpr const char* CombatNotificationsTypeId = "{662BE99C-094B-4864-AFD0-E4EB060B3667}";
     inline constexpr const char* OceanRequestsTypeId = "{E6B2D48A-9C07-4F1E-A35B-8D2C6F1E0B93}";
     inline constexpr const char* SwimRequestsTypeId = "{B7D1E5A2-4F93-4C6E-A0B8-2D5C9E7F1A46}";
     inline constexpr const char* PresentationNotificationsTypeId = "{2C5E8A13-F74B-4D96-9A1C-5B3F7E0D8C62}";
     inline constexpr const char* CameraRigRequestsTypeId = "{8A2E6C14-D95B-4F37-B1E0-4C7A9D2F6E83}";
     inline constexpr const char* LockOnRequestsTypeId = "{F4C1A7E9-2D63-4B85-9F0A-7E3B5C8D1A26}";
+    inline constexpr const char* NavalCombatRequestsTypeId = "{5E96FA5E-380E-49FA-A6BD-02ECEE1285E6}";
+    inline constexpr const char* NavalCombatNotificationsTypeId = "{AE1F01CB-083D-4C2B-A9B9-B1F08B359EB2}";
 }

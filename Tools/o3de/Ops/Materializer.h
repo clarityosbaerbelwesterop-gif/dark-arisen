@@ -1,7 +1,9 @@
 #pragma once
 
-// ContentSource -> O3DE materialiser for the Chapter 1 vertical slice
-// (Harlow opening -> Outer Reef -> Driftwood Beach -> Driftwood Camp).
+// ContentSource -> O3DE materialiser for the campaign: the Chapter 1 slice (Harlow opening ->
+// Outer Reef -> Driftwood Beach -> Driftwood Camp), every ContentSource/Story mission contract of
+// chapters 3-10 with its ContentSource/Naval companion, the credits, and a 34-mission physical
+// coverage report (Levels/PhysicalCoverage.json).
 //
 // Port of UDarkArisenMaterializeAlphaCommandlet, extended where the Unreal maps could not be
 // played through (see Docs/O3DE_MIGRATION.md): it reads the authored layouts, the family manifest
@@ -28,7 +30,7 @@ namespace DarkArisen::Tools
     };
 
     /** Builds every output in memory. Returns false (and fills Errors) on any missing input. */
-    bool MaterializeVerticalSlice(const std::filesystem::path& RepoRoot, MaterializeResult& Out);
+    bool MaterializeCampaign(const std::filesystem::path& RepoRoot, MaterializeResult& Out);
 
     /**
      * Writes the result, or with Check compares it with the files on disk and reports each stale

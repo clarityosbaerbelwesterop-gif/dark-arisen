@@ -58,6 +58,8 @@ namespace DarkArisen::Core
 
     void OpeningRuntime::Journal(const std::string_view Id) const
     {
+        // Persisted before presentation; a repeated observation is already in the notebook.
+        Campaign.UpdateJournal([Id](QuestJournalState& State, const QuestCatalog&) { return QuestJournal::RecordObservation(State, Id); });
         if (Listeners.JournalObservation) Listeners.JournalObservation(Id);
     }
 
@@ -274,6 +276,13 @@ namespace DarkArisen::Core
         // Moran is walked in order; the beach recovery must finish before moving inland.
         if (static_cast<int>(NewLocation) != static_cast<int>(Current.Location) + 1 ||
             Current.RecoveryState != WaterRecoveryState::Recovered)
+        {
+            return false;
+        }
+        // The Moran route is walked one way: nobody who can only be met here may be left behind, or
+        // A Ship to Take could never reach the helm with its core crew.
+        if ((Current.Location == OpeningLocation::MirasCove && !Campaign.IsCrewRecruited("crew.mira")) ||
+            (Current.Location == OpeningLocation::MangroveShallows && !Campaign.IsCrewRecruited("crew.big_tom")))
         {
             return false;
         }

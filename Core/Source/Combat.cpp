@@ -485,7 +485,8 @@ namespace DarkArisen::Core
             Result.Invulnerable = true;
             return Result;
         }
-        if (Target.Combat.IsDeflectionWindowOpen() && Context.Type != AttackType::Critical)
+        // A blade answers a blade or a bullet; nobody deflects an explosion or a falling mast.
+        if (Target.Combat.IsDeflectionWindowOpen() && Context.Type != AttackType::Critical && Context.Type != AttackType::Environmental)
         {
             Result.Deflected = true;
             Source.Combat.AddPostureDamage(Context.PostureDamage * 1.5f);

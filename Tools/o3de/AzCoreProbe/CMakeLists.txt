@@ -130,6 +130,10 @@ add_executable(DarkArisenLevelProbe
     ${GEM}/Source/Story/StoryTriggerComponent.cpp
     ${GEM}/Source/Story/OpeningDirectorComponent.cpp
     ${GEM}/Source/Story/MapTransitionComponent.cpp
+    ${GEM}/Source/Story/StoryActorComponent.cpp
+    ${GEM}/Source/Story/CreditsComponent.cpp
+    ${GEM}/Source/Ships/NavalCombatComponent.cpp
+    ${GEM}/Source/Ships/ShipVoyageComponent.cpp
     ${GEM}/Source/Persistence/SaveSlotStore.cpp
     ${GEM}/Source/Combat/CombatantComponent.cpp
     ${GEM}/Source/Combat/EnemyBrainComponent.cpp
@@ -157,6 +161,45 @@ target_include_directories(DarkArisenLevelProbe PRIVATE ${AZF} ${AZF}/Platform/L
 target_compile_definitions(DarkArisenLevelProbe PRIVATE DARKARISEN_REPO_ROOT="${REPO_ROOT}")
 target_link_libraries(DarkArisenLevelProbe PRIVATE AzCore DarkArisen::Core)
 add_test(NAME DarkArisenLevelProbe COMMAND DarkArisenLevelProbe)
+
+# Chapters 3-10 and the credits, played level by level from the materialised story prefabs.
+add_executable(DarkArisenStoryProbe
+    StoryRuntimeProbe.cpp
+    ${GEM}/Source/Story/CampaignSystemComponent.cpp
+    ${GEM}/Source/Story/StoryTriggerComponent.cpp
+    ${GEM}/Source/Story/OpeningDirectorComponent.cpp
+    ${GEM}/Source/Story/MapTransitionComponent.cpp
+    ${GEM}/Source/Story/StoryActorComponent.cpp
+    ${GEM}/Source/Story/CreditsComponent.cpp
+    ${GEM}/Source/Ships/NavalCombatComponent.cpp
+    ${GEM}/Source/Ships/ShipVoyageComponent.cpp
+    ${GEM}/Source/Persistence/SaveSlotStore.cpp
+    ${GEM}/Source/Combat/CombatantComponent.cpp
+    ${GEM}/Source/Combat/EnemyBrainComponent.cpp
+    ${GEM}/Source/Player/SwimmerComponent.cpp
+    ${GEM}/Source/Player/PlayerSpawnComponent.cpp
+    ${GEM}/Source/Player/CameraRigComponent.cpp
+    ${GEM}/Source/Player/LockOnComponent.cpp
+    ${GEM}/Source/World/OceanComponent.cpp
+    ${GEM}/Source/World/WaterVolumeComponent.cpp
+    ${AZF}/AzFramework/API/ApplicationAPI.cpp
+    ${AZF}/AzFramework/IO/LocalFileIO.cpp
+    ${AZF}/Platform/Common/UnixLike/AzFramework/IO/LocalFileIO_UnixLike.cpp
+    ${AZF}/AzFramework/Entity/GameEntityContextBus.cpp
+    ${AZF}/AzFramework/Physics/CharacterBus.cpp
+    ${AZF}/AzFramework/Physics/Common/PhysicsSceneQueries.cpp
+    ${AZF}/AzFramework/Physics/Collision/CollisionGroups.cpp
+    ${AZF}/AzFramework/Physics/ShapeConfiguration.cpp
+    ${AZF}/AzFramework/Physics/Collision/CollisionLayers.cpp
+    ${AZF}/AzFramework/Physics/CollisionBus.cpp
+    ${AZF}/AzFramework/Physics/SystemBus.cpp
+    ${AZF}/AzFramework/Physics/Common/PhysicsSimulatedBodyEvents.cpp
+    ${AZF}/AzFramework/Physics/Components/SimulatedBodyComponentBus.cpp)
+target_include_directories(DarkArisenStoryProbe PRIVATE ${AZF} ${AZF}/Platform/Linux ${AZF}/Platform/Common
+    ${GEM}/Include ${GEM}/Source ${O3DE_ENGINE_ROOT}/Gems/PhysX/Core/Code/Include)
+target_compile_definitions(DarkArisenStoryProbe PRIVATE DARKARISEN_REPO_ROOT="${REPO_ROOT}")
+target_link_libraries(DarkArisenStoryProbe PRIVATE AzCore DarkArisen::Core)
+add_test(NAME DarkArisenStoryProbe COMMAND DarkArisenStoryProbe)
 
 # Remaining Gem sources, compiled (not linked) against the pinned engine headers so every adapter is
 # checked on each run: input devices and the module entry point need the full AzFramework and launcher.

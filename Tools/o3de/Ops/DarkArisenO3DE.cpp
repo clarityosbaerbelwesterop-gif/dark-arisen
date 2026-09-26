@@ -644,7 +644,7 @@ namespace
     int CommandMaterialize(const Options& Opts)
     {
         DarkArisen::Tools::MaterializeResult Result;
-        if (!DarkArisen::Tools::MaterializeVerticalSlice(Opts.RepoRoot, Result))
+        if (!DarkArisen::Tools::MaterializeCampaign(Opts.RepoRoot, Result))
         {
             for (const std::string& Error : Result.Errors)
             {

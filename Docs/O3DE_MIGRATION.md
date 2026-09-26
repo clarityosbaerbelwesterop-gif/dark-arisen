@@ -82,6 +82,18 @@ controller that integrates velocity over a beach ground profile, point-in-box tr
 materialised trigger colliders, the game entity context and the `LoadLevel` console command.
 Editor loading, Asset Processor output and PhysX behaviour of these prefabs are RUNTIME VERIFY PENDING.
 
+**Chapters 3–10 on the AzCore runtime (VERIFIED, 2026-09-25):** the story probe
+(`DarkArisenStoryProbe`, run by `DarkArisenO3DE probe`) loads all 27 story levels and `L_Credits`
+through the same serializer path and plays them in campaign order from Rexa Harbor: activation at the
+entry, contacts, evidence, duelists (completion refused while any live), Herrera's chart locked until
+he falls, the Rexa war moved by breaking the imperial supply, the Chapter 6 holding claim, hostile
+ships sunk and La Liberación at the naval gates, real Ethan present and never a combatant, Dream
+Ethan resolved without touching real Ethan, a checksummed save before Draven reloaded exactly, Draven
+defeated, The Wake After, `Story.MainComplete`, and the credits roll (O3DE technology, no Unreal).
+Result: 27/27 missions, every map transition to the campaign's next level, 93/93 story characters and
+objects standing on materialised solid ground, 139 checks. Combat outcomes are applied directly
+(lethal damage, hull damage); the fights themselves are covered by the gameplay probe and Core tests.
+
 **Atom shader path (VERIFIED at compile level, 2026-09-25):** `DarkArisenO3DE shader-check` runs the
 Asset Processor's shader chain without the Asset Processor: preprocess with the engine's Atom shader
 include roots, AZSL -> HLSL with O3DE's azslc 1.8.22, then HLSL -> SPIR-V (Vulkan) and DXIL (DX12)
@@ -125,7 +137,7 @@ Engine/O3DE/DarkArisen/Assets ──► Asset Processor   │  StoryTriggerCompo
 |---|---|---|---|
 | 34-mission catalog | `Story/MainStoryMissionCatalog.cpp` | engine-independent | IMPLEMENTED in Core, parity-tested against UE source |
 | Story authority, facts, crew, bosses, checkpoints | `Story/MainStorySubsystem*.cpp` | engine-independent logic, UE-coupled shell | IMPLEMENTED (Core); campaign adapter VERIFIED on O3DE AzCore runtime (probe) |
-| Save schema v9, migration, validation (PR #52) | `Persistence/DarkArisenSaveGame.h`, `ValidateState` | engine-independent rules | IMPLEMENTED + checksummed codec; quest journal, economy, living-NPC snapshots NOT DONE |
+| Save schema v11, migration chain v1→v11, validation | `Persistence/DarkArisenSaveGame.h`, `ValidateState` | engine-independent rules | IMPLEMENTED + checksummed codec; v10 adds the colonial war, v11 the quest journal, progression/economy and living NPCs (v10 saves migrate to empty defaults); round trip VERIFIED in Core tests and the story probe |
 | Cross-map persistence (PR #52) | `CaptureWorldState/RestoreWorldState` | UE-coupled | capture/restore notifications VERIFIED on AzCore; level loading via Editor/launcher RUNTIME VERIFY PENDING |
 | Opening Ch. 1–2 runtime | `Opening/OpeningRuntimeComponent.cpp` | engine-independent logic | IMPLEMENTED (Core), triggers IMPLEMENTED / RUNTIME VERIFY PENDING |
 | Combat, stamina, health/rally, damage | `Components/*`, `Combat/DamagePipeline.cpp` | engine-independent math | IMPLEMENTED (Core), parity-tested |
@@ -135,16 +147,25 @@ Engine/O3DE/DarkArisen/Assets ──► Asset Processor   │  StoryTriggerCompo
 | Visible ocean (Atom) | none in Unreal source (no water system shipped in O3DE 2605.0 either) | rendering | IMPLEMENTED: `DarkArisenOcean.materialtype`, forward + depth shaders displacing tiled grids with the gameplay Gerstner waves on `SceneSrg::m_time` (the clock `OceanComponent` now reads); compiles to SPIR-V and DXIL; material waves = live `OceanComponent` surface (level probe); foam, refraction, underwater fog and runtime weather changes on the material NOT DONE; GPU RUNTIME VERIFY PENDING |
 | Swimming, currents, breath, drowning | `Components/WaterBreathComponent.cpp`, `Opening/OpeningWaterCurrentVolume.cpp` | engine-independent rules, UE-coupled movement | IMPLEMENTED (Core `BreathModel`, `SwimModel`, design speeds 1/1.5/2 m/s); adapters VERIFIED on AzCore; PhysX trigger volumes RUNTIME VERIFY PENDING; swim stamina values PROVISIONAL (section 6, item 9) |
 | Player death and checkpoint respawn | `AJakeCharacter::RestoreAtCheckpoint` (only reachable through an unplaced trigger) | UE-coupled | IMPLEMENTED: 2 s death beat, checkpoint or legal level spawn, full vitals, back in the water when placed inside a volume, no failure screen; VERIFIED on AzCore (level probe) |
-| Enemy AI (boarders, Holders, Dream Ethan, Draven) | `AI/*`, `Bosses/*`, `DuelingEnemyCharacter` | engine-independent decisions | IMPLEMENTED (Core `EnemyBrain`, phases, telegraphs, boss defeat to story); adapter VERIFIED on AzCore; PhysX movement/line of sight RUNTIME VERIFY PENDING; Draven still lacks distinct moves beyond phases (gap carried over from UE) |
+| Enemy AI (boarders, Holders, Dream Ethan, Draven) | `AI/*`, `Bosses/*`, `DuelingEnemyCharacter` | engine-independent decisions | IMPLEMENTED (Core `EnemyBrain`, phases, telegraphs, boss defeat to story, authored movesets); adapter VERIFIED on AzCore; PhysX movement/line of sight RUNTIME VERIFY PENDING; see the boss quality audit below |
+| Draven Voss duel | `Bosses/DravenVossBossCharacter.cpp` (phases only) | engine-independent decisions | IMPLEMENTED: 12 authored moves in four stances (officer, pirate, low guard, unarmed) from the combat content of `docs/design/bosses/draven_voss.md`: chains, a feint, an immediate answer to a deflect, a guard counter to a committed attack, a pistol for a kiting Jake, powder bombs every 20 s, a clinch after 3 s in reach, one disarm at a quarter health after which he waits. Hit numbers stay the combat laws' Light/Heavy profiles and the Unreal 520/190/0.65/0.30; every step telegraphs at least 0.25 s; movesets are validated fail-closed. VERIFIED in Core tests and the gameplay probe (stance, pistol, bomb blast, disarm through the Gem adapters). Arena beats (cabin → deck → helm, falling mast, tilting helm), dropped-sword runtime, animations and voice NOT DONE |
 | La Liberación voyage | `Ship/ShipVoyageComponent.cpp` | engine-independent model | IMPLEMENTED (Core); adapter VERIFIED on AzCore (ownership gate, sailing); buoyancy/collision sweep NOT DONE |
 | Ethan canon guards | scattered validators | engine-independent | IMPLEMENTED: real Ethan can never be hostile, damaged or a boss; `boss.dream_ethan` is separate |
 | Chapter 1 levels (Harlow, Driftwood Beach with Outer Reef, Driftwood Camp) | `DarkArisenMaterializeAlphaCommandlet.cpp` | content build | IMPLEMENTED (`materialize`): prefabs, O3DE-frame greybox, PhysX collision manifests, opening director, map transitions, spawn rules; VERIFIED on AzCore (level probe 38/38); Editor/Launcher RUNTIME VERIFY PENDING |
 | Opening presentation (black sails, Draven, The Taking) | never wired in Unreal | presentation | IMPLEMENTED as timed beats + subtitles bus (Core `OpeningDirector`); cameras, animation and the not-authored `Cinematic.Opening.JakeOverboard` NOT DONE |
-| Chapter 3–10 physical contracts | `ContentSource/Story/Chapter03..10` (27 JSON) | CONTENT SOURCE | SOURCE CREATED; O3DE prefab materialiser for them NOT DONE |
-| Credits | `ContentSource/Story/Credits/CreditsAuthority.json` | CONTENT SOURCE | SOURCE CREATED; O3DE UI NOT DONE |
+| Chapter 3–10 physical contracts | `ContentSource/Story/Chapter03..10` (27 JSON) + `ContentSource/Naval` | content build | IMPLEMENTED (`materialize`): contracts parsed strictly (unknown fields rejected) and validated fail-closed against the campaign (Core `ValidateStoryContract`); one level per mission with authored geometry, PROVISIONAL walk pads/paths/rafts where ContentSource leaves anchors floating, spawn/checkpoint points, `StoryActorComponent` (location triggers, contacts, evidence, route resolutions, war actions, naval gates), duelists and bosses (`EnemyBrain` with the contract's resolution), La Liberación and hostile ships (`NavalCombatComponent`), real Ethan as a non-combatant, and the map transition to the next mission; VERIFIED on AzCore (story probe: 27/27 missions Rexa Harbor → The Wake After, 93/93 actors on materialised ground); Editor/Launcher RUNTIME VERIFY PENDING |
+| Story actor rules | `Story/MainStory*Actor.cpp`, `NavalEncounterGateActor`, `NavalMissionGateActor` | engine-independent | IMPLEMENTED (Core `StoryActions`, tests) |
+| Naval combat | `Ship/NavalCombatComponent.cpp`, `HostileNavalShip.cpp` | engine-independent math | IMPLEMENTED (Core `NavalCombatant`, broadside side selection; `NavalCombatComponent` with the hostile fire loop); helm broadside input NOT DONE |
+| Colonial war | `ColonialWar/ColonialWarStateSubsystem.cpp` | engine-independent | IMPLEMENTED (Core `ColonialWar`, persisted in save v10; war actions and the Chapter 6 holding claim VERIFIED in the story probe); siege, large battles, retaliation NOT DONE |
+| Chapter 2 route (Driftwood Camp → Mira's Cove → Mangrove Shallows → Koa's Trading Post → Galleon Cove → First Wake → Rexa) | `BuildMoranAndRexa` (maps without transitions or crew beats) | content build | IMPLEMENTED (`materialize`): six levels on the layouts, rest at the camp shelter, Mira and Big Tom met → available → recruited at their authored anchors (arrival never recruits), Koa placed (service rules exist in Core; his authored service list awaits owner authority), harbor control, Esteban, La Liberación at the prize berth, gangway, helm (core crew required), harbor exit under sail, First Wake over the authored 4.5 km (no water fast travel) into Rexa; VERIFIED on AzCore (level probe, Harlow → Rexa Harbor, 75 checks) |
+| 34/34 physical coverage | none in Unreal | content build | VERIFIED: `Levels/PhysicalCoverage.json` 34/34 (level, entry, completion, checkpoint, next route per mission); `materialize` fails below 34 |
+| Credits | `ContentSource/Story/Credits/CreditsAuthority.json` | content build | IMPLEMENTED: `L_Credits` with a factual roll (`verifiedTechnologyByEngine.O3DE`, provenance only), starts only after The Wake After (`CreditsComponent`, VERIFIED in the story probe); roll UI NOT DONE |
 | Higgsfield GLB ingest | `Tools/higgsfield/import_3d_jutsu_glb.py` | tooling | IMPLEMENTED natively (`import-glb`), IMPORT READY once the GLBs are supplied |
 | Pixel Streaming | `DarkArisenOps/StreamingOps.cpp` | UE-only | replaced by plan in section 8 |
-| Colonial War, economy, living NPCs, dungeons, Highmoore | many UE subsystems | mixed | NOT DONE |
+| Quest journal | `Quest/QuestJournalComponent.cpp` | engine-independent | IMPLEMENTED (Core `QuestJournal`: authored catalog rules, spoken agreement only in conversation, mutual exclusion, silent quests revealed once, distorted entries and corrections, silent expiry as "Expired", plain text search, strict sequence order). New over Unreal: documents Jake reads (13 on the main path) and the opening observations are kept verbatim in the saved notebook (VERIFIED in the story probe). Notebook UI NOT DONE |
+| Progression and economy | `Progression/ProgressionEconomyComponent.cpp`, `Economy/ChapterEconomyComponent.cpp` | engine-independent | IMPLEMENTED (Core `Progression`): BODY only from authored draughts, pearls, named deflection sets and carry milestones under the bible caps (380/200/175/130 kg); CRAFT from Marks (≤ 94) plus a completed teaching scene with a met teacher, money never unlocks, no respec; three currencies without conversion; atomic services (price and items, one-time work); chapter ledger once per chapter without debt; crew share, legendary and reconstruction payments; four greeting states with chapter-only wary recovery. The 19 bible-named CRAFT nodes are registered; the other 49 are authored data not invented here (`SkillCatalog::IsComplete` stays false until they exist). Koa's service list NOT DONE (owner authority: `region_01_moran.md` is an older draft) |
+| Living NPC state | `NPC/NPCLivingWorldSubsystem.cpp` | engine-independent | IMPLEMENTED (Core `LivingWorld`): memories weigh reputation, stronger memories replace weaker, word spreads along family/friend/professional/community edges (0.85/0.70/0.55/0.40) and through the community for major events (0.35), decay never runs backwards; persistent alive (death permanent), available, schedule anchor and resolved interactions, which Unreal lost on map travel. No authored NPC roster is attached to levels yet |
+| Dungeons, Highmoore | many UE subsystems | mixed | NOT DONE |
 
 ## 6. Defects found while porting
 
@@ -210,6 +231,56 @@ Engine/O3DE/DarkArisen/Assets ──► Asset Processor   │  StoryTriggerCompo
 17. **CI.** PR #52 made the UE jobs unconditional on self-hosted `ue5.8` runners that do not exist, so
    those jobs can only queue or be cancelled. The new `verify-engine-neutral` job gives real, executed
    C++ evidence on every PR.
+18. **Chapters 3–10 were not completable in Unreal as authored.** The story commandlet read `verb`,
+    `targetFaction` and `outcomeKey` for every war action, but the Chapter 6 holding claim authors
+    `actionType`/`locationId`, so `Main.C06.01.HighmooreRoad` could never be completed; `C10.01 Armada`
+    and `C10.02 Break The Chain` only complete through `ContentSource/Naval`; the colonial war lived on a
+    world subsystem and was lost on every map travel; entry anchors were read without failing
+    (missing ones spawned Jake at the origin). O3DE: the holding claim is its own action kind, naval
+    contracts are merged into their missions, the war is saved (v10, now inside save v11), and every anchor is required.
+19. **Completion facts in ContentSource contradicted the story authority.** Six contracts listed facts
+    the campaign never sets (`Story.PrisonShipLocated`, `Story.EthanRecovered` at C08.02,
+    `Story.EthansGroveReached`, `Story.DreamConfrontationEntered`, `Story.DreamEthanDefeated`) where
+    `MAIN_STORY_AUTHORITY_2026_09.md` §4 and the runtime set `Armada.Revealed`,
+    `Story.EthanSignalUnderstood`, `Story.EthanRecovered` at C08.03, `Story.DravenMotiveKnown`,
+    `Story.GroveVisited` and `Story.DreamResolved`. The contracts now carry the authority's facts.
+    **Owner question:** the C08.02/C08.03 contracts place the prison-deck rescue (captive Ethan, escape)
+    in C08.02 and the return aboard in C08.03, while the authority table describes route marks for
+    C08.02 and the rescue in C08.03. Facts follow the authority; the physical beat split is unchanged.
+20. **Floating story content.** Authored geometry supports only part of each route (glTF set pieces of
+    about 30 m for routes up to 230 m; boxes centred on anchors). The materialiser reads a box's top face
+    as the floor its anchor marks, and adds PROVISIONAL 4 × 4 m pads under unsupported anchors, 4 m path
+    tiles between consecutive anchors (stepped at 25 cm rises) and rafts for people authored on open
+    water. Legs longer than 150 m are sea crossings: `C04.01 Salt and Iron` crosses 1.8 km of water with
+    no ship in its contract, so a PROVISIONAL La Liberación is placed (no water fast travel).
+21. **Standing in the exit during a fight never completed the mission (Unreal and first O3DE port).**
+    Location completion ran only on overlap begin, so a player who reached the exit before the last
+    duelist fell had to leave and re-enter. `StoryActorComponent` now re-checks while Jake waits inside.
+22. **Credits named Unreal.** `CreditsAuthority.json` listed only "Unreal Engine"; it now keeps that
+    for the Unreal build and lists the pinned O3DE release for the O3DE build.
+23. **The one-way Moran route could strand the crew.** Mira can only be met in Mira's Cove and Big Tom
+    only stands in the Mangrove Shallows, but Core let Jake walk on without recruiting them; the route
+    has no way back, so A Ship to Take could never reach the helm. Leaving either place now requires
+    its crew member recruited (Core, tested). Authoring mapping, PROVISIONAL: Mira met at `Mira`,
+    available at `BoatWork`, recruited at `RecruitmentConversation`; Big Tom met at `BigTom`, available
+    at `WorkEvent`, recruited at `BigTom`; Galleon Cove cleared by taking `HarborControl` (no enemy
+    placements are authored for the cove), Esteban available from the harbor records.
+24. **Draven was a boarder with more health (Unreal and first O3DE port).** The Unreal boss only
+    raised cooldown, awareness and poise per phase and light-attacked like every duelist. Core now
+    gives authored movesets to any boss profile (see the Draven row); a moveset that could stall a
+    stance, hide a wind-up, end on a feint or land a sabre beyond reach is rejected at validation.
+25. **An explosion could be deflected.** The Unreal damage pipeline let a deflection window stop every
+    non-critical hit, environmental ones included; no environmental source existed, so it never
+    showed. Core no longer deflects `Environmental` hits (powder bombs, falling masts); blades,
+    bullets and grabs still deflect as before.
+
+### Boss quality audit (2026-09-25)
+
+| Boss | Current behaviour | Verdict |
+|---|---|---|
+| Draven Voss (`boss.draven_voss`) | authored 12-move duel, four stances, three phases | IMPLEMENTED; arena beats and animation NOT DONE |
+| Dream Ethan (`boss.dream_ethan`) | generic brain, three phases, learnable light/heavy rhythm | PARTIAL: `docs/design/bosses/ethan_harlow.md` is the superseded real-Ethan boss and cannot drive a moveset; the dream figure's moves need owner authority |
+| The Nine Who Hold (`boss.herrera` … `boss.thorne`) | the boarder profile (180 health, one phase, light attacks) with each contract's resolution | BLOCKED on design: `Docs/M7_TIER1_BOSS_REGISTER.md` names them and their seats but no repository document authors their fights; not invented here. The moveset system is ready for them |
 
 ## 7. Gates before an engine decision
 

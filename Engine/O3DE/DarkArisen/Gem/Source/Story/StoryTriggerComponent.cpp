@@ -55,7 +55,8 @@ namespace DarkArisen
                 ->Value("La Liberacion helm secured", StorySignal::LaLiberacionHelmSecured)
                 ->Value("La Liberacion cleared harbor", StorySignal::LaLiberacionHarborCleared)
                 ->Value("Begin First Wake", StorySignal::BeginFirstWake)
-                ->Value("Reach Rexa Harbor", StorySignal::ReachRexaHarbor);
+                ->Value("Reach Rexa Harbor", StorySignal::ReachRexaHarbor)
+                ->Value("Rest (safe rest and autosave)", StorySignal::Rest);
 
             editContext->Class<StoryTriggerComponent>("Dark Arisen Story Trigger", "Physical story beat. No markers, no highlight.")
                 ->ClassElement(AZ::Edit::ClassElements::EditorData, "")
@@ -171,6 +172,7 @@ namespace DarkArisen
         case StorySignal::LaLiberacionHarborCleared: accepted = opening.SignalLaLiberacionHarborCleared(); break;
         case StorySignal::BeginFirstWake: accepted = opening.BeginFirstWake(); break;
         case StorySignal::ReachRexaHarbor: accepted = opening.ReachRexaHarbor(); break;
+        case StorySignal::Rest: accepted = campaign->CompleteRest(); break;
         }
         if (!accepted)
         {

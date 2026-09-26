@@ -8,6 +8,9 @@
 #include "Player/JakeInputComponent.h"
 #include "Player/CameraRigComponent.h"
 #include "Player/LockOnComponent.h"
+#include "Story/StoryActorComponent.h"
+#include "Ships/NavalCombatComponent.h"
+#include "Story/CreditsComponent.h"
 #include "Player/PlayerSpawnComponent.h"
 #include "Player/SwimmerComponent.h"
 #include "Ships/ShipVoyageComponent.h"
@@ -43,6 +46,9 @@ namespace DarkArisen
                 PlayerSpawnComponent::CreateDescriptor(),
                 CameraRigComponent::CreateDescriptor(),
                 LockOnComponent::CreateDescriptor(),
+                StoryActorComponent::CreateDescriptor(),
+                NavalCombatComponent::CreateDescriptor(),
+                CreditsComponent::CreateDescriptor(),
             });
         }
 

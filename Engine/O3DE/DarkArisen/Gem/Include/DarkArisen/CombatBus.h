@@ -44,4 +44,17 @@ namespace DarkArisen
     };
 
     using CombatRequestBus = AZ::EBus<CombatRequests>;
+
+    /** Per-entity combat outcomes, addressed by the attacker's EntityId. */
+    class CombatNotifications : public AZ::ComponentBus
+    {
+    public:
+        AZ_RTTI(CombatNotifications, CombatNotificationsTypeId);
+        virtual ~CombatNotifications() = default;
+
+        /** One of this combatant's melee contacts resolved against target. */
+        virtual void OnMeleeResolved([[maybe_unused]] const AZ::EntityId& target, [[maybe_unused]] bool deflected) {}
+    };
+
+    using CombatNotificationBus = AZ::EBus<CombatNotifications>;
 }

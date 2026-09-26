@@ -1,6 +1,10 @@
 #pragma once
 
+#include "DarkArisen/Core/ColonialWar.h"
+#include "DarkArisen/Core/LivingWorld.h"
 #include "DarkArisen/Core/MissionCatalog.h"
+#include "DarkArisen/Core/ProgressionEconomy.h"
+#include "DarkArisen/Core/QuestJournal.h"
 
 #include <cstdint>
 #include <map>
@@ -183,13 +187,16 @@ namespace DarkArisen::Core
     };
 
     /**
-     * Complete persistent campaign state. Field-for-field port of UDarkArisenSaveGame v9
-     * except the quest-journal, progression-economy and living-NPC snapshots, which are not
-     * ported yet (see Docs/O3DE_MIGRATION.md).
+     * Complete persistent campaign state: a field-for-field port of UDarkArisenSaveGame v9 with its
+     * quest-journal, progression-economy and living-NPC snapshots. Version 10 adds the colonial war
+     * and version 11 the journal (with the evidence Jake read and authored observations), the
+     * progression economy (with the chapter ledger) and the living population (with alive,
+     * available and resolved interactions); the Unreal reference kept several of these on the
+     * world and lost them on map travel.
      */
     struct CampaignState
     {
-        static constexpr int CurrentVersion = 9;
+        static constexpr int CurrentVersion = 11;
 
         int SaveVersion = CurrentVersion;
         std::string CurrentMission;
@@ -212,6 +219,10 @@ namespace DarkArisen::Core
         std::string CheckpointId;
         std::string SpawnId;
         OpeningProgress Opening;
+        ColonialWarState ColonialWar;
+        QuestJournalState Journal;
+        ProgressionState Progress;
+        LivingWorldState LivingWorld;
 
         bool operator==(const CampaignState&) const = default;
 

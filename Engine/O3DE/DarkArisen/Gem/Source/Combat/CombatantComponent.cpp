@@ -225,8 +225,14 @@ namespace DarkArisen
             }
             Core::Combatant* target = nullptr;
             CombatRequestBus::Event(hit.m_entityId, [&target](CombatRequests* handler) { target = &handler->GetCombatant(); });
-            if (target && Core::ResolveMeleeHit(m_combatant, *target, kind).Resolved)
+            if (!target)
             {
+                continue;
+            }
+            const Core::DamageResult result = Core::ResolveMeleeHit(m_combatant, *target, kind);
+            if (result.Resolved)
+            {
+                CombatNotificationBus::Event(GetEntityId(), &CombatNotifications::OnMeleeResolved, hit.m_entityId, result.Deflected);
                 return; // One authored contact per swing.
             }
         }

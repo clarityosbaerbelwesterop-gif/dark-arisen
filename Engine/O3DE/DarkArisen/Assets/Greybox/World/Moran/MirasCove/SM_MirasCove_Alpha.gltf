@@ -1,0 +1,89 @@
+{
+ "accessors": [
+  {
+   "bufferView": 0,
+   "componentType": 5126,
+   "count": 24,
+   "max": [
+    3,
+    0.6000000238418579,
+    2
+   ],
+   "min": [
+    -3,
+    -0.30000001192092896,
+    -2
+   ],
+   "type": "VEC3"
+  },
+  {
+   "bufferView": 1,
+   "componentType": 5123,
+   "count": 108,
+   "type": "SCALAR"
+  }
+ ],
+ "asset": {
+  "generator": "Dark Arisen Alpha source + DarkArisenO3DE frame conversion",
+  "version": "2.0"
+ },
+ "bufferViews": [
+  {
+   "buffer": 0,
+   "byteLength": 288,
+   "byteOffset": 0
+  },
+  {
+   "buffer": 0,
+   "byteLength": 216,
+   "byteOffset": 288
+  }
+ ],
+ "buffers": [
+  {
+   "byteLength": 504,
+   "uri": "data:application/octet-stream;base64,AABAQJqZmb4AAABAAABAwJqZmb4AAABAAABAwJqZmb4AAADAAABAQJqZmb4AAADAAABAQAAAAAAAAABAAABAwAAAAAAAAABAAABAwAAAAAAAAADAAABAQAAAAAAAAADAmpmZPgAAAADNzEw9ZmamvwAAAADNzEw9ZmamvwAAAACamVm/mpmZPgAAAACamVm/mpmZPpqZGT/NzEw9Zmamv5qZGT/NzEw9Zmamv5qZGT+amVm/mpmZPpqZGT+amVm/mpkZvwAAAABmZoY/MzMzwAAAAABmZoY/MzMzwAAAAADNzAw/mpkZvwAAAADNzAw/mpkZv4/CdT5mZoY/MzMzwI/CdT5mZoY/MzMzwI/CdT7NzAw/mpkZv4/CdT7NzAw/AAACAAEAAAADAAIABAAFAAYABAAGAAcAAAAFAAQAAAABAAUAAQAGAAUAAQACAAYAAgAHAAYAAgADAAcAAwAEAAcAAwAAAAQACAAKAAkACAALAAoADAANAA4ADAAOAA8ACAANAAwACAAJAA0ACQAOAA0ACQAKAA4ACgAPAA4ACgALAA8ACwAMAA8ACwAIAAwAEAASABEAEAATABIAFAAVABYAFAAWABcAEAAVABQAEAARABUAEQAWABUAEQASABYAEgAXABYAEgATABcAEwAUABcAEwAQABQA"
+  }
+ ],
+ "materials": [
+  {
+   "pbrMetallicRoughness": {
+    "baseColorFactor": [
+     0.35,
+     0.28,
+     0.16,
+     1
+    ],
+    "roughnessFactor": 0.8
+   }
+  }
+ ],
+ "meshes": [
+  {
+   "name": "SM_MirasCove_Alpha",
+   "primitives": [
+    {
+     "attributes": {
+      "POSITION": 0
+     },
+     "indices": 1,
+     "material": 0
+    }
+   ]
+  }
+ ],
+ "nodes": [
+  {
+   "mesh": 0,
+   "name": "SM_MirasCove_Alpha"
+  }
+ ],
+ "scene": 0,
+ "scenes": [
+  {
+   "nodes": [
+    0
+   ]
+  }
+ ]
+}
