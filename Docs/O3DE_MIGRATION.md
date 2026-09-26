@@ -167,6 +167,7 @@ Engine/O3DE/DarkArisen/Assets ──► Asset Processor   │  StoryTriggerCompo
 | Progression and economy | `Progression/ProgressionEconomyComponent.cpp`, `Economy/ChapterEconomyComponent.cpp` | engine-independent | IMPLEMENTED (Core `Progression`): BODY only from authored draughts, pearls, named deflection sets and carry milestones under the bible caps (380/200/175/130 kg); CRAFT from Marks (≤ 94) plus a completed teaching scene with a met teacher, money never unlocks, no respec; three currencies without conversion; atomic services (price and items, one-time work); chapter ledger once per chapter without debt; crew share, legendary and reconstruction payments; four greeting states with chapter-only wary recovery. The 19 bible-named CRAFT nodes are registered; the other 49 are authored data not invented here (`SkillCatalog::IsComplete` stays false until they exist). Koa's service list NOT DONE (owner authority: `region_01_moran.md` is an older draft) |
 | Living NPC state | `NPC/NPCLivingWorldSubsystem.cpp` | engine-independent | IMPLEMENTED (Core `LivingWorld`): memories weigh reputation, stronger memories replace weaker, word spreads along family/friend/professional/community edges (0.85/0.70/0.55/0.40) and through the community for major events (0.35), decay never runs backwards; persistent alive (death permanent), available, schedule anchor and resolved interactions, which Unreal lost on map travel. No authored NPC roster is attached to levels yet |
 | Dungeons, Highmoore | many UE subsystems | mixed | NOT DONE |
+| Art kit (rough production art) | none (Unreal used greybox cubes) | content build | IMPLEMENTED (`Tools/o3de/Ops/ArtKit*`): every visible greybox is replaced by hand-authored procedural art built in C++ by `materialize` — 16 tileable textures (planked deck and hull, timber, canvas, rope, plaster, roof tile, dressed stone, sand, grass, rock, bark, palm frond, cloth, iron; normal maps from height) and 46 materials; ships lofted from hull lines (Harlow three-master under sail, La Liberación brig with guns and furled sails, Draven's black raider, a hostile sloop) with rigging, ratlines, deck gear; ten people (Jake, boarders, the Harlow family, Mira, Big Tom, Koa, Esteban, officers, townsfolk); the Driftwood terrain dressed from its greybox heightfield (sand, wet sand, grass, rock, palms, driftwood, shrubs kept clear of the route); wreck, reef, cove jetty, the Rexa warehouse quarter, timber piers on piles for every PROVISIONAL pad, dressed stone for authored blocks, ground tiles and a Rexa quay with town houses under every land story level; generic dressing (houses, walls, platforms, posts) for the other boxed set pieces. The owner's rough concept sheets were palette and form reference only; no image from them and nothing generative is in the game. Output is byte-identical on GCC and Clang (only + − × ÷ and √ reach a file, sine by series, argument order fixed); morning sun for Moran, low evening sun for Rexa. Walkable art collision: both ships' decks, the Rexa hall, the cove boarding stair. Atom material import, texture presets and the look in the engine RUNTIME VERIFY PENDING (three.js preview renders of the materialised levels only; no GPU here, section 3) |
 
 ## 6. Defects found while porting
 
@@ -274,6 +275,37 @@ Engine/O3DE/DarkArisen/Assets ──► Asset Processor   │  StoryTriggerCompo
     non-critical hit, environmental ones included; no environmental source existed, so it never
     showed. Core no longer deflects `Environmental` hits (powder bombs, falling masts); blades,
     bullets and grabs still deflect as before.
+26. **The Harlow's walkable collision stood a metre above the deck the layout authors.** Every Harlow
+    anchor stands at 220 cm (`clearance.mainDeckHeight`), but `SM_HarlowShip_WalkableCollision_Alpha`
+    put the walkable top at 3.25 m. The art kit builds the deck collision from the art at 2.2 m with
+    1.05 m bulwarks (`railHeight`), masts, hatches and the capstan.
+27. **La Liberación was 9.2 m long.** `LaLiberacion_Layout` describes a brig with four decks (weather
+    2.6 m) and anchors from −3 m to +11 m, but the greybox is a 9.2 m boat whose collision top is 2.2 m,
+    so Jake, placed on the weather deck in every story mission, stood 40 cm in the air. The art brig
+    follows the layout (about 30 m, weather deck 2.6 m, raised fore deck 3.0 m for Mira, Esteban and the
+    helm, whose hub is at 4.2 m), and its deck collision replaces the greybox one.
+28. **Galleon Cove anchors were authored against that 9.2 m boat.** At the `ImpoundBerth` anchor a
+    30 m brig would cut through `HarborControl` and the approach path. She now lies 4.5 m on and 5.8 m
+    off the berth so her starboard rail meets `LaLiberacionBoarding`, where a boarding stair climbs over
+    the rail (art collision, 25 cm steps); the helm interaction stands at her wheel on the fore deck
+    instead of on a pad beside her; Esteban and the harbor control post, both authored on open water, get rafts as people
+    on the water already did in story missions. **Owner question:** re-author the cove anchors against
+    the brig, or confirm this berth.
+29. **Ship forward axis.** Layouts, greybox and art put the bow at +X (starboard −Y, as
+    `NavalCombatComponent` assumes), but `ShipVoyageComponent` moves the entity along its local +Y at
+    heading 0 and yaws it by the heading, so a moving ship sails broadside. Not changed here (gameplay
+    code); the voyage adapter must turn heading into +X forward before sailing is verified.
+30. **Helm at the bow.** Both ship layouts put the helm (and the Harlow's family gathering, La
+    Liberación's great cabin and map table) at +X, which the Harlow layout calls forward, so the wheel
+    stands on the fore deck. The art follows the layouts. **Owner question:** is +X the bow (then the
+    helm and great cabin move aft), or the stern (then "forward" and the starboard/port anchors flip)?
+31. **Rexa's warehouse quarter blocked its own route.** The greybox boxes are solid: the path from the
+    broker to the cargo records ran through a 3.6 m block and a 2.4 m house. The art hall has doorways
+    at both ends and a gate between the west houses, and its collision follows the walls, so the
+    authored route is walkable.
+32. **Land story levels had no ground.** Anchors, pads and paths floated over nothing; stepping off a
+    path fell forever. Every land story level now stands on ground tiles with a collider just under its
+    lowest anchor.
 
 ### Boss quality audit (2026-09-25)
 

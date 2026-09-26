@@ -127,9 +127,9 @@
                     "Parent Entity": "ContainerEntity",
                     "Transform Data": {
                         "Translate": [
-                            19.5,
-                            3.6,
-                            3.8
+                            30.2,
+                            10,
+                            3
                         ]
                     }
                 },
@@ -224,10 +224,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_400x400x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_400x400x100_p375.azmodel",
                                 "assetId": {
-                                    "guid": "{3F3B8CF0-DE93-5A11-AD57-D71927DC805C}",
-                                    "subId": 270783830
+                                    "guid": "{D08C7A42-D344-5066-AC12-5E6D6091D1AC}",
+                                    "subId": 268785002
                                 }
                             }
                         }
@@ -1070,6 +1070,103 @@
             "Id": "Entity_[2031296783446007]",
             "Name": "Harbor Control"
         },
+        "Entity_[2365535177801370]": {
+            "Components": {
+                "Component_[1715139115900461]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 1715139115900461
+                },
+                "Component_[2842392145788373]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 2842392145788373
+                },
+                "Component_[2902379778310937]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 2902379778310937
+                },
+                "Component_[3137874072873380]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 3137874072873380
+                },
+                "Component_[3152616937493936]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 3152616937493936
+                },
+                "Component_[3658320940560834]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/models/sm_art_pier_400x400x100_p300.azmodel",
+                                "assetId": {
+                                    "guid": "{32B58571-6DDA-5A99-8BE0-E1E954049D04}",
+                                    "subId": 271464226
+                                }
+                            }
+                        }
+                    },
+                    "Id": 3658320940560834
+                },
+                "Component_[3863466882147393]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 3863466882147393
+                },
+                "Component_[4035145769209007]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 4035145769209007
+                },
+                "Component_[441692688727761]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 441692688727761
+                },
+                "Component_[4767295448664194]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 4767295448664194
+                },
+                "Component_[6749954661738344]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 6749954661738344,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4,
+                                4,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[6921648075961565]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 6921648075961565,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            9,
+                            0,
+                            -0.6
+                        ]
+                    }
+                }
+            },
+            "Id": "Entity_[2365535177801370]",
+            "Name": "PROVISIONAL Raft HarborControl"
+        },
         "Entity_[2799294637254479]": {
             "Components": {
                 "Component_[1698806775649725]": {
@@ -1078,8 +1175,8 @@
                     "Parent Entity": "ContainerEntity",
                     "Transform Data": {
                         "Translate": [
-                            15.5,
-                            4.2,
+                            20,
+                            10,
                             0
                         ]
                     }
@@ -1142,10 +1239,10 @@
                     "ShapeConfiguration": {
                         "PhysicsAsset": {
                             "Asset": {
-                                "assetHint": "assets/greybox/ships/laliberacion/sm_laliberacion_alpha_collision.pxmesh",
+                                "assetHint": "assets/art/collision/sm_laliberacion_alpha_collision.pxmesh",
                                 "assetId": {
-                                    "guid": "{C14EEC61-D4A1-501F-B891-1304FE354F9D}",
-                                    "subId": 3519352714
+                                    "guid": "{5844E8AE-514D-5430-9A0C-F9CC3F1CB13D}",
+                                    "subId": 3591168708
                                 }
                             }
                         }
@@ -1160,10 +1257,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/ships/laliberacion/sm_laliberacion_alpha.azmodel",
+                                "assetHint": "assets/art/models/sm_art_laliberacion.azmodel",
                                 "assetId": {
-                                    "guid": "{C0B3F6CF-366B-5423-B528-B854CD24B9DA}",
-                                    "subId": 268805641
+                                    "guid": "{6064796B-2E33-5EF6-B264-93473791AB14}",
+                                    "subId": 280269200
                                 }
                             }
                         }
@@ -1541,10 +1638,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p350.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{1F23A434-0DEB-52DA-8567-BDEB359DA57A}",
+                                    "subId": 274875525
                                 }
                             }
                         }
@@ -1667,10 +1764,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p350.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{1F23A434-0DEB-52DA-8567-BDEB359DA57A}",
+                                    "subId": 274875525
                                 }
                             }
                         }
@@ -1774,10 +1871,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p350.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{1F23A434-0DEB-52DA-8567-BDEB359DA57A}",
+                                    "subId": 274875525
                                 }
                             }
                         }
@@ -1859,10 +1956,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p325.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{3895B4B8-51E2-5D83-983D-32540F41B56B}",
+                                    "subId": 273229517
                                 }
                             }
                         }
@@ -1997,10 +2094,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p375.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{5B2AE3DA-374B-554A-A87C-0138798CF1FA}",
+                                    "subId": 272552584
                                 }
                             }
                         }
@@ -2085,6 +2182,103 @@
             },
             "Id": "Entity_[3229888982974245]",
             "Name": "Anchor Esteban"
+        },
+        "Entity_[3461012694045393]": {
+            "Components": {
+                "Component_[1085761524409597]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 1085761524409597
+                },
+                "Component_[2346268977808082]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 2346268977808082,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            6.5,
+                            -2.4,
+                            -0.55
+                        ]
+                    }
+                },
+                "Component_[3390812207186661]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 3390812207186661
+                },
+                "Component_[3748542301523727]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 3748542301523727
+                },
+                "Component_[4229910004884231]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            0.5
+                        ]
+                    },
+                    "Id": 4229910004884231,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                4,
+                                4,
+                                1
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                },
+                "Component_[4386354216568906]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 4386354216568906
+                },
+                "Component_[4534164632941461]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/models/sm_art_pier_400x400x100_p300.azmodel",
+                                "assetId": {
+                                    "guid": "{32B58571-6DDA-5A99-8BE0-E1E954049D04}",
+                                    "subId": 271464226
+                                }
+                            }
+                        }
+                    },
+                    "Id": 4534164632941461
+                },
+                "Component_[4639135136432020]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 4639135136432020
+                },
+                "Component_[4716410620657304]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 4716410620657304
+                },
+                "Component_[8408378530040400]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 8408378530040400
+                },
+                "Component_[8719088288160154]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 8719088288160154
+                },
+                "Component_[986695006693374]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 986695006693374
+                }
+            },
+            "Id": "Entity_[3461012694045393]",
+            "Name": "PROVISIONAL Raft Esteban"
         },
         "Entity_[3540262152528330]": {
             "Components": {
@@ -3279,10 +3473,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/world/moran/galleoncove/sm_galleoncove_alpha.azmodel",
+                                "assetHint": "assets/art/models/sm_art_galleoncovejetty.azmodel",
                                 "assetId": {
-                                    "guid": "{CF247EFB-6A83-5839-801F-9EB0FD6E1269}",
-                                    "subId": 283939632
+                                    "guid": "{60A29CF6-1C1E-5EF5-A016-0B714168F987}",
+                                    "subId": 270314540
                                 }
                             }
                         }
@@ -3392,103 +3586,6 @@
             },
             "Id": "Entity_[6338894720008347]",
             "Name": "Anchor Helm"
-        },
-        "Entity_[7256508686930421]": {
-            "Components": {
-                "Component_[1710550731501696]": {
-                    "$type": "EditorEntitySortComponent",
-                    "Id": 1710550731501696
-                },
-                "Component_[2367769498091727]": {
-                    "$type": "AZ::Render::EditorMeshComponent",
-                    "Controller": {
-                        "Configuration": {
-                            "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_400x400x100.azmodel",
-                                "assetId": {
-                                    "guid": "{3F3B8CF0-DE93-5A11-AD57-D71927DC805C}",
-                                    "subId": 270783830
-                                }
-                            }
-                        }
-                    },
-                    "Id": 2367769498091727
-                },
-                "Component_[263102019571511]": {
-                    "$type": "EditorDisabledCompositionComponent",
-                    "Id": 263102019571511
-                },
-                "Component_[2796677328024881]": {
-                    "$type": "EditorColliderComponent",
-                    "ColliderConfiguration": {
-                        "MaterialSlots": {
-                            "Slots": [
-                                {
-                                    "Name": "Entire object"
-                                }
-                            ]
-                        },
-                        "Position": [
-                            0,
-                            0,
-                            0.5
-                        ]
-                    },
-                    "Id": 2796677328024881,
-                    "ShapeConfiguration": {
-                        "Box": {
-                            "Configuration": [
-                                4,
-                                4,
-                                1
-                            ]
-                        },
-                        "ShapeType": 1
-                    }
-                },
-                "Component_[4125180830739490]": {
-                    "$type": "EditorOnlyEntityComponent",
-                    "Id": 4125180830739490
-                },
-                "Component_[4259472778162275]": {
-                    "$type": "EditorEntityIconComponent",
-                    "Id": 4259472778162275
-                },
-                "Component_[5814019368435134]": {
-                    "$type": "EditorInspectorComponent",
-                    "Id": 5814019368435134
-                },
-                "Component_[6284310658389822]": {
-                    "$type": "EditorStaticRigidBodyComponent",
-                    "Id": 6284310658389822
-                },
-                "Component_[6466229667198608]": {
-                    "$type": "EditorLockComponent",
-                    "Id": 6466229667198608
-                },
-                "Component_[716382908741132]": {
-                    "$type": "EditorPendingCompositionComponent",
-                    "Id": 716382908741132
-                },
-                "Component_[7502122701032044]": {
-                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
-                    "Id": 7502122701032044,
-                    "Parent Entity": "ContainerEntity",
-                    "Transform Data": {
-                        "Translate": [
-                            19.5,
-                            3.6,
-                            2.8
-                        ]
-                    }
-                },
-                "Component_[7889630598733761]": {
-                    "$type": "EditorVisibilityComponent",
-                    "Id": 7889630598733761
-                }
-            },
-            "Id": "Entity_[7256508686930421]",
-            "Name": "PROVISIONAL Pad Helm"
         },
         "Entity_[7543921690660517]": {
             "Components": {
@@ -3764,6 +3861,99 @@
             "Id": "Entity_[7755313331551342]",
             "Name": "Ocean Far 12"
         },
+        "Entity_[777822006789172]": {
+            "Components": {
+                "Component_[2950735412627928]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 2950735412627928
+                },
+                "Component_[3251256084754926]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 3251256084754926
+                },
+                "Component_[3643630750091767]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 3643630750091767
+                },
+                "Component_[3870093310840679]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 3870093310840679
+                },
+                "Component_[4556358465089041]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 4556358465089041
+                },
+                "Component_[4844394660751091]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 4844394660751091
+                },
+                "Component_[5305180827019858]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 5305180827019858
+                },
+                "Component_[5861516749264471]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 5861516749264471,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            17,
+                            1.9,
+                            1.2
+                        ]
+                    }
+                },
+                "Component_[633139256269227]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 633139256269227
+                },
+                "Component_[6510755831698100]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/models/sm_art_boardingstair_410x252x112.azmodel",
+                                "assetId": {
+                                    "guid": "{277B6AA3-E8B1-5F5C-8FD7-B932617105C7}",
+                                    "subId": 282519308
+                                }
+                            }
+                        }
+                    },
+                    "Id": 6510755831698100
+                },
+                "Component_[8367085659108005]": {
+                    "$type": "EditorMeshColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        }
+                    },
+                    "Id": 8367085659108005,
+                    "ShapeConfiguration": {
+                        "PhysicsAsset": {
+                            "Asset": {
+                                "assetHint": "assets/art/collision/sm_art_boardingstair_410x252x112_collision.pxmesh",
+                                "assetId": {
+                                    "guid": "{BF6AF8A4-7BB8-5541-87BD-63D65BB37B4A}",
+                                    "subId": 2016678914
+                                }
+                            }
+                        }
+                    }
+                },
+                "Component_[8388283821522523]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 8388283821522523
+                }
+            },
+            "Id": "Entity_[777822006789172]",
+            "Name": "La Liberacion Boarding Stair"
+        },
         "Entity_[7999395882970026]": {
             "Components": {
                 "Component_[193229164755038]": {
@@ -3784,7 +3974,7 @@
                     "Parent Entity": "ContainerEntity",
                     "Transform Data": {
                         "Rotate": [
-                            -76.130997,
+                            -38,
                             -0.847,
                             -15.81
                         ],
@@ -4094,10 +4284,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_placeholder_figure.azmodel",
+                                "assetHint": "assets/art/models/sm_art_figure_officer.azmodel",
                                 "assetId": {
-                                    "guid": "{D5684B6A-9686-573D-8846-71268A3B2E15}",
-                                    "subId": 279670800
+                                    "guid": "{5D3EDBD9-CE10-5839-AE6A-C0E225FB4508}",
+                                    "subId": 278363482
                                 }
                             }
                         }
@@ -4536,10 +4726,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/characters/jake/sk_jake_alpha_bindpose.azmodel",
+                                "assetHint": "assets/art/models/sm_art_figure_jake.azmodel",
                                 "assetId": {
-                                    "guid": "{BC8B88D8-23A6-5D92-B4B0-583548F206EE}",
-                                    "subId": 279915574
+                                    "guid": "{BB12861B-119F-524A-8F88-7E4C40382782}",
+                                    "subId": 277377483
                                 }
                             }
                         }
@@ -4653,10 +4843,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_400x400x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_400x400x100_p325.azmodel",
                                 "assetId": {
-                                    "guid": "{3F3B8CF0-DE93-5A11-AD57-D71927DC805C}",
-                                    "subId": 270783830
+                                    "guid": "{5DEB750F-0CBE-5D89-AAEE-18F3AB6D5AA8}",
+                                    "subId": 275947823
                                 }
                             }
                         }
