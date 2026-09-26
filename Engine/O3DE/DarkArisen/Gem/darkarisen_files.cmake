@@ -11,6 +11,7 @@ set(FILES
     Include/DarkArisen/PresentationBus.h
     Include/DarkArisen/CameraBus.h
     Include/DarkArisen/NavalBus.h
+    Include/DarkArisen/FrontEndBus.h
     Source/Story/CampaignSystemComponent.h
     Source/Story/CampaignSystemComponent.cpp
     Source/Story/StoryTriggerComponent.h
@@ -23,6 +24,10 @@ set(FILES
     Source/Story/StoryActorComponent.cpp
     Source/Story/CreditsComponent.h
     Source/Story/CreditsComponent.cpp
+    Source/FrontEnd/FrontEndSystemComponent.h
+    Source/FrontEnd/FrontEndSystemComponent.cpp
+    Source/FrontEnd/MainMenuComponent.h
+    Source/FrontEnd/MainMenuComponent.cpp
     Source/Persistence/SaveSlotStore.h
     Source/Persistence/SaveSlotStore.cpp
     Source/Combat/CombatantComponent.h

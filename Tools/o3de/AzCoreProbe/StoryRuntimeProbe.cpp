@@ -12,6 +12,9 @@
 // damage); the fights themselves are covered by the gameplay probe and the Core tests.
 
 #include "LevelProbeSupport.h"
+#include "Persistence/SaveSlotStore.h"
+#include <AzCore/Time/ITime.h>
+#include <AzFramework/Font/FontInterface.h>
 
 #include <DarkArisen/NavalBus.h>
 
@@ -20,7 +23,11 @@
 #include <DarkArisen/Core/SaveCodec.h>
 
 #include <algorithm>
+#include <fstream>
+#include <iterator>
 #include <map>
+#include <string>
+#include <vector>
 
 namespace
 {
@@ -71,6 +78,32 @@ namespace
     }
 }
 
+namespace
+{
+    /** Stands in for AtomFont: records every string the front end draws. */
+    struct CapturedText final : AzFramework::FontDrawInterface
+    {
+        std::vector<std::string> lines;
+        void DrawScreenAlignedText2d(const AzFramework::TextDrawParameters&, AZStd::string_view text) override
+        {
+            lines.emplace_back(text.data(), text.size());
+        }
+        void DrawScreenAlignedText3d(const AzFramework::TextDrawParameters&, AZStd::string_view) override {}
+        AZ::Vector2 GetTextSize(const AzFramework::TextDrawParameters&, AZStd::string_view) override { return AZ::Vector2::CreateZero(); }
+        bool Drew(const std::string& needle) const
+        {
+            return std::any_of(lines.begin(), lines.end(), [&needle](const std::string& line) { return line.find(needle) != std::string::npos; });
+        }
+    };
+
+    struct CapturedFonts final : AzFramework::FontQueryInterface
+    {
+        CapturedText* text = nullptr;
+        AzFramework::FontDrawInterface* GetFontDrawInterface(AzFramework::FontId) const override { return text; }
+        AzFramework::FontDrawInterface* GetDefaultFontDrawInterface() const override { return text; }
+    };
+}
+
 int main(int argc, char** argv)
 {
     const std::filesystem::path repo = argc > 1 ? std::filesystem::path(argv[1]) : std::filesystem::path(DARKARISEN_REPO_ROOT);
@@ -102,11 +135,17 @@ int main(int argc, char** argv)
              DarkArisen::CameraRigComponent::CreateDescriptor(), DarkArisen::LockOnComponent::CreateDescriptor(),
              DarkArisen::NavalCombatComponent::CreateDescriptor(), DarkArisen::ShipVoyageComponent::CreateDescriptor(),
              DarkArisen::CreditsComponent::CreateDescriptor(), DarkArisen::OpeningDirectorComponent::CreateDescriptor(),
+             DarkArisen::FrontEndSystemComponent::CreateDescriptor(), DarkArisen::MainMenuComponent::CreateDescriptor(),
              ProbeSupport::ProbeTransformComponent::CreateDescriptor(), ProbeSupport::ProbeCharacterComponent::CreateDescriptor()})
     {
         app.RegisterComponentDescriptor(componentDescriptor);
     }
     systemEntity->CreateComponent<DarkArisen::CampaignSystemComponent>();
+    systemEntity->CreateComponent<DarkArisen::FrontEndSystemComponent>();
+    CapturedText drawn;
+    CapturedFonts fonts;
+    fonts.text = &drawn;
+    AZ::Interface<AzFramework::FontQueryInterface>::Register(&fonts);
     systemEntity->Init();
     systemEntity->Activate();
     auto* campaign = DarkArisen::CampaignInterface::Get();
@@ -401,9 +440,74 @@ int main(int argc, char** argv)
     Check(roll && roll->Field("RollText").find("O3DE 2605.0") != AZStd::string::npos &&
             roll->Field("RollText").find("Unreal") == AZStd::string::npos,
         "credits list the verified O3DE technology, not Unreal");
+
+    // ---- The front end: credits roll on screen, return to L_FrontEnd, main menu, settings, pause.
+    DarkArisen::FrontEndRequests* frontEnd = DarkArisen::FrontEndRequestBus::FindFirstHandler();
+    Check(frontEnd && frontEnd->IsCreditsRolling(), "the front end rolls the credits it was handed");
+    if (!frontEnd)
+    {
+        return 1;
+    }
+    drawn.lines.clear();
+    Tick(level, AZ::EntityId(), 1.0f);
+    Check(drawn.Drew("O3DE 2605.0") && drawn.Drew("Thank you for playing."), "the roll is drawn through AzFramework::FontDrawInterface");
+    frontEnd->Back();
+    Check(frontEnd->IsCreditsRolling(), "the roll cannot be skipped in its first 8 seconds");
+    Tick(level, AZ::EntityId(), 8.0f);
+    frontEnd->Back();
+    Tick(level, AZ::EntityId(), 0.1f);
+    Check(!frontEnd->IsCreditsRolling() && g_requestedLevel == "L_FrontEnd", "skipped after 8 s: the game returns to the front end");
     UnloadLevel(level);
 
+    g_requestedLevel.clear();
+    Check(open("L_FrontEnd", level) && level.m_rejectedComponents == 0, "L_FrontEnd.prefab parsed");
+    const auto focusOn = [&](const std::string& label)
+    {
+        for (int tries = 0; tries < 16; ++tries)
+        {
+            drawn.lines.clear();
+            Tick(level, AZ::EntityId(), 1.0f / 60.0f);
+            if (drawn.Drew("> " + label)) return true;
+            frontEnd->Navigate(1);
+        }
+        return false;
+    };
+    drawn.lines.clear();
+    Tick(level, AZ::EntityId(), 0.1f);
+    Check(frontEnd->IsMenuOpen() && drawn.Drew("DARK ARISEN") && drawn.Drew("NEW GAME") && drawn.Drew("CONTINUE") && drawn.Drew("QUIT"),
+        "L_FrontEnd shows the main menu");
+    Check(DarkArisen::SaveSlotStore::Exists(DarkArisen::SaveSlotStore::AutosaveSlot), "Continue is offered: the chapter autosave exists");
+    Check(focusOn("OPTIONS / SETTINGS"), "menu focus moves with navigation");
+    frontEnd->Confirm();
+    Check(focusOn("GRAPHICS EPIC") && drawn.Drew("RAY TRACING: NOT MEASURED ON THIS MACHINE"),
+        "settings page; ray tracing stays unavailable without a measurement on this machine");
+    frontEnd->Confirm();
+    std::ifstream settingsFile(userDir / "DarkArisen" / "settings.cfg");
+    const std::string settingsText((std::istreambuf_iterator<char>(settingsFile)), std::istreambuf_iterator<char>());
+    Check(frontEnd->GetUserSettings().Preset == DarkArisen::Core::GraphicsPreset::Epic && settingsText.find("preset=epic") != std::string::npos,
+        "graphics preset applied and saved under @user@/DarkArisen/settings.cfg");
+    frontEnd->Back();
+    Check(focusOn("NEW GAME"), "back on the main page");
+    frontEnd->Confirm();
+    Check(!frontEnd->IsMenuOpen() && g_requestedLevel == "L_HarlowOpening" &&
+            Runtime().GetMissionState("Main.C10.05.TheWakeAfter") != MissionState::Completed && Runtime().State().CurrentChapter == 1,
+        "New Game resets the campaign and opens the Harlow opening");
+    UnloadLevel(level);
+
+    g_requestedLevel.clear();
+    auto* time = AZ::Interface<AZ::ITime>::Get();
+    frontEnd->Back();
+    Check(frontEnd->IsPaused() && time && time->GetSimulationTickScale() == 0.0f, "Escape pauses play (simulation tick scale 0)");
+    Check(focusOn("SAVE GAME") && drawn.Drew("PAUSED"), "the pause menu is drawn");
+    frontEnd->Confirm();
+    drawn.lines.clear();
+    Tick(level, AZ::EntityId(), 1.0f / 60.0f);
+    Check(DarkArisen::SaveSlotStore::Exists(DarkArisen::SaveSlotStore::ManualSlot) && drawn.Drew("Game saved."), "Save Game writes the manual slot");
+    frontEnd->Back();
+    Check(!frontEnd->IsPaused() && time && time->GetSimulationTickScale() == 1.0f, "Escape again resumes at the previous time scale");
+
     systemEntity->Deactivate();
+    AZ::Interface<AzFramework::FontQueryInterface>::Unregister(&fonts);
     AZ::IO::FileIOBase::SetInstance(nullptr);
     AZ::IO::FileIOBase::SetInstance(previousIO);
     app.Destroy();

@@ -11,6 +11,8 @@
 #include "Story/StoryActorComponent.h"
 #include "Ships/NavalCombatComponent.h"
 #include "Story/CreditsComponent.h"
+#include "FrontEnd/FrontEndSystemComponent.h"
+#include "FrontEnd/MainMenuComponent.h"
 #include "Player/PlayerSpawnComponent.h"
 #include "Player/SwimmerComponent.h"
 #include "Ships/ShipVoyageComponent.h"
@@ -49,12 +51,14 @@ namespace DarkArisen
                 StoryActorComponent::CreateDescriptor(),
                 NavalCombatComponent::CreateDescriptor(),
                 CreditsComponent::CreateDescriptor(),
+                FrontEndSystemComponent::CreateDescriptor(),
+                MainMenuComponent::CreateDescriptor(),
             });
         }
 
         AZ::ComponentTypeList GetRequiredSystemComponents() const override
         {
-            return AZ::ComponentTypeList{ azrtti_typeid<CampaignSystemComponent>() };
+            return AZ::ComponentTypeList{ azrtti_typeid<CampaignSystemComponent>(), azrtti_typeid<FrontEndSystemComponent>() };
         }
     };
 }

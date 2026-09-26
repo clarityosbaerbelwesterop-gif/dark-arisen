@@ -40,6 +40,8 @@
 #include "Story/StoryTriggerComponent.h"
 #include "Story/StoryActorComponent.h"
 #include "Story/CreditsComponent.h"
+#include "FrontEnd/FrontEndSystemComponent.h"
+#include "FrontEnd/MainMenuComponent.h"
 #include "Ships/NavalCombatComponent.h"
 #include "Ships/ShipVoyageComponent.h"
 #include "World/OceanComponent.h"
@@ -229,6 +231,7 @@ namespace
         if (type == azrtti_typeid<StoryActorComponent>()) return aznew StoryActorComponent();
         if (type == azrtti_typeid<NavalCombatComponent>()) return aznew NavalCombatComponent();
         if (type == azrtti_typeid<CreditsComponent>()) return aznew CreditsComponent();
+        if (type == azrtti_typeid<MainMenuComponent>()) return aznew MainMenuComponent();
         if (type == azrtti_typeid<ShipVoyageComponent>()) return aznew ShipVoyageComponent();
         return nullptr;  // JakeInputComponent needs the input system; it is compile-checked instead.
     }

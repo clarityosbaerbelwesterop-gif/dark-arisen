@@ -1516,6 +1516,21 @@ namespace DarkArisen::Tools
             return Prefab.Write();
         }
 
+        /**
+         * L_FrontEnd: the level the launcher opens first (autoexec.cfg) and the credits return to
+         * (the Unreal L_AlphaStartup). The quiet sea behind the main menu; the menu itself is the
+         * FrontEndSystemComponent's, opened by MainMenuComponent while this level is loaded.
+         */
+        std::string BuildFrontEnd(Session& Work)
+        {
+            PrefabBuilder Prefab("L_FrontEnd");
+            AddEnvironment(Work, Prefab);
+            AddSea(Work, Prefab);
+            const std::string Menu = Prefab.AddEntity("Main Menu", {});
+            AddGame(Prefab, Menu, MainMenuComponentTypeId, "MainMenuComponent", JsonObject());
+            return Prefab.Write();
+        }
+
         // ----------------------------------------------------------------------------- Chapter 2: Moran to Rexa
 
         // PROVISIONAL authoring defaults for Chapter 2 beats (the layouts give points, not sizes).
@@ -1842,6 +1857,7 @@ namespace DarkArisen::Tools
             }
             std::string Credits = BuildCredits(Work);
             Work.Emit(ProjectDir + "/Levels/L_Credits/L_Credits.prefab", std::move(Credits));
+            Work.Emit(ProjectDir + "/Levels/L_FrontEnd/L_FrontEnd.prefab", BuildFrontEnd(Work));
 
             // Physical coverage: every catalogue mission with a materialised level contract.
             JsonValue Missions = JsonObject();

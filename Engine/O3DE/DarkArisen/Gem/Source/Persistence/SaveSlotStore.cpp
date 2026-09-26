@@ -103,4 +103,16 @@ namespace DarkArisen
         }
         return true;
     }
+
+    bool SaveSlotStore::Exists(const AZStd::string& slotName)
+    {
+        AZ::IO::FileIOBase* fileIO = AZ::IO::FileIOBase::GetInstance();
+        return fileIO && IsValidSlotName(slotName) && fileIO->Exists(SlotPath(slotName).c_str());
+    }
+
+    AZ::u64 SaveSlotStore::ModifiedTime(const AZStd::string& slotName)
+    {
+        AZ::IO::FileIOBase* fileIO = AZ::IO::FileIOBase::GetInstance();
+        return Exists(slotName) ? fileIO->ModificationTime(SlotPath(slotName).c_str()) : 0;
+    }
 }

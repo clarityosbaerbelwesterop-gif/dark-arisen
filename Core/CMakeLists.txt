@@ -30,6 +30,7 @@ add_library(DarkArisenCore STATIC
     Source/QuestJournal.cpp
     Source/ProgressionEconomy.cpp
     Source/LivingWorld.cpp
+    Source/FrontEnd.cpp
 )
 add_library(DarkArisen::Core ALIAS DarkArisenCore)
 target_include_directories(DarkArisenCore PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Include)
@@ -62,6 +63,7 @@ if(DARKARISEN_CORE_TESTS)
         Tests/StoryWorldTests.cpp
         Tests/LivingCampaignTests.cpp
         Tests/DravenDuelTests.cpp
+        Tests/FrontEndTests.cpp
         Tests/UnrealParityTests.cpp
     )
     target_link_libraries(DarkArisenCoreTests PRIVATE DarkArisen::Core)
