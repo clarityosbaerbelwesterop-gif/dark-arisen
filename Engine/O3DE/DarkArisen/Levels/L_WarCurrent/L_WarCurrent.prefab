@@ -168,10 +168,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p350.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{1F23A434-0DEB-52DA-8567-BDEB359DA57A}",
+                                    "subId": 274875525
                                 }
                             }
                         }
@@ -286,10 +286,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p350.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{1F23A434-0DEB-52DA-8567-BDEB359DA57A}",
+                                    "subId": 274875525
                                 }
                             }
                         }
@@ -373,10 +373,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p325.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{3895B4B8-51E2-5D83-983D-32540F41B56B}",
+                                    "subId": 273229517
                                 }
                             }
                         }
@@ -438,10 +438,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p325.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{3895B4B8-51E2-5D83-983D-32540F41B56B}",
+                                    "subId": 273229517
                                 }
                             }
                         }
@@ -613,10 +613,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p350.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{1F23A434-0DEB-52DA-8567-BDEB359DA57A}",
+                                    "subId": 274875525
                                 }
                             }
                         }
@@ -694,10 +694,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p350.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{1F23A434-0DEB-52DA-8567-BDEB359DA57A}",
+                                    "subId": 274875525
                                 }
                             }
                         }
@@ -760,10 +760,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p350.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{1F23A434-0DEB-52DA-8567-BDEB359DA57A}",
+                                    "subId": 274875525
                                 }
                             }
                         }
@@ -838,6 +838,136 @@
             },
             "Id": "Entity_[126838905004626]",
             "Name": "PROVISIONAL Path LetterDrop to BackStreetExit 12"
+        },
+        "Entity_[1286096313266004]": {
+            "Components": {
+                "Component_[1769591246013792]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 1769591246013792
+                },
+                "Component_[2255886202881101]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 2255886202881101,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            50,
+                            6.25,
+                            -0.02
+                        ]
+                    }
+                },
+                "Component_[3144506444311553]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 3144506444311553
+                },
+                "Component_[4118018161255165]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 4118018161255165
+                },
+                "Component_[5997908068012511]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 5997908068012511
+                },
+                "Component_[7307320807127749]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 7307320807127749
+                },
+                "Component_[7382006652591668]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 7382006652591668
+                },
+                "Component_[8281091230510985]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 8281091230510985
+                },
+                "Component_[8366260051677938]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/models/sm_art_groundtile_earth.azmodel",
+                                "assetId": {
+                                    "guid": "{32B46DBF-ED53-5A05-B96D-5EA1832CA989}",
+                                    "subId": 280400315
+                                }
+                            }
+                        }
+                    },
+                    "Id": 8366260051677938
+                },
+                "Component_[8525316342738130]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 8525316342738130
+                }
+            },
+            "Id": "Entity_[1286096313266004]",
+            "Name": "Ground Tile 1_1"
+        },
+        "Entity_[1286096313266439]": {
+            "Components": {
+                "Component_[1360553372282205]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 1360553372282205
+                },
+                "Component_[3361823972673472]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 3361823972673472
+                },
+                "Component_[3979468239281065]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 3979468239281065
+                },
+                "Component_[6207331925750484]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 6207331925750484
+                },
+                "Component_[635230843682559]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 635230843682559
+                },
+                "Component_[7572702350191213]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 7572702350191213,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            50,
+                            -43.75,
+                            -0.02
+                        ]
+                    }
+                },
+                "Component_[7828074038599009]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 7828074038599009
+                },
+                "Component_[810592485915762]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 810592485915762
+                },
+                "Component_[8815290740227986]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/models/sm_art_groundtile_earth.azmodel",
+                                "assetId": {
+                                    "guid": "{32B46DBF-ED53-5A05-B96D-5EA1832CA989}",
+                                    "subId": 280400315
+                                }
+                            }
+                        }
+                    },
+                    "Id": 8815290740227986
+                },
+                "Component_[973865445637477]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 973865445637477
+                }
+            },
+            "Id": "Entity_[1286096313266439]",
+            "Name": "Ground Tile 1_0"
         },
         "Entity_[129037928260613]": {
             "Components": {
@@ -923,10 +1053,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p350.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{1F23A434-0DEB-52DA-8567-BDEB359DA57A}",
+                                    "subId": 274875525
                                 }
                             }
                         }
@@ -1025,10 +1155,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p325.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{3895B4B8-51E2-5D83-983D-32540F41B56B}",
+                                    "subId": 273229517
                                 }
                             }
                         }
@@ -1099,10 +1229,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p650.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{92A70220-C95B-5F3E-BD13-7D0AD4671EE8}",
+                                    "subId": 279545454
                                 }
                             }
                         }
@@ -1164,10 +1294,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p625.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{6D946AA8-A70C-5BBB-A548-8AC11FBABCC1}",
+                                    "subId": 277013542
                                 }
                             }
                         }
@@ -1283,10 +1413,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p625.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{6D946AA8-A70C-5BBB-A548-8AC11FBABCC1}",
+                                    "subId": 277013542
                                 }
                             }
                         }
@@ -1408,10 +1538,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p600.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{D925F89A-2F77-551D-93AB-F0B0DF286152}",
+                                    "subId": 283013675
                                 }
                             }
                         }
@@ -1498,10 +1628,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p600.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{D925F89A-2F77-551D-93AB-F0B0DF286152}",
+                                    "subId": 283013675
                                 }
                             }
                         }
@@ -1625,10 +1755,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p575.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{0DEB4DB6-EF63-5019-BCF7-E000D41E00D9}",
+                                    "subId": 280211002
                                 }
                             }
                         }
@@ -1699,10 +1829,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p550.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{9A94512B-1D92-5528-AF80-28D0734CCEB4}",
+                                    "subId": 284112951
                                 }
                             }
                         }
@@ -1833,10 +1963,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p550.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{9A94512B-1D92-5528-AF80-28D0734CCEB4}",
+                                    "subId": 284112951
                                 }
                             }
                         }
@@ -1866,10 +1996,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p675.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{E4DE1CA3-C4CE-5005-A760-2A9B55F3FFF4}",
+                                    "subId": 284495971
                                 }
                             }
                         }
@@ -1988,10 +2118,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p525.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{E685F8D4-7AB4-529E-B834-C34739FC77A3}",
+                                    "subId": 281303679
                                 }
                             }
                         }
@@ -2151,10 +2281,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p525.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{E685F8D4-7AB4-529E-B834-C34739FC77A3}",
+                                    "subId": 281303679
                                 }
                             }
                         }
@@ -2253,10 +2383,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p450.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{047DD00F-F01D-5035-94D4-5E3FDA48D052}",
+                                    "subId": 271405568
                                 }
                             }
                         }
@@ -2319,10 +2449,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p475.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{CB2AE372-15F4-5BF4-B5F0-BF5D466AC7A4}",
+                                    "subId": 275891213
                                 }
                             }
                         }
@@ -2436,10 +2566,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p475.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{CB2AE372-15F4-5BF4-B5F0-BF5D466AC7A4}",
+                                    "subId": 275891213
                                 }
                             }
                         }
@@ -2559,10 +2689,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p500.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{BA379525-6916-5EDA-A133-2D20871198C4}",
+                                    "subId": 278449266
                                 }
                             }
                         }
@@ -2613,10 +2743,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p400.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{C9EF297B-98F0-5A80-B732-F15A06C9B982}",
+                                    "subId": 274376261
                                 }
                             }
                         }
@@ -2743,10 +2873,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p400.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{C9EF297B-98F0-5A80-B732-F15A06C9B982}",
+                                    "subId": 274376261
                                 }
                             }
                         }
@@ -2832,10 +2962,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p425.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{5CB2A5F9-16D5-5A45-9C05-524C70D0D73D}",
+                                    "subId": 268841032
                                 }
                             }
                         }
@@ -2914,10 +3044,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p450.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{047DD00F-F01D-5035-94D4-5E3FDA48D052}",
+                                    "subId": 271405568
                                 }
                             }
                         }
@@ -3031,6 +3161,88 @@
             "Id": "Entity_[2787697318808807]",
             "Name": "Anchor HarborBody"
         },
+        "Entity_[3029239644006161]": {
+            "Components": {
+                "Component_[1054658755062844]": {
+                    "$type": "EditorStaticRigidBodyComponent",
+                    "Id": 1054658755062844
+                },
+                "Component_[1725989240145282]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 1725989240145282
+                },
+                "Component_[1811334802409654]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 1811334802409654
+                },
+                "Component_[2739417302026536]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 2739417302026536
+                },
+                "Component_[2859932058671021]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 2859932058671021
+                },
+                "Component_[3775213184582647]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 3775213184582647
+                },
+                "Component_[4028272686160498]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 4028272686160498
+                },
+                "Component_[4039333701702560]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 4039333701702560
+                },
+                "Component_[5754079208606282]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 5754079208606282,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            75,
+                            -18.75,
+                            -0.02
+                        ]
+                    }
+                },
+                "Component_[646201167158117]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 646201167158117
+                },
+                "Component_[7136991999482095]": {
+                    "$type": "EditorColliderComponent",
+                    "ColliderConfiguration": {
+                        "MaterialSlots": {
+                            "Slots": [
+                                {
+                                    "Name": "Entire object"
+                                }
+                            ]
+                        },
+                        "Position": [
+                            0,
+                            0,
+                            -0.25
+                        ]
+                    },
+                    "Id": 7136991999482095,
+                    "ShapeConfiguration": {
+                        "Box": {
+                            "Configuration": [
+                                200,
+                                100,
+                                0.5
+                            ]
+                        },
+                        "ShapeType": 1
+                    }
+                }
+            },
+            "Id": "Entity_[3029239644006161]",
+            "Name": "Ground Collision"
+        },
         "Entity_[3157189834198540]": {
             "Components": {
                 "Component_[115798278533018]": {
@@ -3074,7 +3286,7 @@
                     "Parent Entity": "ContainerEntity",
                     "Transform Data": {
                         "Rotate": [
-                            -76.130997,
+                            -38,
                             -0.847,
                             -15.81
                         ],
@@ -3116,10 +3328,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_placeholder_figure.azmodel",
+                                "assetHint": "assets/art/models/sm_art_figure_woman.azmodel",
                                 "assetId": {
-                                    "guid": "{D5684B6A-9686-573D-8846-71268A3B2E15}",
-                                    "subId": 279670800
+                                    "guid": "{5C5EB620-16B0-5851-8A72-3CFA5627E05C}",
+                                    "subId": 270642477
                                 }
                             }
                         }
@@ -3343,6 +3555,136 @@
             "Id": "Entity_[3296229555729549]",
             "Name": "Anchor BackStreetExit"
         },
+        "Entity_[3705021969523804]": {
+            "Components": {
+                "Component_[1904338422349671]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 1904338422349671
+                },
+                "Component_[2094995930884936]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 2094995930884936
+                },
+                "Component_[3953801025353236]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 3953801025353236
+                },
+                "Component_[4017527890287613]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 4017527890287613
+                },
+                "Component_[5276769422392675]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 5276769422392675
+                },
+                "Component_[5914834583996570]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 5914834583996570
+                },
+                "Component_[7221063127895758]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 7221063127895758
+                },
+                "Component_[8149139130781296]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 8149139130781296,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            0,
+                            -43.75,
+                            -0.02
+                        ]
+                    }
+                },
+                "Component_[8782408019210403]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/models/sm_art_groundtile_earth.azmodel",
+                                "assetId": {
+                                    "guid": "{32B46DBF-ED53-5A05-B96D-5EA1832CA989}",
+                                    "subId": 280400315
+                                }
+                            }
+                        }
+                    },
+                    "Id": 8782408019210403
+                },
+                "Component_[8925449988563956]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 8925449988563956
+                }
+            },
+            "Id": "Entity_[3705021969523804]",
+            "Name": "Ground Tile 0_0"
+        },
+        "Entity_[3705021969524239]": {
+            "Components": {
+                "Component_[1378074631493095]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 1378074631493095,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            0,
+                            6.25,
+                            -0.02
+                        ]
+                    }
+                },
+                "Component_[1514605838653447]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 1514605838653447
+                },
+                "Component_[232364010288196]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/models/sm_art_groundtile_earth.azmodel",
+                                "assetId": {
+                                    "guid": "{32B46DBF-ED53-5A05-B96D-5EA1832CA989}",
+                                    "subId": 280400315
+                                }
+                            }
+                        }
+                    },
+                    "Id": 232364010288196
+                },
+                "Component_[2527782577122146]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 2527782577122146
+                },
+                "Component_[3519715348014536]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 3519715348014536
+                },
+                "Component_[5139061616654497]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 5139061616654497
+                },
+                "Component_[5143390912397787]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 5143390912397787
+                },
+                "Component_[5943946836130142]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 5943946836130142
+                },
+                "Component_[6130366119488567]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 6130366119488567
+                },
+                "Component_[8731968768441259]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 8731968768441259
+                }
+            },
+            "Id": "Entity_[3705021969524239]",
+            "Name": "Ground Tile 0_1"
+        },
         "Entity_[4002016424617271]": {
             "Components": {
                 "Component_[1094915619679026]": {
@@ -3439,10 +3781,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/characters/jake/sk_jake_alpha_bindpose.azmodel",
+                                "assetHint": "assets/art/models/sm_art_figure_jake.azmodel",
                                 "assetId": {
-                                    "guid": "{BC8B88D8-23A6-5D92-B4B0-583548F206EE}",
-                                    "subId": 279915574
+                                    "guid": "{BB12861B-119F-524A-8F88-7E4C40382782}",
+                                    "subId": 277377483
                                 }
                             }
                         }
@@ -3483,10 +3825,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_placeholder_figure.azmodel",
+                                "assetHint": "assets/art/models/sm_art_figure_woman.azmodel",
                                 "assetId": {
-                                    "guid": "{D5684B6A-9686-573D-8846-71268A3B2E15}",
-                                    "subId": 279670800
+                                    "guid": "{5C5EB620-16B0-5851-8A72-3CFA5627E05C}",
+                                    "subId": 270642477
                                 }
                             }
                         }
@@ -3614,10 +3956,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p250.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{F1FEFEF5-030A-532C-BBCD-07D5E64E3E7A}",
+                                    "subId": 278933170
                                 }
                             }
                         }
@@ -3740,10 +4082,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p250.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{F1FEFEF5-030A-532C-BBCD-07D5E64E3E7A}",
+                                    "subId": 278933170
                                 }
                             }
                         }
@@ -3854,10 +4196,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p250.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{F1FEFEF5-030A-532C-BBCD-07D5E64E3E7A}",
+                                    "subId": 278933170
                                 }
                             }
                         }
@@ -3912,10 +4254,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p250.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{F1FEFEF5-030A-532C-BBCD-07D5E64E3E7A}",
+                                    "subId": 278933170
                                 }
                             }
                         }
@@ -4046,10 +4388,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p250.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{F1FEFEF5-030A-532C-BBCD-07D5E64E3E7A}",
+                                    "subId": 278933170
                                 }
                             }
                         }
@@ -4120,10 +4462,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p250.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{F1FEFEF5-030A-532C-BBCD-07D5E64E3E7A}",
+                                    "subId": 278933170
                                 }
                             }
                         }
@@ -4181,10 +4523,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p250.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{F1FEFEF5-030A-532C-BBCD-07D5E64E3E7A}",
+                                    "subId": 278933170
                                 }
                             }
                         }
@@ -4344,10 +4686,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p250.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{F1FEFEF5-030A-532C-BBCD-07D5E64E3E7A}",
+                                    "subId": 278933170
                                 }
                             }
                         }
@@ -4426,10 +4768,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p250.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{F1FEFEF5-030A-532C-BBCD-07D5E64E3E7A}",
+                                    "subId": 278933170
                                 }
                             }
                         }
@@ -4568,10 +4910,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p250.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{F1FEFEF5-030A-532C-BBCD-07D5E64E3E7A}",
+                                    "subId": 278933170
                                 }
                             }
                         }
@@ -4641,10 +4983,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_1900x1300x700.azmodel",
+                                "assetHint": "assets/art/models/sm_art_masonry_1900x1300x700.azmodel",
                                 "assetId": {
-                                    "guid": "{FC47C976-76DD-592B-B92F-6B55C752809F}",
-                                    "subId": 278210602
+                                    "guid": "{ACB3F539-422F-5EA9-A379-E82B6B5BE4F2}",
+                                    "subId": 279811661
                                 }
                             }
                         }
@@ -4814,10 +5156,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p400.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{C9EF297B-98F0-5A80-B732-F15A06C9B982}",
+                                    "subId": 274376261
                                 }
                             }
                         }
@@ -4953,10 +5295,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p400.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{C9EF297B-98F0-5A80-B732-F15A06C9B982}",
+                                    "subId": 274376261
                                 }
                             }
                         }
@@ -5063,10 +5405,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p425.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{5CB2A5F9-16D5-5A45-9C05-524C70D0D73D}",
+                                    "subId": 268841032
                                 }
                             }
                         }
@@ -5165,10 +5507,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p450.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{047DD00F-F01D-5035-94D4-5E3FDA48D052}",
+                                    "subId": 271405568
                                 }
                             }
                         }
@@ -5190,10 +5532,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p475.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{CB2AE372-15F4-5BF4-B5F0-BF5D466AC7A4}",
+                                    "subId": 275891213
                                 }
                             }
                         }
@@ -5324,10 +5666,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_400x400x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_400x400x100_p375.azmodel",
                                 "assetId": {
-                                    "guid": "{3F3B8CF0-DE93-5A11-AD57-D71927DC805C}",
-                                    "subId": 270783830
+                                    "guid": "{D08C7A42-D344-5066-AC12-5E6D6091D1AC}",
+                                    "subId": 268785002
                                 }
                             }
                         }
@@ -5488,10 +5830,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p350.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{1F23A434-0DEB-52DA-8567-BDEB359DA57A}",
+                                    "subId": 274875525
                                 }
                             }
                         }
@@ -5610,10 +5952,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p350.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{1F23A434-0DEB-52DA-8567-BDEB359DA57A}",
+                                    "subId": 274875525
                                 }
                             }
                         }
@@ -5691,10 +6033,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p375.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{5B2AE3DA-374B-554A-A87C-0138798CF1FA}",
+                                    "subId": 272552584
                                 }
                             }
                         }
@@ -5765,10 +6107,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p375.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{5B2AE3DA-374B-554A-A87C-0138798CF1FA}",
+                                    "subId": 272552584
                                 }
                             }
                         }
@@ -5847,10 +6189,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p350.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{1F23A434-0DEB-52DA-8567-BDEB359DA57A}",
+                                    "subId": 274875525
                                 }
                             }
                         }
@@ -5949,10 +6291,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p375.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{5B2AE3DA-374B-554A-A87C-0138798CF1FA}",
+                                    "subId": 272552584
                                 }
                             }
                         }
@@ -6051,10 +6393,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p375.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{5B2AE3DA-374B-554A-A87C-0138798CF1FA}",
+                                    "subId": 272552584
                                 }
                             }
                         }
@@ -6209,10 +6551,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p375.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{5B2AE3DA-374B-554A-A87C-0138798CF1FA}",
+                                    "subId": 272552584
                                 }
                             }
                         }
@@ -6280,10 +6622,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p375.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{5B2AE3DA-374B-554A-A87C-0138798CF1FA}",
+                                    "subId": 272552584
                                 }
                             }
                         }
@@ -6422,10 +6764,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p375.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{5B2AE3DA-374B-554A-A87C-0138798CF1FA}",
+                                    "subId": 272552584
                                 }
                             }
                         }
@@ -6527,10 +6869,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_400x400x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_400x400x100_p400.azmodel",
                                 "assetId": {
-                                    "guid": "{3F3B8CF0-DE93-5A11-AD57-D71927DC805C}",
-                                    "subId": 270783830
+                                    "guid": "{0E1A359F-C62B-51BB-92B6-59803A67F698}",
+                                    "subId": 274801063
                                 }
                             }
                         }
@@ -6548,6 +6890,136 @@
             },
             "Id": "Entity_[6135144075809474]",
             "Name": "PROVISIONAL Pad CrewTable"
+        },
+        "Entity_[6464796317554854]": {
+            "Components": {
+                "Component_[2017888719318996]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 2017888719318996
+                },
+                "Component_[2064177743442612]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 2064177743442612
+                },
+                "Component_[228666305699335]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 228666305699335
+                },
+                "Component_[3257997579379587]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 3257997579379587
+                },
+                "Component_[3601407292892398]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 3601407292892398
+                },
+                "Component_[4122864979896848]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 4122864979896848,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            100,
+                            -43.75,
+                            -0.02
+                        ]
+                    }
+                },
+                "Component_[4902722504369859]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/models/sm_art_groundtile_earth.azmodel",
+                                "assetId": {
+                                    "guid": "{32B46DBF-ED53-5A05-B96D-5EA1832CA989}",
+                                    "subId": 280400315
+                                }
+                            }
+                        }
+                    },
+                    "Id": 4902722504369859
+                },
+                "Component_[5811396774618490]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 5811396774618490
+                },
+                "Component_[8623482208343389]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 8623482208343389
+                },
+                "Component_[962084112603112]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 962084112603112
+                }
+            },
+            "Id": "Entity_[6464796317554854]",
+            "Name": "Ground Tile 2_0"
+        },
+        "Entity_[6464796317555289]": {
+            "Components": {
+                "Component_[2127737644847187]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 2127737644847187,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            100,
+                            6.25,
+                            -0.02
+                        ]
+                    }
+                },
+                "Component_[2766018150165344]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/models/sm_art_groundtile_earth.azmodel",
+                                "assetId": {
+                                    "guid": "{32B46DBF-ED53-5A05-B96D-5EA1832CA989}",
+                                    "subId": 280400315
+                                }
+                            }
+                        }
+                    },
+                    "Id": 2766018150165344
+                },
+                "Component_[3764693351889043]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 3764693351889043
+                },
+                "Component_[3977591234990038]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 3977591234990038
+                },
+                "Component_[5473268196585890]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 5473268196585890
+                },
+                "Component_[5550251429999307]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 5550251429999307
+                },
+                "Component_[5793959198140820]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 5793959198140820
+                },
+                "Component_[5969992896659167]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 5969992896659167
+                },
+                "Component_[6693571209314549]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 6693571209314549
+                },
+                "Component_[8645710727666855]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 8645710727666855
+                }
+            },
+            "Id": "Entity_[6464796317555289]",
+            "Name": "Ground Tile 2_1"
         },
         "Entity_[6818867674261566]": {
             "Components": {
@@ -6623,10 +7095,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_400x400x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_400x400x100_p250.azmodel",
                                 "assetId": {
-                                    "guid": "{3F3B8CF0-DE93-5A11-AD57-D71927DC805C}",
-                                    "subId": 270783830
+                                    "guid": "{2EC70F4B-D19E-5A11-B1F1-1A6C7BD02446}",
+                                    "subId": 278636880
                                 }
                             }
                         }
@@ -6784,10 +7256,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_placeholder_crate.azmodel",
+                                "assetHint": "assets/art/models/sm_art_crate.azmodel",
                                 "assetId": {
-                                    "guid": "{0511CF1A-82EC-5A0D-BA03-E0E5C78BE787}",
-                                    "subId": 268613373
+                                    "guid": "{41437E6B-B6B9-5A5F-89E9-CBC4386CADD7}",
+                                    "subId": 284570425
                                 }
                             }
                         }
@@ -6983,10 +7455,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p275.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{1F8516B9-4734-5EDE-B3BF-DB2EFECF85A5}",
+                                    "subId": 284997823
                                 }
                             }
                         }
@@ -7085,10 +7557,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p250.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{F1FEFEF5-030A-532C-BBCD-07D5E64E3E7A}",
+                                    "subId": 278933170
                                 }
                             }
                         }
@@ -7195,10 +7667,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p325.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{3895B4B8-51E2-5D83-983D-32540F41B56B}",
+                                    "subId": 273229517
                                 }
                             }
                         }
@@ -7297,10 +7769,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p300.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{CE9370A4-3ACE-5AA4-A8CF-53FA1FAD4CA4}",
+                                    "subId": 269856960
                                 }
                             }
                         }
@@ -7346,10 +7818,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p350.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{1F23A434-0DEB-52DA-8567-BDEB359DA57A}",
+                                    "subId": 274875525
                                 }
                             }
                         }
@@ -7453,10 +7925,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p350.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{1F23A434-0DEB-52DA-8567-BDEB359DA57A}",
+                                    "subId": 274875525
                                 }
                             }
                         }
@@ -7599,10 +8071,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p375.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{5B2AE3DA-374B-554A-A87C-0138798CF1FA}",
+                                    "subId": 272552584
                                 }
                             }
                         }
@@ -7705,10 +8177,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p250.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{F1FEFEF5-030A-532C-BBCD-07D5E64E3E7A}",
+                                    "subId": 278933170
                                 }
                             }
                         }
@@ -7726,10 +8198,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_6200x1800x300.azmodel",
+                                "assetHint": "assets/art/models/sm_art_masonry_6200x1800x300.azmodel",
                                 "assetId": {
-                                    "guid": "{67E5000C-AC8D-52FE-8D1B-1522DE5D3825}",
-                                    "subId": 276461146
+                                    "guid": "{1BB5A630-E329-5ADA-B617-68A3A3A3D629}",
+                                    "subId": 272812093
                                 }
                             }
                         }
@@ -7913,10 +8385,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/world/story/chapter05/sm_warcurrentharbor_alpha.azmodel",
+                                "assetHint": "assets/art/models/sm_art_warcurrentharbor.azmodel",
                                 "assetId": {
-                                    "guid": "{23B00DF3-43B1-51DE-8E3E-8A46CD2D0660}",
-                                    "subId": 269840514
+                                    "guid": "{12FD1F32-151B-5837-9BC7-F09F7B125C1E}",
+                                    "subId": 275432249
                                 }
                             }
                         }
@@ -7930,6 +8402,136 @@
             },
             "Id": "Entity_[7821829110341259]",
             "Name": "Geometry WarCurrentHarbor"
+        },
+        "Entity_[7845782822725790]": {
+            "Components": {
+                "Component_[1406626689231327]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 1406626689231327
+                },
+                "Component_[1950282097702730]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 1950282097702730
+                },
+                "Component_[2634040476579609]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 2634040476579609
+                },
+                "Component_[3102332672469807]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 3102332672469807
+                },
+                "Component_[3704469596836556]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/models/sm_art_groundtile_earth.azmodel",
+                                "assetId": {
+                                    "guid": "{32B46DBF-ED53-5A05-B96D-5EA1832CA989}",
+                                    "subId": 280400315
+                                }
+                            }
+                        }
+                    },
+                    "Id": 3704469596836556
+                },
+                "Component_[3955790544902723]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 3955790544902723
+                },
+                "Component_[4562462973856351]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 4562462973856351,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            150,
+                            6.25,
+                            -0.02
+                        ]
+                    }
+                },
+                "Component_[6009645294579011]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 6009645294579011
+                },
+                "Component_[6765915054056326]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 6765915054056326
+                },
+                "Component_[7930876819802384]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 7930876819802384
+                }
+            },
+            "Id": "Entity_[7845782822725790]",
+            "Name": "Ground Tile 3_1"
+        },
+        "Entity_[7845782822726225]": {
+            "Components": {
+                "Component_[2650939121340231]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 2650939121340231
+                },
+                "Component_[3753413118330849]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 3753413118330849
+                },
+                "Component_[4675107379092135]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 4675107379092135,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            150,
+                            -43.75,
+                            -0.02
+                        ]
+                    }
+                },
+                "Component_[4887790220894071]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 4887790220894071
+                },
+                "Component_[5037592834043524]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/models/sm_art_groundtile_earth.azmodel",
+                                "assetId": {
+                                    "guid": "{32B46DBF-ED53-5A05-B96D-5EA1832CA989}",
+                                    "subId": 280400315
+                                }
+                            }
+                        }
+                    },
+                    "Id": 5037592834043524
+                },
+                "Component_[5391587010934043]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 5391587010934043
+                },
+                "Component_[5710137854248866]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 5710137854248866
+                },
+                "Component_[655244876382955]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 655244876382955
+                },
+                "Component_[7031676667315102]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 7031676667315102
+                },
+                "Component_[775822985773832]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 775822985773832
+                }
+            },
+            "Id": "Entity_[7845782822726225]",
+            "Name": "Ground Tile 3_0"
         },
         "Entity_[7927269256069736]": {
             "Components": {
@@ -8050,10 +8652,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_400x400x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_400x400x100_p325.azmodel",
                                 "assetId": {
-                                    "guid": "{3F3B8CF0-DE93-5A11-AD57-D71927DC805C}",
-                                    "subId": 270783830
+                                    "guid": "{5DEB750F-0CBE-5D89-AAEE-18F3AB6D5AA8}",
+                                    "subId": 275947823
                                 }
                             }
                         }
@@ -8196,10 +8798,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p500.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{BA379525-6916-5EDA-A133-2D20871198C4}",
+                                    "subId": 278449266
                                 }
                             }
                         }
@@ -8302,10 +8904,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p475.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{CB2AE372-15F4-5BF4-B5F0-BF5D466AC7A4}",
+                                    "subId": 275891213
                                 }
                             }
                         }
@@ -8347,10 +8949,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p575.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{0DEB4DB6-EF63-5019-BCF7-E000D41E00D9}",
+                                    "subId": 280211002
                                 }
                             }
                         }
@@ -8522,10 +9124,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p575.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{0DEB4DB6-EF63-5019-BCF7-E000D41E00D9}",
+                                    "subId": 280211002
                                 }
                             }
                         }
@@ -8624,10 +9226,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p550.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{9A94512B-1D92-5528-AF80-28D0734CCEB4}",
+                                    "subId": 284112951
                                 }
                             }
                         }
@@ -8710,10 +9312,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p525.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{E685F8D4-7AB4-529E-B834-C34739FC77A3}",
+                                    "subId": 281303679
                                 }
                             }
                         }
@@ -8784,10 +9386,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p650.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{92A70220-C95B-5F3E-BD13-7D0AD4671EE8}",
+                                    "subId": 279545454
                                 }
                             }
                         }
@@ -8878,10 +9480,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p650.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{92A70220-C95B-5F3E-BD13-7D0AD4671EE8}",
+                                    "subId": 279545454
                                 }
                             }
                         }
@@ -9000,10 +9602,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p625.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{6D946AA8-A70C-5BBB-A548-8AC11FBABCC1}",
+                                    "subId": 277013542
                                 }
                             }
                         }
@@ -9053,10 +9655,10 @@
                     "Controller": {
                         "Configuration": {
                             "ModelAsset": {
-                                "assetHint": "assets/greybox/placeholders/sm_block_405x300x100.azmodel",
+                                "assetHint": "assets/art/models/sm_art_pier_405x300x100_p600.azmodel",
                                 "assetId": {
-                                    "guid": "{1AECF3D4-E29F-5003-BB88-436AD6C5CFCA}",
-                                    "subId": 269725335
+                                    "guid": "{D925F89A-2F77-551D-93AB-F0B0DF286152}",
+                                    "subId": 283013675
                                 }
                             }
                         }

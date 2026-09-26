@@ -1,5 +1,6 @@
 #include "Materializer.h"
 
+#include "ArtKit.h"
 #include "Gltf.h"
 #include "Hash.h"
 #include "Json.h"
@@ -35,7 +36,7 @@ namespace DarkArisen::Tools
     {
         const std::string ProjectDir = "Engine/O3DE/DarkArisen";
         const std::string GreyboxDir = "Assets/Greybox";  // relative to the project (the Asset Processor scan root)
-        constexpr int MaterializerVersion = 2;
+        constexpr int MaterializerVersion = 3;
 
         // Unreal materialiser constants (DarkArisenMaterializeAlphaCommandlet.cpp, BuildHarlow).
         constexpr const char* HarlowEncounter = "Encounter.HarlowRaid.MainDeck";
@@ -83,6 +84,15 @@ namespace DarkArisen::Tools
         {
         public:
             Session(fs::path InRepo, MaterializeResult& InOut) : Repo(std::move(InRepo)), Out(InOut) {}
+
+            /** Procedural art that replaces greybox visuals (Tools/o3de/Ops/ArtKit.h). */
+            Art::Kit Kit;
+
+            /** Every art file produced for this run (textures, models); call once, after the levels. */
+            void EmitArt()
+            {
+                for (const Art::ArtFile& File : Kit.Files()) Emit(ProjectDir + "/" + File.ProjectRelative, File.Content);
+            }
 
             bool Ok() const { return Out.Errors.empty(); }
             void Error(std::string Message) { Out.Errors.push_back(std::move(Message)); }
@@ -222,8 +232,29 @@ namespace DarkArisen::Tools
                 return {SourceAssetUuid(ProjectRelative), AtomModelSubId(Stem_), Lower(Directory(ProjectRelative) + "/" + Stem_ + ".azmodel")};
             }
 
-            /** Converts a ContentSource greybox mesh for rendering. */
+            /**
+             * Render model for a ContentSource greybox mesh: its art-kit replacement, a generic art
+             * dressing of a boxed world set piece, or else the greybox converted for rendering.
+             */
             ModelRef RenderModel(const std::string& SourceRelative, const bool BindPose = false, const std::string& StemOverride = {})
+            {
+                if (const std::string Art = Kit.ReplacementFor(SourceRelative); !Art.empty())
+                {
+                    Text(SourceRelative);  // still an input: its volumes carry the collision
+                    return Model(Art);
+                }
+                if (SourceRelative.rfind("ContentSource/World/", 0) == 0 && SourceRelative.find("Terrain") == std::string::npos)
+                {
+                    if (const std::string* Source = Text(SourceRelative))
+                    {
+                        if (const std::string Art = Kit.Dress(SourceRelative, *Source); !Art.empty()) return Model(Art);
+                    }
+                }
+                return GreyboxModel(SourceRelative, BindPose, StemOverride);
+            }
+
+            /** Converts a ContentSource greybox mesh for rendering. */
+            ModelRef GreyboxModel(const std::string& SourceRelative, const bool BindPose = false, const std::string& StemOverride = {})
             {
                 const std::string Destination = GreyboxPath(SourceRelative, StemOverride);
                 if (!Converted.count(Destination))
@@ -275,6 +306,11 @@ namespace DarkArisen::Tools
              */
             ModelRef CollisionMesh(const std::string& SourceRelative, const std::string& StemOverride = {})
             {
+                if (const std::string* Art = Kit.CollisionFor(SourceRelative))
+                {
+                    Text(SourceRelative);
+                    return ArtCollision("Assets/Art/Collision/" + (StemOverride.empty() ? Stem(SourceRelative) : StemOverride) + "_Collision.gltf", *Art);
+                }
                 const std::string BaseStem = StemOverride.empty() ? Stem(SourceRelative) : StemOverride;
                 const std::string Destination = GreyboxPath(SourceRelative, BaseStem + "_Collision");
                 const std::string GroupId = AzUuidFromName("DarkArisen.PhysXMeshGroup:" + Lower(Destination));
@@ -297,11 +333,33 @@ namespace DarkArisen::Tools
                     Emit(ProjectDir + "/" + Destination + ".assetinfo", PhysXManifest(GroupId, Stem(Destination)));
                     Converted.insert(Destination);
                 }
+                return PhysXRef(Destination, GroupId);
+            }
+
+            /** Art-kit collision (spec glTF, already in the art frame) with the same PhysX-only manifest. */
+            ModelRef ArtCollision(const std::string& Destination, const std::string& Gltf)
+            {
+                const std::string GroupId = AzUuidFromName("DarkArisen.PhysXMeshGroup:" + Lower(Destination));
+                if (!Converted.count(Destination))
+                {
+                    Emit(ProjectDir + "/" + Destination, Gltf);
+                    Emit(ProjectDir + "/" + Destination + ".assetinfo", PhysXManifest(GroupId, Stem(Destination)));
+                    Converted.insert(Destination);
+                }
+                return PhysXRef(Destination, GroupId);
+            }
+
+            static ModelRef PhysXRef(const std::string& Destination, const std::string& GroupId)
+            {
                 const std::array<std::uint8_t, 20> Digest = Sha1(GroupId);
                 const std::uint32_t SubId = static_cast<std::uint32_t>(Digest[0]) | (static_cast<std::uint32_t>(Digest[1]) << 8) |
                     (static_cast<std::uint32_t>(Digest[2]) << 16) | (static_cast<std::uint32_t>(Digest[3]) << 24);
                 return {SourceAssetUuid(Destination), SubId, Lower(Directory(Destination) + "/" + Stem(Destination) + ".pxmesh")};
             }
+
+            /** Art figure for a named person (placeholder figures had one shared prism). */
+            ModelRef Figure(const std::string& EntityName) { return Model(Kit.FigureFor(EntityName)); }
+            ModelRef Prop(const std::string& PlaceholderName) { return Model(Kit.Prop(PlaceholderName)); }
 
             std::string Manifest() const
             {
@@ -470,8 +528,16 @@ namespace DarkArisen::Tools
             Prefab.AddGameComponent(Entity, TypeId, Name, std::move(Fields));
         }
 
-        /** Sun and sky copied from the project's DefaultLevel (O3DE 2605.0 template). */
-        void AddEnvironment(Session& Work, PrefabBuilder& Prefab)
+        /** Time of day per region: the sun's pitch and heading (DefaultLevel light, rotated). */
+        struct SunPreset
+        {
+            double Pitch = -38.0;   // Moran: late morning, long enough shadows to read form
+            double Heading = -15.81;
+        };
+        constexpr SunPreset RexaEvening{-17.0, -38.0};
+
+        /** Sun and sky copied from the project's DefaultLevel (O3DE 2605.0 template), sun set to the region's time of day. */
+        void AddEnvironment(Session& Work, PrefabBuilder& Prefab, const SunPreset& Sun = {})
         {
             const JsonValue* Default = Work.Json(ProjectDir + "/Levels/DefaultLevel/DefaultLevel.prefab");
             const JsonValue* Entities = Default ? Default->Find("Entities") : nullptr;
@@ -519,6 +585,11 @@ namespace DarkArisen::Tools
                         continue;
                     }
                     Copied.push_back(&Component);
+                }
+                if (std::string(Wanted) == "Sun")
+                {
+                    Rotate.X = Sun.Pitch;
+                    Rotate.Z = Sun.Heading;
                 }
                 const std::string Entity = Prefab.AddEntity(Wanted, Translate, Rotate);
                 for (const JsonValue* Component : Copied)
@@ -770,8 +841,6 @@ namespace DarkArisen::Tools
             const JsonValue* Family = Work.Json(ManifestPath);
             const JsonValue* Actors = Family ? Family->Find("actors") : nullptr;
             JsonValue FamilyRefs = JsonArray();
-            const ModelRef Figure = Work.GeneratedModel("SM_Placeholder_Figure",
-                MakePlaceholderFigureGltf(FamilyFigureHeight, FamilyFigureRadius, "SM_Placeholder_Figure"));
             std::set<std::string> Required = {"character.marc", "character.denise", "character.ethan"};
             if (!Actors || !Actors->IsArray())
             {
@@ -791,7 +860,7 @@ namespace DarkArisen::Tools
                     const std::string Name = "Family " + Id->Text.substr(std::string("character.").size());
                     const std::string Entity = Prefab.AddEntity(Name, Work.World(Layout, Anchor->Text));
                     AddCapsuleCollider(Prefab, Entity, FamilyFigureHeight, FamilyFigureRadius);
-                    Prefab.AddComponent(Entity, "AZ::Render::EditorMeshComponent", MeshComponent(Figure));
+                    Prefab.AddComponent(Entity, "AZ::Render::EditorMeshComponent", MeshComponent(Work.Figure(Name)));
                     AddGame(Prefab, Entity, StoryTriggerComponentTypeId, "StoryTriggerComponent",
                         StoryTrigger(StorySignal::FamilyInteraction, Id->Text, 0, true));
                     JsonValue Ref = JsonObject();
@@ -805,9 +874,7 @@ namespace DarkArisen::Tools
             // "Check the manifest with your brother when you're done." - the fleet is sighted there.
             const std::string Crate = Prefab.AddEntity("Cargo Manifest", Work.World(Layout, "Interaction.Cargo.Manifest"));
             AddBoxCollider(Prefab, Crate, ManifestCrateSize, false, {0.0, 0.0, ManifestCrateSize.Z / 2.0});
-            Prefab.AddComponent(Crate, "AZ::Render::EditorMeshComponent",
-                MeshComponent(Work.GeneratedModel("SM_Placeholder_Crate",
-                    MakePlaceholderBoxGltf(ManifestCrateSize.X, ManifestCrateSize.Y, ManifestCrateSize.Z, "SM_Placeholder_Crate"))));
+            Prefab.AddComponent(Crate, "AZ::Render::EditorMeshComponent", MeshComponent(Work.Prop("SM_Placeholder_Crate")));
             AddGame(Prefab, Crate, StoryTriggerComponentTypeId, "StoryTriggerComponent", StoryTrigger(StorySignal::FleetDetected, {}, 0, true));
 
             // Boarders: placed inactive, released by the director when boarding begins.
@@ -874,7 +941,19 @@ namespace DarkArisen::Tools
             AddSea(Work, Prefab);
 
             const std::string Terrain = "ContentSource/World/Moran/DriftwoodBeach/SM_DriftwoodTerrain_Alpha.gltf";
-            AddStaticMesh(Prefab, "Driftwood Terrain", {}, Work.RenderModel(Terrain));
+            // Dressed terrain on the greybox heightfield; scatter keeps clear of the authored route.
+            std::vector<std::pair<double, double>> KeepClear;
+            if (const JsonValue* Root = Work.Json(Layout); Root && Root->Find("anchors"))
+            {
+                for (const std::string& Key : Root->Find("anchors")->Order)
+                {
+                    const Vec3d At = Work.World(Layout, Key);
+                    KeepClear.emplace_back(At.X, At.Y);
+                }
+            }
+            const std::string* TerrainSource = Work.Text(Terrain);
+            const std::string Dressed = TerrainSource ? Work.Kit.DressTerrain("DriftwoodTerrain", *TerrainSource, KeepClear) : std::string();
+            AddStaticMesh(Prefab, "Driftwood Terrain", {}, Dressed.empty() ? Work.GreyboxModel(Terrain) : Work.Model(Dressed));
             AddMeshCollider(Prefab, Prefab.AddEntity("Driftwood Terrain Collision", {}), Work.CollisionMesh(Terrain));
             AddStaticMesh(Prefab, "Harlow Wreckage", Work.World(Layout, "Harlow.Wreckage"),
                 Work.RenderModel("ContentSource/World/Moran/DriftwoodBeach/SM_HarlowWreckage_Alpha.gltf"));
@@ -1069,12 +1148,10 @@ namespace DarkArisen::Tools
         void AddBlock(Session& Work, PrefabBuilder& Prefab, const std::string& Name, const Vec3d& TopCenter, const Vec3d& Size,
             const double YawDegrees, const bool Solid)
         {
-            const std::string Mesh = "SM_Block_" + std::to_string(std::lround(Size.X * 100.0)) + "x" +
-                std::to_string(std::lround(Size.Y * 100.0)) + "x" + std::to_string(std::lround(Size.Z * 100.0));
             const std::string Entity = Prefab.AddEntity(Name, {TopCenter.X, TopCenter.Y, TopCenter.Z - Size.Z}, {0.0, 0.0, YawDegrees});
             // Placeholder boxes are authored in the source frame, where Y is mirrored: sizes are symmetric.
-            Prefab.AddComponent(Entity, "AZ::Render::EditorMeshComponent",
-                MeshComponent(Work.GeneratedModel(Mesh, MakePlaceholderBoxGltf(Size.X, Size.Y, Size.Z, Mesh))));
+            const bool Provisional = Name.rfind("PROVISIONAL", 0) == 0;
+            Prefab.AddComponent(Entity, "AZ::Render::EditorMeshComponent", MeshComponent(Work.Model(Work.Kit.Block(Size.X, Size.Y, Size.Z, TopCenter.Z, Provisional))));
             if (Solid)
             {
                 AddBoxCollider(Prefab, Entity, Size, false, {0.0, 0.0, Size.Z / 2.0});
@@ -1142,6 +1219,54 @@ namespace DarkArisen::Tools
                 }
             }
             return Provisional;
+        }
+
+        /**
+         * Art ground under a land level: the route's anchors float over nothing in ContentSource.
+         * A plate 25 m beyond the anchors, its top just under the lowest anchor, walkable; Rexa gets
+         * a paved quay with the harbour on its west edge and a row of houses along each long side.
+         */
+        void AddLandGround(Session& Work, PrefabBuilder& Prefab, const std::vector<RouteAnchor>& Route, const bool Harbor)
+        {
+            if (Route.empty()) return;
+            Vec3d Low{1e30, 1e30, 1e30}, High{-1e30, -1e30, -1e30};
+            for (const RouteAnchor& Anchor : Route)
+            {
+                Low = {std::min(Low.X, Anchor.At.X), std::min(Low.Y, Anchor.At.Y), std::min(Low.Z, Anchor.At.Z)};
+                High = {std::max(High.X, Anchor.At.X), std::max(High.Y, Anchor.At.Y), std::max(High.Z, Anchor.At.Z)};
+            }
+            const double Margin = 25.0;
+            const double West = Harbor ? Low.X - 3.0 : Low.X - Margin;
+            const double SizeX = High.X + Margin - West;
+            const double SizeY = High.Y - Low.Y + 2.0 * Margin;
+            const double Tile = Art::Kit::GroundTileSize;
+            const int TilesX = static_cast<int>(std::ceil(SizeX / Tile)), TilesY = static_cast<int>(std::ceil(SizeY / Tile));
+            const double South = (Low.Y + High.Y) / 2.0 - TilesY * Tile / 2.0;
+            const double Z = Low.Z - 0.02;
+            const ModelRef TileModel = Work.Model(Work.Kit.GroundTile(Harbor ? "paving" : "earth"));
+            for (int J = 0; J < TilesY; ++J)
+            {
+                for (int I = 0; I < TilesX; ++I)
+                {
+                    AddStaticMesh(Prefab, "Ground Tile " + std::to_string(I) + "_" + std::to_string(J),
+                        {West + (I + 0.5) * Tile, South + (J + 0.5) * Tile, Z}, TileModel);
+                }
+            }
+            const Vec3d Centre{West + TilesX * Tile / 2.0, South + TilesY * Tile / 2.0, Z};
+            const std::string Ground = Prefab.AddEntity("Ground Collision", Centre);
+            AddBoxCollider(Prefab, Ground, {TilesX * Tile, TilesY * Tile, 0.5}, false, {0.0, 0.0, -0.25});
+            if (Harbor)
+            {
+                AddStaticMesh(Prefab, "Rexa Quay Edge", {West, Centre.Y, Z}, Work.Model(Work.Kit.HarborEdge(TilesY * Tile)));
+                for (const double Side : {-1.0, 1.0})
+                {
+                    // a street's width beyond the route: the harbour quarter closes in around the player
+                    const Vec3d At{Centre.X, Side < 0 ? Low.Y - 15.0 : High.Y + 15.0, Z};
+                    const std::string Row = Prefab.AddEntity(Side < 0 ? "Rexa Houses South" : "Rexa Houses North", At);
+                    Prefab.AddComponent(Row, "AZ::Render::EditorMeshComponent", MeshComponent(Work.Model(Work.Kit.TownRow(TilesX * Tile - 12.0, Side < 0))));
+                    AddBoxCollider(Prefab, Row, {TilesX * Tile - 12.0, 6.0, 8.0}, false, {0.0, 0.0, 4.0});
+                }
+            }
         }
 
         void AddStoryActorComponent(PrefabBuilder& Prefab, const std::string& Entity, const Core::StoryActorSpec& Actor)
@@ -1220,7 +1345,8 @@ namespace DarkArisen::Tools
         std::string BuildStoryMission(Session& Work, const Core::StoryMissionContract& Contract)
         {
             PrefabBuilder Prefab(Contract.MapId);
-            AddEnvironment(Work, Prefab);
+            const bool Rexa = Contract.MapId.rfind("L_Rexa", 0) == 0;
+            AddEnvironment(Work, Prefab, Rexa ? RexaEvening : SunPreset{});
             const bool Naval = Contract.IsNaval();
             // A land contract whose route legs cross open water is sailed, not walked (no water fast travel).
             bool SeaCrossing = false;
@@ -1297,6 +1423,7 @@ namespace DarkArisen::Tools
                 Route.push_back({Name, World(Point), SeaLevel, SeaLevel && PeopleAndObjects.count(Name) && !ShipAnchors.count(Name)});
             }
             AddProvisionalGround(Work, Prefab, Route, Ground);
+            if (!Seafaring) AddLandGround(Work, Prefab, Route, Rexa);
 
             // Anchors as entities: spawn points and the travel exit use them.
             std::map<std::string, std::string> AnchorEntities;
@@ -1325,8 +1452,6 @@ namespace DarkArisen::Tools
                 ProvisionalNote = "PROVISIONAL ship: contract crosses open water without a PlayerShip";
             }
 
-            const ModelRef Figure = Work.GeneratedModel("SM_Placeholder_Figure",
-                MakePlaceholderFigureGltf(FamilyFigureHeight, FamilyFigureRadius, "SM_Placeholder_Figure"));
             std::vector<std::string> Completions;
             JsonValue Spawns = JsonArray();
             Spawns.Items.push_back(SpawnPoint(Contract.SpawnId, AnchorEntities[Contract.EntryAnchor], Core::SpawnRule::Arrival));
@@ -1357,7 +1482,7 @@ namespace DarkArisen::Tools
                 case Core::StoryActorKind::Contact:
                 {
                     const std::string Entity = Prefab.AddEntity(Name, At);
-                    Prefab.AddComponent(Entity, "AZ::Render::EditorMeshComponent", MeshComponent(Figure));
+                    Prefab.AddComponent(Entity, "AZ::Render::EditorMeshComponent", MeshComponent(Work.Figure(Actor.ContactId.empty() ? Name : Actor.ContactId)));
                     AddCapsuleCollider(Prefab, Entity, FamilyFigureHeight, FamilyFigureRadius);
                     AddStoryActorComponent(Prefab, Entity, Actor);
                     break;
@@ -1373,8 +1498,7 @@ namespace DarkArisen::Tools
                         : Actor.Kind == Core::StoryActorKind::RouteResolution            ? "SM_Placeholder_RouteMarker"
                                                                                           : "SM_Placeholder_WarMarker";
                     const std::string Entity = Prefab.AddEntity(Name, At);
-                    Prefab.AddComponent(Entity, "AZ::Render::EditorMeshComponent",
-                        MeshComponent(Work.GeneratedModel(Mesh, MakePlaceholderBoxGltf(Size.X, Size.Y, Size.Z, Mesh))));
+                    Prefab.AddComponent(Entity, "AZ::Render::EditorMeshComponent", MeshComponent(Work.Prop(Mesh)));
                     AddBoxCollider(Prefab, Entity, Size, false, {0.0, 0.0, Size.Z / 2.0});
                     AddStoryActorComponent(Prefab, Entity, Actor);
                     break;
@@ -1386,7 +1510,7 @@ namespace DarkArisen::Tools
                     AddCharacterPhysics(Prefab, Entity);
                     const bool Boss = Actor.Kind == Core::StoryActorKind::HolderBoss;
                     Prefab.AddComponent(Entity, "AZ::Render::EditorMeshComponent",
-                        MeshComponent(Boss ? Figure
+                        MeshComponent(Boss ? Work.Figure(Actor.BossId)
                                            : Work.RenderModel("ContentSource/Characters/Boarders/SK_Boarder_Alpha.gltf", true, "SK_Boarder_Alpha_BindPose")));
                     JsonValue Combatant = JsonObject();
                     Combatant.Members["CombatantId"] = JsonString(Boss ? Actor.BossId : "enemy.duelist." + Lower(Slug(Name)));
@@ -1416,7 +1540,7 @@ namespace DarkArisen::Tools
                 {
                     // Real Ethan: present and interactable through his Contact, never a combatant.
                     const std::string Entity = Prefab.AddEntity(Name, At);
-                    Prefab.AddComponent(Entity, "AZ::Render::EditorMeshComponent", MeshComponent(Figure));
+                    Prefab.AddComponent(Entity, "AZ::Render::EditorMeshComponent", MeshComponent(Work.Figure("ethan")));
                     AddCapsuleCollider(Prefab, Entity, FamilyFigureHeight, FamilyFigureRadius);
                     break;
                 }
@@ -1435,9 +1559,7 @@ namespace DarkArisen::Tools
                 case Core::StoryActorKind::NavalEnemy:
                 {
                     const std::string Entity = Prefab.AddEntity(Name, At);
-                    Prefab.AddComponent(Entity, "AZ::Render::EditorMeshComponent",
-                        MeshComponent(Work.GeneratedModel("SM_Placeholder_HostileHull",
-                            MakePlaceholderBoxGltf(HostileHullSize.X, HostileHullSize.Y, HostileHullSize.Z, "SM_Placeholder_HostileHull"))));
+                    Prefab.AddComponent(Entity, "AZ::Render::EditorMeshComponent", MeshComponent(Work.Prop("SM_Placeholder_HostileHull")));
                     AddBoxCollider(Prefab, Entity, HostileHullSize, false, {0.0, 0.0, HostileHullSize.Z / 2.0});
                     AddGame(Prefab, Entity, NavalCombatComponentTypeId, "NavalCombatComponent");
                     break;
@@ -1567,8 +1689,7 @@ namespace DarkArisen::Tools
         std::string AddPerson(Session& Work, PrefabBuilder& Prefab, const std::string& Name, const Vec3d& At)
         {
             const std::string Entity = Prefab.AddEntity(Name, At);
-            Prefab.AddComponent(Entity, "AZ::Render::EditorMeshComponent",
-                MeshComponent(Work.GeneratedModel("SM_Placeholder_Figure", MakePlaceholderFigureGltf(FamilyFigureHeight, FamilyFigureRadius, "SM_Placeholder_Figure"))));
+            Prefab.AddComponent(Entity, "AZ::Render::EditorMeshComponent", MeshComponent(Work.Figure(Name)));
             AddCapsuleCollider(Prefab, Entity, FamilyFigureHeight, FamilyFigureRadius);
             return Entity;
         }
@@ -1623,7 +1744,8 @@ namespace DarkArisen::Tools
         };
 
         MoranScene BeginMoranScene(Session& Work, PrefabBuilder& Prefab, const std::string& Layout, const std::string& Mesh,
-            const std::string& Arrival, const std::string& SpawnId, const bool Sea)
+            const std::string& Arrival, const std::string& SpawnId, const bool Sea, const std::set<std::string>& OnShip = {},
+            const std::set<std::string>& Rafts = {})
         {
             MoranScene Scene;
             AddEnvironment(Work, Prefab);
@@ -1632,8 +1754,8 @@ namespace DarkArisen::Tools
             std::vector<RouteAnchor> Route;
             for (const auto& [Name, At] : LayoutAnchors(Work, Layout))
             {
-                const bool OnWater = Sea && At.Z < SeaLevelTolerance && At.Z > -SeaLevelTolerance;
-                Route.push_back({Name, At, OnWater, false});
+                const bool OnWater = OnShip.count(Name) || (Sea && At.Z < SeaLevelTolerance && At.Z > -SeaLevelTolerance);
+                Route.push_back({Name, At, OnWater, OnWater && Rafts.count(Name) != 0});
                 Scene.Anchors[Name] = Prefab.AddEntity("Anchor " + Name, At);
             }
             AddProvisionalGround(Work, Prefab, Route, Ground);
@@ -1718,8 +1840,9 @@ namespace DarkArisen::Tools
         {
             const std::string Layout = "ContentSource/World/Moran/GalleonCove/GalleonCove_Layout.json";
             PrefabBuilder Prefab("L_GalleonCove");
+            // The Helm stands on the ship (no pad); Esteban and the harbor control post are people on the water (rafts).
             const MoranScene Scene = BeginMoranScene(Work, Prefab, Layout, "ContentSource/World/Moran/GalleonCove/SM_GalleonCove_Alpha.gltf",
-                "Approach", "Spawn.Moran.GalleonCove.Approach", true);
+                "Approach", "Spawn.Moran.GalleonCove.Approach", true, {"Helm"}, {"HarborControl", "Esteban"});
             // Taking the harbor control post clears the cove and frees Esteban to sign on.
             AddSignal(Prefab, AddInteraction(Prefab, "Harbor Control", Work.World(Layout, "HarborControl")), StorySignal::GalleonCoveCleared);
             AddSignal(Prefab, AddInteraction(Prefab, "Harbor Control Crew Records", Work.World(Layout, "HarborControl")),
@@ -1727,11 +1850,28 @@ namespace DarkArisen::Tools
             const Vec3d Esteban = Work.World(Layout, "Esteban");
             AddSignal(Prefab, AddPerson(Work, Prefab, "Esteban", Esteban), StorySignal::CrewMet, "crew.esteban");
             AddSignal(Prefab, AddInteraction(Prefab, "Esteban Signs On", Esteban), StorySignal::CrewRecruited, "crew.esteban");
-            AddLaLiberacion(Work, Prefab, "La Liberacion", Work.World(Layout, "ImpoundBerth"));
-            const std::string Gangway = Prefab.AddEntity("La Liberacion Gangway", Work.World(Layout, "LaLiberacionBoarding"));
+            // The cove anchors were authored against the 9.2 m greybox; the brig follows LaLiberacion_Layout
+            // (about 30 m). She lies off the berth so her starboard rail meets the boarding pier, where a
+            // boarding stair climbs over the rail; the helm interaction stands at her wheel on the fore deck.
+            const Art::CoveBerth Berth = Art::Kit::Cove();
+            const Vec3d BerthAt = Work.World(Layout, "ImpoundBerth");
+            const Vec3d Boarding = Work.World(Layout, "LaLiberacionBoarding");
+            const Vec3d ShipAt{BerthAt.X + Berth.OffsetX, BerthAt.Y + Berth.OffsetY, BerthAt.Z};
+            AddLaLiberacion(Work, Prefab, "La Liberacion", ShipAt);
+            {
+                std::string StairCollision;
+                const double Rail = BerthAt.Y + Berth.OffsetY - Berth.RailHalfWidth;
+                const std::string StairMesh = Work.Kit.BoardingStair(Rail - Berth.StairFrom - Boarding.Y, Berth.RailTop - Boarding.Z,
+                    Berth.RailTop - Berth.DeckZ, StairCollision);
+                const std::string Stair = Prefab.AddEntity("La Liberacion Boarding Stair", {Boarding.X, Boarding.Y + Berth.StairFrom, Boarding.Z});
+                Prefab.AddComponent(Stair, "AZ::Render::EditorMeshComponent", MeshComponent(Work.Model(StairMesh)));
+                AddMeshCollider(Prefab, Stair, Work.ArtCollision("Assets/Art/Collision/" + Stem(StairMesh) + "_Collision.gltf", StairCollision));
+            }
+            const std::string Gangway = Prefab.AddEntity("La Liberacion Gangway", Boarding);
             AddBoxCollider(Prefab, Gangway, BeatVolumeSize, true);
             AddSignal(Prefab, Gangway, StorySignal::LaLiberacionBoarded, {}, 0, false);
-            AddSignal(Prefab, AddInteraction(Prefab, "La Liberacion Helm", Work.World(Layout, "Helm")), StorySignal::LaLiberacionHelmSecured);
+            AddSignal(Prefab, AddInteraction(Prefab, "La Liberacion Helm", {ShipAt.X + Berth.HelmX, ShipAt.Y, ShipAt.Z + Berth.HelmZ}),
+                StorySignal::LaLiberacionHelmSecured);
             // A Ship to Take ends only once La Liberacion clears the harbor under her own movement.
             const std::string Exit = Prefab.AddEntity("Harbor Exit", Work.World(Layout, "HarborExit"));
             AddBoxCollider(Prefab, Exit, HarborExitVolume, true);
@@ -1858,6 +1998,7 @@ namespace DarkArisen::Tools
             std::string Credits = BuildCredits(Work);
             Work.Emit(ProjectDir + "/Levels/L_Credits/L_Credits.prefab", std::move(Credits));
             Work.Emit(ProjectDir + "/Levels/L_FrontEnd/L_FrontEnd.prefab", BuildFrontEnd(Work));
+            Work.EmitArt();
 
             // Physical coverage: every catalogue mission with a materialised level contract.
             JsonValue Missions = JsonObject();
