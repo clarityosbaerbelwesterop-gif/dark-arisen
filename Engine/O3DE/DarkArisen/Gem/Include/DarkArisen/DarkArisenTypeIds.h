@@ -37,6 +37,9 @@ namespace DarkArisen
     inline constexpr const char* ShipRequestsTypeId = "{5A3977F3-57CE-4D80-8048-89110B7DB968}";
     inline constexpr const char* EnemyNotificationsTypeId = "{4C7E2B91-0D3A-4F6E-9A51-7B2E8C1D3F40}";
     inline constexpr const char* CombatNotificationsTypeId = "{662BE99C-094B-4864-AFD0-E4EB060B3667}";
+    inline constexpr const char* FrontEndSystemComponentTypeId = "{E3322C87-41A9-404E-96D4-23DFFE2063FB}";
+    inline constexpr const char* MainMenuComponentTypeId = "{703B4BAE-5DD5-44B0-8355-A489968FA1D5}";
+    inline constexpr const char* FrontEndRequestsTypeId = "{618DC656-363E-4D98-91CE-F93DA26CB818}";
     inline constexpr const char* OceanRequestsTypeId = "{E6B2D48A-9C07-4F1E-A35B-8D2C6F1E0B93}";
     inline constexpr const char* SwimRequestsTypeId = "{B7D1E5A2-4F93-4C6E-A0B8-2D5C9E7F1A46}";
     inline constexpr const char* PresentationNotificationsTypeId = "{2C5E8A13-F74B-4D96-9A1C-5B3F7E0D8C62}";

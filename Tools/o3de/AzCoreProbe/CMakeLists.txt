@@ -132,6 +132,8 @@ add_executable(DarkArisenLevelProbe
     ${GEM}/Source/Story/MapTransitionComponent.cpp
     ${GEM}/Source/Story/StoryActorComponent.cpp
     ${GEM}/Source/Story/CreditsComponent.cpp
+    ${GEM}/Source/FrontEnd/FrontEndSystemComponent.cpp
+    ${GEM}/Source/FrontEnd/MainMenuComponent.cpp
     ${GEM}/Source/Ships/NavalCombatComponent.cpp
     ${GEM}/Source/Ships/ShipVoyageComponent.cpp
     ${GEM}/Source/Persistence/SaveSlotStore.cpp
@@ -147,6 +149,17 @@ add_executable(DarkArisenLevelProbe
     ${AZF}/AzFramework/IO/LocalFileIO.cpp
     ${AZF}/Platform/Common/UnixLike/AzFramework/IO/LocalFileIO_UnixLike.cpp
     ${AZF}/AzFramework/Entity/GameEntityContextBus.cpp
+    ${AZF}/AzFramework/Input/Events/InputChannelEventListener.cpp
+    ${AZF}/AzFramework/Input/Channels/InputChannel.cpp
+    ${AZF}/AzFramework/Input/Channels/InputChannelId.cpp
+    ${AZF}/AzFramework/Input/Buses/Notifications/InputChannelNotificationBus.cpp
+    ${AZF}/AzFramework/Input/Buses/Requests/InputChannelRequestBus.cpp
+    ${AZF}/AzFramework/Input/Buses/Requests/InputDeviceRequestBus.cpp
+    ${AZF}/AzFramework/Input/Buses/Notifications/InputDeviceNotificationBus.cpp
+    ${AZF}/AzFramework/Input/Devices/InputDevice.cpp
+    ${AZF}/AzFramework/Input/Devices/InputDeviceId.cpp
+    ${AZF}/AzFramework/Input/Buses/Notifications/InputTextNotificationBus.cpp
+    ${AZF}/AzFramework/Windowing/WindowBus.cpp
     ${AZF}/AzFramework/Physics/CharacterBus.cpp
     ${AZF}/AzFramework/Physics/Common/PhysicsSceneQueries.cpp
     ${AZF}/AzFramework/Physics/Collision/CollisionGroups.cpp
@@ -171,6 +184,8 @@ add_executable(DarkArisenStoryProbe
     ${GEM}/Source/Story/MapTransitionComponent.cpp
     ${GEM}/Source/Story/StoryActorComponent.cpp
     ${GEM}/Source/Story/CreditsComponent.cpp
+    ${GEM}/Source/FrontEnd/FrontEndSystemComponent.cpp
+    ${GEM}/Source/FrontEnd/MainMenuComponent.cpp
     ${GEM}/Source/Ships/NavalCombatComponent.cpp
     ${GEM}/Source/Ships/ShipVoyageComponent.cpp
     ${GEM}/Source/Persistence/SaveSlotStore.cpp
@@ -186,6 +201,17 @@ add_executable(DarkArisenStoryProbe
     ${AZF}/AzFramework/IO/LocalFileIO.cpp
     ${AZF}/Platform/Common/UnixLike/AzFramework/IO/LocalFileIO_UnixLike.cpp
     ${AZF}/AzFramework/Entity/GameEntityContextBus.cpp
+    ${AZF}/AzFramework/Input/Events/InputChannelEventListener.cpp
+    ${AZF}/AzFramework/Input/Channels/InputChannel.cpp
+    ${AZF}/AzFramework/Input/Channels/InputChannelId.cpp
+    ${AZF}/AzFramework/Input/Buses/Notifications/InputChannelNotificationBus.cpp
+    ${AZF}/AzFramework/Input/Buses/Requests/InputChannelRequestBus.cpp
+    ${AZF}/AzFramework/Input/Buses/Requests/InputDeviceRequestBus.cpp
+    ${AZF}/AzFramework/Input/Buses/Notifications/InputDeviceNotificationBus.cpp
+    ${AZF}/AzFramework/Input/Devices/InputDevice.cpp
+    ${AZF}/AzFramework/Input/Devices/InputDeviceId.cpp
+    ${AZF}/AzFramework/Input/Buses/Notifications/InputTextNotificationBus.cpp
+    ${AZF}/AzFramework/Windowing/WindowBus.cpp
     ${AZF}/AzFramework/Physics/CharacterBus.cpp
     ${AZF}/AzFramework/Physics/Common/PhysicsSceneQueries.cpp
     ${AZF}/AzFramework/Physics/Collision/CollisionGroups.cpp

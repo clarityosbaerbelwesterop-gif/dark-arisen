@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Persistence/SaveSlotStore.h"
+
 #include <AzCore/Component/Component.h>
 #include <AzCore/Component/TickBus.h>
 #include <AzCore/Math/Vector2.h>
@@ -29,7 +31,7 @@ namespace DarkArisen
         /** UE AJakeCharacter: JumpZVelocity 520 cm/s. */
         static constexpr float JumpSpeedMetresPerSecond = 5.2f;
         /** UE AAlphaMenuPlayerController save slot. */
-        static constexpr const char* QuickSlot = "DarkArisenAlpha";
+        static constexpr const char* QuickSlot = SaveSlotStore::ManualSlot;
 
     protected:
         void Activate() override;
