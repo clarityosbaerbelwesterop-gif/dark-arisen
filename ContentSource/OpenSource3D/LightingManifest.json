@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 1,
+  "fixtures": [
+    {
+      "file": "Engine/O3DE/DarkArisen/Assets/Art/Lighting/OpenSource3D/L_wall_torch.gltf",
+      "bytes": 114815,
+      "triangles": 744,
+      "meshNodes": 1,
+      "materials": 4,
+      "animations": [],
+      "sha256": "d1b03036795b856ef95add9d81f306bfee5746702bd19fdf014ac4abefe91ffa",
+      "stage": "modular_alpha",
+      "gltfExtension": "KHR_lights_punctual",
+      "o3deManualSetup": {
+        "type": "Point (simple punctual)",
+        "intensityMode": "Lumen",
+        "intensity": 750,
+        "color": [
+          255,
+          178,
+          93
+        ]
+      }
+    },
+    {
+      "file": "Engine/O3DE/DarkArisen/Assets/Art/Lighting/OpenSource3D/L_harbor_lantern.gltf",
+      "bytes": 132041,
+      "triangles": 864,
+      "meshNodes": 1,
+      "materials": 4,
+      "animations": [],
+      "sha256": "5fd44ebd56e3d4b728a2b7518447c5167408c27c4c195301ba795bd117a19fef",
+      "stage": "modular_alpha",
+      "gltfExtension": "KHR_lights_punctual",
+      "o3deManualSetup": {
+        "type": "Point (simple punctual)",
+        "intensityMode": "Lumen",
+        "intensity": 430,
+        "color": [
+          255,
+          207,
+          149
+        ]
+      }
+    },
+    {
+      "file": "Engine/O3DE/DarkArisen/Assets/Art/Lighting/OpenSource3D/L_forge_brazier.gltf",
+      "bytes": 155839,
+      "triangles": 1032,
+      "meshNodes": 1,
+      "materials": 4,
+      "animations": [],
+      "sha256": "553e445386dd2fb43bf7197be99cd78ce646ae4b3a0f51b2983a5d8f9612cf12",
+      "stage": "modular_alpha",
+      "gltfExtension": "KHR_lights_punctual",
+      "o3deManualSetup": {
+        "type": "Point (sphere)",
+        "intensityMode": "Lumen",
+        "intensity": 1400,
+        "color": [
+          255,
+          141,
+          70
+        ],
+        "shape": "Sphere Shape"
+      }
+    },
+    {
+      "file": "Engine/O3DE/DarkArisen/Assets/Art/Lighting/OpenSource3D/L_lighthouse_beacon.gltf",
+      "bytes": 311626,
+      "triangles": 2084,
+      "meshNodes": 2,
+      "materials": 6,
+      "animations": [
+        "rotating_lens_preview"
+      ],
+      "sha256": "345012dcef152ab336140d185bc90ca8b40876531e57045ed07a2075f044c56e",
+      "stage": "modular_alpha",
+      "gltfExtension": "KHR_lights_punctual",
+      "o3deManualSetup": {
+        "type": "Spot (simple punctual)",
+        "intensityMode": "Candela",
+        "intensity": 250,
+        "color": [
+          255,
+          232,
+          181
+        ]
+      }
+    }
+  ],
+  "limitations": [
+    "O3DE Assimp's import of KHR_lights_punctual and emitter intensity requires Editor verification",
+    "If lights are not imported, add the O3DE Atom Light component from o3deManualSetup to the fixture entity."
+  ]
+}

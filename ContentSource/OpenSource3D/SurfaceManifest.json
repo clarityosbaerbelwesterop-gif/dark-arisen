@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "textureSize": [
+    256,
+    256
+  ],
+  "textures": [
+    "Engine/O3DE/DarkArisen/Assets/Art/Textures/OpenSource3D/T_WeatheredOak_BaseColor.png",
+    "Engine/O3DE/DarkArisen/Assets/Art/Textures/OpenSource3D/T_WeatheredOak_Normal.png",
+    "Engine/O3DE/DarkArisen/Assets/Art/Textures/OpenSource3D/T_SaltStone_BaseColor.png",
+    "Engine/O3DE/DarkArisen/Assets/Art/Textures/OpenSource3D/T_SaltStone_Normal.png",
+    "Engine/O3DE/DarkArisen/Assets/Art/Textures/OpenSource3D/T_MangroveBark_BaseColor.png",
+    "Engine/O3DE/DarkArisen/Assets/Art/Textures/OpenSource3D/T_MangroveBark_Normal.png",
+    "Engine/O3DE/DarkArisen/Assets/Art/Textures/OpenSource3D/T_VolcanicAsh_BaseColor.png",
+    "Engine/O3DE/DarkArisen/Assets/Art/Textures/OpenSource3D/T_SeaFoam_Mask.png",
+    "Engine/O3DE/DarkArisen/Assets/Art/Textures/OpenSource3D/T_ShallowCaustics_BaseColor.png",
+    "Engine/O3DE/DarkArisen/Assets/Art/Textures/OpenSource3D/T_LavaGlow_Emissive.png",
+    "Engine/O3DE/DarkArisen/Assets/Art/Textures/OpenSource3D/T_LanternFlame_Emissive.png"
+  ],
+  "oceanMaterials": [
+    "Engine/O3DE/DarkArisen/Assets/Materials/DarkArisenOcean_CoastMorning.material",
+    "Engine/O3DE/DarkArisen/Assets/Materials/DarkArisenOcean_StormNight.material",
+    "Engine/O3DE/DarkArisen/Assets/Materials/DarkArisenOcean_VolcanicAsh.material"
+  ],
+  "limitations": [
+    "material presets reuse existing shaders and material type; weather/runtime update must choose a preset",
+    "foam and caustics are source textures, not wired into the ocean shader"
+  ]
+}

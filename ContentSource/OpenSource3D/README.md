@@ -41,6 +41,10 @@ checks the embedded buffer bounds, mesh/material/texture references, triangles,
 normals, UVs and animation channels. The visual contact sheet is
 `Docs/Art/OpenSource3D_30Props_Preview.png`.
 
+The next batch of **24 region kits, 20 boss first passes, six extra weapons,
+four lights, eleven texture maps and three ocean material variants** is
+described in `EXTENDED_ASSETS.md` and its separate manifests.
+
 **Integration gate:** These files are new source art and do not overwrite
 existing `Greybox`, collisions, skeletons or gameplay references. Import and
 inspect them in the O3DE 2605.0 project, then author collision/LOD, set final
@@ -49,5 +53,7 @@ playback rates, and replace references only after that review. O3DE Editor and
 Asset Processor were unavailable in this build environment; successful native
 asset compilation and in-game appearance are not claimed. The remaining
 catalog includes 32 hero/boss/NPC figures, 24 environment kits, 10 ships and
-6 creatures; the repo's existing MakeHuman and motion assets are separate
-starting points rather than finished replacements for that work.
+6 creatures; the extended batch provides source art for those 24 environments
+and 20 bosses. The ten ships and 18 non-boss characters remain catalog work.
+The repo's existing MakeHuman and motion assets are reused for human boss
+alpha variants, rather than treated as finished bespoke encounters.

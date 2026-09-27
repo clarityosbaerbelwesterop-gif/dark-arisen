@@ -48,6 +48,14 @@ MATS = {
     "glass": ((.37, .49, .48), .08, .25),
     "ember": ((.95, .57, .12), .0, .5),
     "stone": ((.28, .28, .26), .0, 1.0),
+    "basalt": ((.12, .13, .13), .0, .98),
+    "moss": ((.14, .23, .12), .0, .95),
+    "leaf": ((.19, .34, .14), .0, .92),
+    "coral": ((.46, .27, .20), .0, .89),
+    "plaster": ((.65, .57, .43), .0, .94),
+    "roof": ((.39, .21, .14), .0, .91),
+    "water": ((.05, .25, .29), .0, .29),
+    "lava": ((.95, .19, .025), .0, .44),
 }
 
 
@@ -79,6 +87,9 @@ class Model:
     def group(self, name, at, axis=(0, 0, 1), degrees=0, seconds=2):
         self.groups[name] = at
         self.motions.append((name, axis, degrees, seconds))
+
+    def static_group(self, name, at):
+        self.groups[name] = at
 
     def triangle(self, a, b, c, mat="oak", group="root", uv=((0, 0), (1, 0), (0, 1))):
         if dot(cross(sub(b, a), sub(c, a)), cross(sub(b, a), sub(c, a))) > 1e-13:
@@ -151,7 +162,11 @@ class Model:
             idx=append_bytes(png(color,name))
             images.append({"name":f"{name}_grain","bufferView":idx,"mimeType":"image/png"})
             textures.append({"source":len(images)-1})
-            materials.append({"name":name,"pbrMetallicRoughness":{"baseColorTexture":{"index":len(textures)-1},"metallicFactor":metal,"roughnessFactor":rough},"doubleSided":name in {"canvas","red_canvas","paper","glass"}})
+            material={"name":name,"pbrMetallicRoughness":{"baseColorTexture":{"index":len(textures)-1},"metallicFactor":metal,"roughnessFactor":rough},"doubleSided":name in {"canvas","red_canvas","paper","glass","leaf","water","lava"}}
+            if name in {"ember","lava"}:
+                material["emissiveFactor"]=[1.0,.56,.12] if name=="ember" else [1.0,.22,.03]
+                material["emissiveTexture"]={"index":len(textures)-1}
+            materials.append(material)
         for group in self.groups:
             prims=[]
             for mat in material_names:
