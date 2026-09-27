@@ -36,7 +36,7 @@ namespace DarkArisen::Tools
     {
         const std::string ProjectDir = "Engine/O3DE/DarkArisen";
         const std::string GreyboxDir = "Assets/Greybox";  // relative to the project (the Asset Processor scan root)
-        constexpr int MaterializerVersion = 3;
+        constexpr int MaterializerVersion = 4;
 
         // Unreal materialiser constants (DarkArisenMaterializeAlphaCommandlet.cpp, BuildHarlow).
         constexpr const char* HarlowEncounter = "Encounter.HarlowRaid.MainDeck";
@@ -82,15 +82,27 @@ namespace DarkArisen::Tools
 
         class Session
         {
+            // Declared first: the art kit below reads its source data through Text() while it is constructed.
+            fs::path Repo;
+            MaterializeResult& Out;
+            std::map<std::string, std::string> Texts;
+            std::map<std::string, JsonValue> Parsed;
+            std::map<std::string, std::string> Inputs;
+            std::map<std::string, std::string> Outputs;
+            std::set<std::string> Converted;
+            std::map<std::string, std::vector<std::string>> GltfIndex;
+            std::map<std::string, JsonValue> Coverage;
+
         public:
             Session(fs::path InRepo, MaterializeResult& InOut) : Repo(std::move(InRepo)), Out(InOut) {}
 
-            /** Procedural art that replaces greybox visuals (Tools/o3de/Ops/ArtKit.h). */
-            Art::Kit Kit;
+            /** Procedural art that replaces greybox visuals (Tools/o3de/Ops/ArtKit.h); people from ContentSource/ThirdParty. */
+            Art::Kit Kit{[this](const std::string& Relative) { return Text(Relative); }};
 
             /** Every art file produced for this run (textures, models); call once, after the levels. */
             void EmitArt()
             {
+                for (const std::string& Problem : Kit.Problems()) Error("art kit: " + Problem);
                 for (const Art::ArtFile& File : Kit.Files()) Emit(ProjectDir + "/" + File.ProjectRelative, File.Content);
             }
 
@@ -376,15 +388,6 @@ namespace DarkArisen::Tools
             }
 
         private:
-            fs::path Repo;
-            MaterializeResult& Out;
-            std::map<std::string, std::string> Texts;
-            std::map<std::string, JsonValue> Parsed;
-            std::map<std::string, std::string> Inputs;
-            std::map<std::string, std::string> Outputs;
-            std::set<std::string> Converted;
-            std::map<std::string, std::vector<std::string>> GltfIndex;
-            std::map<std::string, JsonValue> Coverage;
 
             static std::string PhysXManifest(const std::string& GroupId, const std::string& Name)
             {

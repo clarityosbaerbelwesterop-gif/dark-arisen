@@ -31,6 +31,25 @@ namespace DarkArisen::Tools::Art
         return T * T * (3.0 - 2.0 * T);
     }
 
+    double Atan2(const double Y, const double X)
+    {
+        const double AX = X < 0.0 ? -X : X;
+        const double AY = Y < 0.0 ? -Y : Y;
+        if (AX == 0.0 && AY == 0.0) return 0.0;
+        const bool Swap = AY > AX;
+        const double T = Swap ? AX / AY : AY / AX;  // [0, 1]
+        // atan(t) = pi/4 + atan((t - 1) / (t + 1)) keeps the series argument within tan(pi/8).
+        const bool Shift = T > 0.41421356237309503;
+        const double U = Shift ? (T - 1.0) / (T + 1.0) : T;
+        const double U2 = U * U;
+        double Sum = 0.0;
+        for (int K = 23; K >= 0; --K) Sum = 1.0 / (2.0 * K + 1.0) - U2 * Sum;
+        double R = U * Sum + (Shift ? Pi / 4.0 : 0.0);
+        if (Swap) R = Pi / 2.0 - R;
+        if (X < 0.0) R = Pi - R;
+        return Y < 0.0 ? -R : R;
+    }
+
     double Dot(const V3& A, const V3& B) { return A.X * B.X + A.Y * B.Y + A.Z * B.Z; }
     V3 Cross(const V3& A, const V3& B) { return {A.Y * B.Z - A.Z * B.Y, A.Z * B.X - A.X * B.Z, A.X * B.Y - A.Y * B.X}; }
     double Length(const V3& A) { return std::sqrt(Dot(A, A)); }
@@ -554,24 +573,23 @@ namespace DarkArisen::Tools::Art
 
     // ------------------------------------------------------------------ glTF
 
-    namespace
+    namespace GltfBits
     {
-        std::string Num(double V)
+        std::string Num(const double V)
         {
             if (V == 0.0) return "0";
             char Buffer[32];
             const auto Result = std::to_chars(Buffer, Buffer + sizeof(Buffer), V);
             return std::string(Buffer, Result.ptr);
         }
-        std::string NumF(float V)
+        std::string NumF(const float V)
         {
             if (V == 0.0f) return "0";
             char Buffer[32];
             const auto Result = std::to_chars(Buffer, Buffer + sizeof(Buffer), V);
             return std::string(Buffer, Result.ptr);
         }
-        /** Grid-snapped float; + 0.0f turns -0 into +0 so every compiler writes the same bits. */
-        float Quantize(double V, double Steps) { return static_cast<float>(std::round(V * Steps) / Steps) + 0.0f; }
+        float Quantize(const double V, const double Steps) { return static_cast<float>(std::round(V * Steps) / Steps) + 0.0f; }
 
         std::string Base64(const std::string& Bytes)
         {
@@ -592,16 +610,21 @@ namespace DarkArisen::Tools::Art
             return Out;
         }
 
-        void PutF(std::string& Bin, float F)
+        void PutF(std::string& Bin, const float F)
         {
             std::uint32_t Bits;
             static_assert(sizeof(Bits) == sizeof(F));
             std::memcpy(&Bits, &F, sizeof(F));
             for (int Shift = 0; Shift < 32; Shift += 8) Bin.push_back(static_cast<char>((Bits >> Shift) & 0xFFu));
         }
-        void PutU(std::string& Bin, std::uint32_t U)
+        void PutU(std::string& Bin, const std::uint32_t U)
         {
             for (int Shift = 0; Shift < 32; Shift += 8) Bin.push_back(static_cast<char>((U >> Shift) & 0xFFu));
+        }
+        void PutU16(std::string& Bin, const std::uint16_t U)
+        {
+            Bin.push_back(static_cast<char>(U & 0xFFu));
+            Bin.push_back(static_cast<char>((U >> 8) & 0xFFu));
         }
 
         std::string Escape(const std::string& Text)
@@ -614,7 +637,22 @@ namespace DarkArisen::Tools::Art
             }
             return Out;
         }
+
+        std::string MaterialJson(const Material& M, const std::function<int(const std::string&)>& Texture)
+        {
+            // Colours are authored in sRGB; glTF factors are linear (decode with gamma 2.25 = c^2 * c^(1/4)).
+            const auto Linear = [](double C) { return static_cast<double>(Quantize(C * C * std::sqrt(std::sqrt(C)), 1024.0)); };
+            std::string Pbr = "\"baseColorFactor\":[" + Num(Linear(M.BaseColor[0])) + "," + Num(Linear(M.BaseColor[1])) + "," + Num(Linear(M.BaseColor[2])) + "," +
+                Num(M.BaseColor[3]) + "],\"metallicFactor\":" + Num(M.Metallic) + ",\"roughnessFactor\":" + Num(M.Roughness);
+            if (!M.BaseColorTexture.empty()) Pbr += ",\"baseColorTexture\":{\"index\":" + std::to_string(Texture(M.BaseColorTexture)) + "}";
+            std::string Mat = "{\"name\":\"" + Escape(M.Name) + "\",\"pbrMetallicRoughness\":{" + Pbr + "}";
+            if (!M.NormalTexture.empty()) Mat += ",\"normalTexture\":{\"index\":" + std::to_string(Texture(M.NormalTexture)) + "}";
+            if (M.Mask) Mat += ",\"alphaMode\":\"MASK\",\"alphaCutoff\":" + Num(M.AlphaCutoff);
+            if (M.DoubleSided) Mat += ",\"doubleSided\":true";
+            return Mat + "}";
+        }
     }
+    using namespace GltfBits;
 
     std::string WriteGltf(const Mesh& Model, const std::string& Generator)
     {
@@ -693,17 +731,7 @@ namespace DarkArisen::Tools::Art
             for (const std::uint32_t I : P.Indices) PutU(Bin, I);
             const int IdxAcc = Accessor(View(IdxOffset, Bin.size() - IdxOffset, 34963), 5125, P.Indices.size(), "SCALAR", "");
 
-            const Material& M = P.Mat;
-            // Colours are authored in sRGB; glTF factors are linear (decode with gamma 2.25 = c^2 * c^(1/4)).
-            const auto Linear = [](double C) { return static_cast<double>(Quantize(C * C * std::sqrt(std::sqrt(C)), 1024.0)); };
-            std::string Pbr = "\"baseColorFactor\":[" + Num(Linear(M.BaseColor[0])) + "," + Num(Linear(M.BaseColor[1])) + "," + Num(Linear(M.BaseColor[2])) + "," +
-                Num(M.BaseColor[3]) + "],\"metallicFactor\":" + Num(M.Metallic) + ",\"roughnessFactor\":" + Num(M.Roughness);
-            if (!M.BaseColorTexture.empty()) Pbr += ",\"baseColorTexture\":{\"index\":" + std::to_string(TextureFor(M.BaseColorTexture)) + "}";
-            std::string Mat = "{\"name\":\"" + Escape(M.Name) + "\",\"pbrMetallicRoughness\":{" + Pbr + "}";
-            if (!M.NormalTexture.empty()) Mat += ",\"normalTexture\":{\"index\":" + std::to_string(TextureFor(M.NormalTexture)) + "}";
-            if (M.Mask) Mat += ",\"alphaMode\":\"MASK\",\"alphaCutoff\":0.5";
-            if (M.DoubleSided) Mat += ",\"doubleSided\":true";
-            Mat += "}";
+            const std::string Mat = MaterialJson(P.Mat, TextureFor);
             if (MaterialIndex) Materials += ",";
             Materials += Mat;
             if (!Primitives.empty()) Primitives += ",";

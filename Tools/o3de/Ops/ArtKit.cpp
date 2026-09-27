@@ -1,4 +1,5 @@
 #include "ArtKit.h"
+#include "ArtKitHumans.h"
 #include "ArtKitLibrary.h"
 #include "Json.h"
 
@@ -12,13 +13,6 @@ namespace DarkArisen::Tools::Art
     namespace
     {
         const std::string Generator = "Dark Arisen art kit (procedural, hand-authored)";
-
-        std::string Lower(std::string_view Text)
-        {
-            std::string Out(Text);
-            for (char& C : Out) C = (C >= 'A' && C <= 'Z') ? static_cast<char>(C + ('a' - 'A')) : C;
-            return Out;
-        }
 
         std::string Decode64(std::string_view Text)
         {
@@ -121,7 +115,9 @@ namespace DarkArisen::Tools::Art
         return Path;
     }
 
-    Kit::Kit()
+    Kit::~Kit() = default;
+
+    Kit::Kit(SourceReader Reader) : Humans(std::make_unique<HumanFactory>(std::move(Reader)))
     {
         for (ArtFile& File : BuildTextures()) Output.push_back(std::move(File));
 
@@ -214,6 +210,30 @@ namespace DarkArisen::Tools::Art
         // Characters with a greybox in ContentSource
         Replacements["ContentSource/Characters/Jake/SK_Jake_Alpha.gltf"] = FigureFor("jake");
         Replacements["ContentSource/Characters/Boarders/SK_Boarder_Alpha.gltf"] = FigureFor("boarder");
+
+        // Skinned actors and the retargeted motion library for EMotionFX (runtime verification pending).
+        for (const char* Person : {"jake", "boarder"})
+        {
+            std::string Gltf, Problem;
+            std::vector<ArtFile> Files;
+            if (!Humans->BuildActor(Person, Gltf, Files, Problem))
+            {
+                ProblemList.push_back(std::string("actor ") + Person + ": " + Problem);
+                continue;
+            }
+            for (ArtFile& File : Files) Output.push_back(std::move(File));
+            Output.push_back({std::string("Assets/Art/Characters/SK_Art_") + Person + ".gltf", std::move(Gltf)});
+        }
+        for (const std::string& Clip : HumanFactory::MotionClips())
+        {
+            std::string Gltf, Problem;
+            if (!Humans->BuildMotion("jake", Clip, Gltf, Problem))
+            {
+                ProblemList.push_back("motion " + Clip + ": " + Problem);
+                continue;
+            }
+            Output.push_back({"Assets/Art/Characters/Motions/AN_Art_Human_" + Clip + ".gltf", std::move(Gltf)});
+        }
     }
 
     std::string Kit::ReplacementFor(const std::string_view ContentSourceMesh) const
@@ -230,28 +250,19 @@ namespace DarkArisen::Tools::Art
 
     std::string Kit::FigureFor(const std::string_view EntityName)
     {
-        const std::string Name = Lower(EntityName);
-        const auto Has = [&Name](const char* Part) { return Name.find(Part) != std::string::npos; };
-        std::string Variant;
-        if (Has("jake")) Variant = "jake";
-        else if (Has("draven")) Variant = "draven";
-        else if (Has("boarder") || Has("guard") || Has("duel") || Has("raider")) Variant = "boarder";
-        else if (Has("marc")) Variant = "merchant";
-        else if (Has("denise")) Variant = "woman";
-        else if (Has("ethan")) Variant = "youth";
-        else if (Has("mira")) Variant = "sailor_f";
-        else if (Has("tom")) Variant = "bigman";
-        else if (Has("koa")) Variant = "elder";
-        else if (Has("esteban") || Has("holder") || Has("boss") || Has("captain") || Has("herrera")) Variant = "officer";
-        else if (Has("broker") || Has("merchant") || Has("trader") || Has("clerk")) Variant = "merchant";
-        else
-        {
-            static const char* Townsfolk[] = {"sailor", "dockworker", "woman", "sailor", "elder", "dockworker"};
-            Variant = Townsfolk[HashString(Name) % 6u];
-        }
-        const std::string Model = "SM_Art_Figure_" + Variant;
+        const std::string Person = PersonFor(EntityName);
+        const std::string Model = "SM_Art_Person_" + Person;
         if (const auto Found = Generated.find(Model); Found != Generated.end()) return Found->second;
-        return Generated[Model] = Emit(Model, WriteGltf(BuildFigure(Variant, HashString(Variant)), Generator));
+        Mesh Out(Model);
+        std::vector<ArtFile> Files;
+        std::string Problem;
+        if (!Humans->BuildFigure(Person, Out, Files, Problem))
+        {
+            ProblemList.push_back("person " + Person + ": " + Problem);
+            return Generated[Model] = std::string();
+        }
+        for (ArtFile& File : Files) Output.push_back(std::move(File));
+        return Generated[Model] = Emit(Model, WriteGltf(Out, Generator));
     }
 
     std::string Kit::Prop(const std::string_view PlaceholderName)

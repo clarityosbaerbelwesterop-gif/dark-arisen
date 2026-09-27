@@ -1,8 +1,11 @@
+#include "ArtKitCore.h"
+#include "ArtKitHumans.h"
 #include "Gltf.h"
 #include "Hash.h"
 #include "Json.h"
 #include "O3deIds.h"
 
+#include <algorithm>
 #include <cmath>
 #include <cstdint>
 #include <cstring>
@@ -10,6 +13,7 @@
 #include <fstream>
 #include <iostream>
 #include <iterator>
+#include <map>
 #include <string>
 #include <vector>
 
@@ -174,6 +178,54 @@ int main()
     Check(ConvertGreyboxGltf(MakePlaceholderFigureGltf(1.8, 0.35, "SM_Placeholder_Figure"), Converted, Stats, Error) &&
               Stats.Vertices == 18 && Stats.Triangles == 32,
         "placeholder figure is a valid greybox");
+
+    // Human pipeline (ArtKitHumans.h): maths, cast lookup, and a real figure, actor and clip from ContentSource/ThirdParty.
+    {
+        using namespace DarkArisen::Tools::Art;
+        Check(std::abs(Atan2(1.0, 1.0) - Pi / 4.0) < 1e-12 && std::abs(Atan2(-1.0, -1.0) + 3.0 * Pi / 4.0) < 1e-12 &&
+                  Atan2(0.0, -1.0) == Pi && std::abs(Atan2(0.3, 0.9) - std::atan2(0.3, 0.9)) < 1e-12,
+            "Atan2 from basic operations matches atan2");
+        Check(PersonFor("crew.bigtom.c07") == "bigtom" && PersonFor("boss.draven_voss") == "draven" &&
+                  PersonFor("contact.rexa.draven_broker") == "merchant" && PersonFor("boss.dream_ethan") == "dream_ethan" &&
+                  PersonFor("Family marc") == "marc",
+            "entity names map onto the cast");
+        std::map<std::string, std::string> Cache;
+        HumanFactory Humans([&Cache](const std::string& Relative) -> const std::string*
+        {
+            if (const auto Found = Cache.find(Relative); Found != Cache.end()) return &Found->second;
+            const fs::path Path = fs::path(DARKARISEN_REPO_ROOT) / Relative;
+            if (!fs::exists(Path)) return nullptr;
+            return &(Cache[Relative] = Read(Path));
+        });
+        Mesh Jake("SM_Art_Person_jake");
+        std::vector<ArtFile> Files;
+        std::string Problem;
+        Check(Humans.BuildFigure("jake", Jake, Files, Problem), "Jake is built from MakeHuman and CMU data");
+        double MinZ = 1e9, MaxZ = -1e9, EyesX = 0, BodyX = 0;
+        std::size_t Eyes = 0, Body = 0;
+        for (const Mesh::Part& Part : Jake.Parts())
+        {
+            for (const Vertex& V : Part.Vertices)
+            {
+                MinZ = std::min(MinZ, V.P.Z);
+                MaxZ = std::max(MaxZ, V.P.Z);
+                if (Part.Mat.Name.find("_Eyes") != std::string::npos) { EyesX += V.P.X; ++Eyes; }
+                if (Part.Mat.Name.find("_Skin") != std::string::npos) { BodyX += V.P.X; ++Body; }
+            }
+        }
+        Check(std::abs(MinZ) < 1e-9 && MaxZ > 1.65 && MaxZ < 1.9, "Jake stands on z = 0 at his authored height");
+        Check(Eyes > 0 && Body > 0 && EyesX / static_cast<double>(Eyes) > BodyX / static_cast<double>(Body), "Jake faces +X");
+        Check(Files.size() >= 3, "Jake's skin, outfit and eye textures are written");
+        std::string Actor, Motion;
+        Check(Humans.BuildActor("jake", Actor, Files, Problem) && Actor.find("\"skins\"") != std::string::npos &&
+                  Actor.find("JOINTS_0") != std::string::npos,
+            "skinned actor carries a skin and joint weights");
+        Check(Humans.BuildMotion("jake", "02_01", Motion, Problem) && Motion.find("\"animations\"") != std::string::npos,
+            "the CMU walk retargets into a motion clip");
+        JsonValue Parsed;
+        Check(JsonReader::Parse(Actor, Parsed, Error) && JsonReader::Parse(Motion, Parsed, Error), "actor and motion are valid JSON");
+        Check(!Humans.BuildFigure("nobody", Jake, Files, Problem), "unknown people fail closed");
+    }
 
     std::cout << (Failures == 0 ? "conversion tests passed\n" : "conversion tests FAILED\n");
     return Failures == 0 ? 0 : 1;
