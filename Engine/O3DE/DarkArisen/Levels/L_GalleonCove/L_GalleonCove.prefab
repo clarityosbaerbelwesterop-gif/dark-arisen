@@ -47,6 +47,76 @@
         "Name": "Level"
     },
     "Entities": {
+        "Entity_[1494842343631659]": {
+            "Components": {
+                "Component_[1815477509924753]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 1815477509924753
+                },
+                "Component_[2480485891479606]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 2480485891479606
+                },
+                "Component_[3286482450187668]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 3286482450187668
+                },
+                "Component_[4658699019448094]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 4658699019448094,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            70
+                        ],
+                        "Translate": [
+                            4.2,
+                            -1.4,
+                            0.68
+                        ]
+                    }
+                },
+                "Component_[5881691936033779]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 5881691936033779
+                },
+                "Component_[6544030017391790]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 6544030017391790
+                },
+                "Component_[6657847215046730]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 6657847215046730
+                },
+                "Component_[6748711695601025]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 6748711695601025
+                },
+                "Component_[6840451663138716]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 6840451663138716
+                },
+                "Component_[8307671370477377]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/props/opensource3d/sm_oak_barrel.azmodel",
+                                "assetId": {
+                                    "guid": "{A69E8DE8-FD0B-5135-A2D1-D977FF223657}",
+                                    "subId": 280652657
+                                }
+                            }
+                        }
+                    },
+                    "Id": 8307671370477377
+                }
+            },
+            "Id": "Entity_[1494842343631659]",
+            "Name": "Dressing 3 SM_oak_barrel"
+        },
         "Entity_[157663109534337]": {
             "Components": {
                 "Component_[197179247493746]": {
@@ -925,6 +995,71 @@
             },
             "Id": "Entity_[1868446968906937]",
             "Name": "Ocean Near 03"
+        },
+        "Entity_[193227803554834]": {
+            "Components": {
+                "Component_[3161150026818086]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 3161150026818086
+                },
+                "Component_[3328508386264779]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 3328508386264779
+                },
+                "Component_[410776416888119]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/props/opensource3d/sm_rope_coil.azmodel",
+                                "assetId": {
+                                    "guid": "{7965C016-BFEB-5B02-8645-DBE2D69CBD04}",
+                                    "subId": 284292448
+                                }
+                            }
+                        }
+                    },
+                    "Id": 410776416888119
+                },
+                "Component_[4852865460219876]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 4852865460219876,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            2.4,
+                            3.8,
+                            0.76
+                        ]
+                    }
+                },
+                "Component_[5138035756962568]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 5138035756962568
+                },
+                "Component_[5263822213323551]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 5263822213323551
+                },
+                "Component_[5903301192057076]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 5903301192057076
+                },
+                "Component_[7163775843044264]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 7163775843044264
+                },
+                "Component_[7929337286998554]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 7929337286998554
+                },
+                "Component_[8228435961082281]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 8228435961082281
+                }
+            },
+            "Id": "Entity_[193227803554834]",
+            "Name": "Dressing 4 SM_rope_coil"
         },
         "Entity_[2009557123993726]": {
             "Components": {
@@ -3422,6 +3557,76 @@
             "Id": "Entity_[5659924966316342]",
             "Name": "Anchor LaLiberacionBoarding"
         },
+        "Entity_[5885764322901542]": {
+            "Components": {
+                "Component_[1538601024243314]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 1538601024243314
+                },
+                "Component_[2202822977413323]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 2202822977413323
+                },
+                "Component_[2266399869541432]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 2266399869541432
+                },
+                "Component_[3310801254303857]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 3310801254303857
+                },
+                "Component_[3781543191293716]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/props/opensource3d/sm_cargo_crate.azmodel",
+                                "assetId": {
+                                    "guid": "{44992CD3-57ED-54BE-AAD7-AE3C47BA1EC5}",
+                                    "subId": 284239380
+                                }
+                            }
+                        }
+                    },
+                    "Id": 3781543191293716
+                },
+                "Component_[3896562244885959]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 3896562244885959
+                },
+                "Component_[520918467939255]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 520918467939255,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            20
+                        ],
+                        "Translate": [
+                            3.6,
+                            -2.4,
+                            0.79
+                        ]
+                    }
+                },
+                "Component_[7810876359335163]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 7810876359335163
+                },
+                "Component_[7905367295658958]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 7905367295658958
+                },
+                "Component_[8245349282876759]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 8245349282876759
+                }
+            },
+            "Id": "Entity_[5885764322901542]",
+            "Name": "Dressing 2 SM_cargo_crate"
+        },
         "Entity_[5890133710683013]": {
             "Components": {
                 "Component_[2213928465232609]": {
@@ -4649,6 +4854,71 @@
             },
             "Id": "Entity_[8825798224341914]",
             "Name": "Harbor Exit"
+        },
+        "Entity_[8885353082898526]": {
+            "Components": {
+                "Component_[1294384300673971]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 1294384300673971
+                },
+                "Component_[1347545118075460]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 1347545118075460
+                },
+                "Component_[2644842653983776]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 2644842653983776,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            3,
+                            2.5,
+                            0.8
+                        ]
+                    }
+                },
+                "Component_[3412254552653802]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 3412254552653802
+                },
+                "Component_[4918527519124919]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 4918527519124919
+                },
+                "Component_[5675592296503059]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/lighting/opensource3d/l_harbor_lantern.azmodel",
+                                "assetId": {
+                                    "guid": "{867DFAFF-CA49-599A-BB04-AED84C81FBAF}",
+                                    "subId": 278961998
+                                }
+                            }
+                        }
+                    },
+                    "Id": 5675592296503059
+                },
+                "Component_[6288543367290404]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 6288543367290404
+                },
+                "Component_[6869039868200429]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 6869039868200429
+                },
+                "Component_[7611935600467262]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 7611935600467262
+                },
+                "Component_[814781230136120]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 814781230136120
+                }
+            },
+            "Id": "Entity_[8885353082898526]",
+            "Name": "Dressing 1 L_harbor_lantern"
         },
         "Entity_[8900826141118513]": {
             "Components": {

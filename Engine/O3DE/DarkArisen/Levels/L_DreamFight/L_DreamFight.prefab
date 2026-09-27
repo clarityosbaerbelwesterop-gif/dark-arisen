@@ -3431,6 +3431,76 @@
             "Id": "Entity_[6717027941977996]",
             "Name": "PROVISIONAL Path ArenaEntry to ArenaCenter 10"
         },
+        "Entity_[6893678496371338]": {
+            "Components": {
+                "Component_[1377759282536489]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 1377759282536489,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            57
+                        ],
+                        "Translate": [
+                            1.560607,
+                            3.683002,
+                            -0.02
+                        ]
+                    }
+                },
+                "Component_[2148284740161337]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 2148284740161337
+                },
+                "Component_[3773306650821421]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 3773306650821421
+                },
+                "Component_[390857962403365]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 390857962403365
+                },
+                "Component_[4117952055355064]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 4117952055355064
+                },
+                "Component_[4591504585102355]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 4591504585102355
+                },
+                "Component_[4672456319425009]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 4672456319425009
+                },
+                "Component_[5706020972619166]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 5706020972619166
+                },
+                "Component_[7487116355501438]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/props/opensource3d/sm_cannonball_stack.azmodel",
+                                "assetId": {
+                                    "guid": "{0F41F031-8E12-53D2-ADC0-36F7A09AE2D5}",
+                                    "subId": 269756403
+                                }
+                            }
+                        }
+                    },
+                    "Id": 7487116355501438
+                },
+                "Component_[8685177445330164]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 8685177445330164
+                }
+            },
+            "Id": "Entity_[6893678496371338]",
+            "Name": "Dressing 1 SM_cannonball_stack"
+        },
         "Entity_[7117563661674204]": {
             "Components": {
                 "Component_[1046623838510047]": {
@@ -4692,6 +4762,76 @@
             },
             "Id": "Entity_[7469222543272677]",
             "Name": "Ground Tile 3_0"
+        },
+        "Entity_[7849701399365351]": {
+            "Components": {
+                "Component_[1518703296143934]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 1518703296143934
+                },
+                "Component_[2383077653200530]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 2383077653200530,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            23
+                        ],
+                        "Translate": [
+                            0.548123,
+                            4.112976,
+                            -0.14
+                        ]
+                    }
+                },
+                "Component_[2494985098444176]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 2494985098444176
+                },
+                "Component_[401948961969621]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/props/opensource3d/sm_black_powder_keg.azmodel",
+                                "assetId": {
+                                    "guid": "{6E8272F8-C7EB-5BEF-B0D7-70079A497DC6}",
+                                    "subId": 273030439
+                                }
+                            }
+                        }
+                    },
+                    "Id": 401948961969621
+                },
+                "Component_[4362848340711562]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 4362848340711562
+                },
+                "Component_[4819433360360485]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 4819433360360485
+                },
+                "Component_[5924045676192079]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 5924045676192079
+                },
+                "Component_[619068747099608]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 619068747099608
+                },
+                "Component_[8225816706714429]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 8225816706714429
+                },
+                "Component_[9006883861697242]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 9006883861697242
+                }
+            },
+            "Id": "Entity_[7849701399365351]",
+            "Name": "Dressing 2 SM_black_powder_keg"
         },
         "Entity_[7878787683388890]": {
             "Components": {

@@ -196,6 +196,49 @@ namespace DarkArisen::Tools
                 return true;
             }
 
+            /** Every triangle of every primitive, positions as stored (no frame change). */
+            bool Collect(std::vector<Vec3d>& OutPositions, std::vector<std::uint32_t>& OutIndices)
+            {
+                if (!DecodeBuffers()) return false;
+                JsonValue* Meshes = Member("meshes");
+                if (!Meshes || !Meshes->IsArray()) return Fail("no meshes");
+                for (JsonValue& Mesh : Meshes->Items)
+                {
+                    JsonValue* Primitives = Mesh.IsObject() ? MemberOf(Mesh, "primitives") : nullptr;
+                    if (!Primitives) continue;
+                    for (JsonValue& Primitive : Primitives->Items)
+                    {
+                        const JsonValue* Attributes = Primitive.Find("attributes");
+                        std::size_t PositionIndex = 0, IndexAccessor = 0;
+                        if (!Attributes || !GetIndex(*Attributes, "POSITION", PositionIndex) || !GetIndex(Primitive, "indices", IndexAccessor)) continue;
+                        AccessorView Positions, Indices;
+                        if (!ResolveAccessor(PositionIndex, 3, Positions) || Positions.ComponentType != ComponentFloat || !ResolveAccessor(IndexAccessor, 1, Indices) ||
+                            Indices.ComponentType == ComponentFloat)
+                        {
+                            return Fail("unreadable primitive");
+                        }
+                        const auto Base = static_cast<std::uint32_t>(OutPositions.size());
+                        for (std::size_t Element = 0; Element < Positions.Count; ++Element)
+                        {
+                            const std::size_t Offset = Positions.Offset + Element * Positions.Stride;
+                            OutPositions.push_back({ReadFloat(*Positions.Buffer, Offset), ReadFloat(*Positions.Buffer, Offset + 4), ReadFloat(*Positions.Buffer, Offset + 8)});
+                        }
+                        const std::size_t Size = ComponentSize(Indices.ComponentType);
+                        for (std::size_t Element = 0; Element + 2 < Indices.Count; Element += 3)
+                        {
+                            for (std::size_t K = 0; K < 3; ++K)
+                            {
+                                std::uint32_t Value = 0;
+                                std::memcpy(&Value, Indices.Buffer->data() + Indices.Offset + (Element + K) * Indices.Stride, Size);
+                                if (Value >= Positions.Count) return Fail("index out of vertex range");
+                                OutIndices.push_back(Base + Value);
+                            }
+                        }
+                    }
+                }
+                return true;
+            }
+
         private:
             JsonValue& Root;
             std::string& Error;
@@ -592,6 +635,20 @@ namespace DarkArisen::Tools
         }
         OutGltf = JsonWriter::Write(Root, 1);
         return true;
+    }
+
+    bool ReadGltfTriangles(const std::string_view Source, std::vector<Vec3d>& OutPositions, std::vector<std::uint32_t>& OutIndices, std::string& OutError)
+    {
+        JsonValue Root;
+        if (!JsonReader::Parse(Source, Root, OutError) || !Root.IsObject())
+        {
+            OutError = "glTF JSON: " + OutError;
+            return false;
+        }
+        OutPositions.clear();
+        OutIndices.clear();
+        Converter Work(Root, OutError);
+        return Work.Collect(OutPositions, OutIndices);
     }
 
     namespace

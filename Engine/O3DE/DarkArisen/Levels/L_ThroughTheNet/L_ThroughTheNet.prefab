@@ -47,6 +47,76 @@
         "Name": "Level"
     },
     "Entities": {
+        "Entity_[1255502055631055]": {
+            "Components": {
+                "Component_[2664470685899029]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 2664470685899029
+                },
+                "Component_[2708754084686166]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 2708754084686166
+                },
+                "Component_[3494098260835000]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 3494098260835000,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            23
+                        ],
+                        "Translate": [
+                            0.548123,
+                            4.112976,
+                            -0.14
+                        ]
+                    }
+                },
+                "Component_[3713234672185664]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 3713234672185664
+                },
+                "Component_[4588321783359996]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 4588321783359996
+                },
+                "Component_[610869186596927]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 610869186596927
+                },
+                "Component_[6436495708039195]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/props/opensource3d/sm_black_powder_keg.azmodel",
+                                "assetId": {
+                                    "guid": "{6E8272F8-C7EB-5BEF-B0D7-70079A497DC6}",
+                                    "subId": 273030439
+                                }
+                            }
+                        }
+                    },
+                    "Id": 6436495708039195
+                },
+                "Component_[7469249707943820]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 7469249707943820
+                },
+                "Component_[7860486427671762]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 7860486427671762
+                },
+                "Component_[7909486562780987]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 7909486562780987
+                }
+            },
+            "Id": "Entity_[1255502055631055]",
+            "Name": "Dressing 2 SM_black_powder_keg"
+        },
         "Entity_[1290516787913325]": {
             "Components": {
                 "Component_[1515061587857314]": {
@@ -698,6 +768,76 @@
             "Id": "Entity_[4203805660898037]",
             "Name": "Ground Tile 2_1"
         },
+        "Entity_[435403475247827]": {
+            "Components": {
+                "Component_[2195798451874193]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 2195798451874193
+                },
+                "Component_[3273248347912713]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 3273248347912713,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            285
+                        ],
+                        "Translate": [
+                            35.630533,
+                            -12.679056,
+                            -0.14
+                        ]
+                    }
+                },
+                "Component_[3928673208916595]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 3928673208916595
+                },
+                "Component_[3940595296362260]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 3940595296362260
+                },
+                "Component_[3995441211902430]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/props/opensource3d/sm_oak_barrel.azmodel",
+                                "assetId": {
+                                    "guid": "{A69E8DE8-FD0B-5135-A2D1-D977FF223657}",
+                                    "subId": 280652657
+                                }
+                            }
+                        }
+                    },
+                    "Id": 3995441211902430
+                },
+                "Component_[5836111501168645]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 5836111501168645
+                },
+                "Component_[7634145718251213]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 7634145718251213
+                },
+                "Component_[7849733885900313]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 7849733885900313
+                },
+                "Component_[8386768699707006]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 8386768699707006
+                },
+                "Component_[893918297195288]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 893918297195288
+                }
+            },
+            "Id": "Entity_[435403475247827]",
+            "Name": "Dressing 5 SM_oak_barrel"
+        },
         "Entity_[4459094190995201]": {
             "Components": {
                 "Component_[1352075614237303]": {
@@ -1102,6 +1242,76 @@
             },
             "Id": "Entity_[5595457043119607]",
             "Name": "Anchor GreatCabinDoor"
+        },
+        "Entity_[5721064721963419]": {
+            "Components": {
+                "Component_[1486086649475131]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 1486086649475131
+                },
+                "Component_[1846937735651991]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 1846937735651991
+                },
+                "Component_[2029273677006659]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 2029273677006659,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            115
+                        ],
+                        "Translate": [
+                            36.093068,
+                            -11.681027,
+                            -0.14
+                        ]
+                    }
+                },
+                "Component_[3126616470409775]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 3126616470409775
+                },
+                "Component_[5687838453749904]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/props/opensource3d/sm_black_powder_keg.azmodel",
+                                "assetId": {
+                                    "guid": "{6E8272F8-C7EB-5BEF-B0D7-70079A497DC6}",
+                                    "subId": 273030439
+                                }
+                            }
+                        }
+                    },
+                    "Id": 5687838453749904
+                },
+                "Component_[589245924869298]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 589245924869298
+                },
+                "Component_[5965567912462534]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 5965567912462534
+                },
+                "Component_[6480434844972644]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 6480434844972644
+                },
+                "Component_[8347131434704131]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 8347131434704131
+                },
+                "Component_[8692046724719525]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 8692046724719525
+                }
+            },
+            "Id": "Entity_[5721064721963419]",
+            "Name": "Dressing 6 SM_black_powder_keg"
         },
         "Entity_[5734701834401358]": {
             "Components": {
@@ -1848,6 +2058,76 @@
             },
             "Id": "Entity_[6425528091360415]",
             "Name": "PROVISIONAL Path ChartTable to DeckExit 4"
+        },
+        "Entity_[6841047079046290]": {
+            "Components": {
+                "Component_[12934773058405]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 12934773058405
+                },
+                "Component_[245445547090396]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 245445547090396
+                },
+                "Component_[3970947715969121]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 3970947715969121,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            57
+                        ],
+                        "Translate": [
+                            1.560607,
+                            3.683002,
+                            -0.02
+                        ]
+                    }
+                },
+                "Component_[4344997807487769]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 4344997807487769
+                },
+                "Component_[4899218844304262]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/props/opensource3d/sm_cannonball_stack.azmodel",
+                                "assetId": {
+                                    "guid": "{0F41F031-8E12-53D2-ADC0-36F7A09AE2D5}",
+                                    "subId": 269756403
+                                }
+                            }
+                        }
+                    },
+                    "Id": 4899218844304262
+                },
+                "Component_[4940620580545190]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 4940620580545190
+                },
+                "Component_[5048488857705771]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 5048488857705771
+                },
+                "Component_[5740713415199597]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 5740713415199597
+                },
+                "Component_[7889419778196192]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 7889419778196192
+                },
+                "Component_[7939984522369729]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 7939984522369729
+                }
+            },
+            "Id": "Entity_[6841047079046290]",
+            "Name": "Dressing 1 SM_cannonball_stack"
         },
         "Entity_[7132757543342203]": {
             "Components": {
@@ -2674,6 +2954,146 @@
             },
             "Id": "Entity_[8472183209622752]",
             "Name": "C07_03_Mira"
+        },
+        "Entity_[8599894718284575]": {
+            "Components": {
+                "Component_[1945293850996908]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 1945293850996908
+                },
+                "Component_[2231044513963121]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 2231044513963121,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            171
+                        ],
+                        "Translate": [
+                            29.268392,
+                            7.55948,
+                            -0.02
+                        ]
+                    }
+                },
+                "Component_[2329919296240699]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 2329919296240699
+                },
+                "Component_[2864557434135382]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 2864557434135382
+                },
+                "Component_[3619091016069712]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 3619091016069712
+                },
+                "Component_[4157947075236374]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/props/opensource3d/sm_weapon_rack.azmodel",
+                                "assetId": {
+                                    "guid": "{4FA84BD3-205C-56FA-9306-76C88409789A}",
+                                    "subId": 281698239
+                                }
+                            }
+                        }
+                    },
+                    "Id": 4157947075236374
+                },
+                "Component_[4470100255618569]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 4470100255618569
+                },
+                "Component_[5142646155822837]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 5142646155822837
+                },
+                "Component_[7417014888334845]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 7417014888334845
+                },
+                "Component_[7894470381091281]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 7894470381091281
+                }
+            },
+            "Id": "Entity_[8599894718284575]",
+            "Name": "Dressing 3 SM_weapon_rack"
+        },
+        "Entity_[8978189146579198]": {
+            "Components": {
+                "Component_[1026901040315128]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 1026901040315128
+                },
+                "Component_[1518605336471666]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 1518605336471666,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            69
+                        ],
+                        "Translate": [
+                            29.663717,
+                            6.532972,
+                            -0.03
+                        ]
+                    }
+                },
+                "Component_[1983497213010234]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 1983497213010234
+                },
+                "Component_[2484505293401310]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 2484505293401310
+                },
+                "Component_[2654088462303082]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 2654088462303082
+                },
+                "Component_[2791850427694960]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 2791850427694960
+                },
+                "Component_[3510974796038149]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 3510974796038149
+                },
+                "Component_[7203004364353333]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/props/opensource3d/sm_cargo_crate.azmodel",
+                                "assetId": {
+                                    "guid": "{44992CD3-57ED-54BE-AAD7-AE3C47BA1EC5}",
+                                    "subId": 284239380
+                                }
+                            }
+                        }
+                    },
+                    "Id": 7203004364353333
+                },
+                "Component_[7227157673352943]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 7227157673352943
+                },
+                "Component_[7709598068584349]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 7709598068584349
+                }
+            },
+            "Id": "Entity_[8978189146579198]",
+            "Name": "Dressing 4 SM_cargo_crate"
         }
     }
 }

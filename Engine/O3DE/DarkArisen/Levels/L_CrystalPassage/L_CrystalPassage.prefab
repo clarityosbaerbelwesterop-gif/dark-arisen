@@ -1217,6 +1217,76 @@
             "Id": "Entity_[2350191821143541]",
             "Name": "PROVISIONAL Path RepairRoute to IntelligenceRoom 6"
         },
+        "Entity_[2426655777459171]": {
+            "Components": {
+                "Component_[2374929714501725]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 2374929714501725
+                },
+                "Component_[2985514780707017]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 2985514780707017
+                },
+                "Component_[3820957817904405]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 3820957817904405,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            57
+                        ],
+                        "Translate": [
+                            1.560607,
+                            3.683002,
+                            -0.02
+                        ]
+                    }
+                },
+                "Component_[4473954532656033]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 4473954532656033
+                },
+                "Component_[5473010357780903]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 5473010357780903
+                },
+                "Component_[582662805828778]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/props/opensource3d/sm_cannonball_stack.azmodel",
+                                "assetId": {
+                                    "guid": "{0F41F031-8E12-53D2-ADC0-36F7A09AE2D5}",
+                                    "subId": 269756403
+                                }
+                            }
+                        }
+                    },
+                    "Id": 582662805828778
+                },
+                "Component_[6255989044922392]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 6255989044922392
+                },
+                "Component_[6504310462330698]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 6504310462330698
+                },
+                "Component_[7020948220892396]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 7020948220892396
+                },
+                "Component_[7563801148814933]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 7563801148814933
+                }
+            },
+            "Id": "Entity_[2426655777459171]",
+            "Name": "Dressing 1 SM_cannonball_stack"
+        },
         "Entity_[2798696642331650]": {
             "Components": {
                 "Component_[1846408736456753]": {
@@ -5354,6 +5424,76 @@
             },
             "Id": "Entity_[7610793760233413]",
             "Name": "PROVISIONAL Path IntelligenceRoom to ChartDesk 1"
+        },
+        "Entity_[8002074808264150]": {
+            "Components": {
+                "Component_[2519426266876234]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 2519426266876234
+                },
+                "Component_[25648066497685]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/props/opensource3d/sm_black_powder_keg.azmodel",
+                                "assetId": {
+                                    "guid": "{6E8272F8-C7EB-5BEF-B0D7-70079A497DC6}",
+                                    "subId": 273030439
+                                }
+                            }
+                        }
+                    },
+                    "Id": 25648066497685
+                },
+                "Component_[3291848130601957]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 3291848130601957
+                },
+                "Component_[3649578224939023]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 3649578224939023
+                },
+                "Component_[3860829300314366]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 3860829300314366
+                },
+                "Component_[8309414453455696]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 8309414453455696
+                },
+                "Component_[8620124211575450]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 8620124211575450
+                },
+                "Component_[8693910345161112]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 8693910345161112
+                },
+                "Component_[876458942096338]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 876458942096338,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            23
+                        ],
+                        "Translate": [
+                            0.548123,
+                            4.112976,
+                            -0.14
+                        ]
+                    }
+                },
+                "Component_[8907611054610429]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 8907611054610429
+                }
+            },
+            "Id": "Entity_[8002074808264150]",
+            "Name": "Dressing 2 SM_black_powder_keg"
         },
         "Entity_[8065779004662292]": {
             "Components": {

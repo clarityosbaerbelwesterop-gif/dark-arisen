@@ -5774,6 +5774,76 @@
             "Id": "Entity_[5492219839474488]",
             "Name": "Anchor CrewTable"
         },
+        "Entity_[5818572959392267]": {
+            "Components": {
+                "Component_[219651972320736]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 219651972320736
+                },
+                "Component_[2902664234910255]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/props/opensource3d/sm_black_powder_keg.azmodel",
+                                "assetId": {
+                                    "guid": "{6E8272F8-C7EB-5BEF-B0D7-70079A497DC6}",
+                                    "subId": 273030439
+                                }
+                            }
+                        }
+                    },
+                    "Id": 2902664234910255
+                },
+                "Component_[3029325347532162]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 3029325347532162
+                },
+                "Component_[5767309846608579]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 5767309846608579
+                },
+                "Component_[6515173685380428]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 6515173685380428,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            23
+                        ],
+                        "Translate": [
+                            0.548123,
+                            4.112976,
+                            -0.14
+                        ]
+                    }
+                },
+                "Component_[698694645713815]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 698694645713815
+                },
+                "Component_[6988249316872428]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 6988249316872428
+                },
+                "Component_[751369442742494]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 751369442742494
+                },
+                "Component_[7612833290352304]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 7612833290352304
+                },
+                "Component_[8247798879959265]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 8247798879959265
+                }
+            },
+            "Id": "Entity_[5818572959392267]",
+            "Name": "Dressing 2 SM_black_powder_keg"
+        },
         "Entity_[6022567002696124]": {
             "Components": {
                 "Component_[1754722910893670]": {
@@ -8088,6 +8158,76 @@
             },
             "Id": "Entity_[7284577922511109]",
             "Name": "PROVISIONAL Path HarborBody to CrewTable 6"
+        },
+        "Entity_[7587831534185638]": {
+            "Components": {
+                "Component_[1188790986298812]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 1188790986298812
+                },
+                "Component_[1294152538088780]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 1294152538088780
+                },
+                "Component_[2990275308922368]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 2990275308922368
+                },
+                "Component_[5707811774356735]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 5707811774356735
+                },
+                "Component_[6260413789611256]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 6260413789611256,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            57
+                        ],
+                        "Translate": [
+                            1.560607,
+                            3.683002,
+                            -0.02
+                        ]
+                    }
+                },
+                "Component_[6271100036198363]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/props/opensource3d/sm_cannonball_stack.azmodel",
+                                "assetId": {
+                                    "guid": "{0F41F031-8E12-53D2-ADC0-36F7A09AE2D5}",
+                                    "subId": 269756403
+                                }
+                            }
+                        }
+                    },
+                    "Id": 6271100036198363
+                },
+                "Component_[8234730147727611]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 8234730147727611
+                },
+                "Component_[832410271286550]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 832410271286550
+                },
+                "Component_[8665373634067602]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 8665373634067602
+                },
+                "Component_[999916219963349]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 999916219963349
+                }
+            },
+            "Id": "Entity_[7587831534185638]",
+            "Name": "Dressing 1 SM_cannonball_stack"
         },
         "Entity_[7599388374979441]": {
             "Components": {

@@ -14,8 +14,10 @@
 // triangle winding is reversed to keep faces pointing outwards.
 
 #include <cstddef>
+#include <cstdint>
 #include <string>
 #include <string_view>
+#include <vector>
 
 namespace DarkArisen::Tools
 {
@@ -67,6 +69,9 @@ namespace DarkArisen::Tools
      */
     bool ConvertGreyboxGltf(std::string_view Source, std::string& OutGltf, GltfConversionStats& OutStats, std::string& OutError,
         const GltfConversionOptions& Options = {});
+
+    /** Positions (as stored, source frame) and triangle indices of every primitive of an embedded-buffer glTF. */
+    bool ReadGltfTriangles(std::string_view Source, std::vector<Vec3d>& OutPositions, std::vector<std::uint32_t>& OutIndices, std::string& OutError);
 
     /**
      * Placeholder figure for characters that have no greybox in ContentSource: an octagonal prism

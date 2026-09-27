@@ -179,6 +179,15 @@ int main()
               Stats.Vertices == 18 && Stats.Triangles == 32,
         "placeholder figure is a valid greybox");
 
+    {
+        std::vector<Vec3d> Positions;
+        std::vector<std::uint32_t> Triangles;
+        Check(ReadGltfTriangles(MakePlaceholderBoxGltf(2.0, 3.0, 4.0, "SM_Box"), Positions, Triangles, Error) && Positions.size() == 8 &&
+                  Triangles.size() == 36 && Positions[6].X == 1.0 && Positions[6].Y == 1.5 && Positions[6].Z == 4.0,
+            "triangles read back in the source frame");
+        Check(!ReadGltfTriangles(R"({"asset":{"version":"2.0"}})", Positions, Triangles, Error), "glTF without meshes has no triangles");
+    }
+
     // Human pipeline (ArtKitHumans.h): maths, cast lookup, and a real figure, actor and clip from ContentSource/ThirdParty.
     {
         using namespace DarkArisen::Tools::Art;
