@@ -1416,6 +1416,76 @@
             "Id": "Entity_[2233378241237714]",
             "Name": "C08_01_PortGuard_A"
         },
+        "Entity_[2291039963613384]": {
+            "Components": {
+                "Component_[164699052454062]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 164699052454062
+                },
+                "Component_[2667278111009572]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 2667278111009572
+                },
+                "Component_[3054399530813405]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 3054399530813405
+                },
+                "Component_[3068974752233497]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 3068974752233497,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            57
+                        ],
+                        "Translate": [
+                            1.560607,
+                            3.683002,
+                            -0.02
+                        ]
+                    }
+                },
+                "Component_[4052504320549161]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 4052504320549161
+                },
+                "Component_[5477284468676501]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 5477284468676501
+                },
+                "Component_[5795924788462465]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 5795924788462465
+                },
+                "Component_[7137910830340142]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/props/opensource3d/sm_cannonball_stack.azmodel",
+                                "assetId": {
+                                    "guid": "{0F41F031-8E12-53D2-ADC0-36F7A09AE2D5}",
+                                    "subId": 269756403
+                                }
+                            }
+                        }
+                    },
+                    "Id": 7137910830340142
+                },
+                "Component_[714076850642184]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 714076850642184
+                },
+                "Component_[7584116116764291]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 7584116116764291
+                }
+            },
+            "Id": "Entity_[2291039963613384]",
+            "Name": "Dressing 1 SM_cannonball_stack"
+        },
         "Entity_[2299458240834784]": {
             "Components": {
                 "Component_[1092726560653383]": {
@@ -4244,6 +4314,76 @@
             },
             "Id": "Entity_[4373508483681584]",
             "Name": "Jake Camera"
+        },
+        "Entity_[4819793516954409]": {
+            "Components": {
+                "Component_[2585475070498002]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 2585475070498002
+                },
+                "Component_[3194836946757061]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 3194836946757061
+                },
+                "Component_[364402883159778]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 364402883159778
+                },
+                "Component_[4469831868304013]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 4469831868304013
+                },
+                "Component_[5061517549907848]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 5061517549907848
+                },
+                "Component_[6321549640935037]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/props/opensource3d/sm_black_powder_keg.azmodel",
+                                "assetId": {
+                                    "guid": "{6E8272F8-C7EB-5BEF-B0D7-70079A497DC6}",
+                                    "subId": 273030439
+                                }
+                            }
+                        }
+                    },
+                    "Id": 6321549640935037
+                },
+                "Component_[6495345503199318]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 6495345503199318
+                },
+                "Component_[6889286692343594]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 6889286692343594,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            23
+                        ],
+                        "Translate": [
+                            0.548123,
+                            4.112976,
+                            -0.14
+                        ]
+                    }
+                },
+                "Component_[7588472113207232]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 7588472113207232
+                },
+                "Component_[8537717184459287]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 8537717184459287
+                }
+            },
+            "Id": "Entity_[4819793516954409]",
+            "Name": "Dressing 2 SM_black_powder_keg"
         },
         "Entity_[4879250768268017]": {
             "Components": {

@@ -3174,6 +3174,76 @@
             "Id": "Entity_[6040316000811972]",
             "Name": "Anchor MiraWelcome"
         },
+        "Entity_[6389533072645784]": {
+            "Components": {
+                "Component_[1695204051418807]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 1695204051418807
+                },
+                "Component_[1747850008285989]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 1747850008285989
+                },
+                "Component_[2176501460131949]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 2176501460131949
+                },
+                "Component_[342194605062450]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 342194605062450
+                },
+                "Component_[3438180399640182]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 3438180399640182
+                },
+                "Component_[4179763308825576]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 4179763308825576
+                },
+                "Component_[5289885997998146]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 5289885997998146
+                },
+                "Component_[5312351755963786]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 5312351755963786,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            57
+                        ],
+                        "Translate": [
+                            1.560607,
+                            3.683002,
+                            -0.02
+                        ]
+                    }
+                },
+                "Component_[5639645361419616]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 5639645361419616
+                },
+                "Component_[698249799529181]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/props/opensource3d/sm_cannonball_stack.azmodel",
+                                "assetId": {
+                                    "guid": "{0F41F031-8E12-53D2-ADC0-36F7A09AE2D5}",
+                                    "subId": 269756403
+                                }
+                            }
+                        }
+                    },
+                    "Id": 698249799529181
+                }
+            },
+            "Id": "Entity_[6389533072645784]",
+            "Name": "Dressing 1 SM_cannonball_stack"
+        },
         "Entity_[6563952415058341]": {
             "Components": {
                 "Component_[1343466530043029]": {
@@ -3317,6 +3387,76 @@
             },
             "Id": "Entity_[6985226476062909]",
             "Name": "Anchor GreatCabinDoor"
+        },
+        "Entity_[705474625196537]": {
+            "Components": {
+                "Component_[1124870634520135]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 1124870634520135
+                },
+                "Component_[210275774856779]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 210275774856779
+                },
+                "Component_[3496215586270100]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/props/opensource3d/sm_black_powder_keg.azmodel",
+                                "assetId": {
+                                    "guid": "{6E8272F8-C7EB-5BEF-B0D7-70079A497DC6}",
+                                    "subId": 273030439
+                                }
+                            }
+                        }
+                    },
+                    "Id": 3496215586270100
+                },
+                "Component_[3985841327848919]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 3985841327848919
+                },
+                "Component_[540209155565809]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 540209155565809
+                },
+                "Component_[5662403149722958]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 5662403149722958
+                },
+                "Component_[7775208180246258]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 7775208180246258
+                },
+                "Component_[8105277381968251]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 8105277381968251
+                },
+                "Component_[8503007025544376]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 8503007025544376
+                },
+                "Component_[8553561035140151]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 8553561035140151,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            23
+                        ],
+                        "Translate": [
+                            0.548123,
+                            4.112976,
+                            -0.14
+                        ]
+                    }
+                }
+            },
+            "Id": "Entity_[705474625196537]",
+            "Name": "Dressing 2 SM_black_powder_keg"
         },
         "Entity_[7609981107593691]": {
             "Components": {

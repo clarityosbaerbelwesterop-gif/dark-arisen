@@ -1413,6 +1413,76 @@
             "Id": "Entity_[2679879224387554]",
             "Name": "Geometry HoldingRoad"
         },
+        "Entity_[2704103065543351]": {
+            "Components": {
+                "Component_[2062453313299927]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 2062453313299927
+                },
+                "Component_[2173779537861709]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 2173779537861709
+                },
+                "Component_[2769837064786749]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/props/opensource3d/sm_cannonball_stack.azmodel",
+                                "assetId": {
+                                    "guid": "{0F41F031-8E12-53D2-ADC0-36F7A09AE2D5}",
+                                    "subId": 269756403
+                                }
+                            }
+                        }
+                    },
+                    "Id": 2769837064786749
+                },
+                "Component_[3131251636981610]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 3131251636981610,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            57
+                        ],
+                        "Translate": [
+                            1.560607,
+                            3.683002,
+                            -0.02
+                        ]
+                    }
+                },
+                "Component_[3397181991644306]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 3397181991644306
+                },
+                "Component_[5602253401804360]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 5602253401804360
+                },
+                "Component_[6161503783696005]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 6161503783696005
+                },
+                "Component_[6621136132370454]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 6621136132370454
+                },
+                "Component_[665887648605056]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 665887648605056
+                },
+                "Component_[8628689105216930]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 8628689105216930
+                }
+            },
+            "Id": "Entity_[2704103065543351]",
+            "Name": "Dressing 1 SM_cannonball_stack"
+        },
         "Entity_[2961547555831373]": {
             "Components": {
                 "Component_[2310436093855152]": {
@@ -4258,6 +4328,76 @@
             },
             "Id": "Entity_[6257944509040359]",
             "Name": "PROVISIONAL Path HoldingApproach to WarScarredRoad 10"
+        },
+        "Entity_[6886604330510370]": {
+            "Components": {
+                "Component_[1253077341831750]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/props/opensource3d/sm_black_powder_keg.azmodel",
+                                "assetId": {
+                                    "guid": "{6E8272F8-C7EB-5BEF-B0D7-70079A497DC6}",
+                                    "subId": 273030439
+                                }
+                            }
+                        }
+                    },
+                    "Id": 1253077341831750
+                },
+                "Component_[1356509082486565]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 1356509082486565
+                },
+                "Component_[2468961398477472]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 2468961398477472
+                },
+                "Component_[3200854316958566]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 3200854316958566
+                },
+                "Component_[355716910024921]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 355716910024921
+                },
+                "Component_[3586157227178657]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 3586157227178657,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            23
+                        ],
+                        "Translate": [
+                            0.548123,
+                            4.112976,
+                            -0.14
+                        ]
+                    }
+                },
+                "Component_[4269872285693569]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 4269872285693569
+                },
+                "Component_[4714204081385884]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 4714204081385884
+                },
+                "Component_[6301971995195371]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 6301971995195371
+                },
+                "Component_[705720870065453]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 705720870065453
+                }
+            },
+            "Id": "Entity_[6886604330510370]",
+            "Name": "Dressing 2 SM_black_powder_keg"
         },
         "Entity_[691596252717121]": {
             "Components": {

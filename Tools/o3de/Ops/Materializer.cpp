@@ -1,6 +1,7 @@
 #include "Materializer.h"
 
 #include "ArtKit.h"
+#include "ArtKitCore.h"
 #include "Gltf.h"
 #include "Hash.h"
 #include "Json.h"
@@ -688,6 +689,121 @@ namespace DarkArisen::Tools
             Prefab.AddComponent(Entity, "AZ::Render::EditorMeshComponent", MeshComponent(Model));
         }
 
+        // ------------------------------------------------------------------ set dressing
+        // Props and lights of the open-source alpha batch (ContentSource/OpenSource3D/README.md): committed
+        // glTF placed as dressing next to the authored route, never on it. Only large pieces are solid.
+
+        struct DressingProp
+        {
+            const char* Stem;
+            const char* Folder;   // Props or Lighting (Assets/Art/<Folder>/OpenSource3D)
+            double Lift;          // brings the model's lowest point onto the ground
+            Vec3d Solid;          // box collider (world metres, before yaw); zero for walk-through dressing
+        };
+
+        constexpr DressingProp DressingProps[] = {
+            {"SM_cargo_crate", "Props", -0.01, {}},
+            {"SM_oak_barrel", "Props", -0.12, {}},
+            {"SM_black_powder_keg", "Props", -0.12, {}},
+            {"SM_cannonball_stack", "Props", 0.0, {}},
+            {"SM_rope_coil", "Props", -0.04, {}},
+            {"SM_anchor", "Props", -0.09, {}},
+            {"SM_fishing_net", "Props", -0.07, {}},
+            {"SM_weapon_rack", "Props", 0.0, {}},
+            {"SM_dock_crane", "Props", 0.36, {2.85, 1.0, 4.2}},
+            {"SM_market_stall", "Props", 0.0, {2.2, 1.5, 2.5}},
+            {"SM_forge_anvil", "Props", 0.02, {1.2, 0.5, 0.8}},
+            {"SM_chart_table", "Props", 0.0, {1.35, 0.82, 0.9}},
+            {"L_harbor_lantern", "Lighting", 0.0, {}},
+            {"L_forge_brazier", "Lighting", -0.08, {}},
+        };
+
+        /** Ground under a point: the highest upward-facing triangle of a greybox (source frame) near a reference height. */
+        class GroundSampler
+        {
+        public:
+            GroundSampler() = default;
+            GroundSampler(Session& Work, const std::string& SourceRelative)
+            {
+                const std::string* Text = Work.Text(SourceRelative);
+                std::string Problem;
+                std::vector<Vec3d> Positions;
+                if (!Text || !ReadGltfTriangles(*Text, Positions, Indices, Problem))
+                {
+                    Work.Error(SourceRelative + ": ground sampling: " + Problem);
+                    return;
+                }
+                for (const Vec3d& P : Positions) Points.push_back({P.X, -P.Y, P.Z});  // source frame to world: mirror Y
+            }
+            double Height(const double X, const double Y, const double Near) const
+            {
+                double Best = -1e30;
+                for (std::size_t T = 0; T + 2 < Indices.size(); T += 3)
+                {
+                    const Vec3d& A = Points[Indices[T]];
+                    const Vec3d& B = Points[Indices[T + 1]];
+                    const Vec3d& C = Points[Indices[T + 2]];
+                    const double Area = (B.X - A.X) * (C.Y - A.Y) - (C.X - A.X) * (B.Y - A.Y);
+                    if (std::abs(Area) < 1e-9) continue;
+                    const double W1 = ((X - A.X) * (C.Y - A.Y) - (C.X - A.X) * (Y - A.Y)) / Area;
+                    const double W2 = ((B.X - A.X) * (Y - A.Y) - (X - A.X) * (B.Y - A.Y)) / Area;
+                    if (W1 < 0.0 || W2 < 0.0 || W1 + W2 > 1.0) continue;
+                    // Upward-facing only, and not a roof or tree top far above the reference.
+                    const double Nx = (B.Y - A.Y) * (C.Z - A.Z) - (B.Z - A.Z) * (C.Y - A.Y);
+                    const double Ny = (B.Z - A.Z) * (C.X - A.X) - (B.X - A.X) * (C.Z - A.Z);
+                    const double Nz = std::abs(Area) / std::sqrt(Area * Area + Nx * Nx + Ny * Ny);
+                    if (Nz < 0.6) continue;
+                    const double Z = A.Z + W1 * (B.Z - A.Z) + W2 * (C.Z - A.Z);
+                    if (Z > Near + 1.5 || Z < Near - 3.0) continue;
+                    Best = std::max(Best, Z);
+                }
+                return Best > -1e29 ? Best : Near;
+            }
+        private:
+            std::vector<Vec3d> Points;
+            std::vector<std::uint32_t> Indices;
+        };
+
+        void AddProp(Session& Work, PrefabBuilder& Prefab, const std::string& Name, const std::string_view Stem, const Vec3d& At, const double YawDegrees)
+        {
+            const DressingProp* Info = nullptr;
+            for (const DressingProp& P : DressingProps)
+            {
+                if (Stem == P.Stem) Info = &P;
+            }
+            if (!Info)
+            {
+                Work.Error("unknown dressing prop " + std::string(Stem));
+                return;
+            }
+            const std::string Path = std::string("Assets/Art/") + Info->Folder + "/OpenSource3D/" + Info->Stem + ".gltf";
+            if (!Work.Text(ProjectDir + "/" + Path)) return;  // records the input, reports a missing file
+            const std::string Entity = Prefab.AddEntity(Name, {At.X, At.Y, At.Z + Info->Lift}, {0.0, 0.0, YawDegrees});
+            Prefab.AddComponent(Entity, "AZ::Render::EditorMeshComponent", MeshComponent(Work.Model(Path)));
+            if (Info->Solid.Z > 0.0) AddBoxCollider(Prefab, Entity, Info->Solid, false, {0.0, 0.0, Info->Solid.Z / 2.0 - Info->Lift});
+        }
+
+        struct DressingSpot
+        {
+            const char* Anchor;
+            double Dx, Dy;   // world metres from the anchor
+            double Yaw;      // degrees
+            const char* Stem;
+        };
+
+        /** Authored dressing around layout anchors, stood on the level's ground. */
+        void DressAnchors(Session& Work, PrefabBuilder& Prefab, const std::string& Layout, const GroundSampler& Ground,
+            const std::vector<DressingSpot>& Spots)
+        {
+            int Index = 0;
+            for (const DressingSpot& Spot : Spots)
+            {
+                const Vec3d Anchor = Work.World(Layout, Spot.Anchor);
+                const double X = Anchor.X + Spot.Dx, Y = Anchor.Y + Spot.Dy;
+                AddProp(Work, Prefab, "Dressing " + std::to_string(++Index) + " " + Spot.Stem, Spot.Stem, {X, Y, Ground.Height(X, Y, Anchor.Z)}, Spot.Yaw);
+            }
+        }
+
         std::string AddJake(Session& Work, PrefabBuilder& Prefab, const Vec3d& Where)
         {
             const std::string Jake = Prefab.AddEntity("Jake", Where);
@@ -958,6 +1074,10 @@ namespace DarkArisen::Tools
             const std::string Dressed = TerrainSource ? Work.Kit.DressTerrain("DriftwoodTerrain", *TerrainSource, KeepClear) : std::string();
             AddStaticMesh(Prefab, "Driftwood Terrain", {}, Dressed.empty() ? Work.GreyboxModel(Terrain) : Work.Model(Dressed));
             AddMeshCollider(Prefab, Prefab.AddEntity("Driftwood Terrain Collision", {}), Work.CollisionMesh(Terrain));
+            DressAnchors(Work, Prefab, Layout, GroundSampler(Work, Terrain),
+                {{"Harlow.Wreckage", 3.0, 2.2, 25.0, "SM_cargo_crate"}, {"Harlow.Wreckage", 4.2, 1.1, 70.0, "SM_oak_barrel"},
+                    {"Harlow.Wreckage", -2.6, 3.0, 10.0, "SM_rope_coil"}, {"Journal.FamilyDebris", 1.8, 1.6, 40.0, "SM_cargo_crate"},
+                    {"BrokenMast", -2.0, -1.6, 0.0, "SM_rope_coil"}, {"BrokenMast", 2.4, 1.8, 130.0, "SM_oak_barrel"}});
             AddStaticMesh(Prefab, "Harlow Wreckage", Work.World(Layout, "Harlow.Wreckage"),
                 Work.RenderModel("ContentSource/World/Moran/DriftwoodBeach/SM_HarlowWreckage_Alpha.gltf"));
             AddStaticMesh(Prefab, "Outer Reef", {}, Work.RenderModel("ContentSource/World/Moran/OuterReef/SM_OuterReef_Alpha.gltf"));
@@ -1258,6 +1378,64 @@ namespace DarkArisen::Tools
             const Vec3d Centre{West + TilesX * Tile / 2.0, South + TilesY * Tile / 2.0, Z};
             const std::string Ground = Prefab.AddEntity("Ground Collision", Centre);
             AddBoxCollider(Prefab, Ground, {TilesX * Tile, TilesY * Tile, 0.5}, false, {0.0, 0.0, -0.25});
+            const auto Clear = [&Route](const double X, const double Y, const double Distance)
+            {
+                for (const RouteAnchor& Anchor : Route)
+                {
+                    const double Dx = Anchor.At.X - X, Dy = Anchor.At.Y - Y;
+                    if (Dx * Dx + Dy * Dy < Distance * Distance) return false;
+                }
+                return true;
+            };
+            int Dressing = 0;
+            const auto Prop = [&](const char* Stem, const double X, const double Y, const double Yaw)
+            {
+                AddProp(Work, Prefab, "Dressing " + std::to_string(++Dressing) + " " + Stem, Stem, {X, Y, Z}, Yaw);
+            };
+            if (Harbor)
+            {
+                // Working quay: cranes, cargo, rope and nets along the edge, lanterns at the water.
+                const double North = South + TilesY * Tile;
+                int Step = 0;
+                for (double Y = South + 5.0; Y < North - 5.0; Y += 9.0, ++Step)
+                {
+                    const double X = West + 2.4;
+                    if (Step % 2 == 0 && Clear(West + 0.9, Y, 3.0)) Prop("L_harbor_lantern", West + 0.9, Y, 0.0);
+                    if (!Clear(X, Y, 6.0)) continue;
+                    switch (Step % 6)
+                    {
+                    case 0: Prop("SM_dock_crane", West + 1.9, Y, 90.0); break;
+                    case 1: Prop("SM_cargo_crate", X, Y - 0.6, 8.0); Prop("SM_cargo_crate", X + 0.2, Y + 0.5, -12.0); Prop("SM_oak_barrel", X + 1.2, Y, 0.0); break;
+                    case 2: Prop("SM_oak_barrel", X, Y - 0.5, 0.0); Prop("SM_oak_barrel", X + 0.1, Y + 0.45, 40.0); Prop("SM_black_powder_keg", X + 1.1, Y, 0.0); break;
+                    case 3: Prop("SM_rope_coil", X, Y, 0.0); Prop("SM_anchor", X + 1.2, Y + 0.3, 75.0); break;
+                    case 4: Prop("SM_fishing_net", X + 0.4, Y, 90.0); Prop("SM_cargo_crate", X + 1.4, Y + 0.8, 30.0); break;
+                    default: Prop("SM_cannonball_stack", X, Y, 0.0); Prop("SM_black_powder_keg", X + 1.0, Y - 0.4, 0.0); break;
+                    }
+                }
+                // Market stalls in front of the house rows.
+                for (double X = West + 14.0; X < West + TilesX * Tile - 10.0; X += 18.0)
+                {
+                    if (Clear(X, Low.Y - 9.8, 6.0)) Prop("SM_market_stall", X, Low.Y - 9.8, 0.0);
+                    if (Clear(X + 9.0, High.Y + 9.8, 6.0)) Prop("SM_market_stall", X + 9.0, High.Y + 9.8, 180.0);
+                }
+            }
+            else
+            {
+                // Garrison ground: shot, powder and arms beside every other anchor on the flat.
+                static constexpr const char* Garrison[][2] = {{"SM_cannonball_stack", "SM_black_powder_keg"}, {"SM_weapon_rack", "SM_cargo_crate"},
+                    {"SM_oak_barrel", "SM_black_powder_keg"}, {"SM_cargo_crate", "SM_rope_coil"}};
+                int Index = 0;
+                for (const RouteAnchor& Anchor : Route)
+                {
+                    if (Anchor.OnWater || std::abs(Anchor.At.Z - Z) > 0.4 || (Index++ % 2)) continue;
+                    const double Angle = 1.17 * Index;  // radians, a fixed stagger
+                    const double X = Anchor.At.X + 4.0 * Art::Cos(Angle), Y = Anchor.At.Y + 4.0 * Art::Sin(Angle);
+                    if (!Clear(X, Y, 3.5)) continue;
+                    const auto& Pair = Garrison[(Index / 2) % 4];
+                    Prop(Pair[0], X, Y, 57.0 * Index);
+                    Prop(Pair[1], X + 1.1 * Art::Cos(Angle + 1.57), Y + 1.1 * Art::Sin(Angle + 1.57), 23.0 * Index);
+                }
+            }
             if (Harbor)
             {
                 AddStaticMesh(Prefab, "Rexa Quay Edge", {West, Centre.Y, Z}, Work.Model(Work.Kit.HarborEdge(TilesY * Tile)));
@@ -1746,13 +1924,24 @@ namespace DarkArisen::Tools
             std::string Director;
         };
 
+        /**
+         * Tidewater: the sea laps at the coast, piers and stilts (MORAN_OPENING_WORLD_AUTHORITY 3.3 and 3.4) but every
+         * anchor stays on authored ground. OpenSea: anchors at sea level are on the water.
+         */
+        enum class MoranWater
+        {
+            Tidewater,
+            OpenSea
+        };
+
         MoranScene BeginMoranScene(Session& Work, PrefabBuilder& Prefab, const std::string& Layout, const std::string& Mesh,
-            const std::string& Arrival, const std::string& SpawnId, const bool Sea, const std::set<std::string>& OnShip = {},
+            const std::string& Arrival, const std::string& SpawnId, const MoranWater Water, const std::set<std::string>& OnShip = {},
             const std::set<std::string>& Rafts = {})
         {
             MoranScene Scene;
             AddEnvironment(Work, Prefab);
-            if (Sea) AddSea(Work, Prefab);
+            AddSea(Work, Prefab);
+            const bool Sea = Water == MoranWater::OpenSea;
             const std::vector<Footprint> Ground = AddSetPiece(Work, Prefab, Stem(Mesh), Mesh);
             std::vector<RouteAnchor> Route;
             for (const auto& [Name, At] : LayoutAnchors(Work, Layout))
@@ -1773,9 +1962,12 @@ namespace DarkArisen::Tools
             const std::string Layout = "ContentSource/World/Moran/DriftwoodCamp/DriftwoodCamp_Layout.json";
             PrefabBuilder Prefab("L_DriftwoodCamp");
             const MoranScene Scene = BeginMoranScene(Work, Prefab, Layout, "ContentSource/World/Moran/DriftwoodCamp/SM_DriftwoodCamp_Alpha.gltf",
-                "Arrival", "Spawn.Moran.DriftwoodCamp.Arrival", false);
+                "Arrival", "Spawn.Moran.DriftwoodCamp.Arrival", MoranWater::Tidewater);
             // First safe rest after the raid (MORAN_OPENING_WORLD_AUTHORITY 3.1): the second legal autosave.
             AddSignal(Prefab, AddInteraction(Prefab, "Camp Shelter", Work.World(Layout, "Shelter")), StorySignal::Rest, {}, 0, true, false);
+            DressAnchors(Work, Prefab, Layout, GroundSampler(Work, "ContentSource/World/Moran/DriftwoodCamp/SM_DriftwoodCamp_Alpha.gltf"),
+                {{"Shelter", 1.8, 1.6, 15.0, "SM_cargo_crate"}, {"Shelter", 2.6, 0.4, 80.0, "SM_cargo_crate"}, {"Shelter", 2.3, -1.2, 0.0, "SM_oak_barrel"},
+                    {"Shelter", -1.6, 2.2, 30.0, "SM_rope_coil"}, {"Fire", 2.2, 1.2, 0.0, "SM_weapon_rack"}, {"Fire", -2.0, -1.4, 50.0, "SM_fishing_net"}});
             AddRouteExit(Work, Prefab, Layout, "Route.MirasCove", Core::OpeningLocation::MirasCove, "World.MirasCoveReached", "L_MirasCove",
                 Scene.Director);
             return Prefab.Write();
@@ -1786,9 +1978,12 @@ namespace DarkArisen::Tools
             const std::string Layout = "ContentSource/World/Moran/MirasCove/MirasCove_Layout.json";
             PrefabBuilder Prefab("L_MirasCove");
             const MoranScene Scene = BeginMoranScene(Work, Prefab, Layout, "ContentSource/World/Moran/MirasCove/SM_MirasCove_Alpha.gltf",
-                "Arrival", "Spawn.Moran.MirasCove.Arrival", false);
+                "Arrival", "Spawn.Moran.MirasCove.Arrival", MoranWater::Tidewater);
             // met -> available -> recruited at the three authored anchors; arrival alone never recruits.
             AddSignal(Prefab, AddPerson(Work, Prefab, "Mira", Work.World(Layout, "Mira")), StorySignal::CrewMet, "crew.mira");
+            DressAnchors(Work, Prefab, Layout, GroundSampler(Work, "ContentSource/World/Moran/MirasCove/SM_MirasCove_Alpha.gltf"),
+                {{"BoatWork", 1.8, 1.2, 0.0, "SM_fishing_net"}, {"BoatWork", -1.6, 1.8, 20.0, "SM_rope_coil"}, {"BoatWork", 2.2, -1.4, 60.0, "SM_anchor"},
+                    {"BoatWork", -2.2, -1.2, 0.0, "SM_oak_barrel"}, {"Mira", 2.0, 1.8, 30.0, "SM_cargo_crate"}});
             AddSignal(Prefab, AddInteraction(Prefab, "Mira Boat Work", Work.World(Layout, "BoatWork")), StorySignal::CrewRecruitmentAvailable, "crew.mira");
             AddSignal(Prefab, AddInteraction(Prefab, "Mira Recruitment Conversation", Work.World(Layout, "RecruitmentConversation")),
                 StorySignal::CrewRecruited, "crew.mira");
@@ -1802,8 +1997,12 @@ namespace DarkArisen::Tools
             const std::string Layout = "ContentSource/World/Moran/Mangroves/Mangroves_Layout.json";
             PrefabBuilder Prefab("L_MangroveShallows");
             const MoranScene Scene = BeginMoranScene(Work, Prefab, Layout, "ContentSource/World/Moran/Mangroves/SM_MangrovesRoute_Alpha.gltf",
-                "Entry", "Spawn.Moran.MangroveShallows.Entry", false);
+                "Entry", "Spawn.Moran.MangroveShallows.Entry", MoranWater::Tidewater);
             const Vec3d Tom = Work.World(Layout, "BigTom");
+            // Big Tom's field forge at his work event.
+            DressAnchors(Work, Prefab, Layout, GroundSampler(Work, "ContentSource/World/Moran/Mangroves/SM_MangrovesRoute_Alpha.gltf"),
+                {{"WorkEvent", 1.6, 1.0, 20.0, "SM_forge_anvil"}, {"WorkEvent", 2.8, -0.6, 0.0, "L_forge_brazier"}, {"WorkEvent", -1.4, 2.0, 0.0, "SM_weapon_rack"},
+                    {"WorkEvent", -2.2, -1.2, 45.0, "SM_cargo_crate"}, {"BigTom", -2.0, 1.6, 0.0, "SM_oak_barrel"}});
             AddSignal(Prefab, AddPerson(Work, Prefab, "Big Tom", Tom), StorySignal::CrewMet, "crew.big_tom");
             AddSignal(Prefab, AddInteraction(Prefab, "Big Tom Work Event", Work.World(Layout, "WorkEvent")), StorySignal::CrewRecruitmentAvailable,
                 "crew.big_tom");
@@ -1819,8 +2018,14 @@ namespace DarkArisen::Tools
             const std::string Layout = "ContentSource/World/Moran/Koa/KoaTradingPost_Layout.json";
             PrefabBuilder Prefab("L_KoaTradingPost");
             const MoranScene Scene = BeginMoranScene(Work, Prefab, Layout, "ContentSource/World/Moran/Koa/SM_KoaTradingPost_Alpha.gltf",
-                "Arrival", "Spawn.Moran.KoasTradingPost.Arrival", false);
+                "Arrival", "Spawn.Moran.KoasTradingPost.Arrival", MoranWater::Tidewater);
             AddPerson(Work, Prefab, "Koa", Work.World(Layout, "Koa.Counter"));  // services: economy port pending
+            DressAnchors(Work, Prefab, Layout, GroundSampler(Work, "ContentSource/World/Moran/Koa/SM_KoaTradingPost_Alpha.gltf"),
+                {{"ChartTable", 0.0, 0.0, 0.0, "SM_chart_table"}, {"SupplyShelves", 0.0, 0.0, 90.0, "SM_market_stall"},
+                    {"SupplyShelves", 2.0, 1.2, 0.0, "SM_cargo_crate"}, {"SupplyShelves", 2.4, -0.2, 30.0, "SM_cargo_crate"},
+                    {"SupplyShelves", -2.0, 1.0, 0.0, "SM_oak_barrel"}, {"SupplyShelves", -2.2, -0.4, 0.0, "SM_black_powder_keg"},
+                    {"RepairBench", 0.0, 0.0, 0.0, "SM_forge_anvil"}, {"RepairBench", 1.8, 0.8, 0.0, "SM_weapon_rack"},
+                    {"RepairBench", -1.6, 1.2, 0.0, "SM_rope_coil"}, {"Koa.Counter", 1.8, 1.6, 0.0, "L_harbor_lantern"}});
             AddRouteExit(Work, Prefab, Layout, "Route.GalleonCove", Core::OpeningLocation::GalleonCove, "World.GalleonCoveReached",
                 "L_GalleonCove", Scene.Director);
             return Prefab.Write();
@@ -1845,7 +2050,10 @@ namespace DarkArisen::Tools
             PrefabBuilder Prefab("L_GalleonCove");
             // The Helm stands on the ship (no pad); Esteban and the harbor control post are people on the water (rafts).
             const MoranScene Scene = BeginMoranScene(Work, Prefab, Layout, "ContentSource/World/Moran/GalleonCove/SM_GalleonCove_Alpha.gltf",
-                "Approach", "Spawn.Moran.GalleonCove.Approach", true, {"Helm"}, {"HarborControl", "Esteban"});
+                "Approach", "Spawn.Moran.GalleonCove.Approach", MoranWater::OpenSea, {"Helm"}, {"HarborControl", "Esteban"});
+            DressAnchors(Work, Prefab, Layout, GroundSampler(Work, "ContentSource/World/Moran/GalleonCove/SM_GalleonCove_Alpha.gltf"),
+                {{"Approach", 3.0, 2.5, 0.0, "L_harbor_lantern"}, {"Approach", 3.6, -2.4, 20.0, "SM_cargo_crate"},
+                    {"Approach", 4.2, -1.4, 70.0, "SM_oak_barrel"}, {"Approach", 2.4, 3.8, 0.0, "SM_rope_coil"}});
             // Taking the harbor control post clears the cove and frees Esteban to sign on.
             AddSignal(Prefab, AddInteraction(Prefab, "Harbor Control", Work.World(Layout, "HarborControl")), StorySignal::GalleonCoveCleared);
             AddSignal(Prefab, AddInteraction(Prefab, "Harbor Control Crew Records", Work.World(Layout, "HarborControl")),
