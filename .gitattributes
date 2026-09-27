@@ -28,3 +28,6 @@
 *.ps1 text eol=crlf
 *.psd1 text eol=crlf
 
+
+# Third-party source data is read byte for byte by the native art kit (and in CI): plain Git, no EOL conversion.
+ContentSource/ThirdParty/** -filter -diff -merge -text

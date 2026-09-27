@@ -13,13 +13,20 @@
 // unless an art collision is given (ships' walkable decks, the Rexa warehouse hall, cove jetty).
 
 #include <cstdint>
+#include <functional>
 #include <map>
+#include <memory>
 #include <string>
 #include <string_view>
 #include <vector>
 
 namespace DarkArisen::Tools::Art
 {
+    class HumanFactory;
+
+    /** Reads a repository-relative source file; nullptr when it is missing (the reader records the error). */
+    using SourceReader = std::function<const std::string*(const std::string&)>;
+
     struct ArtFile
     {
         std::string ProjectRelative;  // e.g. "Assets/Art/Models/SM_Art_HarlowMerchantShip.gltf"
@@ -42,18 +49,26 @@ namespace DarkArisen::Tools::Art
     class Kit
     {
     public:
-        /** Builds the fixed assets (textures, ships, set pieces, people, props). */
-        Kit();
+        /** Builds the fixed assets (textures, ships, set pieces, people, props); Reader supplies ContentSource/ThirdParty. */
+        explicit Kit(SourceReader Reader);
+        ~Kit();
+        Kit(const Kit&) = delete;
+        Kit& operator=(const Kit&) = delete;
 
         /** Every file produced so far (fixed assets plus everything requested since). */
         const std::vector<ArtFile>& Files() const { return Output; }
+        /** Problems met while building (missing or unreadable source data); empty when all is well. */
+        const std::vector<std::string>& Problems() const { return ProblemList; }
 
         /** Project-relative art model replacing a ContentSource greybox mesh, empty when none. */
         std::string ReplacementFor(std::string_view ContentSourceMesh) const;
         /** Art collision (spec glTF) for a ContentSource render or collision mesh, nullptr when the greybox stays. */
         const std::string* CollisionFor(std::string_view ContentSourceMesh) const;
 
-        /** A person for a placeholder figure: named cast get their own look, others a townsfolk variant. */
+        /**
+         * A person for a placeholder figure (ArtKitHumans.h): the named cast get their own body, face,
+         * clothes and pose; hostiles, soldiers and townsfolk one of the crowd archetypes.
+         */
         std::string FigureFor(std::string_view EntityName);
         /** Art for a placeholder prop by its placeholder mesh name (crate, route marker, war marker, hostile hull). */
         std::string Prop(std::string_view PlaceholderName);
@@ -82,6 +97,8 @@ namespace DarkArisen::Tools::Art
         static CoveBerth Cove() { return {}; }
 
     private:
+        std::unique_ptr<HumanFactory> Humans;
+        std::vector<std::string> ProblemList;
         std::vector<ArtFile> Output;
         std::map<std::string, std::string, std::less<>> Replacements;
         std::map<std::string, std::string, std::less<>> Collisions;

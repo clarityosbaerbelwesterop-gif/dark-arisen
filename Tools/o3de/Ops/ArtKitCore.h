@@ -5,6 +5,7 @@
 // the same on GCC, Clang and MSVC.
 
 #include <array>
+#include <functional>
 #include <cstdint>
 #include <string>
 #include <string_view>
@@ -19,6 +20,8 @@ namespace DarkArisen::Tools::Art
     double Clamp(double V, double Lo, double Hi);
     double Lerp(double A, double B, double T);
     double SmoothStep(double E0, double E1, double X);
+    /** atan2 from basic operations only (same bits on every compiler); error below 1e-9 rad. */
+    double Atan2(double Y, double X);
 
     struct V3
     {
@@ -91,7 +94,8 @@ namespace DarkArisen::Tools::Art
         std::array<double, 4> BaseColor{1, 1, 1, 1};
         double Metallic = 0.0;
         double Roughness = 0.8;
-        bool Mask = false;              // alpha-tested (fronds)
+        bool Mask = false;              // alpha-tested (fronds, cloth edges, hair shells)
+        double AlphaCutoff = 0.5;
         bool DoubleSided = false;
         double MetresPerTile = 2.0;     // world-space UV scale used by the builders
     };
@@ -149,4 +153,20 @@ namespace DarkArisen::Tools::Art
     std::string WriteGltf(const Mesh& Model, const std::string& Generator);
     /** Positions/normals only, one primitive, for a PhysX collision copy. */
     std::string WriteCollisionGltf(const Mesh& Model);
+
+    /** Building blocks of the glTF writers, shared with the skinned actor writer (ArtKitHumanActor.cpp). */
+    namespace GltfBits
+    {
+        std::string Num(double V);
+        std::string NumF(float V);
+        /** Grid-snapped float; + 0.0f turns -0 into +0 so every compiler writes the same bits. */
+        float Quantize(double V, double Steps);
+        std::string Base64(const std::string& Bytes);
+        void PutF(std::string& Bin, float F);
+        void PutU(std::string& Bin, std::uint32_t U);
+        void PutU16(std::string& Bin, std::uint16_t U);
+        std::string Escape(const std::string& Text);
+        /** glTF material JSON for M (colours authored in sRGB, written as linear factors); Texture returns a texture index. */
+        std::string MaterialJson(const Material& M, const std::function<int(const std::string&)>& Texture);
+    }
 }

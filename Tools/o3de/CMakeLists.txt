@@ -16,7 +16,8 @@ set(DARKARISEN_CORE_TESTS OFF CACHE BOOL "" FORCE)
 add_subdirectory(../../Core ${CMAKE_CURRENT_BINARY_DIR}/Core)
 
 add_library(DarkArisenAssetPipeline STATIC Ops/AssetPipeline.cpp Ops/Gltf.cpp Ops/Prefab.cpp Ops/Materializer.cpp Ops/StoryContracts.cpp
-    Ops/ArtKit.cpp Ops/ArtKitCore.cpp Ops/ArtKitShips.cpp Ops/ArtKitTextures.cpp Ops/ArtKitWorld.cpp)
+    Ops/ArtKit.cpp Ops/ArtKitCore.cpp Ops/ArtKitShips.cpp Ops/ArtKitTextures.cpp Ops/ArtKitWorld.cpp
+    Ops/ArtKitCast.cpp Ops/ArtKitHumanActor.cpp Ops/ArtKitHumanBody.cpp Ops/ArtKitHumanDress.cpp)
 target_include_directories(DarkArisenAssetPipeline PUBLIC Ops ../../Engine/O3DE/DarkArisen/Gem/Include)
 target_link_libraries(DarkArisenAssetPipeline PUBLIC DarkArisen::Core)
 target_compile_features(DarkArisenAssetPipeline PUBLIC cxx_std_20)

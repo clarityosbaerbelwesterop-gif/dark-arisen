@@ -69,11 +69,6 @@ namespace DarkArisen::Tools::Art
     /** Hull, deck, rig and fittings; Collision receives the walkable decks, bulwarks, masts and hull shell. */
     Mesh BuildShip(const ShipSpec& Spec, Mesh* Collision);
 
-    // ------------------------------------------------------------------ people
-
-    /** Standing person, feet on z = 0, facing +X. Variant: jake, boarder, merchant, officer, draven, woman, sailor, dockworker, elder, bigman. */
-    Mesh BuildFigure(std::string_view Variant, std::uint32_t Seed);
-
     // ------------------------------------------------------------------ world
 
     Mesh BuildPalm(double Height, std::uint32_t Seed);
