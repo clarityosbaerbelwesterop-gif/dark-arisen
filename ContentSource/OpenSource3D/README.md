@@ -41,9 +41,9 @@ checks the embedded buffer bounds, mesh/material/texture references, triangles,
 normals, UVs and animation channels. The visual contact sheet is
 `Docs/Art/OpenSource3D_30Props_Preview.png`.
 
-The next batch of **24 region kits, 20 boss first passes, six extra weapons,
-four lights, eleven texture maps and three ocean material variants** is
-described in `EXTENDED_ASSETS.md` and its separate manifests.
+The later batches of **24 region kits, 20 boss first passes, six extra weapons,
+four lights, eleven texture maps, three ocean material variants, ten ships and
+18 characters** are described in `EXTENDED_ASSETS.md` and its separate manifests.
 
 **Integration gate:** These files are new source art and do not overwrite
 existing `Greybox`, collisions, skeletons or gameplay references. Import and
@@ -51,9 +51,9 @@ inspect them in the O3DE 2605.0 project, then author collision/LOD, set final
 scale and origin, check PBR and vertex-color interpretation, choose animation
 playback rates, and replace references only after that review. O3DE Editor and
 Asset Processor were unavailable in this build environment; successful native
-asset compilation and in-game appearance are not claimed. The remaining
-catalog includes 32 hero/boss/NPC figures, 24 environment kits, 10 ships and
-6 creatures; the extended batch provides source art for those 24 environments
-and 20 bosses. The ten ships and 18 non-boss characters remain catalog work.
-The repo's existing MakeHuman and motion assets are reused for human boss
-alpha variants, rather than treated as finished bespoke encounters.
+asset compilation and in-game appearance are not claimed. The pack now has an
+alpha entry for every one of the catalog's 102 **non-audio** IDs. Its ten audio
+entries are separate sound-production work. Ships are source meshes rather
+than drivable entities, and characters are approximate skin transfers rather
+than production-ready rigs. The repo's existing MakeHuman and motion assets
+are reused for human variants rather than treated as finished encounters.

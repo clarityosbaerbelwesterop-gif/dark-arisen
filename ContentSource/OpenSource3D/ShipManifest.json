@@ -1,0 +1,202 @@
+{
+  "generator": "generate_ships.py",
+  "ships": [
+    {
+      "catalogId": "ship.draven_flagship",
+      "lengthMeters": 27,
+      "beamMeters": 7.4,
+      "mastCount": 3,
+      "gunPortsPerSide": 9,
+      "role": "warship",
+      "file": "Engine/O3DE/DarkArisen/Assets/Art/Ships/OpenSource3D/KIT_ship_draven_flagship.gltf",
+      "bytes": 436915,
+      "triangles": 2890,
+      "meshNodes": 5,
+      "materials": 7,
+      "animations": [
+        "sail_01_preview",
+        "sail_02_preview",
+        "sail_03_preview",
+        "rudder_preview"
+      ],
+      "sha256": "6a74e4cff38fc278ef27f65aa787e9e27fe4add72359d9ab2daf981d13de2604",
+      "stage": "modular_alpha"
+    },
+    {
+      "catalogId": "ship.armada_sloop",
+      "lengthMeters": 12.5,
+      "beamMeters": 3.8,
+      "mastCount": 1,
+      "gunPortsPerSide": 3,
+      "role": "warship",
+      "file": "Engine/O3DE/DarkArisen/Assets/Art/Ships/OpenSource3D/KIT_ship_armada_sloop.gltf",
+      "bytes": 293441,
+      "triangles": 1922,
+      "meshNodes": 3,
+      "materials": 7,
+      "animations": [
+        "sail_01_preview",
+        "rudder_preview"
+      ],
+      "sha256": "b3dacd7df73066683df28e696d1cfa50a9fd0f72307b43e0936a59ae4bb8e1a5",
+      "stage": "modular_alpha"
+    },
+    {
+      "catalogId": "ship.armada_brig",
+      "lengthMeters": 19,
+      "beamMeters": 5.5,
+      "mastCount": 2,
+      "gunPortsPerSide": 6,
+      "role": "warship",
+      "file": "Engine/O3DE/DarkArisen/Assets/Art/Ships/OpenSource3D/KIT_ship_armada_brig.gltf",
+      "bytes": 365128,
+      "triangles": 2406,
+      "meshNodes": 4,
+      "materials": 7,
+      "animations": [
+        "sail_01_preview",
+        "sail_02_preview",
+        "rudder_preview"
+      ],
+      "sha256": "2180f35506207c6a7f9c77ae39566ff085dff28870f433eeabfbb306e5dc04ff",
+      "stage": "modular_alpha"
+    },
+    {
+      "catalogId": "ship.armada_galleon",
+      "lengthMeters": 30,
+      "beamMeters": 8.3,
+      "mastCount": 3,
+      "gunPortsPerSide": 10,
+      "role": "galleon",
+      "file": "Engine/O3DE/DarkArisen/Assets/Art/Ships/OpenSource3D/KIT_ship_armada_galleon.gltf",
+      "bytes": 451445,
+      "triangles": 2978,
+      "meshNodes": 5,
+      "materials": 8,
+      "animations": [
+        "sail_01_preview",
+        "sail_02_preview",
+        "sail_03_preview",
+        "rudder_preview"
+      ],
+      "sha256": "2c8de4f13ea4f5df9b6f38178d06f1461f583e7a09367075d4720b62330c5e76",
+      "stage": "modular_alpha"
+    },
+    {
+      "catalogId": "ship.prison_transport",
+      "lengthMeters": 20,
+      "beamMeters": 5.6,
+      "mastCount": 2,
+      "gunPortsPerSide": 4,
+      "role": "prison",
+      "file": "Engine/O3DE/DarkArisen/Assets/Art/Ships/OpenSource3D/KIT_ship_prison_transport.gltf",
+      "bytes": 355048,
+      "triangles": 2338,
+      "meshNodes": 4,
+      "materials": 7,
+      "animations": [
+        "sail_01_preview",
+        "sail_02_preview",
+        "rudder_preview"
+      ],
+      "sha256": "8db0b9a654c1ae536abac06b9483b991132a3915347104e321405e4c411a5f4b",
+      "stage": "modular_alpha"
+    },
+    {
+      "catalogId": "ship.merchant_sloop",
+      "lengthMeters": 12,
+      "beamMeters": 3.7,
+      "mastCount": 1,
+      "gunPortsPerSide": 0,
+      "role": "merchant",
+      "file": "Engine/O3DE/DarkArisen/Assets/Art/Ships/OpenSource3D/KIT_ship_merchant_sloop.gltf",
+      "bytes": 480827,
+      "triangles": 3226,
+      "meshNodes": 3,
+      "materials": 7,
+      "animations": [
+        "sail_01_preview",
+        "rudder_preview"
+      ],
+      "sha256": "722f06f98af57555ce4a81e0c5674c01f3604434f19a72de8612a2c30ec5e699",
+      "stage": "modular_alpha"
+    },
+    {
+      "catalogId": "ship.moran_fishing_boat",
+      "lengthMeters": 8.4,
+      "beamMeters": 2.6,
+      "mastCount": 1,
+      "gunPortsPerSide": 0,
+      "role": "fishing",
+      "file": "Engine/O3DE/DarkArisen/Assets/Art/Ships/OpenSource3D/KIT_ship_moran_fishing_boat.gltf",
+      "bytes": 345520,
+      "triangles": 2298,
+      "meshNodes": 3,
+      "materials": 6,
+      "animations": [
+        "sail_01_preview",
+        "rudder_preview"
+      ],
+      "sha256": "a77472b810ec665fe62440512b60e2a10533186aa31defe95809d84826471384",
+      "stage": "modular_alpha"
+    },
+    {
+      "catalogId": "ship.longboat",
+      "lengthMeters": 7,
+      "beamMeters": 2.1,
+      "mastCount": 0,
+      "gunPortsPerSide": 0,
+      "role": "longboat",
+      "file": "Engine/O3DE/DarkArisen/Assets/Art/Ships/OpenSource3D/KIT_ship_longboat.gltf",
+      "bytes": 172422,
+      "triangles": 1130,
+      "meshNodes": 2,
+      "materials": 4,
+      "animations": [
+        "rudder_preview"
+      ],
+      "sha256": "d18f1ce3257121db81088dcc5717d53dbf91f620b29fa9fe209074074f18738b",
+      "stage": "modular_alpha"
+    },
+    {
+      "catalogId": "ship.harlow_merchant",
+      "lengthMeters": 21.5,
+      "beamMeters": 6,
+      "mastCount": 2,
+      "gunPortsPerSide": 2,
+      "role": "merchant",
+      "file": "Engine/O3DE/DarkArisen/Assets/Art/Ships/OpenSource3D/KIT_ship_harlow_merchant.gltf",
+      "bytes": 539869,
+      "triangles": 3622,
+      "meshNodes": 4,
+      "materials": 7,
+      "animations": [
+        "sail_01_preview",
+        "sail_02_preview",
+        "rudder_preview"
+      ],
+      "sha256": "b12dc1d885dd1e0731582cd39bd0ae642da1596bbea5333f50de33c483986aa5",
+      "stage": "modular_alpha"
+    },
+    {
+      "catalogId": "ship.la_liberacion",
+      "lengthMeters": 18,
+      "beamMeters": 5.1,
+      "mastCount": 2,
+      "gunPortsPerSide": 5,
+      "role": "liberation",
+      "file": "Engine/O3DE/DarkArisen/Assets/Art/Ships/OpenSource3D/KIT_ship_la_liberacion.gltf",
+      "bytes": 352781,
+      "triangles": 2318,
+      "meshNodes": 4,
+      "materials": 7,
+      "animations": [
+        "sail_01_preview",
+        "sail_02_preview",
+        "rudder_preview"
+      ],
+      "sha256": "d4d091ce1c95a5c7cd242e03a7c2b22a72c253930ca5cfa4aca1963007774844",
+      "stage": "modular_alpha"
+    }
+  ]
+}
