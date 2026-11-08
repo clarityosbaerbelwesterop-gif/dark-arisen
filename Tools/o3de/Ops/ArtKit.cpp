@@ -453,15 +453,28 @@ namespace DarkArisen::Tools::Art
         return Generated[Key] = Emit(Out.Name(), WriteGltf(Out, Generator));
     }
 
-    std::string Kit::Block(const double SizeX, const double SizeY, const double SizeZ, const double TopHeight, const bool Provisional)
+    std::string Kit::Block(const double SizeX, const double SizeY, const double SizeZ, const double TopHeight, const bool Provisional, const bool Land)
     {
         const double Top = std::floor(TopHeight * 4.0 + 0.5) / 4.0;
-        const std::string Name = std::string(Provisional ? "SM_Art_Pier_" : "SM_Art_Masonry_") + Mm(SizeX) + "x" + Mm(SizeY) + "x" + Mm(SizeZ) +
-            (Provisional ? "_P" + Mm(Top + 2.5) : "");
+        const std::string Name = std::string(Provisional ? (Land ? "SM_Art_Bank_" : "SM_Art_Pier_") : "SM_Art_Masonry_") + Mm(SizeX) + "x" + Mm(SizeY) + "x" +
+            Mm(SizeZ) + (Provisional && !Land ? "_P" + Mm(Top + 2.5) : "");
         if (const auto Found = Generated.find(Name); Found != Generated.end()) return Found->second;
         Mesh Out(Name);
         const double Hx = SizeX / 2.0, Hy = SizeY / 2.0;
-        if (Provisional)
+        if (Provisional && Land)
+        {
+            // walkable earth bank: packed dirt top on a dry-stone revetment, battered, sunk into the ground
+            const double B = 0.12;
+            Out.Box(Mat(M::Dirt), {-Hx, -Hy, SizeZ - 0.12}, {Hx, Hy, SizeZ});
+            const V3 Lo[4] = {{-Hx - B, -Hy - B, 0.0}, {Hx + B, -Hy - B, 0.0}, {Hx + B, Hy + B, 0.0}, {-Hx - B, Hy + B, 0.0}};
+            const V3 Hi[4] = {{-Hx, -Hy, SizeZ - 0.12}, {Hx, -Hy, SizeZ - 0.12}, {Hx, Hy, SizeZ - 0.12}, {-Hx, Hy, SizeZ - 0.12}};
+            for (int K = 0; K < 4; ++K)
+            {
+                const int N = (K + 1) % 4;
+                Out.Quad(Mat(M::StoneDark), Lo[K], Lo[N], Hi[N], Hi[K]);
+            }
+        }
+        else if (Provisional)
         {
             // timber deck on stringers and piles down to the sea bed (-2.5 m), footprint centred, top at SizeZ
             Out.Box(Mat(M::DeckWorn), {-Hx, -Hy, SizeZ - 0.1}, {Hx, Hy, SizeZ});

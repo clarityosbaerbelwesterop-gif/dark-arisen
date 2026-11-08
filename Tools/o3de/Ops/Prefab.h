@@ -32,6 +32,9 @@ namespace DarkArisen::Tools
     public:
         explicit PrefabBuilder(std::string LevelName);
 
+        /** Sets the uniform scale of an entity's transform (1 is left unwritten). */
+        void SetUniformScale(const std::string& Alias, double Scale);
+
         /** Adds an entity under the container (or Parent) and returns its alias, "Entity_[n]". */
         std::string AddEntity(std::string_view Name, const Vec3d& Translate, const Vec3d& RotateDegrees = {},
             std::string_view Parent = {}, bool StartActive = true);

@@ -46,6 +46,58 @@ namespace DarkArisen::Tools::Art
         double HelmZ = 3.0;
     };
 
+    /** Ground character of a land level (ArtKitTerrain.cpp). */
+    enum class Biome
+    {
+        Moor,      // Highmoore: heather, dry grass, gorse, birch and pine, standing stones, rock on slopes
+        Tropical,  // Rexa and the archipelago: red earth, grass, palms, broadleaf trees, scrub, ferns
+        Mire,      // back routes: mud, moss, mangroves, reeds, dead trees
+        Grove,     // Moran groves: lush grass and moss, dense broadleaf and palms, ferns
+        Dream      // memory spaces: ash and dark stone, a few dead trees
+    };
+
+    /** Ground for a land level, in O3DE world metres. */
+    struct TerrainSpec
+    {
+        std::string Name;            // names the models (SM_Art_Terrain_<Name>)
+        Biome Kind = Biome::Moor;
+        double X0 = 0, Y0 = 0, X1 = 0, Y1 = 0;  // extent
+        double BaseZ = 0;            // lowest walkable level
+        struct Leg
+        {
+            double Ax, Ay, Az, Bx, By, Bz, HalfWidth;  // walkable corridor segment (tops), a pad when A == B
+        };
+        std::vector<Leg> Route;
+        struct Block
+        {
+            double X0, Y0, X1, Y1, Top;  // authored geometry the ground stays under
+        };
+        std::vector<Block> Keep;
+        std::uint32_t Seed = 1;
+    };
+
+    struct Planting
+    {
+        std::string Model;           // project-relative glTF (shared plant model)
+        double X, Y, Z, Yaw, Scale;  // degrees
+    };
+
+    struct TerrainArt
+    {
+        std::string Model;           // the ground with its ground cover
+        std::string CollisionGltf;   // walkable ground triangles
+        std::vector<Planting> Plants;
+    };
+
+    /** A named story box (its top is the floor the anchors mark), dressed by Kit::Authored. */
+    struct AuthoredSpec
+    {
+        std::string Name;                     // geometry name from the contract, e.g. HoldingGate
+        double SizeX = 0, SizeY = 0, SizeZ = 0;
+        Biome Kind = Biome::Moor;
+        unsigned Open = 0;                    // edges the route crosses (1 -X, 2 +X, 4 -Y, 8 +Y): no walls there
+    };
+
     class Kit
     {
     public:
@@ -76,9 +128,13 @@ namespace DarkArisen::Tools::Art
          * Dressing for a solid block (metres; X/Y footprint, Z depth below its top at TopHeight):
          * provisional ground becomes a timber deck on piles, authored geometry dressed stone.
          */
-        std::string Block(double SizeX, double SizeY, double SizeZ, double TopHeight, bool Provisional);
+        std::string Block(double SizeX, double SizeY, double SizeZ, double TopHeight, bool Provisional, bool Land = false);
         /** Ground tile for land levels, GroundTileSize square, top at z = 0 (Style "paving" or "earth"). */
         std::string GroundTile(std::string_view Style);
+        /** Heightfield ground carrying the route, painted and planted by biome (ArtKitTerrain.cpp). */
+        TerrainArt Terrain(const TerrainSpec& Spec);
+        /** Architecture for a named story box by what its name says it is (ArtKitAuthored.cpp). */
+        std::string Authored(const AuthoredSpec& Spec);
         static constexpr double GroundTileSize = 50.0;
         /** Quay wall along a harbour edge (x = 0 is the quay face, water towards -X), Length along Y. */
         std::string HarborEdge(double Length);

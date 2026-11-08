@@ -17,6 +17,9 @@ namespace DarkArisen::Tools::Art
         Rope, Iron, Brass, Glass, Plaster, PlasterOchre, PlasterBlue, RoofTile, Stone, StoneDark, Paving, Sand, WetSand, Grass,
         Rock, Bark, Frond, Coral, CoralRed, Kelp, HarborWater,
         Linen, WoolBlue, WoolBrown, WoolGrey, WoolBlack, Sash, Ochre, DressGreen, Leather, Skin, SkinDark, Hair, HairGrey,
+        // terrain and vegetation (ArtKitTerrain.cpp)
+        Heather, DryGrass, Dirt, Mud, RedEarth, Moss, Ash, Leaves, LeavesDark, LeavesPale, Needles, GrassBlades, GrassDry, HeatherSprig,
+        Fern, Reeds, Gorse, BirchBark, Lichen, PondWater,
         Count
     };
     const Material& Mat(M Id);
