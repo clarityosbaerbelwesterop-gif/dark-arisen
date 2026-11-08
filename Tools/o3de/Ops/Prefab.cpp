@@ -158,6 +158,19 @@ namespace DarkArisen::Tools
         return Alias;
     }
 
+    void PrefabBuilder::SetUniformScale(const std::string& Alias, const double Scale)
+    {
+        if (Scale == 1.0) return;
+        for (auto& [Key, Component] : ComponentsOf(Alias).Members)
+        {
+            const JsonValue* Type = Component.Find("$type");
+            if (!Type || Type->Text != TransformType) continue;
+            Component.Members["Transform Data"].Members["UniformScale"] = JsonNumber(Scale);
+            return;
+        }
+        throw std::logic_error("no transform on " + Alias);
+    }
+
     void PrefabBuilder::AddComponent(const std::string& Alias, const std::string_view Type, JsonValue Body)
     {
         std::uint64_t Id = 0;

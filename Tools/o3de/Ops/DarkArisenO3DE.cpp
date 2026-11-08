@@ -578,6 +578,9 @@ namespace
             Jobs.push_back({Source, Entries});
         }
 
+        // The Asset Processor prepends the RHI's AZSL header to every shader (it defines real, real3, ... for the
+        // platform); compile exactly as it does, for Vulkan on Linux.
+        const fs::path RhiHeader = Engine / "Gems" / "Atom" / "Asset" / "Shader" / "Code" / "AZSL" / "Platform" / "Linux" / "Vulkan" / "AzslcHeader.azsli";
         const fs::path Out = Opts.BuildDir / "shader-check";
         fs::create_directories(Out);
         int Compiled = 0;
@@ -586,7 +589,9 @@ namespace
             const std::string Stem = Source.stem().string();
             const fs::path Pre = Out / (Stem + ".pre.azsl");
             const fs::path Hlsl = Out / (Stem + ".hlsl");
-            if (Run("clang -E -P -x c -Wno-pragma-once-outside-header" + Includes + " " + Quote(Source.string()) + " -o " + Quote(Pre.string()), Opts) != 0 ||
+            if (Run("clang -E -P -x c -Wno-pragma-once-outside-header -include " + Quote(RhiHeader.string()) + Includes + " " + Quote(Source.string()) + " -o " +
+                        Quote(Pre.string()),
+                    Opts) != 0 ||
                 Run(Quote(Azslc.string()) + " " + Quote(Pre.string()) + " -o " + Quote(Hlsl.string()), Opts) != 0)
             {
                 std::cerr << "error: " << Source << " failed AZSL -> HLSL\n";

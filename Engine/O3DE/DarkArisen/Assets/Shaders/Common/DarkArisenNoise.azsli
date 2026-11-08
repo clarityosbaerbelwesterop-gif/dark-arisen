@@ -1,0 +1,39 @@
+/*
+ * Dark Arisen shader noise: hash, value noise and fractal sums for procedural surfaces
+ * (lava flow, foam, wind gusts). Pure functions, no resources.
+ */
+#pragma once
+
+float DarkArisenHash(float2 p)
+{
+    p = frac(p * float2(123.34, 456.21));
+    p += dot(p, p + 45.32);
+    return frac(p.x * p.y);
+}
+
+float DarkArisenValueNoise(float2 p)
+{
+    const float2 cell = floor(p);
+    const float2 f = frac(p);
+    const float2 u = f * f * (3.0 - 2.0 * f);
+    const float a = DarkArisenHash(cell);
+    const float b = DarkArisenHash(cell + float2(1.0, 0.0));
+    const float c = DarkArisenHash(cell + float2(0.0, 1.0));
+    const float d = DarkArisenHash(cell + float2(1.0, 1.0));
+    return lerp(lerp(a, b, u.x), lerp(c, d, u.x), u.y);
+}
+
+/** Four octaves of value noise in [0, 1]. */
+float DarkArisenFractal(float2 p)
+{
+    float sum = 0.0;
+    float amplitude = 0.5;
+    [unroll]
+    for (int octave = 0; octave < 4; ++octave)
+    {
+        sum += amplitude * DarkArisenValueNoise(p);
+        p = p * 2.03 + float2(17.1, 9.7);
+        amplitude *= 0.5;
+    }
+    return sum / 0.9375;
+}

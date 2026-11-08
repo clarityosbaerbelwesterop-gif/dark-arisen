@@ -637,6 +637,26 @@ namespace DarkArisen::Tools
             return {SourceAssetUuid(Relative), 0, Lower("Assets/Materials/DarkArisenOcean.azmaterial")};
         }
 
+        /** EditorMaterialComponent replacing every slot of the entity's model with one project material. */
+        void AddMaterialOverride(PrefabBuilder& Prefab, const std::string& Entity, const std::string& MaterialRelative)
+        {
+            const std::string Product = Lower(Directory(MaterialRelative) + "/" + Stem(MaterialRelative) + ".azmaterial");
+            JsonValue Assignment = JsonObject();
+            Assignment.Members["MaterialAsset"] = AssetReference(SourceAssetUuid(MaterialRelative), 0, Product);
+            JsonValue Override = JsonObject();
+            Override.Members["Key"] = JsonObject();
+            Override.Members["Value"] = std::move(Assignment);
+            JsonValue Materials = JsonArray();
+            Materials.Items.push_back(std::move(Override));
+            JsonValue Configuration = JsonObject();
+            Configuration.Members["materials"] = std::move(Materials);
+            JsonValue Controller = JsonObject();
+            Controller.Members["Configuration"] = std::move(Configuration);
+            JsonValue Body = JsonObject();
+            Body.Members["Controller"] = std::move(Controller);
+            Prefab.AddComponent(Entity, "EditorMaterialComponent", std::move(Body));
+        }
+
         void AddSea(Session& Work, PrefabBuilder& Prefab)
         {
             const std::string Sea = Prefab.AddEntity("Sea", {});
@@ -1269,12 +1289,13 @@ namespace DarkArisen::Tools
 
         /** A solid PROVISIONAL or authored block whose top face is at TopZ (box glTF + box collider). */
         void AddBlock(Session& Work, PrefabBuilder& Prefab, const std::string& Name, const Vec3d& TopCenter, const Vec3d& Size,
-            const double YawDegrees, const bool Solid)
+            const double YawDegrees, const bool Solid, const bool Land = false)
         {
             const std::string Entity = Prefab.AddEntity(Name, {TopCenter.X, TopCenter.Y, TopCenter.Z - Size.Z}, {0.0, 0.0, YawDegrees});
             // Placeholder boxes are authored in the source frame, where Y is mirrored: sizes are symmetric.
             const bool Provisional = Name.rfind("PROVISIONAL", 0) == 0;
-            Prefab.AddComponent(Entity, "AZ::Render::EditorMeshComponent", MeshComponent(Work.Model(Work.Kit.Block(Size.X, Size.Y, Size.Z, TopCenter.Z, Provisional))));
+            Prefab.AddComponent(Entity, "AZ::Render::EditorMeshComponent",
+                MeshComponent(Work.Model(Work.Kit.Block(Size.X, Size.Y, Size.Z, TopCenter.Z, Provisional, Land && Provisional))));
             if (Solid)
             {
                 AddBoxCollider(Prefab, Entity, Size, false, {0.0, 0.0, Size.Z / 2.0});
@@ -1295,7 +1316,8 @@ namespace DarkArisen::Tools
          * path tiles between consecutive land anchors (stepped at 25 cm rises, one shared mesh), and
          * rafts for people authored on open water. Legs over 150 m are sea crossings and get no path.
          */
-        int AddProvisionalGround(Session& Work, PrefabBuilder& Prefab, const std::vector<RouteAnchor>& Route, const std::vector<Footprint>& Ground)
+        int AddProvisionalGround(Session& Work, PrefabBuilder& Prefab, const std::vector<RouteAnchor>& Route, const std::vector<Footprint>& Ground,
+            const bool OnLand = false)
         {
             int Provisional = 0;
             const Vec3d Pad{ProvisionalPadSize, ProvisionalPadSize, ProvisionalPathDepth};
@@ -1311,7 +1333,7 @@ namespace DarkArisen::Tools
                 Land.push_back(&Anchor);
                 if (!Supported(Ground, Anchor.At))
                 {
-                    AddBlock(Work, Prefab, "PROVISIONAL Pad " + Anchor.Name, Anchor.At, Pad, 0.0, true);
+                    AddBlock(Work, Prefab, "PROVISIONAL Pad " + Anchor.Name, Anchor.At, Pad, 0.0, true, OnLand);
                     ++Provisional;
                 }
             }
@@ -1337,7 +1359,7 @@ namespace DarkArisen::Tools
                     const double T = Along / Length;
                     const Vec3d Center{From.X + Dx * T, From.Y + Dy * T, From.Z + (To.Z - From.Z) * (Tile + 0.5) / Tiles};
                     AddBlock(Work, Prefab, "PROVISIONAL Path " + Land[Index - 1]->Name + " to " + Land[Index]->Name + " " + std::to_string(Tile),
-                        Center, {ProvisionalTileLength + 0.05, ProvisionalPathWidth, ProvisionalPathDepth}, Yaw, true);
+                        Center, {ProvisionalTileLength + 0.05, ProvisionalPathWidth, ProvisionalPathDepth}, Yaw, true, OnLand);
                     ++Provisional;
                 }
             }
@@ -1349,6 +1371,141 @@ namespace DarkArisen::Tools
          * A plate 25 m beyond the anchors, its top just under the lowest anchor, walkable; Rexa gets
          * a paved quay with the harbour on its west edge and a row of houses along each long side.
          */
+        /** Biome of a story mission's region (ContentSource/Story regionId); false where the ground stays tiled. */
+        bool BiomeFor(const std::string& RegionId, Art::Biome& Out)
+        {
+            const auto Starts = [&RegionId](const char* Prefix) { return RegionId.rfind(Prefix, 0) == 0; };
+            if (Starts("Archipelago/ContestedHolding")) Out = Art::Biome::Moor;          // Highmoore
+            else if (Starts("Rexa/BackRoutes")) Out = Art::Biome::Mire;
+            else if (Starts("Moran/")) Out = Art::Biome::Grove;
+            else if (Starts("Dream/")) Out = Art::Biome::Dream;
+            else if (Starts("Rexa") || Starts("Archipelago") || Starts("OpenSea")) Out = Art::Biome::Tropical;
+            else return false;                                                           // ship decks keep their tiles
+            return true;
+        }
+
+        /**
+         * Heightfield ground (Kit::Terrain) instead of tiles: the route on a flat corridor at its own heights,
+         * country beyond, painted and planted by biome, walkable by its own mesh collider.
+         */
+        void AddTerrain(Session& Work, PrefabBuilder& Prefab, const std::vector<RouteAnchor>& Route, const std::vector<Footprint>& Ground,
+            const Art::Biome Kind, const std::string& LevelName)
+        {
+            Art::TerrainSpec Spec;
+            Spec.Name = LevelName;
+            Spec.Kind = Kind;
+            Spec.Seed = static_cast<std::uint32_t>(Art::HashString(LevelName));
+            double X0 = 1e30, Y0 = 1e30, X1 = -1e30, Y1 = -1e30, Z0 = 1e30;
+            std::vector<const RouteAnchor*> Land;
+            for (const RouteAnchor& Anchor : Route)
+            {
+                if (Anchor.OnWater) continue;
+                Land.push_back(&Anchor);
+                X0 = std::min(X0, Anchor.At.X);
+                Y0 = std::min(Y0, Anchor.At.Y);
+                X1 = std::max(X1, Anchor.At.X);
+                Y1 = std::max(Y1, Anchor.At.Y);
+                Z0 = std::min(Z0, Anchor.At.Z);
+                Spec.Route.push_back({Anchor.At.X, Anchor.At.Y, Anchor.At.Z, Anchor.At.X, Anchor.At.Y, Anchor.At.Z, ProvisionalPadSize / 2.0});
+            }
+            if (Land.empty()) return;
+            for (std::size_t Index = 1; Index < Land.size(); ++Index)
+            {
+                const Vec3d& A = Land[Index - 1]->At;
+                const Vec3d& B = Land[Index]->At;
+                if (std::hypot(B.X - A.X, B.Y - A.Y) > MaxWalkLegMetres) continue;
+                Spec.Route.push_back({A.X, A.Y, A.Z, B.X, B.Y, B.Z, ProvisionalPathWidth / 2.0});
+            }
+            for (const Footprint& F : Ground)
+            {
+                Spec.Keep.push_back({F.Min.X, F.Min.Y, F.Max.X, F.Max.Y, F.Top});
+                X0 = std::min(X0, F.Min.X);
+                Y0 = std::min(Y0, F.Min.Y);
+                X1 = std::max(X1, F.Max.X);
+                Y1 = std::max(Y1, F.Max.Y);
+            }
+            const double Margin = 60.0;
+            Spec.X0 = std::floor((X0 - Margin) / 2.0) * 2.0;
+            Spec.Y0 = std::floor((Y0 - Margin) / 2.0) * 2.0;
+            Spec.X1 = std::ceil((X1 + Margin) / 2.0) * 2.0;
+            Spec.Y1 = std::ceil((Y1 + Margin) / 2.0) * 2.0;
+            Spec.BaseZ = Z0;
+            const Art::TerrainArt Art = Work.Kit.Terrain(Spec);
+            const std::string Terrain = Prefab.AddEntity("Terrain", {});
+            Prefab.AddComponent(Terrain, "AZ::Render::EditorMeshComponent", MeshComponent(Work.Model(Art.Model)));
+            AddMeshCollider(Prefab, Terrain, Work.ArtCollision("Assets/Art/Collision/SM_Art_Terrain_" + LevelName + "_Collision.gltf", Art.CollisionGltf));
+            for (const Art::PlantPart& Part : Art.Cover)
+            {
+                const std::string Cover = Prefab.AddEntity("Ground Cover " + Stem(Part.Model), {});
+                Prefab.AddComponent(Cover, "AZ::Render::EditorMeshComponent", MeshComponent(Work.Model(Part.Model)));
+                AddMaterialOverride(Prefab, Cover, Part.Material);
+            }
+            int Index = 0;
+            for (const Art::Planting& P : Art.Plants)
+            {
+                ++Index;
+                for (const Art::PlantPart& Part : P.Parts)
+                {
+                    const std::string Plant = Prefab.AddEntity("Plant " + std::to_string(Index) + " " + Stem(Part.Model), {P.X, P.Y, P.Z}, {0.0, 0.0, P.Yaw});
+                    Prefab.SetUniformScale(Plant, std::floor(P.Scale * 100.0 + 0.5) / 100.0);
+                    Prefab.AddComponent(Plant, "AZ::Render::EditorMeshComponent", MeshComponent(Work.Model(Part.Model)));
+                    if (!Part.Material.empty()) AddMaterialOverride(Prefab, Plant, Part.Material);  // wind (DarkArisenFoliage)
+                }
+            }
+        }
+
+        /** True when segments AB and CD cross (2D, X/Y). */
+        bool Crosses(const Vec3d& A, const Vec3d& B, const Vec3d& C, const Vec3d& D)
+        {
+            const auto Side = [](const Vec3d& P, const Vec3d& Q, const Vec3d& R) { return (Q.X - P.X) * (R.Y - P.Y) - (Q.Y - P.Y) * (R.X - P.X); };
+            const double D1 = Side(C, D, A), D2 = Side(C, D, B), D3 = Side(A, B, C), D4 = Side(A, B, D);
+            return ((D1 > 0) != (D2 > 0)) && ((D3 > 0) != (D4 > 0));
+        }
+
+        /**
+         * A named story box on a terrain level, dressed by what its name says (Kit::Authored); walls stay off
+         * the edges the route crosses or touches. The walkable top keeps the authored box collider.
+         */
+        void AddStoryBox(Session& Work, PrefabBuilder& Prefab, const std::string& Name, const Vec3d& At, const Vec3d& Size, const Art::Biome Kind,
+            const std::vector<RouteAnchor>& Route)
+        {
+            const double X0 = At.X - Size.X / 2.0, X1 = At.X + Size.X / 2.0, Y0 = At.Y - Size.Y / 2.0, Y1 = At.Y + Size.Y / 2.0;
+            const Vec3d Corner[4] = {{X0, Y0, 0.0}, {X1, Y0, 0.0}, {X1, Y1, 0.0}, {X0, Y1, 0.0}};
+            const unsigned Bits[4] = {4u, 2u, 8u, 1u};  // edges -Y, +X, +Y, -X (counter-clockwise from Corner[0])
+            unsigned Open = 0;
+            std::vector<const RouteAnchor*> Land;
+            for (const RouteAnchor& Anchor : Route)
+            {
+                if (!Anchor.OnWater) Land.push_back(&Anchor);
+            }
+            for (std::size_t K = 0; K < 4; ++K)
+            {
+                const Vec3d& C = Corner[K];
+                const Vec3d& D = Corner[(K + 1) % 4];
+                for (std::size_t Index = 0; Index < Land.size(); ++Index)
+                {
+                    const Vec3d& P = Land[Index]->At;
+                    // an anchor close to the edge (inside or out) needs it open
+                    const double Ex = D.X - C.X, Ey = D.Y - C.Y, L2 = Ex * Ex + Ey * Ey;
+                    const double T = std::clamp(((P.X - C.X) * Ex + (P.Y - C.Y) * Ey) / L2, 0.0, 1.0);
+                    if (std::hypot(C.X + Ex * T - P.X, C.Y + Ey * T - P.Y) < 2.5) Open |= Bits[K];
+                    if (Index == 0) continue;
+                    const Vec3d& Q = Land[Index - 1]->At;
+                    if (std::hypot(P.X - Q.X, P.Y - Q.Y) <= MaxWalkLegMetres && Crosses(Q, P, C, D)) Open |= Bits[K];
+                }
+            }
+            const std::string Entity = Prefab.AddEntity("Geometry " + Name, {At.X, At.Y, At.Z - Size.Z});
+            Art::AuthoredSpec Spec;
+            Spec.Name = Name;
+            Spec.SizeX = Size.X;
+            Spec.SizeY = Size.Y;
+            Spec.SizeZ = Size.Z;
+            Spec.Kind = Kind;
+            Spec.Open = Open;
+            Prefab.AddComponent(Entity, "AZ::Render::EditorMeshComponent", MeshComponent(Work.Model(Work.Kit.Authored(Spec))));
+            AddBoxCollider(Prefab, Entity, Size, false, {0.0, 0.0, Size.Z / 2.0});
+        }
+
         void AddLandGround(Session& Work, PrefabBuilder& Prefab, const std::vector<RouteAnchor>& Route, const bool Harbor)
         {
             if (Route.empty()) return;
@@ -1545,6 +1702,14 @@ namespace DarkArisen::Tools
                 AddSea(Work, Prefab);
             }
             std::string ProvisionalNote;
+            Art::Biome Kind = Art::Biome::Moor;
+            const bool Terrain = !Seafaring && !Rexa && BiomeFor(Contract.RegionId, Kind);
+            struct StoryBox
+            {
+                std::string Name;
+                Vec3d At, Size;
+            };
+            std::vector<StoryBox> Dressed;  // terrain levels: dressed once the route is known
 
             // Authored geometry. Boxes are read with their top face on the anchor (the floor the
             // anchor marks); in naval missions they are sea zones and stay non-solid.
@@ -1563,7 +1728,8 @@ namespace DarkArisen::Tools
                         AddBoxCollider(Prefab, Zone, Size, true);
                         continue;
                     }
-                    AddBlock(Work, Prefab, "Geometry " + Geometry.Name, At, Size, 0.0, true);
+                    if (Terrain) Dressed.push_back({Geometry.Name, At, Size});
+                    else AddBlock(Work, Prefab, "Geometry " + Geometry.Name, At, Size, 0.0, true);
                     Ground.push_back({{At.X - Size.X / 2.0, At.Y - Size.Y / 2.0, At.Z - Size.Z}, {At.X + Size.X / 2.0, At.Y + Size.Y / 2.0, At.Z}, At.Z});
                     continue;
                 }
@@ -1603,8 +1769,10 @@ namespace DarkArisen::Tools
                 const bool SeaLevel = Seafaring && (ShipAnchors.count(Name) || std::abs(Point[2]) / 100.0 < SeaLevelTolerance);
                 Route.push_back({Name, World(Point), SeaLevel, SeaLevel && PeopleAndObjects.count(Name) && !ShipAnchors.count(Name)});
             }
-            AddProvisionalGround(Work, Prefab, Route, Ground);
-            if (!Seafaring) AddLandGround(Work, Prefab, Route, Rexa);
+            for (const StoryBox& Box : Dressed) AddStoryBox(Work, Prefab, Box.Name, Box.At, Box.Size, Kind, Route);
+            AddProvisionalGround(Work, Prefab, Route, Ground, Terrain);
+            if (Terrain) AddTerrain(Work, Prefab, Route, Ground, Kind, Contract.MapId);
+            else if (!Seafaring) AddLandGround(Work, Prefab, Route, Rexa);
 
             // Anchors as entities: spawn points and the travel exit use them.
             std::map<std::string, std::string> AnchorEntities;

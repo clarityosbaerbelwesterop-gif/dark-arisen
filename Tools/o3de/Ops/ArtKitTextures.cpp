@@ -454,6 +454,184 @@ namespace DarkArisen::Tools::Art
         }
     }
 
+    namespace
+    {
+        /** Ground texture from three mottled tones (Fbm patches) plus fine grain; Height for the normal map. */
+        Surface Ground(const std::array<double, 3>& A, const std::array<double, 3>& B, const std::array<double, 3>& C, const std::uint32_t Seed,
+            const int GrainPeriod, const double Speckle)
+        {
+            Surface Out;
+            for (int Y = 0; Y < S; ++Y)
+            {
+                for (int X = 0; X < S; ++X)
+                {
+                    const double P1 = N01(Fbm(X, Y, S, 4, 4, Seed));
+                    const double P2 = N01(Fbm(X, Y, S, 8, 3, Seed + 1u));
+                    const double Grain = N01(Noise(X, Y, S, GrainPeriod, Seed + 2u)) - 0.5;
+                    const double Fine = N01(Noise(X, Y, S, 128, Seed + 3u)) - 0.5;
+                    const double Mab = SmoothStep(0.35, 0.65, P1), Mc = SmoothStep(0.55, 0.8, P2);
+                    double R = Lerp(Lerp(A[0], B[0], Mab), C[0], Mc), G = Lerp(Lerp(A[1], B[1], Mab), C[1], Mc), Bl = Lerp(Lerp(A[2], B[2], Mab), C[2], Mc);
+                    const double V = 1.0 + 0.16 * Grain + Speckle * Fine;
+                    Out.Put(X, Y, R * V, G * V, Bl * V, 0.45 + 0.25 * Grain + 0.15 * P2);
+                }
+            }
+            return Out;
+        }
+
+        /** Heather: low woody tufts, purple-brown out of bloom with rust and fawn, dark gaps between plants. */
+        Surface HeatherGround()
+        {
+            Surface Out;
+            for (int Y = 0; Y < S; ++Y)
+            {
+                for (int X = 0; X < S; ++X)
+                {
+                    const double Tuft = N01(Noise(X, Y, S, 32, 201u));
+                    const double Fine = N01(Noise(X, Y, S, 128, 202u));
+                    const double Patch = N01(Fbm(X, Y, S, 4, 3, 203u));
+                    const double Gap = SmoothStep(0.25, 0.45, Tuft);
+                    double R = Lerp(0.30, 0.42, Fine), G = Lerp(0.20, 0.27, Fine), B = Lerp(0.20, 0.22, Fine);   // purple-brown
+                    R = Lerp(R, 0.50, SmoothStep(0.55, 0.8, Patch));                                               // rust
+                    G = Lerp(G, 0.36, SmoothStep(0.55, 0.8, Patch));
+                    B = Lerp(B, 0.20, SmoothStep(0.55, 0.8, Patch));
+                    const double Shade = Lerp(0.45, 1.0, Gap);
+                    Out.Put(X, Y, R * Shade, G * Shade, B * Shade, 0.3 + 0.5 * Gap * Tuft);
+                }
+            }
+            return Out;
+        }
+
+        /**
+         * Alpha card of a vegetation sprig: Count blades or leaves rising from the bottom edge (Kind 0 grass blades,
+         * 1 broadleaf cluster, 2 pine needles on twigs, 3 fern frond, 4 reeds, 5 heather sprigs with tiny flowers).
+         */
+        Surface Sprig(const int Kind, const std::uint32_t Seed)
+        {
+            Surface Out(4);
+            for (int Y = 0; Y < S; ++Y)
+            {
+                for (int X = 0; X < S; ++X) Out.Put(X, Y, 0.2, 0.25, 0.1, 0.5, 0.0);
+            }
+            Rng R(Seed);
+            const auto Disc = [&](double Cx, double Cy, double Rx, double Ry, double Angle, double Cr, double Cg, double Cb)
+            {
+                const double Ca = Cos(Angle), Sa = Sin(Angle);
+                const double Ext = std::max(Rx, Ry) + 1.0;
+                for (int Y = static_cast<int>(Cy - Ext); Y <= static_cast<int>(Cy + Ext); ++Y)
+                {
+                    for (int X = static_cast<int>(Cx - Ext); X <= static_cast<int>(Cx + Ext); ++X)
+                    {
+                        if (X < 0 || Y < 0 || X >= S || Y >= S) continue;
+                        const double Dx = X - Cx, Dy = Y - Cy;
+                        const double U = (Dx * Ca + Dy * Sa) / Rx, V = (-Dx * Sa + Dy * Ca) / Ry;
+                        const double D = U * U + V * V;
+                        if (D > 1.0) continue;
+                        const double Shade = 0.78 + 0.22 * (1.0 - D) + 0.1 * (V > 0 ? 0.0 : -V);
+                        Out.Put(X, Y, Cr * Shade, Cg * Shade, Cb * Shade, 0.5, 1.0);
+                    }
+                }
+            };
+            const auto Line = [&](double X0, double Y0, double X1, double Y1, double W0, double W1, double Cr, double Cg, double Cb)
+            {
+                const int Steps = static_cast<int>(std::sqrt((X1 - X0) * (X1 - X0) + (Y1 - Y0) * (Y1 - Y0))) + 1;
+                for (int K = 0; K <= Steps; ++K)
+                {
+                    const double T = static_cast<double>(K) / Steps;
+                    Disc(Lerp(X0, X1, T), Lerp(Y0, Y1, T), Lerp(W0, W1, T), Lerp(W0, W1, T), 0.0, Cr * (0.8 + 0.2 * T), Cg * (0.8 + 0.2 * T), Cb * (0.8 + 0.2 * T));
+                }
+            };
+            // texture row 0 is the top of the card, row 255 its foot
+            if (Kind == 0 || Kind == 4 || Kind == 6)
+            {
+                const bool Golden = Kind == 6;
+                const int Count = Kind == 4 ? 14 : 26;
+                for (int I = 0; I < Count; ++I)
+                {
+                    const double Bx = 30 + R.Unit() * 196, Lean = (R.Unit() - 0.5) * (Kind != 4 ? 90 : 30);
+                    const double Top = Kind != 4 ? 20 + R.Unit() * 120 : 4 + R.Unit() * 50;
+                    const double Dry = Golden ? 0.75 + 0.25 * R.Unit() : R.Unit();
+                    const double Cr = Kind != 4 ? Lerp(0.24, 0.66, Dry * Dry) : Lerp(0.42, 0.62, Dry);
+                    const double Cg = Kind != 4 ? Lerp(0.36, 0.55, Dry) : Lerp(0.44, 0.55, Dry);
+                    const double Cb = Kind != 4 ? Lerp(0.12, 0.30, Dry) : Lerp(0.22, 0.30, Dry);
+                    Line(Bx, 255, Bx + Lean, Top, Kind != 4 ? 2.6 : 3.4, 0.6, Cr, Cg, Cb);
+                    if (Kind == 4 && R.Unit() < 0.5) Disc(Bx + Lean, Top + 10, 3.5, 14, 0.0, 0.33, 0.24, 0.14);  // seed head
+                }
+            }
+            else if (Kind == 1)
+            {
+                Line(128, 255, 128, 120, 4, 2, 0.32, 0.24, 0.16);
+                for (int I = 0; I < 60; ++I)
+                {
+                    const double A = R.Unit() * 6.283, Rad = 30 + R.Unit() * 85;
+                    const double Cx = 128 + Cos(A) * Rad, Cy = 118 + Sin(A) * Rad * 0.85;
+                    const double Tone = R.Unit();
+                    const double Long = 13 + R.Unit() * 6, Wide = 7 + R.Unit() * 3;  // in order: argument evaluation order differs between compilers
+                    Disc(Cx, Cy, Long, Wide, A, Lerp(0.16, 0.30, Tone), Lerp(0.28, 0.42, Tone), Lerp(0.08, 0.14, Tone));
+                }
+            }
+            else if (Kind == 2)
+            {
+                Line(128, 255, 128, 10, 3, 1.5, 0.30, 0.22, 0.15);
+                for (int I = 0; I < 9; ++I)
+                {
+                    const double Y0 = 230 - I * 24, Side = (I % 2) ? 1.0 : -1.0;
+                    Line(128, Y0, 128 + Side * (70 - I * 5), Y0 - 30, 2, 1, 0.30, 0.22, 0.15);
+                    for (int K = 0; K < 90; ++K)
+                    {
+                        const double T = R.Unit();
+                        const double Px = 128 + Side * (70 - I * 5) * T, Py = Y0 - 30 * T;
+                        const double A = (R.Unit() - 0.5) * 2.4 - 1.57;
+                        Line(Px, Py, Px + Cos(A) * 18, Py + Sin(A) * 18, 2.2, 1.0, 0.13, 0.24, 0.12);
+                    }
+                }
+            }
+            else if (Kind == 3)
+            {
+                Line(128, 255, 128, 8, 2.5, 1, 0.25, 0.32, 0.12);
+                for (int I = 0; I < 22; ++I)
+                {
+                    const double Y0 = 240 - I * 10.5, L = 95 * (1.0 - I / 24.0) * (0.4 + 0.6 * Sin(3.1416 * (I + 2) / 25.0));
+                    for (const double Side : {-1.0, 1.0}) Disc(128 + Side * L / 2, Y0 - 6, L / 2, 4.5, Side * 0.35, 0.20, 0.38, 0.12);
+                }
+            }
+            else
+            {
+                for (int I = 0; I < 12; ++I)
+                {
+                    const double Bx = 40 + R.Unit() * 176, Lean = (R.Unit() - 0.5) * 70, Top = 60 + R.Unit() * 120;
+                    Line(Bx, 255, Bx + Lean, Top, 3, 1.2, 0.33, 0.27, 0.20);
+                    for (int K = 0; K < 26; ++K)
+                    {
+                        const double T = 0.15 + R.Unit() * 0.85;
+                        const bool Bloom = R.Unit() < 0.35;
+                        Disc(Lerp(Bx, Bx + Lean, T) + (R.Unit() - 0.5) * 12, Lerp(255, Top, T), 3.5, 3.5, 0.0, Bloom ? 0.52 : 0.30, Bloom ? 0.30 : 0.33, Bloom ? 0.48 : 0.17);
+                    }
+                }
+            }
+            return Out;
+        }
+    }
+
+        /** Birch bark: chalk white with dark horizontal lenticels and black patches near the foot of the texture. */
+        Surface BirchBark()
+        {
+            Surface Out;
+            for (int Y = 0; Y < S; ++Y)
+            {
+                for (int X = 0; X < S; ++X)
+                {
+                    const double Fine = N01(Noise(X, Y, S, 64, 281u)) - 0.5;
+                    const double Band = N01(Noise((X * 1) % S, (Y * 8) % S, S, 16, 282u));
+                    const bool Lenticel = Band > 0.72 && N01(Noise((X * 4) % S, Y, S, 32, 283u)) > 0.55;
+                    const double Patch = SmoothStep(0.68, 0.8, N01(Fbm(X, Y, S, 4, 3, 284u)));
+                    double V = 0.86 + 0.06 * Fine;
+                    if (Lenticel) V = 0.22;
+                    V = Lerp(V, 0.16, Patch * 0.85);
+                    Out.Put(X, Y, V, V * 0.98, V * 0.94, Lenticel ? 0.2 : 0.6 - 0.3 * Patch);
+                }
+            }
+            return Out;
+        }
     std::vector<ArtFile> BuildTextures()
     {
         std::vector<ArtFile> Files;
@@ -480,6 +658,22 @@ namespace DarkArisen::Tools::Art
         Add("T_Frond", Frond(), 0);
         Add("T_Fabric", Fabric(), 0);
         Add("T_Iron", Iron(), 0);
+        // terrain and vegetation
+        Add("T_Heather", HeatherGround(), 120);
+        Add("T_DryGrass", Ground({0.55, 0.47, 0.28}, {0.47, 0.42, 0.25}, {0.62, 0.55, 0.36}, 211u, 64, 0.1), 60);
+        Add("T_Dirt", Ground({0.42, 0.34, 0.25}, {0.36, 0.29, 0.21}, {0.50, 0.43, 0.33}, 221u, 96, 0.14), 160);
+        Add("T_Mud", Ground({0.22, 0.19, 0.15}, {0.17, 0.15, 0.12}, {0.28, 0.25, 0.18}, 231u, 64, 0.06), 90);
+        Add("T_RedEarth", Ground({0.52, 0.30, 0.19}, {0.44, 0.26, 0.17}, {0.60, 0.41, 0.27}, 241u, 96, 0.12), 140);
+        Add("T_Moss", Ground({0.22, 0.30, 0.12}, {0.18, 0.25, 0.10}, {0.30, 0.34, 0.16}, 251u, 64, 0.12), 70);
+        Add("T_Ash", Ground({0.30, 0.29, 0.28}, {0.22, 0.21, 0.21}, {0.40, 0.39, 0.37}, 261u, 128, 0.1), 80);
+        Add("T_SprigGrass", Sprig(0, 271u), 0);
+        Add("T_SprigLeaves", Sprig(1, 272u), 0);
+        Add("T_SprigNeedles", Sprig(2, 273u), 0);
+        Add("T_SprigFern", Sprig(3, 274u), 0);
+        Add("T_SprigReeds", Sprig(4, 275u), 0);
+        Add("T_SprigHeather", Sprig(5, 276u), 0);
+        Add("T_SprigDryGrass", Sprig(6, 277u), 0);
+        Add("T_BirchBark", BirchBark(), 160);
         return Files;
     }
 
@@ -551,6 +745,26 @@ namespace DarkArisen::Tools::Art
             Set(M::SkinDark, "M_Art_SkinDark", nullptr, false, {0.5, 0.34, 0.24, 1}, 0.55, 1.0);
             Set(M::Hair, "M_Art_Hair", nullptr, false, {0.24, 0.16, 0.1, 1}, 0.6, 1.0);
             Set(M::HairGrey, "M_Art_HairGrey", nullptr, false, {0.50, 0.48, 0.45, 1}, 0.6, 1.0);
+            Set(M::Heather, "M_Art_Heather", "T_Heather", true, {1, 1, 1, 1}, 0.95, 3.0);
+            Set(M::DryGrass, "M_Art_DryGrass", "T_DryGrass", true, {1, 1, 1, 1}, 0.93, 3.5);
+            Set(M::Dirt, "M_Art_Dirt", "T_Dirt", true, {1, 1, 1, 1}, 0.9, 3.0);
+            Set(M::Mud, "M_Art_Mud", "T_Mud", true, {1, 1, 1, 1}, 0.45, 3.0);
+            Set(M::RedEarth, "M_Art_RedEarth", "T_RedEarth", true, {1, 1, 1, 1}, 0.9, 3.0);
+            Set(M::Moss, "M_Art_Moss", "T_Moss", true, {1, 1, 1, 1}, 0.92, 2.5);
+            Set(M::Ash, "M_Art_Ash", "T_Ash", true, {1, 1, 1, 1}, 0.95, 3.0);
+            Set(M::Leaves, "M_Art_Leaves", "T_SprigLeaves", false, {1, 1, 1, 1}, 0.75, 1.0, 0.0, true);
+            Set(M::LeavesDark, "M_Art_LeavesDark", "T_SprigLeaves", false, {0.62, 0.7, 0.6, 1}, 0.75, 1.0, 0.0, true);
+            Set(M::LeavesPale, "M_Art_LeavesPale", "T_SprigLeaves", false, {1.0, 1.0, 0.72, 1}, 0.75, 1.0, 0.0, true);
+            Set(M::Needles, "M_Art_Needles", "T_SprigNeedles", false, {1, 1, 1, 1}, 0.8, 1.0, 0.0, true);
+            Set(M::GrassBlades, "M_Art_GrassBlades", "T_SprigGrass", false, {1, 1, 1, 1}, 0.85, 1.0, 0.0, true);
+            Set(M::GrassDry, "M_Art_GrassDry", "T_SprigDryGrass", false, {1, 1, 1, 1}, 0.9, 1.0, 0.0, true);
+            Set(M::HeatherSprig, "M_Art_HeatherSprig", "T_SprigHeather", false, {1, 1, 1, 1}, 0.9, 1.0, 0.0, true);
+            Set(M::Fern, "M_Art_Fern", "T_SprigFern", false, {1, 1, 1, 1}, 0.8, 1.0, 0.0, true);
+            Set(M::Reeds, "M_Art_Reeds", "T_SprigReeds", false, {1, 1, 1, 1}, 0.85, 1.0, 0.0, true);
+            Set(M::Gorse, "M_Art_Gorse", "T_SprigNeedles", false, {0.75, 0.95, 0.6, 1}, 0.85, 1.0, 0.0, true);
+            Set(M::BirchBark, "M_Art_BirchBark", "T_BirchBark", true, {1, 1, 1, 1}, 0.8, 1.2);
+            Set(M::Lichen, "M_Art_Lichen", "T_Rock", true, {0.85, 0.88, 0.72, 1}, 0.9, 2.0);
+            Set(M::PondWater, "M_Art_PondWater", nullptr, false, {0.05, 0.07, 0.06, 1}, 0.05, 1.0);
             return T;
         }();
         return Table[static_cast<std::size_t>(Id)];

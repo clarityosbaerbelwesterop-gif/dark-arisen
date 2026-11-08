@@ -1,0 +1,57 @@
+/*
+ * Dark Arisen lava, forward pass: sunlit crust over a glowing melt. The crust's albedo,
+ * F0 and normal go to the later passes, so image-based light and GI reach it like any surface.
+ * check: vs_6_2 MainVS
+ * check: ps_6_2 MainPS
+ */
+#include "DarkArisenLavaCommon.azsli"
+#include <Atom/Features/Pipeline/Forward/ForwardPassOutput.azsli>
+#include <Atom/RPI/Math.azsli>
+
+struct VertexShaderInput
+{
+    float3 m_position : POSITION;
+    float3 m_normal : NORMAL;
+};
+
+struct VertexShaderOutput
+{
+    float4 m_position : SV_Position;
+    float3 m_worldPosition : TEXCOORD0;
+    float3 m_normal : NORMAL;
+};
+
+VertexShaderOutput MainVS(VertexShaderInput IN, uint instanceId : SV_InstanceID)
+{
+    VertexShaderOutput OUT;
+    const float4x4 objectToWorld = GetObjectToWorldMatrix(instanceId);
+    const float4 world = mul(objectToWorld, float4(IN.m_position, 1.0));
+    OUT.m_position = mul(ViewSrg::m_viewProjectionMatrix, world);
+    OUT.m_worldPosition = world.xyz;
+    OUT.m_normal = normalize(mul(GetObjectToWorldMatrixInverseTranspose(instanceId), IN.m_normal));
+    return OUT;
+}
+
+ForwardPassOutput MainPS(VertexShaderOutput IN)
+{
+    ForwardPassOutput OUT;
+    const LavaSample lava = EvaluateLava(IN.m_worldPosition.xy, SceneSrg::m_time);
+    const float3 normal = normalize(IN.m_normal);
+    const float3 crustAlbedo = DarkArisenLavaMaterialSrg::m_crustColor * lava.m_crust;
+
+    float3 direct = float3(0.0, 0.0, 0.0);
+    if (SceneSrg::m_directionalLightCount > 0)
+    {
+        const DirectionalLight sun = SceneSrg::m_directionalLights[0];
+        const float NdotL = saturate(dot(normal, normalize(-sun.m_direction)));
+        direct = crustAlbedo * (NdotL / 3.14159265) * sun.m_rgbIntensityLux;
+    }
+    const float3 glow = DarkArisenLavaMaterialSrg::m_moltenColor * DarkArisenLavaMaterialSrg::m_glowIntensity * lava.m_heat;
+
+    OUT.m_diffuseColor = float4(direct + glow, -1.0);
+    OUT.m_specularColor = float4(0.0, 0.0, 0.0, 0.0);
+    OUT.m_albedo = float4(crustAlbedo, 1.0);
+    OUT.m_specularF0 = float4(0.04, 0.04, 0.04, DarkArisenLavaMaterialSrg::m_crustRoughness);
+    OUT.m_normal = float4(EncodeNormalSignedOctahedron(normal), EncodeUnorm2BitFlags(true, false));
+    return OUT;
+}

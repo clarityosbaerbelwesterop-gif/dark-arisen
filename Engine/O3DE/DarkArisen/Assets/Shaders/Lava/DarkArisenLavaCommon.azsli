@@ -1,0 +1,52 @@
+/*
+ * Dark Arisen lava: a molten flow under a cooling crust. The crust drifts along the flow
+ * direction (two phase-shifted samples blended, so nothing stretches), cracks glow with the
+ * molten colour and breathe slowly. Shared by the forward and depth passes.
+ */
+#pragma once
+
+#include <scenesrg_all.srgi>
+#include <viewsrg_all.srgi>
+#include <Atom/Features/PBR/DefaultObjectSrg.azsli>
+#include <Atom/RPI/ShaderResourceGroups/DefaultDrawSrg.azsli>
+#include <Atom/Features/InstancedTransforms.azsli>
+#include <Atom/Features/SrgSemantics.azsli>
+
+#include "../Common/DarkArisenNoise.azsli"
+
+ShaderResourceGroup DarkArisenLavaMaterialSrg : SRG_PerMaterial
+{
+    float3 m_moltenColor;     // colour of the open melt
+    float3 m_crustColor;      // albedo of the cooled crust
+    float2 m_flowDirection;   // world XY, metres per second
+    float m_glowIntensity;    // in the level light's units (sun = 1 lux)
+    float m_crustCoverage;    // 0 = open melt, 1 = all crust
+    float m_featureSize;      // metres per crust plate
+    float m_crustRoughness;
+}
+
+struct LavaSample
+{
+    float m_crust;  // 0 molten .. 1 solid crust
+    float m_heat;   // glow factor of what shows between plates
+};
+
+LavaSample EvaluateLava(float2 worldXY, float time)
+{
+    const float scale = 1.0 / max(DarkArisenLavaMaterialSrg::m_featureSize, 0.05);
+    const float period = 6.0;
+    const float phase0 = frac(time / period);
+    const float phase1 = frac(time / period + 0.5);
+    const float2 flow = DarkArisenLavaMaterialSrg::m_flowDirection * period;
+    const float n0 = DarkArisenFractal((worldXY - flow * phase0) * scale);
+    const float n1 = DarkArisenFractal((worldXY - flow * phase1) * scale + float2(31.7, 11.3));
+    const float weight = abs(1.0 - 2.0 * phase0);
+    const float plates = lerp(n1, n0, weight);
+
+    LavaSample result;
+    const float threshold = lerp(0.25, 0.75, saturate(DarkArisenLavaMaterialSrg::m_crustCoverage));
+    result.m_crust = smoothstep(threshold - 0.06, threshold + 0.06, plates);
+    const float breathe = 0.85 + 0.15 * sin(time * 0.9 + DarkArisenValueNoise(worldXY * 0.15) * 6.2831);
+    result.m_heat = (1.0 - result.m_crust) * breathe * (0.6 + 0.4 * DarkArisenValueNoise(worldXY * scale * 3.0 + time * 0.2));
+    return result;
+}
