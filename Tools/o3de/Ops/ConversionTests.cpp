@@ -1,3 +1,4 @@
+#include "ArtKitArchipelago.h"
 #include "ArtKitCore.h"
 #include "ArtKitHumans.h"
 #include "Gltf.h"
@@ -273,6 +274,36 @@ int main()
         Bad = Attack;
         Bad.Contact = 3.0;
         Check(!Humans.BuildLibraryMotion(Bad, Cycle, Problem), "a hit outside its cut fails closed");
+    }
+
+    // Open world: every materialised level has a place, land places on land, sea places at sea.
+    {
+        const auto ReadText = [](const fs::path& P)
+        {
+            std::ifstream In(P, std::ios::binary);
+            return std::string((std::istreambuf_iterator<char>(In)), std::istreambuf_iterator<char>());
+        };
+        const fs::path Root(DARKARISEN_REPO_ROOT);
+        DarkArisen::Tools::Art::ArchipelagoSpec World;
+        std::string Problem;
+        Check(DarkArisen::Tools::Art::ReadArchipelago(ReadText(Root / "ContentSource/World/Archipelago.json"), World, Problem), "archipelago reads");
+        JsonValue Places;
+        Check(JsonReader::Parse(ReadText(Root / "ContentSource/World/Places.json"), Places, Problem) && Places.Find("places"), "places read");
+        std::map<std::string, const JsonValue*> ByLevel;
+        if (Places.Find("places"))
+            for (const JsonValue& P : Places.Find("places")->Items) ByLevel[P.Find("level")->Text] = &P;
+        for (const auto& Entry : fs::directory_iterator(Root / "Engine/O3DE/DarkArisen/Levels"))
+        {
+            if (!Entry.is_directory()) continue;
+            const std::string Level = Entry.path().filename().string();
+            const auto Found = ByLevel.find(Level);
+            Check(Found != ByLevel.end(), ("level has a place in the world: " + Level).c_str());
+            if (Found == ByLevel.end()) continue;
+            const std::string Kind = Found->second->Find("kind")->Text;
+            if (Kind != "land" && Kind != "sea") continue;
+            const double Z = DarkArisen::Tools::Art::ArchipelagoHeight(World, Found->second->Find("x")->Number, Found->second->Find("y")->Number, nullptr);
+            Check(Kind == "land" ? Z > 0.5 : Z < -1.0, (Level + " lies " + (Kind == "land" ? "on land" : "at sea") + " (height " + std::to_string(Z) + " m)").c_str());
+        }
     }
 
     std::cout << (Failures == 0 ? "conversion tests passed\n" : "conversion tests FAILED\n");
