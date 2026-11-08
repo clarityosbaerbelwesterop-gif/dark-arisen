@@ -396,4 +396,3 @@ namespace DarkArisen::Tools::Art
         return Out;
     }
 }
-
