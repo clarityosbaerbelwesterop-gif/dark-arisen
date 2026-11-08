@@ -222,4 +222,154 @@ namespace DarkArisen::Tools::Art
         Out.ReliefPng = EncodePng(Relief);
         return Out;
     }
+
+    namespace
+    {
+        struct BiomeLayers
+        {
+            const char* Biome;
+            const char* Layer[4];
+            double Tile[4];
+        };
+        const BiomeLayers Layers[] = {
+            {"tropical", {"sparse_grass", "sand_01", "rock_face_03", "forrest_ground_01"}, {2.0, 1.5, 2.7, 2.0}},
+            {"mire", {"sparse_grass", "brown_mud_02", "rock_pitted_mossy", "forrest_ground_01"}, {2.0, 1.3, 1.0, 2.0}},
+            {"moor", {"sparse_grass", "forrest_ground_01", "rock_pitted_mossy", "brown_mud_02"}, {2.0, 2.0, 1.0, 1.3}},
+            {"volcanic", {"brown_mud_02", "sand_01", "rock_face_03", "forrest_ground_01"}, {1.3, 1.5, 2.7, 2.0}},
+            {"cold", {"sparse_grass", "sand_01", "rock_pitted_mossy", "rock_face_03"}, {2.0, 1.5, 1.0, 2.7}},
+            {"fortress", {"sparse_grass", "sand_01", "rock_face_03", "cobblestone_floor_08"}, {2.0, 1.5, 2.7, 2.0}},
+            {"maw", {"brown_mud_02", "forrest_ground_01", "rock_pitted_mossy", "rock_face_03"}, {1.3, 2.0, 1.0, 2.7}}};
+
+    }
+
+    WorldTerrain BuildWorldTerrain(const ArchipelagoSpec& Spec, const double TileSize, const double TileStep, const double CoarseStep, const double TextureCell)
+    {
+        WorldTerrain Out;
+        const auto Height = [&Spec](double X, double Y) { return ArchipelagoHeight(Spec, X, Y, nullptr); };
+        const auto Normal = [&](double X, double Y, double Step)
+        {
+            const double Dx = (Height(X + Step, Y) - Height(X - Step, Y)) / (2.0 * Step), Dy = (Height(X, Y + Step) - Height(X, Y - Step)) / (2.0 * Step);
+            return Normalize(V3{-Dx, -Dy, 1.0});
+        };
+        // a grid mesh over [X0, X1] x [Y0, Y1]; UVs address the world textures (V = 0 at the north edge)
+        const auto Grid = [&](const std::string& Name, double X0, double Y0, double X1, double Y1, double Step, double Lower, const Material& Mat)
+        {
+            const int Nx = static_cast<int>((X1 - X0) / Step + 0.5), Ny = static_cast<int>((Y1 - Y0) / Step + 0.5);
+            std::vector<Vertex> V;
+            std::vector<std::uint32_t> I;
+            V.reserve(static_cast<std::size_t>((Nx + 1) * (Ny + 1)));
+            for (int J = 0; J <= Ny; ++J)
+                for (int K = 0; K <= Nx; ++K)
+                {
+                    const double X = X0 + K * Step, Y = Y0 + J * Step;
+                    V.push_back(Vertex{V3{X, Y, Height(X, Y) - Lower}, Normal(X, Y, Step), X / Spec.Width, (Spec.Height - Y) / Spec.Height});
+                }
+            for (int J = 0; J < Ny; ++J)
+                for (int K = 0; K < Nx; ++K)
+                {
+                    const auto A = static_cast<std::uint32_t>(J * (Nx + 1) + K), B = A + 1u, C = A + static_cast<std::uint32_t>(Nx + 2), D = A + static_cast<std::uint32_t>(Nx + 1);
+                    // skip cells entirely in the deep, where only the ocean is seen
+                    if (V[A].P.Z < -20.0 && V[B].P.Z < -20.0 && V[C].P.Z < -20.0 && V[D].P.Z < -20.0) continue;
+                    I.insert(I.end(), {A, B, C, A, C, D});
+                }
+            Mesh M(Name);
+            M.Indexed(Mat, V, I);
+            Out.Triangles += I.size() / 3;
+            return M;
+        };
+
+        // world textures: macro colour (biome by height) and splat (ground, path/sand/mud, rock, accent)
+        const int Tw = static_cast<int>(Spec.Width / TextureCell), Th = static_cast<int>(Spec.Height / TextureCell);
+        Image Macro, Splat;
+        Macro.Width = Splat.Width = Tw;
+        Macro.Height = Splat.Height = Th;
+        Macro.Channels = 3;
+        Splat.Channels = 4;
+        Macro.Pixels.assign(static_cast<std::size_t>(Tw * Th * 3), 0);
+        Splat.Pixels.assign(static_cast<std::size_t>(Tw * Th * 4), 0);
+        for (int J = 0; J < Th; ++J)
+            for (int K = 0; K < Tw; ++K)
+            {
+                const double X = (K + 0.5) * TextureCell, Y = Spec.Height - (J + 0.5) * TextureCell;
+                int Owner = -1;
+                const double Z = ArchipelagoHeight(Spec, X, Y, &Owner);
+                const std::string Biome = Owner >= 0 ? Spec.Islands[static_cast<std::size_t>(Owner)].Biome : std::string("tropical");
+                const double Peak = Owner >= 0 ? Spec.Islands[static_cast<std::size_t>(Owner)].Peak : 100.0;
+                const V3 N = Normal(X, Y, TextureCell);
+                const double Steep = Smooth(0.80, 0.62, N.Z);
+                const double Shore = Smooth(3.0, 0.5, Z);
+                const double Accent = Smooth(0.45, 0.62, Fractal(X, Y, 260.0, 3, Spec.Seed + 77u));
+                double W1 = Biome == "mire" ? Smooth(4.0, 1.0, Z) : Shore, W2 = Steep, W3 = Accent;
+                if (Biome == "cold") W3 = Smooth(0.45, 0.8, Z / std::max(Peak, 1.0));  // bare rock towards the tops
+                W1 = std::clamp(W1, 0.0, 1.0) * (1.0 - W2);
+                W3 = std::clamp(W3, 0.0, 1.0) * (1.0 - W2) * (1.0 - W1);
+                const double W[4] = {std::clamp(1.0 - W1 - W2 - W3, 0.0, 1.0), W1, W2, W3};
+                std::uint8_t* S = &Splat.Pixels[static_cast<std::size_t>((J * Tw + K) * 4)];
+                for (int C = 0; C < 4; ++C) S[C] = static_cast<std::uint8_t>(std::lround(W[C] * 255.0));
+                double Col[3] = {0.45, 0.5, 0.35};
+                const double T = std::clamp(Z / std::max(Peak, 1.0), 0.0, 1.0);
+                struct Pal { const char* B; double L[3], H[3]; };
+                static const Pal Palette[] = {{"tropical", {0.30, 0.42, 0.16}, {0.40, 0.38, 0.24}}, {"mire", {0.24, 0.30, 0.16}, {0.30, 0.33, 0.20}},
+                    {"moor", {0.42, 0.34, 0.24}, {0.46, 0.36, 0.34}}, {"volcanic", {0.27, 0.25, 0.23}, {0.18, 0.16, 0.15}}, {"cold", {0.34, 0.40, 0.32}, {0.62, 0.64, 0.66}},
+                    {"fortress", {0.40, 0.42, 0.26}, {0.48, 0.45, 0.32}}, {"maw", {0.22, 0.20, 0.22}, {0.15, 0.13, 0.15}}};
+                for (const Pal& P : Palette)
+                    if (Biome == P.B)
+                        for (int C = 0; C < 3; ++C) Col[C] = P.L[C] + (P.H[C] - P.L[C]) * T;
+                std::uint8_t* M = &Macro.Pixels[static_cast<std::size_t>((J * Tw + K) * 3)];
+                for (int C = 0; C < 3; ++C) M[C] = static_cast<std::uint8_t>(std::lround(std::clamp(Col[C], 0.0, 1.0) * 255.0));
+            }
+        Out.Files.push_back({"T_World_Macro.png", EncodePng(Macro)});
+        Out.Files.push_back({"T_World_Splat.png", EncodePng(Splat)});
+
+        // one material per biome; tiles and the coarse mesh take their biome's (the coarse mesh the tropical one)
+        for (const BiomeLayers& L : Layers)
+        {
+            std::string J = "{\n    \"materialType\": \"../../Materials/Types/DarkArisenTerrain.materialtype\",\n    \"materialTypeVersion\": 1,\n    \"propertyValues\": {\n";
+            for (int K = 0; K < 4; ++K)
+            {
+                const std::string Base = std::string("../../Art/Scanned/") + L.Layer[K] + "/" + L.Layer[K];
+                const std::string G = "        \"layer" + std::to_string(K);
+                J += G + ".arm\": \"" + Base + "_arm_2k.jpg\",\n" + G + ".color\": \"" + Base + "_diff_2k.jpg\",\n" + G + ".normal\": \"" + Base + "_nor_gl_2k.jpg\",\n";
+            }
+            J += "        \"macro.blendSharpness\": 3,\n        \"macro.color\": \"../T_World_Macro.png\",\n        \"macro.splat\": \"../T_World_Splat.png\",\n";
+            J += "        \"macro.strength\": 0.8,\n        \"macro.tiles\": [" + GltfBits::Num(L.Tile[0]) + ", " + GltfBits::Num(L.Tile[1]) + ", " + GltfBits::Num(L.Tile[2]) + ", " +
+                 GltfBits::Num(L.Tile[3]) + "]\n    }\n}\n";
+            Out.Files.push_back({std::string("Materials/M_World_") + L.Biome + ".material", J});
+        }
+
+        Material Placeholder;
+        Placeholder.Name = "M_World_Terrain";
+        Placeholder.BaseColor = {0.4, 0.42, 0.3, 1.0};
+        Placeholder.Roughness = 0.95;
+        Out.Files.push_back({"SM_World_Coarse.gltf", WriteGltf(Grid("SM_World_Coarse", 0.0, 0.0, Spec.Width, Spec.Height, CoarseStep, 0.6, Placeholder), "Dark Arisen world-build")});
+
+        const int Columns = static_cast<int>(Spec.Width / TileSize + 0.5), Rows = static_cast<int>(Spec.Height / TileSize + 0.5);
+        std::string Index = "{\n  \"tileSize\": " + GltfBits::Num(TileSize) + ",\n  \"columns\": " + std::to_string(Columns) + ",\n  \"rows\": " + std::to_string(Rows) + ",\n  \"tiles\": [";
+        bool First = true;
+        for (int Row = 0; Row < Rows; ++Row)
+            for (int Column = 0; Column < Columns; ++Column)
+            {
+                const double X0 = Column * TileSize, Y0 = Row * TileSize;
+                double Top = -1e30;
+                int Owner = -1, Votes = 0;
+                for (double Y = Y0; Y <= Y0 + TileSize; Y += TileSize / 8.0)
+                    for (double X = X0; X <= X0 + TileSize; X += TileSize / 8.0)
+                    {
+                        int O = -1;
+                        Top = std::max(Top, ArchipelagoHeight(Spec, X, Y, &O));
+                        if (O >= 0 && Votes == 0) { Owner = O; Votes = 1; }
+                    }
+                if (Top < -2.0) continue;  // open sea: the ocean alone
+                const std::string Biome = Owner >= 0 ? Spec.Islands[static_cast<std::size_t>(Owner)].Biome : std::string("tropical");
+                const std::string Name = "SM_World_Tile_" + std::to_string(Column) + "_" + std::to_string(Row);
+                Out.Files.push_back({"Tiles/" + Name + ".gltf", WriteGltf(Grid(Name, X0, Y0, X0 + TileSize, Y0 + TileSize, TileStep, 0.0, Placeholder), "Dark Arisen world-build")});
+                Index += std::string(First ? "" : ",") + "\n    {\"tile\": " + std::to_string(Row * Columns + Column) + ", \"column\": " + std::to_string(Column) + ", \"row\": " +
+                         std::to_string(Row) + ", \"model\": \"Tiles/" + Name + ".gltf\", \"material\": \"Materials/M_World_" + Biome + ".material\"}";
+                First = false;
+                ++Out.Tiles;
+            }
+        Out.Files.push_back({"WorldTiles.json", Index + "\n  ]\n}\n"});
+        return Out;
+    }
 }
+

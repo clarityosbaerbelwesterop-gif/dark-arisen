@@ -637,6 +637,37 @@ namespace
     }
 
     /**
+     * The open world's terrain onto the build host (git-ignored, Assets/World): the coarse archipelago mesh at
+     * 32 m, 500 m detail tiles at 5 m for the streamer, world macro and splat textures at 8 m, one terrain
+     * material per biome, and WorldTiles.json listing the land tiles with their models and materials.
+     */
+    int CommandWorldBuild(const Options& Opts)
+    {
+        std::ifstream In(Opts.RepoRoot / "ContentSource" / "World" / "Archipelago.json");
+        const std::string Text((std::istreambuf_iterator<char>(In)), std::istreambuf_iterator<char>());
+        DarkArisen::Tools::Art::ArchipelagoSpec Spec;
+        std::string Problem;
+        if (!In || !DarkArisen::Tools::Art::ReadArchipelago(Text, Spec, Problem))
+        {
+            std::cerr << "error: " << Problem << "\n";
+            return LockError;
+        }
+        const auto World = DarkArisen::Tools::Art::BuildWorldTerrain(Spec, 500.0, 5.0, 32.0, 8.0);
+        const fs::path Root = Opts.RepoRoot / "Engine" / "O3DE" / "DarkArisen" / "Assets" / "World";
+        std::size_t Bytes = 0;
+        for (const auto& File : World.Files)
+        {
+            const fs::path Target = Root / File.Path;
+            fs::create_directories(Target.parent_path());
+            std::ofstream(Target, std::ios::binary) << File.Content;
+            Bytes += File.Content.size();
+        }
+        std::cout << "world terrain: " << World.Tiles << " land tiles, " << World.Triangles << " triangles, " << World.Files.size() << " files, "
+                  << Bytes / 1000000 << " MB into " << Root.string() << "\n";
+        return Ok;
+    }
+
+    /**
      * The Atom shader path without the Asset Processor: preprocess with the engine's shader
      * include roots, AZSL -> HLSL with O3DE's azslc 1.8.22, then HLSL -> SPIR-V (Vulkan) and DXIL
      * (DX12) with DXC 1.8.2505.1, the compiler O3DE 2605.0 pins. Every .azsl under the project's
@@ -824,7 +855,7 @@ namespace
 
     void PrintUsage()
     {
-        std::cout << "usage: DarkArisenO3DE <doctor|lock|bootstrap|configure|build|test|package|import-glb|probe|shader-check|materialize|fetch-art|decimate-art|world-map>\n"
+        std::cout << "usage: DarkArisenO3DE <doctor|lock|bootstrap|configure|build|test|package|import-glb|probe|shader-check|materialize|fetch-art|decimate-art|world-map|world-build>\n"
                      "       [--repo=PATH]\n"
                      "       [--engine=PATH] [--build-dir=PATH] [--config=profile|debug|release] [--dry-run]\n"
                      "       import-glb --manifest=PATH --glb=PATH [--min-vertices=N]\n"
@@ -893,6 +924,7 @@ int main(int ArgumentCount, char** Arguments)
     if (Opts.Command == "fetch-art") return CommandFetchArt(Opts);
     if (Opts.Command == "decimate-art") return CommandDecimateArt(Opts);
     if (Opts.Command == "world-map") return CommandWorldMap(Opts);
+    if (Opts.Command == "world-build") return CommandWorldBuild(Opts);
     PrintUsage();
     return Usage;
 }

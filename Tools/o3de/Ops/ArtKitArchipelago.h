@@ -38,3 +38,22 @@ namespace DarkArisen::Tools::Art
 
     ArchipelagoMaps BuildArchipelagoMaps(const ArchipelagoSpec& Spec, double HeightCell, double ReliefCell);
 }
+
+namespace DarkArisen::Tools::Art
+{
+    /** The world's terrain as models: a coarse mesh of the whole archipelago (always resident, the horizon) and
+     * detail tiles for the streamer, plus world-wide macro colour and splat textures and one DarkArisenTerrain
+     * material per biome. Paths are relative to Assets/World. */
+    struct WorldTerrain
+    {
+        struct File
+        {
+            std::string Path, Content;
+        };
+        std::vector<File> Files;
+        int Tiles = 0;
+        std::size_t Triangles = 0;
+    };
+
+    WorldTerrain BuildWorldTerrain(const ArchipelagoSpec& Spec, double TileSize, double TileStep, double CoarseStep, double TextureCell);
+}
