@@ -91,6 +91,7 @@ namespace DarkArisen::Tools::Art
         std::string Name;
         std::string BaseColorTexture;   // file name under Assets/Art/Textures, empty for none
         std::string NormalTexture;
+        std::string OrmTexture;         // occlusion (R), roughness (G), metal (B): glTF's packing, Poly Haven's ARM map
         std::array<double, 4> BaseColor{1, 1, 1, 1};
         double Metallic = 0.0;
         double Roughness = 0.8;

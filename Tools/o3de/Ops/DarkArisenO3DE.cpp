@@ -487,6 +487,70 @@ namespace
     }
 
     /**
+     * Scanned CC0 art (ContentSource/ThirdParty/PolyHaven/Scanned.lock) onto this host: every file the lock
+     * names is downloaded into Assets/Art/Scanned unless a copy with the pinned SHA-256 is already there.
+     * The files are large and not committed; materials and models reference them by path.
+     */
+    int CommandFetchArt(const Options& Opts)
+    {
+        const fs::path LockPath = Opts.RepoRoot / "ContentSource" / "ThirdParty" / "PolyHaven" / "Scanned.lock";
+        const fs::path Root = Opts.RepoRoot / "Engine" / "O3DE" / "DarkArisen" / "Assets" / "Art" / "Scanned";
+        std::ifstream Stream(LockPath);
+        if (!Stream)
+        {
+            std::cerr << "error: cannot read " << LockPath << "\n";
+            return LockError;
+        }
+        const auto Digest = [](const fs::path& File)
+        {
+            std::ifstream In(File, std::ios::binary);
+            const std::string Bytes((std::istreambuf_iterator<char>(In)), std::istreambuf_iterator<char>());
+            return DarkArisen::Tools::Sha256Hex(Bytes);
+        };
+        int Fetched = 0, Present = 0;
+        std::string Line;
+        while (std::getline(Stream, Line))
+        {
+            if (Line.empty() || Line[0] == '#') continue;
+            std::istringstream Fields(Line);
+            std::string Relative, Hash, Url;
+            Fields >> Relative >> Hash >> Url;
+            const std::string Expected = Hash.rfind("sha256:", 0) == 0 ? Hash.substr(7) : std::string();
+            if (Relative.empty() || Relative.find("..") != std::string::npos || Url.rfind("https://", 0) != 0 || Expected.size() != 64 ||
+                Expected.find_first_not_of("0123456789abcdef") != std::string::npos)
+            {
+                std::cerr << "error: " << LockPath << ": malformed line: " << Line << "\n";
+                return LockError;
+            }
+            const fs::path Target = Root / fs::path(Relative);
+            if (fs::exists(Target) && Digest(Target) == Expected)
+            {
+                ++Present;
+                continue;
+            }
+            if (Opts.DryRun)
+            {
+                std::cout << "[dry-run] fetch " << Url << " -> " << Target.string() << "\n";
+                continue;
+            }
+            fs::create_directories(Target.parent_path());
+            const fs::path Partial = Target.string() + ".part";
+            if (Run("curl -fsSL -A DarkArisenArtFetch/1.0 -o " + Quote(Partial.string()) + " " + Quote(Url), Opts) != 0) return CommandFailed;
+            if (Digest(Partial) != Expected)
+            {
+                std::cerr << "error: " << Relative << " does not match its pinned sha256\n";
+                std::error_code Ignored;
+                fs::remove(Partial, Ignored);
+                return LockError;
+            }
+            fs::rename(Partial, Target);
+            ++Fetched;
+        }
+        std::cout << "scanned art: " << Fetched << " fetched, " << Present << " already present (" << Root.string() << ")\n";
+        return Ok;
+    }
+
+    /**
      * The Atom shader path without the Asset Processor: preprocess with the engine's shader
      * include roots, AZSL -> HLSL with O3DE's azslc 1.8.22, then HLSL -> SPIR-V (Vulkan) and DXIL
      * (DX12) with DXC 1.8.2505.1, the compiler O3DE 2605.0 pins. Every .azsl under the project's
@@ -674,7 +738,7 @@ namespace
 
     void PrintUsage()
     {
-        std::cout << "usage: DarkArisenO3DE <doctor|lock|bootstrap|configure|build|test|package|import-glb|probe|shader-check|materialize>\n"
+        std::cout << "usage: DarkArisenO3DE <doctor|lock|bootstrap|configure|build|test|package|import-glb|probe|shader-check|materialize|fetch-art>\n"
                      "       [--repo=PATH]\n"
                      "       [--engine=PATH] [--build-dir=PATH] [--config=profile|debug|release] [--dry-run]\n"
                      "       import-glb --manifest=PATH --glb=PATH [--min-vertices=N]\n"
@@ -740,6 +804,7 @@ int main(int ArgumentCount, char** Arguments)
     if (Opts.Command == "probe") return CommandProbe(Opts, Lock);
     if (Opts.Command == "shader-check") return CommandShaderCheck(Opts);
     if (Opts.Command == "materialize") return CommandMaterialize(Opts);
+    if (Opts.Command == "fetch-art") return CommandFetchArt(Opts);
     PrintUsage();
     return Usage;
 }

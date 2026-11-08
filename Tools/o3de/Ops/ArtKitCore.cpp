@@ -645,8 +645,15 @@ namespace DarkArisen::Tools::Art
             std::string Pbr = "\"baseColorFactor\":[" + Num(Linear(M.BaseColor[0])) + "," + Num(Linear(M.BaseColor[1])) + "," + Num(Linear(M.BaseColor[2])) + "," +
                 Num(M.BaseColor[3]) + "],\"metallicFactor\":" + Num(M.Metallic) + ",\"roughnessFactor\":" + Num(M.Roughness);
             if (!M.BaseColorTexture.empty()) Pbr += ",\"baseColorTexture\":{\"index\":" + std::to_string(Texture(M.BaseColorTexture)) + "}";
+            int Orm = -1;
+            if (!M.OrmTexture.empty())
+            {
+                Orm = Texture(M.OrmTexture);
+                Pbr += ",\"metallicRoughnessTexture\":{\"index\":" + std::to_string(Orm) + "}";
+            }
             std::string Mat = "{\"name\":\"" + Escape(M.Name) + "\",\"pbrMetallicRoughness\":{" + Pbr + "}";
             if (!M.NormalTexture.empty()) Mat += ",\"normalTexture\":{\"index\":" + std::to_string(Texture(M.NormalTexture)) + "}";
+            if (Orm >= 0) Mat += ",\"occlusionTexture\":{\"index\":" + std::to_string(Orm) + "}";
             if (M.Mask) Mat += ",\"alphaMode\":\"MASK\",\"alphaCutoff\":" + Num(M.AlphaCutoff);
             if (M.DoubleSided) Mat += ",\"doubleSided\":true";
             return Mat + "}";
@@ -682,7 +689,8 @@ namespace DarkArisen::Tools::Art
                 Image = static_cast<int>(ImageIndex.size());
                 ImageIndex[File] = Image;
                 if (Image) Images += ",";
-                Images += "{\"uri\":\"../Textures/" + File + "\"}";
+                // kit textures by name under Textures; scanned art by its path under Assets/Art (e.g. Scanned/<set>/<file>)
+                Images += "{\"uri\":\"../" + (File.find('/') == std::string::npos ? "Textures/" + File : File) + "\"}";
             }
             else Image = Found->second;
             if (TextureCount) Textures += ",";

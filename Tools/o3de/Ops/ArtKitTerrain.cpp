@@ -390,7 +390,8 @@ namespace DarkArisen::Tools::Art
             J += "    \"materialTypeVersion\": 1,\n";
             J += "    \"propertyValues\": {\n";
             J += "        \"baseColor.color\": [" + Num(Part.BaseColor[0]) + ", " + Num(Part.BaseColor[1]) + ", " + Num(Part.BaseColor[2]) + "],\n";
-            J += "        \"baseColor.textureMap\": \"../../Art/Textures/" + Part.BaseColorTexture + "\",\n";
+            const std::string Texture = Part.BaseColorTexture.find('/') == std::string::npos ? "Textures/" + Part.BaseColorTexture : Part.BaseColorTexture;
+            J += "        \"baseColor.textureMap\": \"../../Art/" + Texture + "\",\n";
             J += "        \"opacity.alphaCutoff\": " + Num(Leaf ? Part.AlphaCutoff : 0.0) + ",\n";
             J += "        \"surface.roughness\": " + Num(Part.Roughness) + ",\n";
             J += std::string("        \"translucency.color\": ") + (Leaf ? "[0.55, 0.75, 0.25]" : "[0, 0, 0]") + ",\n";
