@@ -70,7 +70,7 @@ namespace DarkArisen::Tools::Art
         /** Motion clip retargeted onto the person's skeleton (glTF: skeleton plus one animation). */
         bool BuildMotion(const std::string& PersonId, const std::string& ClipId, std::string& OutGltf, std::string& Problem);
         /** Gameplay motion library clip (glTF: skeleton plus one animation named Spec.Name). */
-        bool BuildLibraryMotion(const MotionSpec& Spec, std::string& OutGltf, std::string& Problem);
+        bool BuildLibraryMotion(const MotionSpec& Spec, std::string& OutGltf, std::string& Problem, double* GroundSpeed = nullptr);
         /** Every cast and crowd id, sorted. */
         static std::vector<std::string> People();
         /** Clip ids of the motion library, in a fixed order. */

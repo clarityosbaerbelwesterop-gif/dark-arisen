@@ -111,7 +111,8 @@ namespace DarkArisen::Tools::Art::Humans
         }
     }
 
-    bool BuildMotionPoses(const Source& Data, const Body& B, const Motion& Clip, const Motion* Upper, const MotionSpec& Spec, std::vector<Pose>& Out, std::string& Problem)
+    bool BuildMotionPoses(const Source& Data, const Body& B, const Motion& Clip, const Motion* Upper, const MotionSpec& Spec, std::vector<Pose>& Out, std::string& Problem,
+        double* GroundSpeed)
     {
         const double Length = static_cast<double>(Clip.Frames.size() - 1) * Clip.FrameTime;
         if (!(Spec.From >= Clip.FrameTime && Spec.To > Spec.From && Spec.To <= Length + 1e-9))
@@ -169,6 +170,15 @@ namespace DarkArisen::Tools::Art::Humans
             if (Turn > Pi) Turn -= 2.0 * Pi;
             if (Turn < -Pi) Turn += 2.0 * Pi;
             Pivot0 = A.Head[R];
+        }
+
+        if (GroundSpeed)
+        {
+            // body units are decimetres (MakeHuman); the writer scales by 0.1
+            const Pose A = Sample(Data, B, Clip, SourceTime(0.0), Reference, Spec);
+            const Pose C = Sample(Data, B, Clip, SourceTime(Duration), Reference, Spec);
+            const double Dx = C.Head[R].X - A.Head[R].X, Dz = C.Head[R].Z - A.Head[R].Z;
+            *GroundSpeed = std::sqrt(Dx * Dx + Dz * Dz) * 0.1 / Duration;
         }
 
         Out.clear();

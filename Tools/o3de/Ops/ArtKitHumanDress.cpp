@@ -2135,7 +2135,7 @@ namespace DarkArisen::Tools::Art
         return true;
     }
 
-    bool HumanFactory::BuildLibraryMotion(const MotionSpec& Spec, std::string& OutGltf, std::string& Problem)
+    bool HumanFactory::BuildLibraryMotion(const MotionSpec& Spec, std::string& OutGltf, std::string& Problem, double* GroundSpeed)
     {
         const PersonSpec* Person = FindPerson(Spec.Person);
         if (!Person)
@@ -2151,7 +2151,7 @@ namespace DarkArisen::Tools::Art
         const Motion* Upper = nullptr;
         if (!Spec.UpperClip.empty() && !(Upper = LoadMotion(P->Reader, P->Data, Spec.UpperClip, Problem))) return false;
         std::vector<Pose> Poses;
-        if (!BuildMotionPoses(P->Data, B, *Clip, Upper, Spec, Poses, Problem)) return false;
+        if (!BuildMotionPoses(P->Data, B, *Clip, Upper, Spec, Poses, Problem, GroundSpeed)) return false;
         OutGltf = WriteMotionGltf(P->Data, B, Spec.Name, Poses, Spec.Duration() / static_cast<double>(Poses.size() - 1));
         return true;
     }

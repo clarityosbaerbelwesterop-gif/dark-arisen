@@ -349,7 +349,8 @@ namespace DarkArisen::Tools::Art
         for (const LibraryEntry& E : Library)
         {
             std::string Gltf, Problem;
-            if (!Humans->BuildLibraryMotion(E.Spec, Gltf, Problem))
+            double GroundSpeed = 0.0;
+            if (!Humans->BuildLibraryMotion(E.Spec, Gltf, Problem, &GroundSpeed))
             {
                 ProblemList.push_back("motion " + E.Spec.Name + ": " + Problem);
                 continue;
@@ -359,6 +360,7 @@ namespace DarkArisen::Tools::Art
             Manifest += std::string(First ? "" : ",") + "\n    {\"name\": \"" + S.Name + "\", \"set\": \"" + E.Set + "\", \"state\": \"" + E.State +
                 "\", \"file\": \"Assets/Art/Characters/Motions/" + S.Name + ".gltf\", \"duration\": " + GltfBits::Num(S.Duration()) +
                 ", \"loop\": " + (S.Loop ? "true" : "false") + ", \"rootMotion\": " + (S.Loop || S.InPlace ? "false" : "true") +
+                ", \"groundSpeed\": " + GltfBits::Num(std::floor(GroundSpeed * 1000.0 + 0.5) / 1000.0) +
                 ", \"contact\": " + (S.Contact >= 0.0 ? GltfBits::Num(S.ContactAt) : std::string("null")) + ", \"timing\": " +
                 (E.Timing.empty() ? std::string("null") : "\"" + E.Timing + "\"") + ", \"source\": \"CMU " + S.Clip + " " + GltfBits::Num(S.From) + "-" +
                 GltfBits::Num(S.To) + " s" + (S.Mirror ? ", mirrored" : "") + (S.UpperClip.empty() ? "" : ", upper body CMU " + S.UpperClip + " at " + GltfBits::Num(S.UpperAt) + " s") + "\"}";

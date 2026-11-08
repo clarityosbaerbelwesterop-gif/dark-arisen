@@ -315,5 +315,7 @@ namespace DarkArisen::Tools::Art::Humans
     /** Skeleton plus one animation from precomputed poses, one every FrameTime seconds. */
     std::string WriteMotionGltf(const Source& Data, const Body& B, const std::string& Name, const std::vector<Pose>& Poses, double FrameTime);
     /** Library clip (ArtKitHumanMotion.cpp): cut, time-warped, mirrored, looped and layered as MotionSpec asks. */
-    bool BuildMotionPoses(const Source& Data, const Body& B, const Motion& Clip, const Motion* Upper, const MotionSpec& Spec, std::vector<Pose>& Out, std::string& Problem);
+    /** GroundSpeed (optional): horizontal root travel of the cut in metres per second, before any in-place or loop handling. */
+    bool BuildMotionPoses(const Source& Data, const Body& B, const Motion& Clip, const Motion* Upper, const MotionSpec& Spec, std::vector<Pose>& Out, std::string& Problem,
+        double* GroundSpeed = nullptr);
 }
