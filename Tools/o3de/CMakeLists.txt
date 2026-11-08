@@ -8,6 +8,10 @@ if(MSVC)
     add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
 else()
     set(DARKARISEN_TOOL_WARNINGS -Wall -Wextra -Wpedantic -Werror)
+    # Materialised content is checked byte for byte, so arithmetic must not depend on the target ISA:
+    # compilers that default to an FMA-capable ISA (GCC 15 on ubuntu 26.04) would otherwise fuse a*b+c
+    # and round differently. Applies to the core added below as well. MSVC does not contract under /fp:precise.
+    add_compile_options(-ffp-contract=off)
 endif()
 
 # The engine-neutral core supplies the rules the materialiser validates against (mission levels,
