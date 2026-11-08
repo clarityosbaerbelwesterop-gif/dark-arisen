@@ -27,8 +27,13 @@ target_link_libraries(DarkArisenAssetPipeline PUBLIC DarkArisen::Core)
 target_compile_features(DarkArisenAssetPipeline PUBLIC cxx_std_20)
 target_compile_options(DarkArisenAssetPipeline PRIVATE ${DARKARISEN_TOOL_WARNINGS})
 
+# decimate-art: game-ready versions of heavy scans (native quadric-error simplifier, no third-party code)
+add_library(DarkArisenArtDecimate STATIC Ops/ArtKitDecimate.cpp)
+target_link_libraries(DarkArisenArtDecimate PUBLIC DarkArisenAssetPipeline)
+target_compile_options(DarkArisenArtDecimate PRIVATE ${DARKARISEN_TOOL_WARNINGS})
+
 add_executable(DarkArisenO3DE Ops/DarkArisenO3DE.cpp)
-target_link_libraries(DarkArisenO3DE PRIVATE DarkArisenAssetPipeline)
+target_link_libraries(DarkArisenO3DE PRIVATE DarkArisenAssetPipeline DarkArisenArtDecimate)
 target_compile_options(DarkArisenO3DE PRIVATE ${DARKARISEN_TOOL_WARNINGS})
 
 enable_testing()

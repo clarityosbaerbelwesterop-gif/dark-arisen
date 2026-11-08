@@ -5,8 +5,10 @@
 // Every step is deterministic and fails closed with a stable exit code:
 //   0 ok, 2 usage, 3 lock file, 4 missing prerequisite, 5 engine checkout, 6 command failed.
 
+#include "ArtKitDecimate.h"
 #include "AssetPipeline.h"
 #include "Hash.h"
+#include "Json.h"
 #include "Materializer.h"
 
 #include <algorithm>
@@ -551,6 +553,60 @@ namespace
     }
 
     /**
+     * Game-ready versions of the heavy scans (ContentSource/ThirdParty/PolyHaven/Decimate.json): each fetched
+     * scan under Assets/Art/Scanned/models/<id>/ is simplified to its triangle budget and written to
+     * Assets/Art/Scanned/game/<id>_<n>.gltf, one per variant (git-ignored, like the scans). Run after fetch-art.
+     */
+    int CommandDecimateArt(const Options& Opts)
+    {
+        const fs::path ListPath = Opts.RepoRoot / "ContentSource" / "ThirdParty" / "PolyHaven" / "Decimate.json";
+        const fs::path Root = Opts.RepoRoot / "Engine" / "O3DE" / "DarkArisen" / "Assets" / "Art" / "Scanned";
+        std::ifstream In(ListPath);
+        const std::string Text((std::istreambuf_iterator<char>(In)), std::istreambuf_iterator<char>());
+        DarkArisen::Tools::JsonValue List;
+        std::string Problem;
+        if (!In || !DarkArisen::Tools::JsonReader::Parse(Text, List, Problem) || !List.Find("models"))
+        {
+            std::cerr << "error: cannot read " << ListPath << " " << Problem << "\n";
+            return LockError;
+        }
+        fs::create_directories(Root / "game");
+        int Done = 0;
+        for (const auto& Entry : List.Find("models")->Items)
+        {
+            const std::string Id = Entry.Find("id") ? Entry.Find("id")->Text : std::string();
+            const std::string File = Entry.Find("source") ? Entry.Find("source")->Text : std::string();
+            const auto Budget = static_cast<std::size_t>(Entry.Find("triangles") ? Entry.Find("triangles")->Number : 0.0);
+            if (Id.empty() || File.empty() || Budget == 0 || Id.find('/') != std::string::npos || File.find("..") != std::string::npos)
+            {
+                std::cerr << "error: " << ListPath << ": malformed entry\n";
+                return LockError;
+            }
+            if (Opts.DryRun)
+            {
+                std::cout << "[dry-run] decimate " << Id << " to " << Budget << " triangles\n";
+                continue;
+            }
+            std::vector<std::string> Gltfs;
+            DarkArisen::Tools::Art::DecimateStats Stats;
+            if (!DarkArisen::Tools::Art::DecimateGltf(Root / "models" / Id / File, Budget, "models/" + Id + "/", Id, Gltfs, Stats, Problem))
+            {
+                std::cerr << "error: " << Id << ": " << Problem << " (run fetch-art first)\n";
+                return CommandFailed;
+            }
+            for (std::size_t K = 0; K < Gltfs.size(); ++K)
+            {
+                std::ofstream Out(Root / "game" / (Id + "_" + std::to_string(K) + ".gltf"), std::ios::binary);
+                Out << Gltfs[K];
+            }
+            std::cout << Id << ": " << Gltfs.size() << " variants, " << Stats.SourceTriangles << " -> " << Stats.Triangles << " triangles\n";
+            ++Done;
+        }
+        std::cout << "decimated " << Done << " scans into " << (Root / "game").string() << "\n";
+        return Ok;
+    }
+
+    /**
      * The Atom shader path without the Asset Processor: preprocess with the engine's shader
      * include roots, AZSL -> HLSL with O3DE's azslc 1.8.22, then HLSL -> SPIR-V (Vulkan) and DXIL
      * (DX12) with DXC 1.8.2505.1, the compiler O3DE 2605.0 pins. Every .azsl under the project's
@@ -738,7 +794,7 @@ namespace
 
     void PrintUsage()
     {
-        std::cout << "usage: DarkArisenO3DE <doctor|lock|bootstrap|configure|build|test|package|import-glb|probe|shader-check|materialize|fetch-art>\n"
+        std::cout << "usage: DarkArisenO3DE <doctor|lock|bootstrap|configure|build|test|package|import-glb|probe|shader-check|materialize|fetch-art|decimate-art>\n"
                      "       [--repo=PATH]\n"
                      "       [--engine=PATH] [--build-dir=PATH] [--config=profile|debug|release] [--dry-run]\n"
                      "       import-glb --manifest=PATH --glb=PATH [--min-vertices=N]\n"
@@ -805,6 +861,7 @@ int main(int ArgumentCount, char** Arguments)
     if (Opts.Command == "shader-check") return CommandShaderCheck(Opts);
     if (Opts.Command == "materialize") return CommandMaterialize(Opts);
     if (Opts.Command == "fetch-art") return CommandFetchArt(Opts);
+    if (Opts.Command == "decimate-art") return CommandDecimateArt(Opts);
     PrintUsage();
     return Usage;
 }

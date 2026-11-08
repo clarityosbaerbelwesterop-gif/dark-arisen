@@ -381,14 +381,25 @@ namespace DarkArisen::Tools::Art
             }
         }
 
-        /** Game-ready scanned model for a species, or null to build the kit's own (heavy scans wait for decimation). */
-        const char* ScannedPlant(const Species Kind, const int Variant)
+        /**
+         * Game-ready scanned model for a species, or empty to build the kit's own. Light scans are used as fetched
+         * (Assets/Art/Scanned/models); heavy ones as decimate-art writes them (Assets/Art/Scanned/game/<id>_<n>).
+         */
+        std::string ScannedPlant(const Species Kind, const int Variant, const Biome Where)
         {
+            const auto Game = [](const char* Id, int N) { return std::string("Assets/Art/Scanned/game/") + Id + "_" + std::to_string(N) + ".gltf"; };
             switch (Kind)
             {
-            case Species::Fern: return "fern_02";
-            case Species::Stone: return Variant % 2 == 0 ? "rock_moss_set_01" : "rock_moss_set_02";
-            default: return nullptr;
+            case Species::Fern: return "Assets/Art/Scanned/models/fern_02/fern_02_2k.gltf";
+            case Species::Stone:
+                return Variant % 2 == 0 ? "Assets/Art/Scanned/models/rock_moss_set_01/rock_moss_set_01_2k.gltf"
+                                        : "Assets/Art/Scanned/models/rock_moss_set_02/rock_moss_set_02_2k.gltf";
+            case Species::Boulder: return Variant % 2 == 0 ? Game("boulder_01", 0) : Game("namaqualand_boulder_02", 0);
+            case Species::Shrub: case Species::Gorse: return Game("searsia_lucida", (Variant * 3 + static_cast<int>(Kind)) % 7);
+            case Species::Broadleaf:
+                if (Where == Biome::Tropical) return Variant == 0 ? Game("island_tree_01", 0) : Variant == 1 ? Game("island_tree_02", 0) : Game("island_tree_03", 0);
+                return Variant == 1 ? Game("island_tree_02", 0) : Game("tree_small_02", 0);
+            default: return {};
             }
         }
 
@@ -868,13 +879,15 @@ namespace DarkArisen::Tools::Art
                 if (Pick->Tree && NormalAt(static_cast<int>(Fx), static_cast<int>(Fy)).Z < 0.86) continue;
                 const int Variant = static_cast<int>(R.Unit() * 3.0);
                 const std::string Key = std::string(SpeciesName(Pick->Kind)) + "_" + std::to_string(Variant);
-                auto Known = PlantModels.find(Key);
+                // the scanned pick depends on the biome; the kit's own models do not (their names stay Species_Variant)
+                const std::string CacheKey = Key + "@" + std::to_string(static_cast<int>(Spec.Kind));
+                auto Known = PlantModels.find(CacheKey);
                 if (Known == PlantModels.end())
                 {
                     // scanned CC0 models where a game-ready one exists (ContentSource/ThirdParty/PolyHaven/Scanned.lock), else the kit's own
-                    const char* Scanned = ScannedPlant(Pick->Kind, Variant);
-                    Known = Scanned ? PlantModels.emplace(Key, std::vector<PlantPart>{{std::string("Assets/Art/Scanned/models/") + Scanned + "/" + Scanned + "_2k.gltf", ""}}).first
-                                    : PlantModels.emplace(Key, EmitPlant(Key, Pick->Kind, BuildPlant(Pick->Kind, Variant, Spec.Kind))).first;
+                    const std::string Scanned = ScannedPlant(Pick->Kind, Variant, Spec.Kind);
+                    Known = !Scanned.empty() ? PlantModels.emplace(CacheKey, std::vector<PlantPart>{{Scanned, ""}}).first
+                                             : PlantModels.emplace(CacheKey, EmitPlant(Key, Pick->Kind, BuildPlant(Pick->Kind, Variant, Spec.Kind))).first;
                 }
                 Art.Plants.push_back({Known->second, X, Y, Z - 0.05, R.Range(0.0, 360.0), R.Range(0.85, 1.2)});
             }
