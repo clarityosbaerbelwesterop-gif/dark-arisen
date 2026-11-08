@@ -16,15 +16,17 @@
 
 The world is one archipelago of about 12 × 10 km (about 120 km², of which about 60–75 km² is land). For comparison, RDR2's map is about 75 km² and Elden Ring's Lands Between about 79 km². Sea lanes join the regions; there is no loading screen inside the world.
 
-| Region | Character | Main story |
+| Region | Character | Main story (from the contracts) |
 |---|---|---|
-| Moran | tropical start islands | Chapters 1–2 |
-| Rexa & The Mire | colonial port city, jungle, swamp | Chapters 2–5 |
-| Highmoore | highland basin, barrows, Crystal Caves | optional, mid-game |
-| Ashenmoor | volcanic island chain, ash jungle | Chapters 6–7 |
-| The Quiet Coast (Fjordlund) | cold fjords, villages, lighthouse chain | Chapters 7–8 |
-| Open Sea & Fort Carrion | naval waters, Armada fortress | Chapters 8–10 |
+| Moran | tropical start islands, Ethan's Grove | Chapters 1–2, 9 |
+| Rexa & The Mire | colonial port, Puerto de la Corona, swamp back routes | Chapters 3–5 |
+| Highmoore (the contested holding) | highland moor, Crystal Passage, northern oath | Chapters 5–7 |
+| Open Sea & Fort Carrion | naval waters, Armada occupation and final screen | Chapters 5, 7, 8, 10 |
+| Ashenmoor | volcanic island chain, ash jungle | no main-story contract yet: open-world region (exploration, side quests) |
+| The Quiet Coast (Fjordlund) | cold fjords, villages, lighthouse chain | no main-story contract yet: open-world region (exploration, side quests) |
 | The Maw | post-story only, never blocks the credits | — |
+
+Ship decks (La Liberación, Draven's flagship, the prison navigator) and the Harlow dream are places the story moves into, not regions on the map.
 
 Mission levels become **places in the world**. The 34 missions keep their contracts; their geometry is placed at world coordinates.
 
@@ -45,7 +47,7 @@ Mission levels become **places in the world**. The 34 missions keep their contra
 
 ## Decisions taken here, revisable by the owner
 
-- **World geography** is the region table above. Moran is in the south-west; the sea lanes follow the chapter order.
+- **World geography** is the region table above. Moran is in the south-west; the sea lanes follow the chapter order, and Ashenmoor and the Quiet Coast lie off the main lanes as places to discover.
 - **Generated world data** (heightfields, splat maps) is built on the build host, not committed. The repository holds the generators and checksums. This settles the open "keep committing materialised art" question for world-scale data only.
 - **Lighting reference** is a physically based sun plus a CC0 HDRI sky. Renders use AgX tone mapping.
 

@@ -8,6 +8,7 @@
 #include "ArtKitLibrary.h"
 
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <map>
 
@@ -380,6 +381,17 @@ namespace DarkArisen::Tools::Art
             }
         }
 
+        /** Game-ready scanned model for a species, or null to build the kit's own (heavy scans wait for decimation). */
+        const char* ScannedPlant(const Species Kind, const int Variant)
+        {
+            switch (Kind)
+            {
+            case Species::Fern: return "fern_02";
+            case Species::Stone: return Variant % 2 == 0 ? "rock_moss_set_01" : "rock_moss_set_02";
+            default: return nullptr;
+            }
+        }
+
         /** DarkArisenFoliage material (Assets/Materials/Foliage) for one part of a plant. */
         std::string FoliageMaterialJson(const Material& Part, const Wind& W, const double BendHeight, const bool GroundCover = false)
         {
@@ -685,6 +697,80 @@ namespace DarkArisen::Tools::Art
                 for (int K = 0; K < 3; ++K) Px[K] = static_cast<std::uint8_t>(std::lround(Clamp(C[static_cast<std::size_t>(K)] * Grain, 0.0, 1.0) * 255.0));
             }
         }
+        // Splat for the DarkArisenTerrain material: weights of four scanned layers (ground, path, rock, accent)
+        // from the same masks as the macro colour, at half its resolution.
+        {
+            const int Sw = std::max(2, Tw / 2), Sh = std::max(2, Th / 2);
+            Image Splat;
+            Splat.Width = Sw;
+            Splat.Height = Sh;
+            Splat.Channels = 4;
+            Splat.Pixels.assign(static_cast<std::size_t>(Sw * Sh * 4), 0);
+            for (int Sy = 0; Sy < Sh; ++Sy)
+            {
+                for (int Sx = 0; Sx < Sw; ++Sx)
+                {
+                    const double X = Ex0 + (Sx + 0.5) * (Ex1 - Ex0) / Sw, Y = Ey1 - (Sy + 0.5) * (Ey1 - Ey0) / Sh;
+                    const auto [Z, Nn] = Bilinear(X, Y);
+                    const Near N = Nearest(X, Y);
+                    const double P = 0.65 * Fractal(X, Y, 30.0, 3, Seed + 11u) + 0.35 * Fractal(X, Y, 8.0, 2, Seed + 17u);
+                    const double Q = Fractal(X, Y, 5.0, 2, Seed + 13u);
+                    const double Road = 1.0 - SmoothStep(-0.6, 1.0 + 0.6 * Q, N.D);
+                    const double Steep = SmoothStep(0.88, 0.72, Nn.Z);
+                    const double Bank = Ponds.empty() ? 0.0 : SmoothStep(1.12, 0.86, PondAt(X, Y));
+                    double W1 = 0.0, W2 = Steep, W3 = 0.0;
+                    switch (Spec.Kind)
+                    {
+                    case Biome::Moor: W1 = Road + Bank; W3 = SmoothStep(0.36, 0.26, P); break;
+                    case Biome::Tropical:
+                        W1 = SmoothStep(Spec.BaseZ + 0.4, Spec.BaseZ - 0.1, Z) * SmoothStep(10.0, 16.0, N.D);
+                        W3 = Road + 0.6 * SmoothStep(0.58, 0.72, P);
+                        break;
+                    case Biome::Mire: W1 = Road + Bank + SmoothStep(Spec.BaseZ - 0.1, Spec.BaseZ - 0.5, Z); W3 = SmoothStep(0.45, 0.6, P); break;
+                    case Biome::Grove: W1 = Road; W3 = SmoothStep(0.52, 0.66, P); break;
+                    case Biome::Dream: default: W1 = SmoothStep(0.4, 0.7, P); break;
+                    }
+                    W1 = Clamp(W1, 0.0, 1.0) * (1.0 - W2);
+                    W3 = Clamp(W3, 0.0, 1.0) * (1.0 - W2) * (1.0 - W1);
+                    const double W0 = Clamp(1.0 - W1 - W2 - W3, 0.0, 1.0);
+                    std::uint8_t* Px = &Splat.Pixels[static_cast<std::size_t>((Sy * Sw + Sx) * 4)];
+                    const double W[4] = {W0, W1, W2, W3};
+                    for (int K = 0; K < 4; ++K) Px[K] = static_cast<std::uint8_t>(std::lround(Clamp(W[K], 0.0, 1.0) * 255.0));
+                }
+            }
+            Output.push_back({"Assets/Art/Textures/T_TerrainSplat_" + Spec.Name + ".png", EncodePng(Splat)});
+
+            // scanned layers per biome: ground, path, rock (triplanar), accent; tiles are the scans' real widths
+            struct Layer
+            {
+                const char* Set;
+                double Tile;
+            };
+            const Layer Grass{"sparse_grass", 2.0}, Forest{"forrest_ground_01", 2.0}, Cliff{"rock_face_03", 2.7}, Mossy{"rock_pitted_mossy", 1.0},
+                SandL{"sand_01", 1.5}, MudL{"brown_mud_02", 1.3};
+            std::array<Layer, 4> L{Grass, Forest, Cliff, Mossy};
+            if (Spec.Kind == Biome::Tropical) L = {Grass, SandL, Cliff, Forest};
+            if (Spec.Kind == Biome::Mire) L = {Grass, MudL, Mossy, Forest};
+            if (Spec.Kind == Biome::Dream) L = {MudL, Forest, Cliff, Mossy};
+            using GltfBits::Num;
+            std::string J = "{\n    \"materialType\": \"../Types/DarkArisenTerrain.materialtype\",\n    \"materialTypeVersion\": 1,\n    \"propertyValues\": {\n";
+            for (int K = 0; K < 4; ++K)
+            {
+                const std::string Base = std::string("../../Art/Scanned/") + L[static_cast<std::size_t>(K)].Set + "/" + L[static_cast<std::size_t>(K)].Set;
+                const std::string Group = "        \"layer" + std::to_string(K);
+                J += Group + ".arm\": \"" + Base + "_arm_2k.jpg\",\n";
+                J += Group + ".color\": \"" + Base + "_diff_2k.jpg\",\n";
+                J += Group + ".normal\": \"" + Base + "_nor_gl_2k.jpg\",\n";
+            }
+            J += "        \"macro.blendSharpness\": 3,\n";
+            J += "        \"macro.color\": \"../../Art/Textures/T_Terrain_" + Spec.Name + ".png\",\n";
+            J += "        \"macro.splat\": \"../../Art/Textures/T_TerrainSplat_" + Spec.Name + ".png\",\n";
+            J += "        \"macro.strength\": 0.6,\n";
+            J += "        \"macro.tiles\": [" + Num(L[0].Tile) + ", " + Num(L[1].Tile) + ", " + Num(L[2].Tile) + ", " + Num(L[3].Tile) + "]\n    }\n}\n";
+            Art.Material = "Assets/Materials/Terrain/M_Terrain_" + Spec.Name + ".material";
+            Output.push_back({Art.Material, J});
+        }
+
         const std::string TextureName = "T_Terrain_" + Spec.Name + ".png";
         Output.push_back({"Assets/Art/Textures/" + TextureName, EncodePng(Colour)});
         Material GroundMat;
@@ -783,12 +869,19 @@ namespace DarkArisen::Tools::Art
                 const int Variant = static_cast<int>(R.Unit() * 3.0);
                 const std::string Key = std::string(SpeciesName(Pick->Kind)) + "_" + std::to_string(Variant);
                 auto Known = PlantModels.find(Key);
-                if (Known == PlantModels.end()) Known = PlantModels.emplace(Key, EmitPlant(Key, Pick->Kind, BuildPlant(Pick->Kind, Variant, Spec.Kind))).first;
+                if (Known == PlantModels.end())
+                {
+                    // scanned CC0 models where a game-ready one exists (ContentSource/ThirdParty/PolyHaven/Scanned.lock), else the kit's own
+                    const char* Scanned = ScannedPlant(Pick->Kind, Variant);
+                    Known = Scanned ? PlantModels.emplace(Key, std::vector<PlantPart>{{std::string("Assets/Art/Scanned/models/") + Scanned + "/" + Scanned + "_2k.gltf", ""}}).first
+                                    : PlantModels.emplace(Key, EmitPlant(Key, Pick->Kind, BuildPlant(Pick->Kind, Variant, Spec.Kind))).first;
+                }
                 Art.Plants.push_back({Known->second, X, Y, Z - 0.05, R.Range(0.0, 360.0), R.Range(0.85, 1.2)});
             }
         }
 
-        // ---- still water: one disc per pond, its rim buried in the bank
+        // ---- still water: one disc per pond, its rim buried in the bank (its own model: the ground takes the terrain material)
+        Mesh Water("SM_Art_Ponds_" + Spec.Name);
         for (const Pond& P : Ponds)
         {
             const double Rw = P.R * std::sqrt(1.0 - 0.15 / (PondDepth + 0.3));
@@ -801,7 +894,7 @@ namespace DarkArisen::Tools::Art
                 WV.push_back(Vertex{V3{P.X + Cos(A) * Rw, P.Y + Sin(A) * Rw, P.Level}, V3{0, 0, 1}, 0.5 + 0.5 * Cos(A), 0.5 - 0.5 * Sin(A)});
                 WI.insert(WI.end(), {0u, static_cast<std::uint32_t>(1 + K), static_cast<std::uint32_t>(1 + (K + 1) % Segments)});
             }
-            Ground.Indexed(Mat(M::PondWater), WV, WI);
+            Water.Indexed(Mat(M::PondWater), WV, WI);
         }
 
         for (const Mesh::Part& P : Cover.Parts())
@@ -816,6 +909,7 @@ namespace DarkArisen::Tools::Art
             Art.Cover.push_back(std::move(Part));
         }
 
+        if (!Ponds.empty()) Art.Ponds = Emit(Water.Name(), WriteGltf(Water, "Dark Arisen art kit (terrain)"));
         Art.Model = Emit(Ground.Name(), WriteGltf(Ground, "Dark Arisen art kit (terrain)"));
         Art.CollisionGltf = WriteCollisionGltf(Collide);
         return Art;

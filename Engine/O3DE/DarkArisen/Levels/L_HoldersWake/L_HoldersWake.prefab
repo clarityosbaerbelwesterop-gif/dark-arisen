@@ -66359,6 +66359,71 @@
             "Id": "Entity_[5901293955970086]",
             "Name": "Plant 424 SM_Art_Veg_Reeds_1"
         },
+        "Entity_[5904375515603146]": {
+            "Components": {
+                "Component_[1065727052877568]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 1065727052877568
+                },
+                "Component_[3022945569616625]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 3022945569616625
+                },
+                "Component_[3731653339873459]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 3731653339873459
+                },
+                "Component_[3748638376279374]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 3748638376279374
+                },
+                "Component_[4117737981563527]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 4117737981563527
+                },
+                "Component_[5848610499889788]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 5848610499889788
+                },
+                "Component_[7530613158931056]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 7530613158931056
+                },
+                "Component_[8505758586932671]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/models/sm_art_ponds_l_holderswake.azmodel",
+                                "assetId": {
+                                    "guid": "{F4EA6F78-06F9-5A9E-95C9-8E1EEA35E78E}",
+                                    "subId": 270626892
+                                }
+                            }
+                        }
+                    },
+                    "Id": 8505758586932671
+                },
+                "Component_[855094593827484]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 855094593827484,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            0,
+                            0,
+                            0
+                        ]
+                    }
+                },
+                "Component_[8903764905571986]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 8903764905571986
+                }
+            },
+            "Id": "Entity_[5904375515603146]",
+            "Name": "Ponds"
+        },
         "Entity_[5928415054755272]": {
             "Components": {
                 "Component_[1244364854854086]": {
@@ -90414,6 +90479,28 @@
                 "Component_[3884759539390024]": {
                     "$type": "EditorInspectorComponent",
                     "Id": 3884759539390024
+                },
+                "Component_[4056691286583792]": {
+                    "$type": "EditorMaterialComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "materials": [
+                                {
+                                    "Key": {},
+                                    "Value": {
+                                        "MaterialAsset": {
+                                            "assetHint": "assets/materials/terrain/m_terrain_l_holderswake.azmaterial",
+                                            "assetId": {
+                                                "guid": "{667F0707-6C5E-5630-86AF-8A5FE703B2E8}",
+                                                "subId": 0
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "Id": 4056691286583792
                 },
                 "Component_[4360104385360160]": {
                     "$type": "EditorOnlyEntityComponent",

@@ -1,0 +1,138 @@
+/*
+ * Dark Arisen terrain: four scanned detail layers (albedo, OpenGL normal, ARM) blended by a per-level splat
+ * map, under the level's baked macro colour. Layers tile in world metres at their scans' real width; the
+ * blend is height-aware (each layer's occlusion stands in for height) so grass gives way to rock along
+ * cracks instead of a soft smear; layer 2 (rock) is projected triplanar so cliffs do not stretch.
+ * Shared by the forward and depth passes.
+ */
+#pragma once
+
+#include <scenesrg_all.srgi>
+#include <viewsrg_all.srgi>
+#include <Atom/Features/PBR/DefaultObjectSrg.azsli>
+#include <Atom/RPI/ShaderResourceGroups/DefaultDrawSrg.azsli>
+#include <Atom/Features/InstancedTransforms.azsli>
+#include <Atom/Features/SrgSemantics.azsli>
+
+ShaderResourceGroup DarkArisenTerrainMaterialSrg : SRG_PerMaterial
+{
+    Texture2D m_macroColor;     // baked per level, sRGB, covers the terrain's UV 0..1
+    Texture2D m_splat;          // layer weights in RGBA, same UV
+    Texture2D m_layer0Color;
+    Texture2D m_layer0Normal;
+    Texture2D m_layer0Arm;
+    Texture2D m_layer1Color;
+    Texture2D m_layer1Normal;
+    Texture2D m_layer1Arm;
+    Texture2D m_layer2Color;
+    Texture2D m_layer2Normal;
+    Texture2D m_layer2Arm;
+    Texture2D m_layer3Color;
+    Texture2D m_layer3Normal;
+    Texture2D m_layer3Arm;
+    Sampler m_clampSampler
+    {
+        MinFilter = Linear;
+        MagFilter = Linear;
+        MipFilter = Linear;
+        AddressU = Clamp;
+        AddressV = Clamp;
+        AddressW = Clamp;
+    };
+    Sampler m_tileSampler
+    {
+        MaxAnisotropy = 8;
+        MinFilter = Linear;
+        MagFilter = Linear;
+        MipFilter = Linear;
+        ReductionType = Filter;
+        AddressU = Wrap;
+        AddressV = Wrap;
+        AddressW = Wrap;
+    };
+    float4 m_layerTile;         // metres per tile of layers 0..3
+    float m_macroStrength;      // 0: detail colour only, 1: detail re-tinted fully by the macro colour
+    float m_blendSharpness;     // height-aware blend contrast
+}
+
+struct TerrainSurface
+{
+    float3 m_albedo;
+    float3 m_normal;    // world space
+    float m_occlusion;
+    float m_roughness;
+};
+
+float3 DarkArisenTerrainDecodeNormal(float4 texel)
+{
+    float3 n = texel.xyz * 2.0 - 1.0;
+    n.z = sqrt(saturate(1.0 - dot(n.xy, n.xy)));
+    return n;
+}
+
+/** World-aligned tangent space on the ground plane: X east, Y north (OpenGL normal maps, +Y up in the texture). */
+float3 DarkArisenTerrainGroundNormal(float3 tangentNormal, float3 vertexNormal)
+{
+    // whiteout blend of the detail normal onto the geometric normal
+    return normalize(float3(tangentNormal.xy + vertexNormal.xy, tangentNormal.z * vertexNormal.z));
+}
+
+void DarkArisenTerrainSampleLayer(Texture2D color, Texture2D normalMap, Texture2D arm, float2 uv,
+    out float3 albedo, out float3 tangentNormal, out float3 armOut)
+{
+    albedo = color.Sample(DarkArisenTerrainMaterialSrg::m_tileSampler, uv).rgb;
+    tangentNormal = DarkArisenTerrainDecodeNormal(normalMap.Sample(DarkArisenTerrainMaterialSrg::m_tileSampler, uv));
+    armOut = arm.Sample(DarkArisenTerrainMaterialSrg::m_tileSampler, uv).rgb;
+}
+
+TerrainSurface DarkArisenTerrainEvaluate(float3 worldPosition, float3 vertexNormal, float2 uv)
+{
+    const float4 tile = max(DarkArisenTerrainMaterialSrg::m_layerTile, float4(0.05, 0.05, 0.05, 0.05));
+    float4 weights = DarkArisenTerrainMaterialSrg::m_splat.Sample(DarkArisenTerrainMaterialSrg::m_clampSampler, uv);
+
+    float3 c0, n0, a0, c1, n1, a1, c3, n3, a3;
+    DarkArisenTerrainSampleLayer(DarkArisenTerrainMaterialSrg::m_layer0Color, DarkArisenTerrainMaterialSrg::m_layer0Normal,
+        DarkArisenTerrainMaterialSrg::m_layer0Arm, worldPosition.xy / tile.x, c0, n0, a0);
+    DarkArisenTerrainSampleLayer(DarkArisenTerrainMaterialSrg::m_layer1Color, DarkArisenTerrainMaterialSrg::m_layer1Normal,
+        DarkArisenTerrainMaterialSrg::m_layer1Arm, worldPosition.xy / tile.y, c1, n1, a1);
+    DarkArisenTerrainSampleLayer(DarkArisenTerrainMaterialSrg::m_layer3Color, DarkArisenTerrainMaterialSrg::m_layer3Normal,
+        DarkArisenTerrainMaterialSrg::m_layer3Arm, worldPosition.xy / tile.w, c3, n3, a3);
+
+    // layer 2 (rock): triplanar, weighted by the normal's axes
+    float3 axes = pow(abs(vertexNormal), float3(4.0, 4.0, 4.0));
+    axes /= max(axes.x + axes.y + axes.z, 1e-4);
+    float3 cx, nx, ax, cy, ny, ay, cz, nz, az;
+    DarkArisenTerrainSampleLayer(DarkArisenTerrainMaterialSrg::m_layer2Color, DarkArisenTerrainMaterialSrg::m_layer2Normal,
+        DarkArisenTerrainMaterialSrg::m_layer2Arm, worldPosition.yz / tile.z, cx, nx, ax);
+    DarkArisenTerrainSampleLayer(DarkArisenTerrainMaterialSrg::m_layer2Color, DarkArisenTerrainMaterialSrg::m_layer2Normal,
+        DarkArisenTerrainMaterialSrg::m_layer2Arm, worldPosition.xz / tile.z, cy, ny, ay);
+    DarkArisenTerrainSampleLayer(DarkArisenTerrainMaterialSrg::m_layer2Color, DarkArisenTerrainMaterialSrg::m_layer2Normal,
+        DarkArisenTerrainMaterialSrg::m_layer2Arm, worldPosition.xy / tile.z, cz, nz, az);
+    const float3 c2 = cx * axes.x + cy * axes.y + cz * axes.z;
+    const float3 a2 = ax * axes.x + ay * axes.y + az * axes.z;
+    // swizzled per-projection normals back into world space (approximate, sign from the vertex normal)
+    const float3 n2World = normalize(
+        float3(nx.z * sign(vertexNormal.x), nx.x, nx.y) * axes.x +
+        float3(ny.x, ny.z * sign(vertexNormal.y), ny.y) * axes.y +
+        DarkArisenTerrainGroundNormal(nz, vertexNormal) * axes.z);
+
+    // height-aware blend: occlusion stands in for height, so crevices of one layer fill with the next first
+    const float4 heights = float4(a0.r, a1.r, a2.r, a3.r);
+    float4 blend = weights * (1.0 + DarkArisenTerrainMaterialSrg::m_blendSharpness * (heights - 0.5));
+    const float top = max(max(blend.x, blend.y), max(blend.z, blend.w));
+    blend = max(blend - (top - 0.25), 0.0);
+    blend /= max(blend.x + blend.y + blend.z + blend.w, 1e-4);
+
+    TerrainSurface surface;
+    const float3 detail = c0 * blend.x + c1 * blend.y + c2 * blend.z + c3 * blend.w;
+    const float3 macro = DarkArisenTerrainMaterialSrg::m_macroColor.Sample(DarkArisenTerrainMaterialSrg::m_clampSampler, uv).rgb;
+    const float detailLuma = max(dot(detail, float3(0.2126, 0.7152, 0.0722)), 1e-3);
+    surface.m_albedo = lerp(detail, macro * (detailLuma / 0.22), DarkArisenTerrainMaterialSrg::m_macroStrength * 0.5);
+    surface.m_normal = normalize(
+        DarkArisenTerrainGroundNormal(n0, vertexNormal) * blend.x + DarkArisenTerrainGroundNormal(n1, vertexNormal) * blend.y +
+        n2World * blend.z + DarkArisenTerrainGroundNormal(n3, vertexNormal) * blend.w);
+    const float3 arm = a0 * blend.x + a1 * blend.y + a2 * blend.z + a3 * blend.w;
+    surface.m_occlusion = arm.r;
+    surface.m_roughness = arm.g;
+    return surface;
+}

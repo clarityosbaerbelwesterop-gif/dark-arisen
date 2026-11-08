@@ -91,7 +91,9 @@ namespace DarkArisen::Tools::Art
 
     struct TerrainArt
     {
-        std::string Model;           // the ground with its ground cover
+        std::string Model;           // the ground
+        std::string Material;        // its DarkArisenTerrain material (scanned layers, splat, macro colour)
+        std::string Ponds;           // still water of the tarns and pools, empty when there are none
         std::string CollisionGltf;   // walkable ground triangles
         std::vector<Planting> Plants;
         std::vector<PlantPart> Cover;  // ground cover cards, one model per card material, placed at the origin

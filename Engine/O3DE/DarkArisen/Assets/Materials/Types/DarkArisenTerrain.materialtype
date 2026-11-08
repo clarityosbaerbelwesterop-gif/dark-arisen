@@ -1,0 +1,224 @@
+{
+    "description": "Dark Arisen terrain: four scanned detail layers blended by a per-level splat map (height-aware, rock triplanar) under the level's baked macro colour; sun with engine cascaded shadows, IBL and GI through the standard outputs.",
+    "version": 1,
+    "versionUpdates": [],
+    "propertyLayout": {
+        "propertyGroups": [
+            {
+                "name": "macro",
+                "displayName": "Macro",
+                "description": "Baked per level over the terrain's UV.",
+                "properties": [
+                    {
+                        "name": "color",
+                        "displayName": "Macro Color",
+                        "type": "Image",
+                        "connection": {
+                            "type": "ShaderInput",
+                            "name": "m_macroColor"
+                        },
+                        "description": "Large-scale colour; re-tints the detail layers."
+                    },
+                    {
+                        "name": "splat",
+                        "displayName": "Splat",
+                        "type": "Image",
+                        "connection": {
+                            "type": "ShaderInput",
+                            "name": "m_splat"
+                        },
+                        "description": "Weights of layers 0..3 in RGBA."
+                    },
+                    {
+                        "name": "strength",
+                        "displayName": "Macro Strength",
+                        "type": "Float",
+                        "defaultValue": 0.6,
+                        "min": 0.0,
+                        "max": 1.0,
+                        "connection": {
+                            "type": "ShaderInput",
+                            "name": "m_macroStrength"
+                        }
+                    },
+                    {
+                        "name": "blendSharpness",
+                        "displayName": "Blend Sharpness",
+                        "type": "Float",
+                        "defaultValue": 3.0,
+                        "min": 0.0,
+                        "max": 10.0,
+                        "connection": {
+                            "type": "ShaderInput",
+                            "name": "m_blendSharpness"
+                        },
+                        "description": "Height-aware blend contrast between layers (occlusion as height)."
+                    },
+                    {
+                        "name": "tiles",
+                        "displayName": "Layer Tiles (m)",
+                        "type": "Vector4",
+                        "defaultValue": [
+                            2.0,
+                            2.0,
+                            2.7,
+                            2.0
+                        ],
+                        "connection": {
+                            "type": "ShaderInput",
+                            "name": "m_layerTile"
+                        },
+                        "description": "Metres per tile of layers 0..3: the scans' real width."
+                    }
+                ]
+            },
+            {
+                "name": "layer0",
+                "displayName": "Layer 0: ground",
+                "properties": [
+                    {
+                        "name": "color",
+                        "displayName": "Albedo",
+                        "type": "Image",
+                        "connection": {
+                            "type": "ShaderInput",
+                            "name": "m_layer0Color"
+                        }
+                    },
+                    {
+                        "name": "normal",
+                        "displayName": "Normal (OpenGL)",
+                        "type": "Image",
+                        "connection": {
+                            "type": "ShaderInput",
+                            "name": "m_layer0Normal"
+                        }
+                    },
+                    {
+                        "name": "arm",
+                        "displayName": "ARM",
+                        "type": "Image",
+                        "connection": {
+                            "type": "ShaderInput",
+                            "name": "m_layer0Arm"
+                        },
+                        "description": "Occlusion, roughness, metal."
+                    }
+                ]
+            },
+            {
+                "name": "layer1",
+                "displayName": "Layer 1: path",
+                "properties": [
+                    {
+                        "name": "color",
+                        "displayName": "Albedo",
+                        "type": "Image",
+                        "connection": {
+                            "type": "ShaderInput",
+                            "name": "m_layer1Color"
+                        }
+                    },
+                    {
+                        "name": "normal",
+                        "displayName": "Normal (OpenGL)",
+                        "type": "Image",
+                        "connection": {
+                            "type": "ShaderInput",
+                            "name": "m_layer1Normal"
+                        }
+                    },
+                    {
+                        "name": "arm",
+                        "displayName": "ARM",
+                        "type": "Image",
+                        "connection": {
+                            "type": "ShaderInput",
+                            "name": "m_layer1Arm"
+                        },
+                        "description": "Occlusion, roughness, metal."
+                    }
+                ]
+            },
+            {
+                "name": "layer2",
+                "displayName": "Layer 2: rock (triplanar)",
+                "properties": [
+                    {
+                        "name": "color",
+                        "displayName": "Albedo",
+                        "type": "Image",
+                        "connection": {
+                            "type": "ShaderInput",
+                            "name": "m_layer2Color"
+                        }
+                    },
+                    {
+                        "name": "normal",
+                        "displayName": "Normal (OpenGL)",
+                        "type": "Image",
+                        "connection": {
+                            "type": "ShaderInput",
+                            "name": "m_layer2Normal"
+                        }
+                    },
+                    {
+                        "name": "arm",
+                        "displayName": "ARM",
+                        "type": "Image",
+                        "connection": {
+                            "type": "ShaderInput",
+                            "name": "m_layer2Arm"
+                        },
+                        "description": "Occlusion, roughness, metal."
+                    }
+                ]
+            },
+            {
+                "name": "layer3",
+                "displayName": "Layer 3: accent",
+                "properties": [
+                    {
+                        "name": "color",
+                        "displayName": "Albedo",
+                        "type": "Image",
+                        "connection": {
+                            "type": "ShaderInput",
+                            "name": "m_layer3Color"
+                        }
+                    },
+                    {
+                        "name": "normal",
+                        "displayName": "Normal (OpenGL)",
+                        "type": "Image",
+                        "connection": {
+                            "type": "ShaderInput",
+                            "name": "m_layer3Normal"
+                        }
+                    },
+                    {
+                        "name": "arm",
+                        "displayName": "ARM",
+                        "type": "Image",
+                        "connection": {
+                            "type": "ShaderInput",
+                            "name": "m_layer3Arm"
+                        },
+                        "description": "Occlusion, roughness, metal."
+                    }
+                ]
+            }
+        ]
+    },
+    "shaders": [
+        {
+            "file": "../../Shaders/Terrain/DarkArisenTerrain_Forward.shader"
+        },
+        {
+            "file": "../../Shaders/Terrain/DarkArisenTerrain_Depth.shader"
+        },
+        {
+            "file": "../../Shaders/Terrain/DarkArisenTerrain_Shadow.shader"
+        }
+    ]
+}

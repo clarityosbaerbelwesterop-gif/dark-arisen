@@ -2213,77 +2213,6 @@
             "Id": "Entity_[1540917788491111]",
             "Name": "Plant 1 SM_Art_Veg_Gorse_1"
         },
-        "Entity_[1587211182191965]": {
-            "Components": {
-                "Component_[1404152606279942]": {
-                    "$type": "EditorLockComponent",
-                    "Id": 1404152606279942
-                },
-                "Component_[1486172057975213]": {
-                    "$type": "AZ::Render::EditorMeshComponent",
-                    "Controller": {
-                        "Configuration": {
-                            "ModelAsset": {
-                                "assetHint": "assets/art/models/sm_art_veg_standingstone_0.azmodel",
-                                "assetId": {
-                                    "guid": "{1B1AAF06-EB49-5B7D-AE63-65C6D0AAE75E}",
-                                    "subId": 284694201
-                                }
-                            }
-                        }
-                    },
-                    "Id": 1486172057975213
-                },
-                "Component_[2279327593802434]": {
-                    "$type": "EditorPendingCompositionComponent",
-                    "Id": 2279327593802434
-                },
-                "Component_[3029901310142855]": {
-                    "$type": "EditorVisibilityComponent",
-                    "Id": 3029901310142855
-                },
-                "Component_[4250499922136605]": {
-                    "$type": "EditorEntityIconComponent",
-                    "Id": 4250499922136605
-                },
-                "Component_[4509481904170194]": {
-                    "$type": "EditorEntitySortComponent",
-                    "Id": 4509481904170194
-                },
-                "Component_[6207084402119514]": {
-                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
-                    "Id": 6207084402119514,
-                    "Parent Entity": "ContainerEntity",
-                    "Transform Data": {
-                        "Rotate": [
-                            0,
-                            0,
-                            156.945426
-                        ],
-                        "Translate": [
-                            -82.745045,
-                            60.110729,
-                            1.21475
-                        ],
-                        "UniformScale": 1.12
-                    }
-                },
-                "Component_[6510471018953400]": {
-                    "$type": "EditorOnlyEntityComponent",
-                    "Id": 6510471018953400
-                },
-                "Component_[7641473026983573]": {
-                    "$type": "EditorDisabledCompositionComponent",
-                    "Id": 7641473026983573
-                },
-                "Component_[8630469592502736]": {
-                    "$type": "EditorInspectorComponent",
-                    "Id": 8630469592502736
-                }
-            },
-            "Id": "Entity_[1587211182191965]",
-            "Name": "Plant 265 SM_Art_Veg_StandingStone_0"
-        },
         "Entity_[1589093218128048]": {
             "Components": {
                 "Component_[1045962848832199]": {
@@ -2354,6 +2283,77 @@
             },
             "Id": "Entity_[1589093218128048]",
             "Name": "Plant 161 SM_Art_Veg_Boulder_2"
+        },
+        "Entity_[1595908440538503]": {
+            "Components": {
+                "Component_[111728122748274]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 111728122748274
+                },
+                "Component_[1378236557241674]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 1378236557241674,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            69.367011
+                        ],
+                        "Translate": [
+                            133.329531,
+                            89.988257,
+                            11.192606
+                        ],
+                        "UniformScale": 0.93
+                    }
+                },
+                "Component_[2807640075989533]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/rock_moss_set_02/rock_moss_set_02_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{F0B4EF2E-D558-5270-9280-E19A7F2D225C}",
+                                    "subId": 280287216
+                                }
+                            }
+                        }
+                    },
+                    "Id": 2807640075989533
+                },
+                "Component_[3378803715818422]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 3378803715818422
+                },
+                "Component_[4940110384998530]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 4940110384998530
+                },
+                "Component_[5952438935252008]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 5952438935252008
+                },
+                "Component_[6072953691896493]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 6072953691896493
+                },
+                "Component_[632687717102693]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 632687717102693
+                },
+                "Component_[6988234817808119]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 6988234817808119
+                },
+                "Component_[7555774667990176]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 7555774667990176
+                }
+            },
+            "Id": "Entity_[1595908440538503]",
+            "Name": "Plant 339 rock_moss_set_02_2k"
         },
         "Entity_[1648522360497270]": {
             "Components": {
@@ -5816,77 +5816,6 @@
             "Id": "Entity_[2422669727940122]",
             "Name": "Plant 318 SM_Art_Veg_Gorse_1"
         },
-        "Entity_[2433338892127707]": {
-            "Components": {
-                "Component_[1487750198110558]": {
-                    "$type": "EditorInspectorComponent",
-                    "Id": 1487750198110558
-                },
-                "Component_[2203191969061473]": {
-                    "$type": "EditorVisibilityComponent",
-                    "Id": 2203191969061473
-                },
-                "Component_[2517363391095404]": {
-                    "$type": "EditorPendingCompositionComponent",
-                    "Id": 2517363391095404
-                },
-                "Component_[3181144804536160]": {
-                    "$type": "EditorEntitySortComponent",
-                    "Id": 3181144804536160
-                },
-                "Component_[3823879543781295]": {
-                    "$type": "AZ::Render::EditorMeshComponent",
-                    "Controller": {
-                        "Configuration": {
-                            "ModelAsset": {
-                                "assetHint": "assets/art/models/sm_art_veg_standingstone_2.azmodel",
-                                "assetId": {
-                                    "guid": "{3FE48A8A-BE26-5D9D-918D-F54DBA95BCCE}",
-                                    "subId": 284587925
-                                }
-                            }
-                        }
-                    },
-                    "Id": 3823879543781295
-                },
-                "Component_[4023172803945520]": {
-                    "$type": "EditorLockComponent",
-                    "Id": 4023172803945520
-                },
-                "Component_[5864780979488791]": {
-                    "$type": "EditorDisabledCompositionComponent",
-                    "Id": 5864780979488791
-                },
-                "Component_[5940744695080652]": {
-                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
-                    "Id": 5940744695080652,
-                    "Parent Entity": "ContainerEntity",
-                    "Transform Data": {
-                        "Rotate": [
-                            0,
-                            0,
-                            268.798199
-                        ],
-                        "Translate": [
-                            119.060975,
-                            -74.740301,
-                            5.51146
-                        ],
-                        "UniformScale": 1.01
-                    }
-                },
-                "Component_[5991917691375362]": {
-                    "$type": "EditorOnlyEntityComponent",
-                    "Id": 5991917691375362
-                },
-                "Component_[8729902190451779]": {
-                    "$type": "EditorEntityIconComponent",
-                    "Id": 8729902190451779
-                }
-            },
-            "Id": "Entity_[2433338892127707]",
-            "Name": "Plant 56 SM_Art_Veg_StandingStone_2"
-        },
         "Entity_[2499637030189124]": {
             "Components": {
                 "Component_[225511683050884]": {
@@ -6980,77 +6909,6 @@
             },
             "Id": "Entity_[2627231314475909]",
             "Name": "Plant 250 SM_Art_Veg_Boulder_0"
-        },
-        "Entity_[2633360337539816]": {
-            "Components": {
-                "Component_[1547370921823786]": {
-                    "$type": "EditorEntityIconComponent",
-                    "Id": 1547370921823786
-                },
-                "Component_[21642328023992]": {
-                    "$type": "EditorVisibilityComponent",
-                    "Id": 21642328023992
-                },
-                "Component_[2284473389688839]": {
-                    "$type": "EditorOnlyEntityComponent",
-                    "Id": 2284473389688839
-                },
-                "Component_[4483205385241917]": {
-                    "$type": "EditorPendingCompositionComponent",
-                    "Id": 4483205385241917
-                },
-                "Component_[4995546090134389]": {
-                    "$type": "EditorInspectorComponent",
-                    "Id": 4995546090134389
-                },
-                "Component_[5356363952593641]": {
-                    "$type": "EditorLockComponent",
-                    "Id": 5356363952593641
-                },
-                "Component_[5619677874560844]": {
-                    "$type": "EditorDisabledCompositionComponent",
-                    "Id": 5619677874560844
-                },
-                "Component_[5697094219974666]": {
-                    "$type": "AZ::Render::EditorMeshComponent",
-                    "Controller": {
-                        "Configuration": {
-                            "ModelAsset": {
-                                "assetHint": "assets/art/models/sm_art_veg_standingstone_1.azmodel",
-                                "assetId": {
-                                    "guid": "{2B953DAA-F604-5BBB-8B9C-2FA7242718DE}",
-                                    "subId": 285156911
-                                }
-                            }
-                        }
-                    },
-                    "Id": 5697094219974666
-                },
-                "Component_[6972815391429121]": {
-                    "$type": "EditorEntitySortComponent",
-                    "Id": 6972815391429121
-                },
-                "Component_[8355199451791477]": {
-                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
-                    "Id": 8355199451791477,
-                    "Parent Entity": "ContainerEntity",
-                    "Transform Data": {
-                        "Rotate": [
-                            0,
-                            0,
-                            69.367011
-                        ],
-                        "Translate": [
-                            133.329531,
-                            89.988257,
-                            11.192606
-                        ],
-                        "UniformScale": 0.93
-                    }
-                }
-            },
-            "Id": "Entity_[2633360337539816]",
-            "Name": "Plant 339 SM_Art_Veg_StandingStone_1"
         },
         "Entity_[2640730040486434]": {
             "Components": {
@@ -10730,77 +10588,6 @@
             "Id": "Entity_[3302693658040531]",
             "Name": "PROVISIONAL Pad DamageSurvey"
         },
-        "Entity_[3306877896624176]": {
-            "Components": {
-                "Component_[1734308359112213]": {
-                    "$type": "EditorEntityIconComponent",
-                    "Id": 1734308359112213
-                },
-                "Component_[1866949445664846]": {
-                    "$type": "EditorLockComponent",
-                    "Id": 1866949445664846
-                },
-                "Component_[4942860902204698]": {
-                    "$type": "EditorPendingCompositionComponent",
-                    "Id": 4942860902204698
-                },
-                "Component_[5164450465884453]": {
-                    "$type": "AZ::Render::EditorMeshComponent",
-                    "Controller": {
-                        "Configuration": {
-                            "ModelAsset": {
-                                "assetHint": "assets/art/models/sm_art_veg_standingstone_1.azmodel",
-                                "assetId": {
-                                    "guid": "{2B953DAA-F604-5BBB-8B9C-2FA7242718DE}",
-                                    "subId": 285156911
-                                }
-                            }
-                        }
-                    },
-                    "Id": 5164450465884453
-                },
-                "Component_[5542971206258208]": {
-                    "$type": "EditorOnlyEntityComponent",
-                    "Id": 5542971206258208
-                },
-                "Component_[6330566185136813]": {
-                    "$type": "EditorDisabledCompositionComponent",
-                    "Id": 6330566185136813
-                },
-                "Component_[7313903288583496]": {
-                    "$type": "EditorInspectorComponent",
-                    "Id": 7313903288583496
-                },
-                "Component_[8340562475578730]": {
-                    "$type": "EditorEntitySortComponent",
-                    "Id": 8340562475578730
-                },
-                "Component_[8546842152146018]": {
-                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
-                    "Id": 8546842152146018,
-                    "Parent Entity": "ContainerEntity",
-                    "Transform Data": {
-                        "Rotate": [
-                            0,
-                            0,
-                            276.760068
-                        ],
-                        "Translate": [
-                            -101.972448,
-                            2.29661,
-                            8.416466
-                        ],
-                        "UniformScale": 1.19
-                    }
-                },
-                "Component_[8670691756714463]": {
-                    "$type": "EditorVisibilityComponent",
-                    "Id": 8670691756714463
-                }
-            },
-            "Id": "Entity_[3306877896624176]",
-            "Name": "Plant 173 SM_Art_Veg_StandingStone_1"
-        },
         "Entity_[3315049708521810]": {
             "Components": {
                 "Component_[113829023413946]": {
@@ -10871,77 +10658,6 @@
             },
             "Id": "Entity_[3315049708521810]",
             "Name": "Plant 310 SM_Art_Veg_Boulder_2"
-        },
-        "Entity_[3345872705244189]": {
-            "Components": {
-                "Component_[2612362162086581]": {
-                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
-                    "Id": 2612362162086581,
-                    "Parent Entity": "ContainerEntity",
-                    "Transform Data": {
-                        "Rotate": [
-                            0,
-                            0,
-                            67.105737
-                        ],
-                        "Translate": [
-                            -56.990731,
-                            93.337043,
-                            15.49517
-                        ],
-                        "UniformScale": 1.07
-                    }
-                },
-                "Component_[3876437993527861]": {
-                    "$type": "EditorInspectorComponent",
-                    "Id": 3876437993527861
-                },
-                "Component_[4149054416161021]": {
-                    "$type": "EditorPendingCompositionComponent",
-                    "Id": 4149054416161021
-                },
-                "Component_[4212618433565930]": {
-                    "$type": "EditorEntityIconComponent",
-                    "Id": 4212618433565930
-                },
-                "Component_[5578912261903818]": {
-                    "$type": "AZ::Render::EditorMeshComponent",
-                    "Controller": {
-                        "Configuration": {
-                            "ModelAsset": {
-                                "assetHint": "assets/art/models/sm_art_veg_standingstone_1.azmodel",
-                                "assetId": {
-                                    "guid": "{2B953DAA-F604-5BBB-8B9C-2FA7242718DE}",
-                                    "subId": 285156911
-                                }
-                            }
-                        }
-                    },
-                    "Id": 5578912261903818
-                },
-                "Component_[5749557515089351]": {
-                    "$type": "EditorOnlyEntityComponent",
-                    "Id": 5749557515089351
-                },
-                "Component_[6682162889535145]": {
-                    "$type": "EditorLockComponent",
-                    "Id": 6682162889535145
-                },
-                "Component_[758489250785292]": {
-                    "$type": "EditorDisabledCompositionComponent",
-                    "Id": 758489250785292
-                },
-                "Component_[8142524304300225]": {
-                    "$type": "EditorEntitySortComponent",
-                    "Id": 8142524304300225
-                },
-                "Component_[8927801089930104]": {
-                    "$type": "EditorVisibilityComponent",
-                    "Id": 8927801089930104
-                }
-            },
-            "Id": "Entity_[3345872705244189]",
-            "Name": "Plant 330 SM_Art_Veg_StandingStone_1"
         },
         "Entity_[340068947031759]": {
             "Components": {
@@ -11760,6 +11476,77 @@
             },
             "Id": "Entity_[348800909228742]",
             "Name": "Plant 303 SM_Art_Veg_Boulder_2"
+        },
+        "Entity_[3526840289452835]": {
+            "Components": {
+                "Component_[1140394717108550]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 1140394717108550
+                },
+                "Component_[1657460672874212]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 1657460672874212
+                },
+                "Component_[1954749466677435]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 1954749466677435
+                },
+                "Component_[3052107452766147]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 3052107452766147,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            242.447555
+                        ],
+                        "Translate": [
+                            168.629736,
+                            58.252157,
+                            14.147178
+                        ],
+                        "UniformScale": 0.89
+                    }
+                },
+                "Component_[3524157262605699]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 3524157262605699
+                },
+                "Component_[3867973040993317]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 3867973040993317
+                },
+                "Component_[4701169014652847]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 4701169014652847
+                },
+                "Component_[6439925291925042]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 6439925291925042
+                },
+                "Component_[6629142994879760]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/rock_moss_set_02/rock_moss_set_02_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{F0B4EF2E-D558-5270-9280-E19A7F2D225C}",
+                                    "subId": 280287216
+                                }
+                            }
+                        }
+                    },
+                    "Id": 6629142994879760
+                },
+                "Component_[7905426992690967]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 7905426992690967
+                }
+            },
+            "Id": "Entity_[3526840289452835]",
+            "Name": "Plant 285 rock_moss_set_02_2k"
         },
         "Entity_[353466954674460]": {
             "Components": {
@@ -15135,6 +14922,77 @@
             "Id": "Entity_[4105129240291895]",
             "Name": "Plant 151 SM_Art_Veg_Birch_0_BirchBark"
         },
+        "Entity_[4153495135323075]": {
+            "Components": {
+                "Component_[2871880920228677]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 2871880920228677
+                },
+                "Component_[3022869062074500]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 3022869062074500
+                },
+                "Component_[3747113270975715]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 3747113270975715,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            301.47774
+                        ],
+                        "Translate": [
+                            130.226,
+                            -94.716634,
+                            14.92741
+                        ],
+                        "UniformScale": 1.04
+                    }
+                },
+                "Component_[393225258253943]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 393225258253943
+                },
+                "Component_[3961969044344624]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/rock_moss_set_01/rock_moss_set_01_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{7D02977E-DBC6-51F2-8400-FF64A79B86E0}",
+                                    "subId": 268531742
+                                }
+                            }
+                        }
+                    },
+                    "Id": 3961969044344624
+                },
+                "Component_[5754255225280419]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 5754255225280419
+                },
+                "Component_[696015694672783]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 696015694672783
+                },
+                "Component_[6970385850222043]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 6970385850222043
+                },
+                "Component_[8643742699393190]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 8643742699393190
+                },
+                "Component_[8949604696820434]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 8949604696820434
+                }
+            },
+            "Id": "Entity_[4153495135323075]",
+            "Name": "Plant 15 rock_moss_set_01_2k"
+        },
         "Entity_[4175417960456882]": {
             "Components": {
                 "Component_[1804861101932254]": {
@@ -17748,77 +17606,6 @@
             "Id": "Entity_[4682898787049460]",
             "Name": "Plant 293 SM_Art_Veg_Boulder_2"
         },
-        "Entity_[4687440494960662]": {
-            "Components": {
-                "Component_[1230407827597886]": {
-                    "$type": "EditorPendingCompositionComponent",
-                    "Id": 1230407827597886
-                },
-                "Component_[1353641215630353]": {
-                    "$type": "AZ::Render::EditorMeshComponent",
-                    "Controller": {
-                        "Configuration": {
-                            "ModelAsset": {
-                                "assetHint": "assets/art/models/sm_art_veg_standingstone_1.azmodel",
-                                "assetId": {
-                                    "guid": "{2B953DAA-F604-5BBB-8B9C-2FA7242718DE}",
-                                    "subId": 285156911
-                                }
-                            }
-                        }
-                    },
-                    "Id": 1353641215630353
-                },
-                "Component_[2537204646316516]": {
-                    "$type": "EditorOnlyEntityComponent",
-                    "Id": 2537204646316516
-                },
-                "Component_[3671482079414209]": {
-                    "$type": "EditorDisabledCompositionComponent",
-                    "Id": 3671482079414209
-                },
-                "Component_[4760641854285574]": {
-                    "$type": "EditorEntitySortComponent",
-                    "Id": 4760641854285574
-                },
-                "Component_[4811396151950190]": {
-                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
-                    "Id": 4811396151950190,
-                    "Parent Entity": "ContainerEntity",
-                    "Transform Data": {
-                        "Rotate": [
-                            0,
-                            0,
-                            332.055824
-                        ],
-                        "Translate": [
-                            48.298946,
-                            58.465299,
-                            1.565352
-                        ],
-                        "UniformScale": 0.99
-                    }
-                },
-                "Component_[6425357230277251]": {
-                    "$type": "EditorVisibilityComponent",
-                    "Id": 6425357230277251
-                },
-                "Component_[700605118155610]": {
-                    "$type": "EditorLockComponent",
-                    "Id": 700605118155610
-                },
-                "Component_[7647513349682929]": {
-                    "$type": "EditorEntityIconComponent",
-                    "Id": 7647513349682929
-                },
-                "Component_[8613535068162764]": {
-                    "$type": "EditorInspectorComponent",
-                    "Id": 8613535068162764
-                }
-            },
-            "Id": "Entity_[4687440494960662]",
-            "Name": "Plant 276 SM_Art_Veg_StandingStone_1"
-        },
         "Entity_[4693987060155065]": {
             "Components": {
                 "Component_[1259462947745463]": {
@@ -18255,6 +18042,77 @@
             },
             "Id": "Entity_[4727395509556280]",
             "Name": "C07_01_Resident"
+        },
+        "Entity_[4731821433509974]": {
+            "Components": {
+                "Component_[2525619073427551]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 2525619073427551
+                },
+                "Component_[3067075458643402]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 3067075458643402
+                },
+                "Component_[3453989069506783]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 3453989069506783,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            156.945426
+                        ],
+                        "Translate": [
+                            -82.745045,
+                            60.110729,
+                            1.21475
+                        ],
+                        "UniformScale": 1.12
+                    }
+                },
+                "Component_[3750833837520281]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 3750833837520281
+                },
+                "Component_[4049708104695116]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/rock_moss_set_01/rock_moss_set_01_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{7D02977E-DBC6-51F2-8400-FF64A79B86E0}",
+                                    "subId": 268531742
+                                }
+                            }
+                        }
+                    },
+                    "Id": 4049708104695116
+                },
+                "Component_[41570437629840]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 41570437629840
+                },
+                "Component_[4975407315859887]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 4975407315859887
+                },
+                "Component_[5978540397987590]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 5978540397987590
+                },
+                "Component_[6130499865883843]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 6130499865883843
+                },
+                "Component_[89637543021763]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 89637543021763
+                }
+            },
+            "Id": "Entity_[4731821433509974]",
+            "Name": "Plant 265 rock_moss_set_01_2k"
         },
         "Entity_[4768785334599733]": {
             "Components": {
@@ -19069,6 +18927,77 @@
             },
             "Id": "Entity_[4867573617045802]",
             "Name": "Plant 55 SM_Art_Veg_Boulder_0"
+        },
+        "Entity_[4887734974329541]": {
+            "Components": {
+                "Component_[1024559990542446]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 1024559990542446,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            150.318396
+                        ],
+                        "Translate": [
+                            85.840543,
+                            -52.90512,
+                            3.669648
+                        ],
+                        "UniformScale": 1.07
+                    }
+                },
+                "Component_[2218086964942723]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 2218086964942723
+                },
+                "Component_[3441342595976177]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 3441342595976177
+                },
+                "Component_[3795020401811262]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 3795020401811262
+                },
+                "Component_[4335559306184794]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 4335559306184794
+                },
+                "Component_[553371588951046]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 553371588951046
+                },
+                "Component_[7139548762300876]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 7139548762300876
+                },
+                "Component_[7337133635722980]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 7337133635722980
+                },
+                "Component_[7351245775603985]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/rock_moss_set_02/rock_moss_set_02_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{F0B4EF2E-D558-5270-9280-E19A7F2D225C}",
+                                    "subId": 280287216
+                                }
+                            }
+                        }
+                    },
+                    "Id": 7351245775603985
+                },
+                "Component_[8296218785273537]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 8296218785273537
+                }
+            },
+            "Id": "Entity_[4887734974329541]",
+            "Name": "Plant 104 rock_moss_set_02_2k"
         },
         "Entity_[4892310498621502]": {
             "Components": {
@@ -22160,6 +22089,77 @@
             "Id": "Entity_[5606799215151665]",
             "Name": "Plant 268 SM_Art_Veg_Gorse_0"
         },
+        "Entity_[5611117123564175]": {
+            "Components": {
+                "Component_[1345282570677803]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 1345282570677803
+                },
+                "Component_[1430589411433524]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/rock_moss_set_02/rock_moss_set_02_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{F0B4EF2E-D558-5270-9280-E19A7F2D225C}",
+                                    "subId": 280287216
+                                }
+                            }
+                        }
+                    },
+                    "Id": 1430589411433524
+                },
+                "Component_[2862187781491310]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 2862187781491310
+                },
+                "Component_[3728528333447000]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 3728528333447000
+                },
+                "Component_[4584156258053079]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 4584156258053079,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            276.760068
+                        ],
+                        "Translate": [
+                            -101.972448,
+                            2.29661,
+                            8.416466
+                        ],
+                        "UniformScale": 1.19
+                    }
+                },
+                "Component_[4650085254915303]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 4650085254915303
+                },
+                "Component_[5026493208465271]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 5026493208465271
+                },
+                "Component_[5336350409163665]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 5336350409163665
+                },
+                "Component_[6084073259466706]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 6084073259466706
+                },
+                "Component_[8294553321390043]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 8294553321390043
+                }
+            },
+            "Id": "Entity_[5611117123564175]",
+            "Name": "Plant 173 rock_moss_set_02_2k"
+        },
         "Entity_[5622068657603161]": {
             "Components": {
                 "Component_[112070413089375]": {
@@ -22904,77 +22904,6 @@
             "Id": "Entity_[5725310522644887]",
             "Name": "Plant 71 SM_Art_Veg_Gorse_2"
         },
-        "Entity_[5729618242070396]": {
-            "Components": {
-                "Component_[1432694884011309]": {
-                    "$type": "EditorDisabledCompositionComponent",
-                    "Id": 1432694884011309
-                },
-                "Component_[2998476583342485]": {
-                    "$type": "EditorEntityIconComponent",
-                    "Id": 2998476583342485
-                },
-                "Component_[4148583523362766]": {
-                    "$type": "EditorLockComponent",
-                    "Id": 4148583523362766
-                },
-                "Component_[599730468323562]": {
-                    "$type": "EditorEntitySortComponent",
-                    "Id": 599730468323562
-                },
-                "Component_[6442945384418248]": {
-                    "$type": "EditorInspectorComponent",
-                    "Id": 6442945384418248
-                },
-                "Component_[6809338453744032]": {
-                    "$type": "EditorOnlyEntityComponent",
-                    "Id": 6809338453744032
-                },
-                "Component_[7686690701631458]": {
-                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
-                    "Id": 7686690701631458,
-                    "Parent Entity": "ContainerEntity",
-                    "Transform Data": {
-                        "Rotate": [
-                            0,
-                            0,
-                            172.848287
-                        ],
-                        "Translate": [
-                            -7.068312,
-                            94.202675,
-                            15.285846
-                        ],
-                        "UniformScale": 1.08
-                    }
-                },
-                "Component_[7810564936644773]": {
-                    "$type": "AZ::Render::EditorMeshComponent",
-                    "Controller": {
-                        "Configuration": {
-                            "ModelAsset": {
-                                "assetHint": "assets/art/models/sm_art_veg_standingstone_1.azmodel",
-                                "assetId": {
-                                    "guid": "{2B953DAA-F604-5BBB-8B9C-2FA7242718DE}",
-                                    "subId": 285156911
-                                }
-                            }
-                        }
-                    },
-                    "Id": 7810564936644773
-                },
-                "Component_[8516689262379162]": {
-                    "$type": "EditorPendingCompositionComponent",
-                    "Id": 8516689262379162
-                },
-                "Component_[929859749459295]": {
-                    "$type": "EditorVisibilityComponent",
-                    "Id": 929859749459295
-                }
-            },
-            "Id": "Entity_[5729618242070396]",
-            "Name": "Plant 335 SM_Art_Veg_StandingStone_1"
-        },
         "Entity_[5737109717559257]": {
             "Components": {
                 "Component_[1421744802168002]": {
@@ -23700,77 +23629,6 @@
             },
             "Id": "Entity_[5917337865463811]",
             "Name": "Plant 184 SM_Art_Veg_Gorse_1"
-        },
-        "Entity_[5941223905952714]": {
-            "Components": {
-                "Component_[1076781051890213]": {
-                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
-                    "Id": 1076781051890213,
-                    "Parent Entity": "ContainerEntity",
-                    "Transform Data": {
-                        "Rotate": [
-                            0,
-                            0,
-                            150.318396
-                        ],
-                        "Translate": [
-                            85.840543,
-                            -52.90512,
-                            3.669648
-                        ],
-                        "UniformScale": 1.07
-                    }
-                },
-                "Component_[122480956484377]": {
-                    "$type": "EditorLockComponent",
-                    "Id": 122480956484377
-                },
-                "Component_[1475461768982213]": {
-                    "$type": "EditorInspectorComponent",
-                    "Id": 1475461768982213
-                },
-                "Component_[2701827617225786]": {
-                    "$type": "AZ::Render::EditorMeshComponent",
-                    "Controller": {
-                        "Configuration": {
-                            "ModelAsset": {
-                                "assetHint": "assets/art/models/sm_art_veg_standingstone_1.azmodel",
-                                "assetId": {
-                                    "guid": "{2B953DAA-F604-5BBB-8B9C-2FA7242718DE}",
-                                    "subId": 285156911
-                                }
-                            }
-                        }
-                    },
-                    "Id": 2701827617225786
-                },
-                "Component_[331000484710263]": {
-                    "$type": "EditorOnlyEntityComponent",
-                    "Id": 331000484710263
-                },
-                "Component_[525220740190381]": {
-                    "$type": "EditorPendingCompositionComponent",
-                    "Id": 525220740190381
-                },
-                "Component_[573239530950065]": {
-                    "$type": "EditorEntitySortComponent",
-                    "Id": 573239530950065
-                },
-                "Component_[6033382009240058]": {
-                    "$type": "EditorEntityIconComponent",
-                    "Id": 6033382009240058
-                },
-                "Component_[7231508241625308]": {
-                    "$type": "EditorDisabledCompositionComponent",
-                    "Id": 7231508241625308
-                },
-                "Component_[8617187898799080]": {
-                    "$type": "EditorVisibilityComponent",
-                    "Id": 8617187898799080
-                }
-            },
-            "Id": "Entity_[5941223905952714]",
-            "Name": "Plant 104 SM_Art_Veg_StandingStone_1"
         },
         "Entity_[5949788562205684]": {
             "Components": {
@@ -24729,77 +24587,6 @@
             },
             "Id": "Entity_[6161469690311229]",
             "Name": "Plant 165 SM_Art_Veg_Gorse_2"
-        },
-        "Entity_[6167764516329073]": {
-            "Components": {
-                "Component_[1009297238263049]": {
-                    "$type": "EditorVisibilityComponent",
-                    "Id": 1009297238263049
-                },
-                "Component_[2137088935023748]": {
-                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
-                    "Id": 2137088935023748,
-                    "Parent Entity": "ContainerEntity",
-                    "Transform Data": {
-                        "Rotate": [
-                            0,
-                            0,
-                            259.718063
-                        ],
-                        "Translate": [
-                            -73.822486,
-                            19.310025,
-                            1.127998
-                        ],
-                        "UniformScale": 0.97
-                    }
-                },
-                "Component_[2373994973293064]": {
-                    "$type": "EditorLockComponent",
-                    "Id": 2373994973293064
-                },
-                "Component_[4801621009368872]": {
-                    "$type": "EditorEntitySortComponent",
-                    "Id": 4801621009368872
-                },
-                "Component_[4978202721868907]": {
-                    "$type": "EditorEntityIconComponent",
-                    "Id": 4978202721868907
-                },
-                "Component_[5085837105373114]": {
-                    "$type": "EditorOnlyEntityComponent",
-                    "Id": 5085837105373114
-                },
-                "Component_[5719298892099671]": {
-                    "$type": "AZ::Render::EditorMeshComponent",
-                    "Controller": {
-                        "Configuration": {
-                            "ModelAsset": {
-                                "assetHint": "assets/art/models/sm_art_veg_standingstone_2.azmodel",
-                                "assetId": {
-                                    "guid": "{3FE48A8A-BE26-5D9D-918D-F54DBA95BCCE}",
-                                    "subId": 284587925
-                                }
-                            }
-                        }
-                    },
-                    "Id": 5719298892099671
-                },
-                "Component_[6858652088631814]": {
-                    "$type": "EditorInspectorComponent",
-                    "Id": 6858652088631814
-                },
-                "Component_[8166882968469908]": {
-                    "$type": "EditorPendingCompositionComponent",
-                    "Id": 8166882968469908
-                },
-                "Component_[876873865597759]": {
-                    "$type": "EditorDisabledCompositionComponent",
-                    "Id": 876873865597759
-                }
-            },
-            "Id": "Entity_[6167764516329073]",
-            "Name": "Plant 199 SM_Art_Veg_StandingStone_2"
         },
         "Entity_[6193773285640135]": {
             "Components": {
@@ -26817,6 +26604,77 @@
             "Id": "Entity_[6469364750945624]",
             "Name": "Plant 84 SM_Art_Veg_Pine_0_Needles"
         },
+        "Entity_[6475661471666458]": {
+            "Components": {
+                "Component_[1565691219617055]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 1565691219617055
+                },
+                "Component_[2477432324890803]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 2477432324890803
+                },
+                "Component_[4325462172193161]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 4325462172193161
+                },
+                "Component_[4636725587231318]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 4636725587231318
+                },
+                "Component_[5529764450321231]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 5529764450321231,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            268.798199
+                        ],
+                        "Translate": [
+                            119.060975,
+                            -74.740301,
+                            5.51146
+                        ],
+                        "UniformScale": 1.01
+                    }
+                },
+                "Component_[6040466722693562]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 6040466722693562
+                },
+                "Component_[6059959302299535]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 6059959302299535
+                },
+                "Component_[6429016976450656]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 6429016976450656
+                },
+                "Component_[6800826131565203]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 6800826131565203
+                },
+                "Component_[7735646367694396]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/rock_moss_set_01/rock_moss_set_01_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{7D02977E-DBC6-51F2-8400-FF64A79B86E0}",
+                                    "subId": 268531742
+                                }
+                            }
+                        }
+                    },
+                    "Id": 7735646367694396
+                }
+            },
+            "Id": "Entity_[6475661471666458]",
+            "Name": "Plant 56 rock_moss_set_01_2k"
+        },
         "Entity_[6510382726945273]": {
             "Components": {
                 "Component_[2118936168740863]": {
@@ -27630,77 +27488,6 @@
             },
             "Id": "Entity_[6658623525480166]",
             "Name": "Plant 101 SM_Art_Veg_Gorse_1"
-        },
-        "Entity_[6667304040561218]": {
-            "Components": {
-                "Component_[1070490933249207]": {
-                    "$type": "AZ::Render::EditorMeshComponent",
-                    "Controller": {
-                        "Configuration": {
-                            "ModelAsset": {
-                                "assetHint": "assets/art/models/sm_art_veg_standingstone_0.azmodel",
-                                "assetId": {
-                                    "guid": "{1B1AAF06-EB49-5B7D-AE63-65C6D0AAE75E}",
-                                    "subId": 284694201
-                                }
-                            }
-                        }
-                    },
-                    "Id": 1070490933249207
-                },
-                "Component_[155654497733476]": {
-                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
-                    "Id": 155654497733476,
-                    "Parent Entity": "ContainerEntity",
-                    "Transform Data": {
-                        "Rotate": [
-                            0,
-                            0,
-                            351.348331
-                        ],
-                        "Translate": [
-                            66.082109,
-                            -85.880223,
-                            12.890629
-                        ],
-                        "UniformScale": 1.11
-                    }
-                },
-                "Component_[2384928593063560]": {
-                    "$type": "EditorEntitySortComponent",
-                    "Id": 2384928593063560
-                },
-                "Component_[4259064094395508]": {
-                    "$type": "EditorPendingCompositionComponent",
-                    "Id": 4259064094395508
-                },
-                "Component_[5176230123099546]": {
-                    "$type": "EditorOnlyEntityComponent",
-                    "Id": 5176230123099546
-                },
-                "Component_[5303576133707167]": {
-                    "$type": "EditorDisabledCompositionComponent",
-                    "Id": 5303576133707167
-                },
-                "Component_[5475328797183273]": {
-                    "$type": "EditorVisibilityComponent",
-                    "Id": 5475328797183273
-                },
-                "Component_[575401222365771]": {
-                    "$type": "EditorEntityIconComponent",
-                    "Id": 575401222365771
-                },
-                "Component_[6431449106831526]": {
-                    "$type": "EditorInspectorComponent",
-                    "Id": 6431449106831526
-                },
-                "Component_[6600503111746344]": {
-                    "$type": "EditorLockComponent",
-                    "Id": 6600503111746344
-                }
-            },
-            "Id": "Entity_[6667304040561218]",
-            "Name": "Plant 33 SM_Art_Veg_StandingStone_0"
         },
         "Entity_[6675349495543292]": {
             "Components": {
@@ -28610,6 +28397,77 @@
             "Id": "Entity_[6860080461620252]",
             "Name": "Plant 117 SM_Art_Veg_Pine_1_Needles"
         },
+        "Entity_[6862981343417868]": {
+            "Components": {
+                "Component_[2539312877683828]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/rock_moss_set_01/rock_moss_set_01_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{7D02977E-DBC6-51F2-8400-FF64A79B86E0}",
+                                    "subId": 268531742
+                                }
+                            }
+                        }
+                    },
+                    "Id": 2539312877683828
+                },
+                "Component_[3023214770351256]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 3023214770351256
+                },
+                "Component_[4916377667716635]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 4916377667716635
+                },
+                "Component_[5283883980115986]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 5283883980115986
+                },
+                "Component_[568675594010577]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 568675594010577
+                },
+                "Component_[6409838785568295]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 6409838785568295
+                },
+                "Component_[7359350609362615]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 7359350609362615
+                },
+                "Component_[7375255995342231]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 7375255995342231,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            259.718063
+                        ],
+                        "Translate": [
+                            -73.822486,
+                            19.310025,
+                            1.127998
+                        ],
+                        "UniformScale": 0.97
+                    }
+                },
+                "Component_[763002352309099]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 763002352309099
+                },
+                "Component_[7649748484296878]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 7649748484296878
+                }
+            },
+            "Id": "Entity_[6862981343417868]",
+            "Name": "Plant 199 rock_moss_set_01_2k"
+        },
         "Entity_[6871379896302190]": {
             "Components": {
                 "Component_[1439493910137571]": {
@@ -28698,6 +28556,28 @@
                 "Component_[8243577873747930]": {
                     "$type": "EditorStaticRigidBodyComponent",
                     "Id": 8243577873747930
+                },
+                "Component_[8496703249854718]": {
+                    "$type": "EditorMaterialComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "materials": [
+                                {
+                                    "Key": {},
+                                    "Value": {
+                                        "MaterialAsset": {
+                                            "assetHint": "assets/materials/terrain/m_terrain_l_falsebearings.azmaterial",
+                                            "assetId": {
+                                                "guid": "{D315F7BB-D2C0-5284-8FDE-C88AF14B1D9B}",
+                                                "subId": 0
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "Id": 8496703249854718
                 }
             },
             "Id": "Entity_[6871379896302190]",
@@ -29628,6 +29508,77 @@
             },
             "Id": "Entity_[7053837076662681]",
             "Name": "Plant 209 SM_Art_Veg_Boulder_2"
+        },
+        "Entity_[7068815493161249]": {
+            "Components": {
+                "Component_[1314152054698712]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/rock_moss_set_02/rock_moss_set_02_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{F0B4EF2E-D558-5270-9280-E19A7F2D225C}",
+                                    "subId": 280287216
+                                }
+                            }
+                        }
+                    },
+                    "Id": 1314152054698712
+                },
+                "Component_[2158576119133499]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 2158576119133499,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            332.055824
+                        ],
+                        "Translate": [
+                            48.298946,
+                            58.465299,
+                            1.565352
+                        ],
+                        "UniformScale": 0.99
+                    }
+                },
+                "Component_[427766100095523]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 427766100095523
+                },
+                "Component_[5448808524374155]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 5448808524374155
+                },
+                "Component_[5901398621097902]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 5901398621097902
+                },
+                "Component_[6580881255024716]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 6580881255024716
+                },
+                "Component_[6618263165633263]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 6618263165633263
+                },
+                "Component_[7566433459414519]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 7566433459414519
+                },
+                "Component_[784148538704378]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 784148538704378
+                },
+                "Component_[804358410103229]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 804358410103229
+                }
+            },
+            "Id": "Entity_[7068815493161249]",
+            "Name": "Plant 276 rock_moss_set_02_2k"
         },
         "Entity_[7085093766654166]": {
             "Components": {
@@ -30706,77 +30657,6 @@
             },
             "Id": "Entity_[7222941942315529]",
             "Name": "Plant 243 SM_Art_Veg_Birch_2_LeavesPale"
-        },
-        "Entity_[7225208550867860]": {
-            "Components": {
-                "Component_[1433703807725108]": {
-                    "$type": "EditorInspectorComponent",
-                    "Id": 1433703807725108
-                },
-                "Component_[1698877953856441]": {
-                    "$type": "AZ::Render::EditorMeshComponent",
-                    "Controller": {
-                        "Configuration": {
-                            "ModelAsset": {
-                                "assetHint": "assets/art/models/sm_art_veg_standingstone_1.azmodel",
-                                "assetId": {
-                                    "guid": "{2B953DAA-F604-5BBB-8B9C-2FA7242718DE}",
-                                    "subId": 285156911
-                                }
-                            }
-                        }
-                    },
-                    "Id": 1698877953856441
-                },
-                "Component_[2457627048360713]": {
-                    "$type": "EditorDisabledCompositionComponent",
-                    "Id": 2457627048360713
-                },
-                "Component_[4098753557366918]": {
-                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
-                    "Id": 4098753557366918,
-                    "Parent Entity": "ContainerEntity",
-                    "Transform Data": {
-                        "Rotate": [
-                            0,
-                            0,
-                            242.447555
-                        ],
-                        "Translate": [
-                            168.629736,
-                            58.252157,
-                            14.147178
-                        ],
-                        "UniformScale": 0.89
-                    }
-                },
-                "Component_[5958580221042278]": {
-                    "$type": "EditorPendingCompositionComponent",
-                    "Id": 5958580221042278
-                },
-                "Component_[6000786786148114]": {
-                    "$type": "EditorLockComponent",
-                    "Id": 6000786786148114
-                },
-                "Component_[6055086218452299]": {
-                    "$type": "EditorVisibilityComponent",
-                    "Id": 6055086218452299
-                },
-                "Component_[6535192324889084]": {
-                    "$type": "EditorOnlyEntityComponent",
-                    "Id": 6535192324889084
-                },
-                "Component_[6537128178651630]": {
-                    "$type": "EditorEntitySortComponent",
-                    "Id": 6537128178651630
-                },
-                "Component_[7165563017505305]": {
-                    "$type": "EditorEntityIconComponent",
-                    "Id": 7165563017505305
-                }
-            },
-            "Id": "Entity_[7225208550867860]",
-            "Name": "Plant 285 SM_Art_Veg_StandingStone_1"
         },
         "Entity_[7232117237106068]": {
             "Components": {
@@ -32422,6 +32302,71 @@
             "Id": "Entity_[7436927075843430]",
             "Name": "Plant 273 SM_Art_Veg_Pine_2_Needles"
         },
+        "Entity_[7463471017949339]": {
+            "Components": {
+                "Component_[1393692831510456]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 1393692831510456,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            0,
+                            0,
+                            0
+                        ]
+                    }
+                },
+                "Component_[1657023133697343]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 1657023133697343
+                },
+                "Component_[2180680289666624]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 2180680289666624
+                },
+                "Component_[3711724144627221]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 3711724144627221
+                },
+                "Component_[3757107055042134]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 3757107055042134
+                },
+                "Component_[4683750762387003]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 4683750762387003
+                },
+                "Component_[4995219702019355]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/models/sm_art_ponds_l_falsebearings.azmodel",
+                                "assetId": {
+                                    "guid": "{D7A70E13-7FBA-5FBD-8AEE-5CF672EF94DD}",
+                                    "subId": 270792275
+                                }
+                            }
+                        }
+                    },
+                    "Id": 4995219702019355
+                },
+                "Component_[5257695128880892]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 5257695128880892
+                },
+                "Component_[5426484827091922]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 5426484827091922
+                },
+                "Component_[8516503166672012]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 8516503166672012
+                }
+            },
+            "Id": "Entity_[7463471017949339]",
+            "Name": "Ponds"
+        },
         "Entity_[7480790373008066]": {
             "Components": {
                 "Component_[1252636866292094]": {
@@ -33568,6 +33513,77 @@
             },
             "Id": "Entity_[764789965393691]",
             "Name": "Plant 202 SM_Art_Veg_Boulder_1"
+        },
+        "Entity_[7704964520172207]": {
+            "Components": {
+                "Component_[2884557361145056]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 2884557361145056,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            351.348331
+                        ],
+                        "Translate": [
+                            66.082109,
+                            -85.880223,
+                            12.890629
+                        ],
+                        "UniformScale": 1.11
+                    }
+                },
+                "Component_[3227424412261496]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 3227424412261496
+                },
+                "Component_[3392997791095908]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 3392997791095908
+                },
+                "Component_[3431796857901]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 3431796857901
+                },
+                "Component_[3550763161850103]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 3550763161850103
+                },
+                "Component_[4195064785940723]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 4195064785940723
+                },
+                "Component_[6264930644869162]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 6264930644869162
+                },
+                "Component_[8104932457417092]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 8104932457417092
+                },
+                "Component_[821463854848339]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/rock_moss_set_01/rock_moss_set_01_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{7D02977E-DBC6-51F2-8400-FF64A79B86E0}",
+                                    "subId": 268531742
+                                }
+                            }
+                        }
+                    },
+                    "Id": 821463854848339
+                },
+                "Component_[891817109193598]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 891817109193598
+                }
+            },
+            "Id": "Entity_[7704964520172207]",
+            "Name": "Plant 33 rock_moss_set_01_2k"
         },
         "Entity_[7718077873478075]": {
             "Components": {
@@ -36599,6 +36615,77 @@
             "Id": "Entity_[8263631255457583]",
             "Name": "Plant 113 SM_Art_Veg_Gorse_1"
         },
+        "Entity_[8294499002185515]": {
+            "Components": {
+                "Component_[1015414339087353]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 1015414339087353
+                },
+                "Component_[13016570263507]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 13016570263507
+                },
+                "Component_[4289788910987369]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 4289788910987369,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            172.848287
+                        ],
+                        "Translate": [
+                            -7.068312,
+                            94.202675,
+                            15.285846
+                        ],
+                        "UniformScale": 1.08
+                    }
+                },
+                "Component_[4536437933170750]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/rock_moss_set_02/rock_moss_set_02_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{F0B4EF2E-D558-5270-9280-E19A7F2D225C}",
+                                    "subId": 280287216
+                                }
+                            }
+                        }
+                    },
+                    "Id": 4536437933170750
+                },
+                "Component_[5569159920167661]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 5569159920167661
+                },
+                "Component_[5923712578350456]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 5923712578350456
+                },
+                "Component_[6198520471787700]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 6198520471787700
+                },
+                "Component_[6785158114932709]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 6785158114932709
+                },
+                "Component_[7253523500347057]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 7253523500347057
+                },
+                "Component_[8905527088131678]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 8905527088131678
+                }
+            },
+            "Id": "Entity_[8294499002185515]",
+            "Name": "Plant 335 rock_moss_set_02_2k"
+        },
         "Entity_[8294634914397916]": {
             "Components": {
                 "Component_[193235555291819]": {
@@ -38458,77 +38545,6 @@
             "Id": "Entity_[8661358969130321]",
             "Name": "Plant 203 SM_Art_Veg_Boulder_0"
         },
-        "Entity_[8674949776332758]": {
-            "Components": {
-                "Component_[1861907069531387]": {
-                    "$type": "EditorEntityIconComponent",
-                    "Id": 1861907069531387
-                },
-                "Component_[2831291825935640]": {
-                    "$type": "EditorEntitySortComponent",
-                    "Id": 2831291825935640
-                },
-                "Component_[411158362774584]": {
-                    "$type": "EditorLockComponent",
-                    "Id": 411158362774584
-                },
-                "Component_[509294841357263]": {
-                    "$type": "EditorDisabledCompositionComponent",
-                    "Id": 509294841357263
-                },
-                "Component_[6330340071814196]": {
-                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
-                    "Id": 6330340071814196,
-                    "Parent Entity": "ContainerEntity",
-                    "Transform Data": {
-                        "Rotate": [
-                            0,
-                            0,
-                            301.47774
-                        ],
-                        "Translate": [
-                            130.226,
-                            -94.716634,
-                            14.92741
-                        ],
-                        "UniformScale": 1.04
-                    }
-                },
-                "Component_[6902242119931833]": {
-                    "$type": "EditorVisibilityComponent",
-                    "Id": 6902242119931833
-                },
-                "Component_[7535298795083178]": {
-                    "$type": "EditorOnlyEntityComponent",
-                    "Id": 7535298795083178
-                },
-                "Component_[8681603846644039]": {
-                    "$type": "AZ::Render::EditorMeshComponent",
-                    "Controller": {
-                        "Configuration": {
-                            "ModelAsset": {
-                                "assetHint": "assets/art/models/sm_art_veg_standingstone_0.azmodel",
-                                "assetId": {
-                                    "guid": "{1B1AAF06-EB49-5B7D-AE63-65C6D0AAE75E}",
-                                    "subId": 284694201
-                                }
-                            }
-                        }
-                    },
-                    "Id": 8681603846644039
-                },
-                "Component_[868475082196950]": {
-                    "$type": "EditorInspectorComponent",
-                    "Id": 868475082196950
-                },
-                "Component_[89485279292484]": {
-                    "$type": "EditorPendingCompositionComponent",
-                    "Id": 89485279292484
-                }
-            },
-            "Id": "Entity_[8674949776332758]",
-            "Name": "Plant 15 SM_Art_Veg_StandingStone_0"
-        },
         "Entity_[8710155290789370]": {
             "Components": {
                 "Component_[3190138091881138]": {
@@ -39622,6 +39638,77 @@
             },
             "Id": "Entity_[8923027882824439]",
             "Name": "Plant 325 SM_Art_Veg_Gorse_2"
+        },
+        "Entity_[8969733773338764]": {
+            "Components": {
+                "Component_[1855177478779060]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 1855177478779060,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            67.105737
+                        ],
+                        "Translate": [
+                            -56.990731,
+                            93.337043,
+                            15.49517
+                        ],
+                        "UniformScale": 1.07
+                    }
+                },
+                "Component_[2783940550760903]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/rock_moss_set_02/rock_moss_set_02_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{F0B4EF2E-D558-5270-9280-E19A7F2D225C}",
+                                    "subId": 280287216
+                                }
+                            }
+                        }
+                    },
+                    "Id": 2783940550760903
+                },
+                "Component_[283239131157561]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 283239131157561
+                },
+                "Component_[3713477728559439]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 3713477728559439
+                },
+                "Component_[4247904312242555]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 4247904312242555
+                },
+                "Component_[5217289068646808]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 5217289068646808
+                },
+                "Component_[5435201051491512]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 5435201051491512
+                },
+                "Component_[6204839892277590]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 6204839892277590
+                },
+                "Component_[7584409131923652]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 7584409131923652
+                },
+                "Component_[916295806308906]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 916295806308906
+                }
+            },
+            "Id": "Entity_[8969733773338764]",
+            "Name": "Plant 330 rock_moss_set_02_2k"
         },
         "Entity_[900824434120759]": {
             "Components": {
