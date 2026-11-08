@@ -20,7 +20,7 @@ struct VSDepthOutput
 VSDepthOutput DepthPassVS(VSInput IN, uint instanceId : SV_InstanceID)
 {
     VSDepthOutput OUT;
-    const float3 world = DarkArisenFoliageWorldPosition(IN.m_position, instanceId);
+    const float3 world = DarkArisenFoliageWorldPosition(IN.m_position, IN.m_uv0, instanceId);
     OUT.m_position = mul(ViewSrg::m_viewProjectionMatrix, float4(world, 1.0));
     OUT.m_uv = IN.m_uv0;
     return OUT;

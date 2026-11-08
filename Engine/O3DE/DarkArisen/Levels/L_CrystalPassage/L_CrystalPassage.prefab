@@ -9185,6 +9185,93 @@
             "Id": "Entity_[3124639786609065]",
             "Name": "Plant 165 SM_Art_Veg_Gorse_0"
         },
+        "Entity_[3128793396461181]": {
+            "Components": {
+                "Component_[1023794132983499]": {
+                    "$type": "EditorMaterialComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "materials": [
+                                {
+                                    "Key": {},
+                                    "Value": {
+                                        "MaterialAsset": {
+                                            "assetHint": "assets/materials/foliage/sm_art_cover_l_crystalpassage_grassblades.azmaterial",
+                                            "assetId": {
+                                                "guid": "{8C5163E3-170B-5EAA-B1E0-99522DDF2329}",
+                                                "subId": 0
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "Id": 1023794132983499
+                },
+                "Component_[1655405404004725]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 1655405404004725
+                },
+                "Component_[2994530847061373]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 2994530847061373
+                },
+                "Component_[3447149294737732]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 3447149294737732
+                },
+                "Component_[4093591715287651]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 4093591715287651
+                },
+                "Component_[4314045340809704]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 4314045340809704
+                },
+                "Component_[5382752422782585]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 5382752422782585,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            0,
+                            0,
+                            0
+                        ]
+                    }
+                },
+                "Component_[5701553529479054]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 5701553529479054
+                },
+                "Component_[6836561995302409]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 6836561995302409
+                },
+                "Component_[8672492870937761]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 8672492870937761
+                },
+                "Component_[8753427854206990]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/models/sm_art_cover_l_crystalpassage_grassblades.azmodel",
+                                "assetId": {
+                                    "guid": "{536E3040-095E-55F0-906B-98155D247EB6}",
+                                    "subId": 282323638
+                                }
+                            }
+                        }
+                    },
+                    "Id": 8753427854206990
+                }
+            },
+            "Id": "Entity_[3128793396461181]",
+            "Name": "Ground Cover SM_Art_Cover_L_CrystalPassage_GrassBlades"
+        },
         "Entity_[3128812350176235]": {
             "Components": {
                 "Component_[2796923743252608]": {
@@ -11070,6 +11157,93 @@
             },
             "Id": "Entity_[3370691871744929]",
             "Name": "Plant 45 SM_Art_Veg_Boulder_2"
+        },
+        "Entity_[3455776744574564]": {
+            "Components": {
+                "Component_[1299306451401434]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 1299306451401434,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            0,
+                            0,
+                            0
+                        ]
+                    }
+                },
+                "Component_[2242045719892231]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 2242045719892231
+                },
+                "Component_[2453261444891202]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 2453261444891202
+                },
+                "Component_[324754725598485]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 324754725598485
+                },
+                "Component_[3265443980597896]": {
+                    "$type": "EditorMaterialComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "materials": [
+                                {
+                                    "Key": {},
+                                    "Value": {
+                                        "MaterialAsset": {
+                                            "assetHint": "assets/materials/foliage/sm_art_cover_l_crystalpassage_heathersprig.azmaterial",
+                                            "assetId": {
+                                                "guid": "{5157C9D7-E61F-5EFC-90ED-CFB5C7816C7A}",
+                                                "subId": 0
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "Id": 3265443980597896
+                },
+                "Component_[3464843355141533]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 3464843355141533
+                },
+                "Component_[3722725825547346]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 3722725825547346
+                },
+                "Component_[4129166510828678]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 4129166510828678
+                },
+                "Component_[4492078311820368]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 4492078311820368
+                },
+                "Component_[5723714940330552]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 5723714940330552
+                },
+                "Component_[798124527420717]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/models/sm_art_cover_l_crystalpassage_heathersprig.azmodel",
+                                "assetId": {
+                                    "guid": "{B17A93BD-42E9-541F-8501-21E250E3D215}",
+                                    "subId": 278644425
+                                }
+                            }
+                        }
+                    },
+                    "Id": 798124527420717
+                }
+            },
+            "Id": "Entity_[3455776744574564]",
+            "Name": "Ground Cover SM_Art_Cover_L_CrystalPassage_HeatherSprig"
         },
         "Entity_[3474221873304541]": {
             "Components": {
@@ -20586,6 +20760,93 @@
             "Id": "Entity_[5725658102700146]",
             "Name": "Plant 108 SM_Art_Veg_Gorse_0"
         },
+        "Entity_[5769526132397739]": {
+            "Components": {
+                "Component_[1471020907192252]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 1471020907192252
+                },
+                "Component_[2739724249923833]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 2739724249923833
+                },
+                "Component_[4098453866821574]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 4098453866821574
+                },
+                "Component_[4410658978917651]": {
+                    "$type": "EditorMaterialComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "materials": [
+                                {
+                                    "Key": {},
+                                    "Value": {
+                                        "MaterialAsset": {
+                                            "assetHint": "assets/materials/foliage/sm_art_cover_l_crystalpassage_grassdry.azmaterial",
+                                            "assetId": {
+                                                "guid": "{2DD5CEFA-6356-582B-A2A7-5D899B67C70F}",
+                                                "subId": 0
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "Id": 4410658978917651
+                },
+                "Component_[5127317390502656]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 5127317390502656
+                },
+                "Component_[5176005421587041]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 5176005421587041
+                },
+                "Component_[577820519666470]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/models/sm_art_cover_l_crystalpassage_grassdry.azmodel",
+                                "assetId": {
+                                    "guid": "{E552DFED-BE68-55EE-83D3-70CA59A3180B}",
+                                    "subId": 283393972
+                                }
+                            }
+                        }
+                    },
+                    "Id": 577820519666470
+                },
+                "Component_[6110589268959179]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 6110589268959179
+                },
+                "Component_[615465040689805]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 615465040689805
+                },
+                "Component_[6921961374283845]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 6921961374283845
+                },
+                "Component_[8436560693371521]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 8436560693371521,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            0,
+                            0,
+                            0
+                        ]
+                    }
+                }
+            },
+            "Id": "Entity_[5769526132397739]",
+            "Name": "Ground Cover SM_Art_Cover_L_CrystalPassage_GrassDry"
+        },
         "Entity_[5791970624448092]": {
             "Components": {
                 "Component_[1009306241552777]": {
@@ -23166,6 +23427,93 @@
             },
             "Id": "Entity_[643500003350165]",
             "Name": "Plant 145 SM_Art_Veg_Boulder_1"
+        },
+        "Entity_[6468696330641809]": {
+            "Components": {
+                "Component_[1824286808725777]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 1824286808725777
+                },
+                "Component_[2477684228957665]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 2477684228957665
+                },
+                "Component_[2947917022608739]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 2947917022608739
+                },
+                "Component_[3581754727016230]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 3581754727016230
+                },
+                "Component_[4106933113738170]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 4106933113738170
+                },
+                "Component_[4254585123386156]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 4254585123386156
+                },
+                "Component_[439724124569998]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 439724124569998,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            0,
+                            0,
+                            0
+                        ]
+                    }
+                },
+                "Component_[4507003047010828]": {
+                    "$type": "EditorMaterialComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "materials": [
+                                {
+                                    "Key": {},
+                                    "Value": {
+                                        "MaterialAsset": {
+                                            "assetHint": "assets/materials/foliage/sm_art_cover_l_crystalpassage_reeds.azmaterial",
+                                            "assetId": {
+                                                "guid": "{5C58577C-E421-5D96-8FC2-725704100045}",
+                                                "subId": 0
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "Id": 4507003047010828
+                },
+                "Component_[5857451357953374]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 5857451357953374
+                },
+                "Component_[7366313006811396]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 7366313006811396
+                },
+                "Component_[8592698056396849]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/models/sm_art_cover_l_crystalpassage_reeds.azmodel",
+                                "assetId": {
+                                    "guid": "{AD98CCE7-ADF7-5A11-94D3-735DEBB2744C}",
+                                    "subId": 279666193
+                                }
+                            }
+                        }
+                    },
+                    "Id": 8592698056396849
+                }
+            },
+            "Id": "Entity_[6468696330641809]",
+            "Name": "Ground Cover SM_Art_Cover_L_CrystalPassage_Reeds"
         },
         "Entity_[648197456221805]": {
             "Components": {

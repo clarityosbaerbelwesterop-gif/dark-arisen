@@ -4243,6 +4243,93 @@
             "Id": "Entity_[1301353490561454]",
             "Name": "Plant 432 SM_Art_Veg_Boulder_0"
         },
+        "Entity_[1303277295224025]": {
+            "Components": {
+                "Component_[1758798227824285]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 1758798227824285
+                },
+                "Component_[2354480649575040]": {
+                    "$type": "EditorMaterialComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "materials": [
+                                {
+                                    "Key": {},
+                                    "Value": {
+                                        "MaterialAsset": {
+                                            "assetHint": "assets/materials/foliage/sm_art_cover_l_herrerasfall_grassblades.azmaterial",
+                                            "assetId": {
+                                                "guid": "{296E4B56-4BE8-579E-B6D0-89D6B9F921D0}",
+                                                "subId": 0
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "Id": 2354480649575040
+                },
+                "Component_[245606419436650]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 245606419436650
+                },
+                "Component_[4196905823108149]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/models/sm_art_cover_l_herrerasfall_grassblades.azmodel",
+                                "assetId": {
+                                    "guid": "{02F4B903-7884-533C-9A23-136E21634F99}",
+                                    "subId": 279477891
+                                }
+                            }
+                        }
+                    },
+                    "Id": 4196905823108149
+                },
+                "Component_[4351727975109615]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 4351727975109615
+                },
+                "Component_[4793544309043704]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 4793544309043704
+                },
+                "Component_[634445586167045]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 634445586167045
+                },
+                "Component_[8010345438207346]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 8010345438207346,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            0,
+                            0,
+                            0
+                        ]
+                    }
+                },
+                "Component_[8116366281135674]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 8116366281135674
+                },
+                "Component_[8923619984192624]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 8923619984192624
+                },
+                "Component_[8964619296229854]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 8964619296229854
+                }
+            },
+            "Id": "Entity_[1303277295224025]",
+            "Name": "Ground Cover SM_Art_Cover_L_HerrerasFall_GrassBlades"
+        },
         "Entity_[1306013608781759]": {
             "Components": {
                 "Component_[2917873203277202]": {

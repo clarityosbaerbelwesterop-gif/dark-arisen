@@ -46966,6 +46966,93 @@
             "Id": "Entity_[681655105049273]",
             "Name": "Plant 205 SM_Art_Veg_Palm_2_TimberDark"
         },
+        "Entity_[683169827709617]": {
+            "Components": {
+                "Component_[1683750779381481]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/models/sm_art_cover_l_crowncitadelapproach_grassblades.azmodel",
+                                "assetId": {
+                                    "guid": "{AAB83D41-4A0E-55B9-84CD-FFB6733CD64F}",
+                                    "subId": 275612024
+                                }
+                            }
+                        }
+                    },
+                    "Id": 1683750779381481
+                },
+                "Component_[2154251279732254]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 2154251279732254
+                },
+                "Component_[234883093213529]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 234883093213529
+                },
+                "Component_[2721405104583542]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 2721405104583542,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            0,
+                            0,
+                            0
+                        ]
+                    }
+                },
+                "Component_[2922237108522025]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 2922237108522025
+                },
+                "Component_[3686969062254020]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 3686969062254020
+                },
+                "Component_[5101581235538612]": {
+                    "$type": "EditorMaterialComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "materials": [
+                                {
+                                    "Key": {},
+                                    "Value": {
+                                        "MaterialAsset": {
+                                            "assetHint": "assets/materials/foliage/sm_art_cover_l_crowncitadelapproach_grassblades.azmaterial",
+                                            "assetId": {
+                                                "guid": "{FFED06B3-18C5-5213-B61A-9D53460ECB30}",
+                                                "subId": 0
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "Id": 5101581235538612
+                },
+                "Component_[5154331942735163]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 5154331942735163
+                },
+                "Component_[7209816678032662]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 7209816678032662
+                },
+                "Component_[7251492637821058]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 7251492637821058
+                },
+                "Component_[7830347223835436]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 7830347223835436
+                }
+            },
+            "Id": "Entity_[683169827709617]",
+            "Name": "Ground Cover SM_Art_Cover_L_CrownCitadelApproach_GrassBlades"
+        },
         "Entity_[683338753800697]": {
             "Components": {
                 "Component_[2063970126667818]": {

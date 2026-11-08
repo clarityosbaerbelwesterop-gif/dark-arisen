@@ -3962,6 +3962,93 @@
             "Id": "Entity_[1991691426940652]",
             "Name": "Plant 305 SM_Art_Veg_Birch_2_BirchBark"
         },
+        "Entity_[199265446099563]": {
+            "Components": {
+                "Component_[1838203170105082]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 1838203170105082
+                },
+                "Component_[1985609130959343]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 1985609130959343
+                },
+                "Component_[3377376106350475]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 3377376106350475
+                },
+                "Component_[3524948929452349]": {
+                    "$type": "EditorMaterialComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "materials": [
+                                {
+                                    "Key": {},
+                                    "Value": {
+                                        "MaterialAsset": {
+                                            "assetHint": "assets/materials/foliage/sm_art_cover_l_falsebearings_grassblades.azmaterial",
+                                            "assetId": {
+                                                "guid": "{971ABCD7-8C3E-57D0-ACF9-F1A57C014843}",
+                                                "subId": 0
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "Id": 3524948929452349
+                },
+                "Component_[3829966203074222]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 3829966203074222
+                },
+                "Component_[4270226616771319]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 4270226616771319
+                },
+                "Component_[4509448837001036]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 4509448837001036
+                },
+                "Component_[5292806363733051]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 5292806363733051,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            0,
+                            0,
+                            0
+                        ]
+                    }
+                },
+                "Component_[7740125246820541]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 7740125246820541
+                },
+                "Component_[7963817930160419]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 7963817930160419
+                },
+                "Component_[8389244607619544]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/models/sm_art_cover_l_falsebearings_grassblades.azmodel",
+                                "assetId": {
+                                    "guid": "{D9463DA1-9512-52D0-A1BD-4EA415301580}",
+                                    "subId": 279947940
+                                }
+                            }
+                        }
+                    },
+                    "Id": 8389244607619544
+                }
+            },
+            "Id": "Entity_[199265446099563]",
+            "Name": "Ground Cover SM_Art_Cover_L_FalseBearings_GrassBlades"
+        },
         "Entity_[2002406132501086]": {
             "Components": {
                 "Component_[1156332848757575]": {
@@ -11952,6 +12039,93 @@
             },
             "Id": "Entity_[3541584965929313]",
             "Name": "Plant 249 SM_Art_Veg_Birch_2_BirchBark"
+        },
+        "Entity_[3559322476880774]": {
+            "Components": {
+                "Component_[1079166307956079]": {
+                    "$type": "EditorMaterialComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "materials": [
+                                {
+                                    "Key": {},
+                                    "Value": {
+                                        "MaterialAsset": {
+                                            "assetHint": "assets/materials/foliage/sm_art_cover_l_falsebearings_heathersprig.azmaterial",
+                                            "assetId": {
+                                                "guid": "{BFA81619-3718-5388-8E3B-920F827FF130}",
+                                                "subId": 0
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "Id": 1079166307956079
+                },
+                "Component_[1228955739693920]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 1228955739693920
+                },
+                "Component_[3271983138021965]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 3271983138021965,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            0,
+                            0,
+                            0
+                        ]
+                    }
+                },
+                "Component_[5457272561692639]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 5457272561692639
+                },
+                "Component_[7590326483015732]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 7590326483015732
+                },
+                "Component_[7740455724191113]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 7740455724191113
+                },
+                "Component_[7851858324863489]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 7851858324863489
+                },
+                "Component_[7983581324790482]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 7983581324790482
+                },
+                "Component_[8737824526375109]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 8737824526375109
+                },
+                "Component_[8887701028503794]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/models/sm_art_cover_l_falsebearings_heathersprig.azmodel",
+                                "assetId": {
+                                    "guid": "{B36DB4F1-9590-568D-9108-FAC8A77E9FEF}",
+                                    "subId": 269077441
+                                }
+                            }
+                        }
+                    },
+                    "Id": 8887701028503794
+                },
+                "Component_[94400337956093]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 94400337956093
+                }
+            },
+            "Id": "Entity_[3559322476880774]",
+            "Name": "Ground Cover SM_Art_Cover_L_FalseBearings_HeatherSprig"
         },
         "Entity_[3570494964555787]": {
             "Components": {
@@ -20998,6 +21172,93 @@
             },
             "Id": "Entity_[5470231934521884]",
             "Name": "Plant 225 SM_Art_Veg_Gorse_0"
+        },
+        "Entity_[5479117986075113]": {
+            "Components": {
+                "Component_[1901726407856811]": {
+                    "$type": "EditorMaterialComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "materials": [
+                                {
+                                    "Key": {},
+                                    "Value": {
+                                        "MaterialAsset": {
+                                            "assetHint": "assets/materials/foliage/sm_art_cover_l_falsebearings_grassdry.azmaterial",
+                                            "assetId": {
+                                                "guid": "{6F342214-0E72-509A-A140-984E76C15340}",
+                                                "subId": 0
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "Id": 1901726407856811
+                },
+                "Component_[2055921035346073]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 2055921035346073,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            0,
+                            0,
+                            0
+                        ]
+                    }
+                },
+                "Component_[2158822707929109]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 2158822707929109
+                },
+                "Component_[2972692951514286]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/models/sm_art_cover_l_falsebearings_grassdry.azmodel",
+                                "assetId": {
+                                    "guid": "{3B020128-26D9-56DC-92A6-7BC86EA2D1FE}",
+                                    "subId": 282631745
+                                }
+                            }
+                        }
+                    },
+                    "Id": 2972692951514286
+                },
+                "Component_[4034806969286280]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 4034806969286280
+                },
+                "Component_[4263455332761347]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 4263455332761347
+                },
+                "Component_[4427988831589469]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 4427988831589469
+                },
+                "Component_[5853436546447662]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 5853436546447662
+                },
+                "Component_[751995842787753]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 751995842787753
+                },
+                "Component_[8278732947069185]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 8278732947069185
+                },
+                "Component_[8356015605003172]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 8356015605003172
+                }
+            },
+            "Id": "Entity_[5479117986075113]",
+            "Name": "Ground Cover SM_Art_Cover_L_FalseBearings_GrassDry"
         },
         "Entity_[553441039724899]": {
             "Components": {
@@ -36616,6 +36877,93 @@
             },
             "Id": "Entity_[8351046605196954]",
             "Name": "Plant 251 SM_Art_Veg_Pine_0_Bark"
+        },
+        "Entity_[8358211275715399]": {
+            "Components": {
+                "Component_[1347651636234212]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 1347651636234212
+                },
+                "Component_[3214348225965699]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 3214348225965699
+                },
+                "Component_[3415028856688946]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 3415028856688946
+                },
+                "Component_[3559263515981093]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 3559263515981093
+                },
+                "Component_[6194541455342255]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 6194541455342255
+                },
+                "Component_[7262660166326467]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 7262660166326467,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            0,
+                            0,
+                            0
+                        ]
+                    }
+                },
+                "Component_[7704575693058491]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 7704575693058491
+                },
+                "Component_[8314482950438416]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/models/sm_art_cover_l_falsebearings_reeds.azmodel",
+                                "assetId": {
+                                    "guid": "{018F8044-437F-57AB-8C83-51D1A5E30C4B}",
+                                    "subId": 277335125
+                                }
+                            }
+                        }
+                    },
+                    "Id": 8314482950438416
+                },
+                "Component_[832784703724102]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 832784703724102
+                },
+                "Component_[8932165254592261]": {
+                    "$type": "EditorMaterialComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "materials": [
+                                {
+                                    "Key": {},
+                                    "Value": {
+                                        "MaterialAsset": {
+                                            "assetHint": "assets/materials/foliage/sm_art_cover_l_falsebearings_reeds.azmaterial",
+                                            "assetId": {
+                                                "guid": "{2F8D98EE-2339-593D-8252-1B9C6F076B29}",
+                                                "subId": 0
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "Id": 8932165254592261
+                },
+                "Component_[8944782705999895]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 8944782705999895
+                }
+            },
+            "Id": "Entity_[8358211275715399]",
+            "Name": "Ground Cover SM_Art_Cover_L_FalseBearings_Reeds"
         },
         "Entity_[8382432215378639]": {
             "Components": {

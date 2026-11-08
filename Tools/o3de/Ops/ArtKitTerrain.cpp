@@ -381,7 +381,7 @@ namespace DarkArisen::Tools::Art
         }
 
         /** DarkArisenFoliage material (Assets/Materials/Foliage) for one part of a plant. */
-        std::string FoliageMaterialJson(const Material& Part, const Wind& W, const double BendHeight)
+        std::string FoliageMaterialJson(const Material& Part, const Wind& W, const double BendHeight, const bool GroundCover = false)
         {
             using GltfBits::Num;
             const bool Leaf = Part.Mask;
@@ -396,6 +396,7 @@ namespace DarkArisen::Tools::Art
             J += std::string("        \"translucency.color\": ") + (Leaf ? "[0.55, 0.75, 0.25]" : "[0, 0, 0]") + ",\n";
             J += "        \"wind.bendHeight\": " + Num(BendHeight) + ",\n";
             J += "        \"wind.flutter\": " + Num(Leaf ? W.Flutter : 0.0) + ",\n";
+            if (GroundCover) J += "        \"wind.groundCover\": 1,\n";
             J += "        \"wind.speed\": " + Num(W.Speed) + ",\n";
             J += "        \"wind.strength\": " + Num(W.Strength) + "\n";
             J += "    }\n}\n";
@@ -710,7 +711,8 @@ namespace DarkArisen::Tools::Art
         Ground.Indexed(GroundMat, GV, CI);
         Collide.Indexed(Mat(M::Rock), GV, CI);
 
-        // ---- ground cover near the route, merged into the terrain model
+        // ---- ground cover near the route: its own model per card material, swaying as a meadow
+        Mesh Cover("SM_Art_Cover_" + Spec.Name);
         for (int J = 0; J < Ny; ++J)
         {
             for (int I = 0; I < Nx; ++I)
@@ -729,7 +731,7 @@ namespace DarkArisen::Tools::Art
                 if (Shore)
                 {
                     const double Width = R.Range(0.7, 1.1), Height = R.Range(0.9, 1.5), Yaw = R.Range(0.0, Pi);
-                    Tuft(Ground, Mat(M::Reeds), {X, Y, Z - 0.04}, Width, Height, Yaw, 3);
+                    Tuft(Cover, Mat(M::Reeds), {X, Y, Z - 0.04}, Width, Height, Yaw, 3);
                     continue;
                 }
                 const V3 Nn = NormalAt(I, J);
@@ -746,7 +748,7 @@ namespace DarkArisen::Tools::Art
                 case M::Ash: case M::StoneDark: case M::Rock: case M::Lichen: case M::Sand: case M::Dirt: case M::RedEarth: continue;
                 default: break;
                 }
-                Tuft(Ground, Mat(Card), {X, Y, Z - 0.04}, W, Hh, R.Range(0.0, Pi), 2);
+                Tuft(Cover, Mat(Card), {X, Y, Z - 0.04}, W, Hh, R.Range(0.0, Pi), 2);
             }
         }
 
@@ -799,6 +801,18 @@ namespace DarkArisen::Tools::Art
                 WI.insert(WI.end(), {0u, static_cast<std::uint32_t>(1 + K), static_cast<std::uint32_t>(1 + (K + 1) % Segments)});
             }
             Ground.Indexed(Mat(M::PondWater), WV, WI);
+        }
+
+        for (const Mesh::Part& P : Cover.Parts())
+        {
+            const std::string Suffix = P.Mat.Name.rfind("M_Art_", 0) == 0 ? P.Mat.Name.substr(6) : P.Mat.Name;
+            const std::string Model = Cover.Name() + "_" + Suffix;
+            Mesh One(Model);
+            One.Indexed(P.Mat, P.Vertices, P.Indices);
+            PlantPart Part{Emit(Model, WriteGltf(One, "Dark Arisen art kit (terrain)")), "Assets/Materials/Foliage/" + Model + ".material"};
+            const Wind Grass{0.09, 0.55, 0.25};
+            Output.push_back({Part.Material, FoliageMaterialJson(P.Mat, Grass, 0.6, true)});
+            Art.Cover.push_back(std::move(Part));
         }
 
         Art.Model = Emit(Ground.Name(), WriteGltf(Ground, "Dark Arisen art kit (terrain)"));

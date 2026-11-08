@@ -94,6 +94,7 @@ namespace DarkArisen::Tools::Art
         std::string Model;           // the ground with its ground cover
         std::string CollisionGltf;   // walkable ground triangles
         std::vector<Planting> Plants;
+        std::vector<PlantPart> Cover;  // ground cover cards, one model per card material, placed at the origin
     };
 
     /** A named story box (its top is the floor the anchors mark), dressed by Kit::Authored. */

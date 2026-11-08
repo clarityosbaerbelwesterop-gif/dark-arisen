@@ -140,6 +140,93 @@
             "Id": "Entity_[1011091229380619]",
             "Name": "Plant 437 SM_Art_Veg_Fern_1"
         },
+        "Entity_[1021495439558687]": {
+            "Components": {
+                "Component_[1787022987306679]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 1787022987306679
+                },
+                "Component_[2999255368304307]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 2999255368304307
+                },
+                "Component_[3121618731701304]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 3121618731701304
+                },
+                "Component_[3526254732010218]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 3526254732010218
+                },
+                "Component_[3737535336382189]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 3737535336382189
+                },
+                "Component_[4481530580276798]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 4481530580276798
+                },
+                "Component_[5437878806792211]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/models/sm_art_cover_l_brokencompact_grassblades.azmodel",
+                                "assetId": {
+                                    "guid": "{7D183F2D-56C4-5C37-A9D4-C5DF9F5C0F6D}",
+                                    "subId": 271161201
+                                }
+                            }
+                        }
+                    },
+                    "Id": 5437878806792211
+                },
+                "Component_[6976977264326382]": {
+                    "$type": "EditorMaterialComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "materials": [
+                                {
+                                    "Key": {},
+                                    "Value": {
+                                        "MaterialAsset": {
+                                            "assetHint": "assets/materials/foliage/sm_art_cover_l_brokencompact_grassblades.azmaterial",
+                                            "assetId": {
+                                                "guid": "{B9DE653D-1A86-57A0-8812-911FB24CBA8D}",
+                                                "subId": 0
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "Id": 6976977264326382
+                },
+                "Component_[7166168980938532]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 7166168980938532
+                },
+                "Component_[7225438864253764]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 7225438864253764
+                },
+                "Component_[8107332911357216]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 8107332911357216,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            0,
+                            0,
+                            0
+                        ]
+                    }
+                }
+            },
+            "Id": "Entity_[1021495439558687]",
+            "Name": "Ground Cover SM_Art_Cover_L_BrokenCompact_GrassBlades"
+        },
         "Entity_[1031282463388807]": {
             "Components": {
                 "Component_[1486372813747921]": {

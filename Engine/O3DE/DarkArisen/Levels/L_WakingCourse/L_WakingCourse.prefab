@@ -11744,6 +11744,93 @@
             "Id": "Entity_[2110244806438277]",
             "Name": "Plant 157 SM_Art_Veg_Fern_0"
         },
+        "Entity_[2139045272786709]": {
+            "Components": {
+                "Component_[1188999354882632]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 1188999354882632
+                },
+                "Component_[1732647758209641]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 1732647758209641
+                },
+                "Component_[3212620435867755]": {
+                    "$type": "EditorMaterialComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "materials": [
+                                {
+                                    "Key": {},
+                                    "Value": {
+                                        "MaterialAsset": {
+                                            "assetHint": "assets/materials/foliage/sm_art_cover_l_wakingcourse_grassblades.azmaterial",
+                                            "assetId": {
+                                                "guid": "{BAD66099-B7DB-5E12-804A-D2B4519749DE}",
+                                                "subId": 0
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "Id": 3212620435867755
+                },
+                "Component_[3625971078067907]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 3625971078067907
+                },
+                "Component_[4599260121779673]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 4599260121779673,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            0,
+                            0,
+                            0
+                        ]
+                    }
+                },
+                "Component_[7550919725832302]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/models/sm_art_cover_l_wakingcourse_grassblades.azmodel",
+                                "assetId": {
+                                    "guid": "{8BCA6ED8-548F-567C-AA98-2692B9544910}",
+                                    "subId": 276459603
+                                }
+                            }
+                        }
+                    },
+                    "Id": 7550919725832302
+                },
+                "Component_[7779750207452117]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 7779750207452117
+                },
+                "Component_[8141956379138845]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 8141956379138845
+                },
+                "Component_[8502619550956481]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 8502619550956481
+                },
+                "Component_[8692709010774766]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 8692709010774766
+                },
+                "Component_[987158898007140]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 987158898007140
+                }
+            },
+            "Id": "Entity_[2139045272786709]",
+            "Name": "Ground Cover SM_Art_Cover_L_WakingCourse_GrassBlades"
+        },
         "Entity_[2139067459182683]": {
             "Components": {
                 "Component_[1813523472745403]": {

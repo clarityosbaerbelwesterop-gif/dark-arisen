@@ -125,6 +125,19 @@
                         "description": "Fast leaf flutter as a fraction of the sway (0 for bark).",
                         "min": 0.0,
                         "max": 1.0
+                    },
+                    {
+                        "name": "groundCover",
+                        "displayName": "Ground Cover",
+                        "type": "Float",
+                        "defaultValue": 0.0,
+                        "connection": {
+                            "type": "ShaderInput",
+                            "name": "m_groundCover"
+                        },
+                        "description": "1 for many cards in one model (grass, heather): bend by card height from UV, phase from a wave field.",
+                        "min": 0.0,
+                        "max": 1.0
                     }
                 ]
             },

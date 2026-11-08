@@ -24300,6 +24300,93 @@
             "Id": "Entity_[2574730178534692]",
             "Name": "PROVISIONAL Path BackRouteEnemyB to WatcherTwo 8"
         },
+        "Entity_[2588158860602777]": {
+            "Components": {
+                "Component_[2829715024041237]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 2829715024041237
+                },
+                "Component_[4119995353052656]": {
+                    "$type": "EditorMaterialComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "materials": [
+                                {
+                                    "Key": {},
+                                    "Value": {
+                                        "MaterialAsset": {
+                                            "assetHint": "assets/materials/foliage/sm_art_cover_l_holderswake_grassblades.azmaterial",
+                                            "assetId": {
+                                                "guid": "{BD5AE20A-99A9-50D2-8BB6-D97FDDA06A40}",
+                                                "subId": 0
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "Id": 4119995353052656
+                },
+                "Component_[428769885766762]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 428769885766762
+                },
+                "Component_[4535820207481698]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 4535820207481698,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            0,
+                            0,
+                            0
+                        ]
+                    }
+                },
+                "Component_[5897514318282789]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/models/sm_art_cover_l_holderswake_grassblades.azmodel",
+                                "assetId": {
+                                    "guid": "{F81B48E5-8122-56AF-8B2B-1A8529D06536}",
+                                    "subId": 270247222
+                                }
+                            }
+                        }
+                    },
+                    "Id": 5897514318282789
+                },
+                "Component_[6638377871187232]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 6638377871187232
+                },
+                "Component_[6711260891156397]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 6711260891156397
+                },
+                "Component_[759998678530271]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 759998678530271
+                },
+                "Component_[8241625949144910]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 8241625949144910
+                },
+                "Component_[8256417967733320]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 8256417967733320
+                },
+                "Component_[999853571552282]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 999853571552282
+                }
+            },
+            "Id": "Entity_[2588158860602777]",
+            "Name": "Ground Cover SM_Art_Cover_L_HoldersWake_GrassBlades"
+        },
         "Entity_[2592401557751509]": {
             "Components": {
                 "Component_[1417580439792617]": {
@@ -64696,6 +64783,93 @@
             },
             "Id": "Entity_[5806747089459446]",
             "Name": "Plant 417 SM_Art_Veg_Mangrove_0_Bark"
+        },
+        "Entity_[5811681993943829]": {
+            "Components": {
+                "Component_[1974583843677815]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 1974583843677815
+                },
+                "Component_[2583426216725712]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 2583426216725712
+                },
+                "Component_[2849933317925824]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 2849933317925824
+                },
+                "Component_[2886745169587042]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 2886745169587042
+                },
+                "Component_[4681170610247546]": {
+                    "$type": "EditorMaterialComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "materials": [
+                                {
+                                    "Key": {},
+                                    "Value": {
+                                        "MaterialAsset": {
+                                            "assetHint": "assets/materials/foliage/sm_art_cover_l_holderswake_reeds.azmaterial",
+                                            "assetId": {
+                                                "guid": "{2B90B2A7-F217-5A63-9F4C-E1D3953C40EE}",
+                                                "subId": 0
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "Id": 4681170610247546
+                },
+                "Component_[4811060416158209]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 4811060416158209
+                },
+                "Component_[4904957579297551]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/models/sm_art_cover_l_holderswake_reeds.azmodel",
+                                "assetId": {
+                                    "guid": "{B1632CEC-999D-5E29-88FB-7A723199D2AC}",
+                                    "subId": 280275553
+                                }
+                            }
+                        }
+                    },
+                    "Id": 4904957579297551
+                },
+                "Component_[5908238311961388]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 5908238311961388,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            0,
+                            0,
+                            0
+                        ]
+                    }
+                },
+                "Component_[7412209518928204]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 7412209518928204
+                },
+                "Component_[783996837900286]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 783996837900286
+                },
+                "Component_[8323098299608227]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 8323098299608227
+                }
+            },
+            "Id": "Entity_[5811681993943829]",
+            "Name": "Ground Cover SM_Art_Cover_L_HoldersWake_Reeds"
         },
         "Entity_[5813213758565080]": {
             "Components": {

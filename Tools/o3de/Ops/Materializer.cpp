@@ -1434,6 +1434,12 @@ namespace DarkArisen::Tools
             const std::string Terrain = Prefab.AddEntity("Terrain", {});
             Prefab.AddComponent(Terrain, "AZ::Render::EditorMeshComponent", MeshComponent(Work.Model(Art.Model)));
             AddMeshCollider(Prefab, Terrain, Work.ArtCollision("Assets/Art/Collision/SM_Art_Terrain_" + LevelName + "_Collision.gltf", Art.CollisionGltf));
+            for (const Art::PlantPart& Part : Art.Cover)
+            {
+                const std::string Cover = Prefab.AddEntity("Ground Cover " + Stem(Part.Model), {});
+                Prefab.AddComponent(Cover, "AZ::Render::EditorMeshComponent", MeshComponent(Work.Model(Part.Model)));
+                AddMaterialOverride(Prefab, Cover, Part.Material);
+            }
             int Index = 0;
             for (const Art::Planting& P : Art.Plants)
             {

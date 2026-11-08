@@ -13380,6 +13380,93 @@
             "Id": "Entity_[2829651453695993]",
             "Name": "Plant 25 SM_Art_Veg_Boulder_1"
         },
+        "Entity_[2845245560528001]": {
+            "Components": {
+                "Component_[2519457309694527]": {
+                    "$type": "EditorMaterialComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "materials": [
+                                {
+                                    "Key": {},
+                                    "Value": {
+                                        "MaterialAsset": {
+                                            "assetHint": "assets/materials/foliage/sm_art_cover_l_thewakeafter_grassblades.azmaterial",
+                                            "assetId": {
+                                                "guid": "{FA9B3284-B831-58C5-B528-4BFC61BE111F}",
+                                                "subId": 0
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "Id": 2519457309694527
+                },
+                "Component_[3476599895080345]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 3476599895080345
+                },
+                "Component_[3726837054263344]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 3726837054263344
+                },
+                "Component_[4312034607025489]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 4312034607025489
+                },
+                "Component_[4610465397606191]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 4610465397606191
+                },
+                "Component_[5342615077061378]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 5342615077061378
+                },
+                "Component_[5516715649398850]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/models/sm_art_cover_l_thewakeafter_grassblades.azmodel",
+                                "assetId": {
+                                    "guid": "{507AA8B7-9A17-50B4-9A3E-BA02AE10FCAF}",
+                                    "subId": 271105990
+                                }
+                            }
+                        }
+                    },
+                    "Id": 5516715649398850
+                },
+                "Component_[5871297792772181]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 5871297792772181
+                },
+                "Component_[7559622873184685]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 7559622873184685
+                },
+                "Component_[7585983321501533]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 7585983321501533,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            0,
+                            0,
+                            0
+                        ]
+                    }
+                },
+                "Component_[8617326085734692]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 8617326085734692
+                }
+            },
+            "Id": "Entity_[2845245560528001]",
+            "Name": "Ground Cover SM_Art_Cover_L_TheWakeAfter_GrassBlades"
+        },
         "Entity_[2849162487754791]": {
             "Components": {
                 "Component_[1246416706775657]": {

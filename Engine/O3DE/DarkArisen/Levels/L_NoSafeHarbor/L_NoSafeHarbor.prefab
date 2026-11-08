@@ -100694,6 +100694,93 @@
             "Id": "Entity_[7860592519354606]",
             "Name": "Plant 113 SM_Art_Veg_Boulder_1"
         },
+        "Entity_[7862986018791953]": {
+            "Components": {
+                "Component_[1206804602387933]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 1206804602387933
+                },
+                "Component_[201228910350661]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 201228910350661
+                },
+                "Component_[2026459771998384]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 2026459771998384
+                },
+                "Component_[3192768805126592]": {
+                    "$type": "EditorMaterialComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "materials": [
+                                {
+                                    "Key": {},
+                                    "Value": {
+                                        "MaterialAsset": {
+                                            "assetHint": "assets/materials/foliage/sm_art_cover_l_nosafeharbor_grassblades.azmaterial",
+                                            "assetId": {
+                                                "guid": "{D15785AD-CAD4-5015-A296-DAFE914D8F38}",
+                                                "subId": 0
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "Id": 3192768805126592
+                },
+                "Component_[3465136622124847]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 3465136622124847
+                },
+                "Component_[3636454256139038]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 3636454256139038
+                },
+                "Component_[6319926632077112]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 6319926632077112
+                },
+                "Component_[6706318686195834]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 6706318686195834
+                },
+                "Component_[6756919098876978]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 6756919098876978,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            0,
+                            0,
+                            0
+                        ]
+                    }
+                },
+                "Component_[7177084491488682]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 7177084491488682
+                },
+                "Component_[8500726157375605]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/models/sm_art_cover_l_nosafeharbor_grassblades.azmodel",
+                                "assetId": {
+                                    "guid": "{14E84937-89F2-50B6-B235-69852FBBE02A}",
+                                    "subId": 272118750
+                                }
+                            }
+                        }
+                    },
+                    "Id": 8500726157375605
+                }
+            },
+            "Id": "Entity_[7862986018791953]",
+            "Name": "Ground Cover SM_Art_Cover_L_NoSafeHarbor_GrassBlades"
+        },
         "Entity_[7874267818298979]": {
             "Components": {
                 "Component_[1921191054196894]": {

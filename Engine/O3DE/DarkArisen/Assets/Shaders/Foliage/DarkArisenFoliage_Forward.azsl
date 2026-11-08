@@ -30,7 +30,7 @@ struct VertexShaderOutput
 VertexShaderOutput MainVS(VertexShaderInput IN, uint instanceId : SV_InstanceID)
 {
     VertexShaderOutput OUT;
-    const float3 world = DarkArisenFoliageWorldPosition(IN.m_position, instanceId);
+    const float3 world = DarkArisenFoliageWorldPosition(IN.m_position, IN.m_uv0, instanceId);
     OUT.m_position = mul(ViewSrg::m_viewProjectionMatrix, float4(world, 1.0));
     OUT.m_worldPosition = world;
     OUT.m_normal = normalize(mul(GetObjectToWorldMatrixInverseTranspose(instanceId), IN.m_normal));

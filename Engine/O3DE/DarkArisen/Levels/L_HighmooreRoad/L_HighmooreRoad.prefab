@@ -8313,6 +8313,93 @@
             "Id": "Entity_[246244376026204]",
             "Name": "Plant 207 SM_Art_Veg_Birch_1_BirchBark"
         },
+        "Entity_[2486847089052261]": {
+            "Components": {
+                "Component_[1032680164532127]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 1032680164532127
+                },
+                "Component_[1274399231652359]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 1274399231652359
+                },
+                "Component_[1866615445597741]": {
+                    "$type": "EditorMaterialComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "materials": [
+                                {
+                                    "Key": {},
+                                    "Value": {
+                                        "MaterialAsset": {
+                                            "assetHint": "assets/materials/foliage/sm_art_cover_l_highmooreroad_grassdry.azmaterial",
+                                            "assetId": {
+                                                "guid": "{BA05D603-D41E-56E5-A337-FCEC49B21861}",
+                                                "subId": 0
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "Id": 1866615445597741
+                },
+                "Component_[2596346003076077]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 2596346003076077
+                },
+                "Component_[5696798550562259]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 5696798550562259
+                },
+                "Component_[6117312251497288]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/models/sm_art_cover_l_highmooreroad_grassdry.azmodel",
+                                "assetId": {
+                                    "guid": "{AACB6340-18FC-50BD-BB10-A4DA4E0C3754}",
+                                    "subId": 282001797
+                                }
+                            }
+                        }
+                    },
+                    "Id": 6117312251497288
+                },
+                "Component_[685412187201182]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 685412187201182
+                },
+                "Component_[6898191841392571]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 6898191841392571
+                },
+                "Component_[863397691788060]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 863397691788060
+                },
+                "Component_[8755931617338539]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 8755931617338539,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            0,
+                            0,
+                            0
+                        ]
+                    }
+                },
+                "Component_[8773794745427530]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 8773794745427530
+                }
+            },
+            "Id": "Entity_[2486847089052261]",
+            "Name": "Ground Cover SM_Art_Cover_L_HighmooreRoad_GrassDry"
+        },
         "Entity_[2500057846461755]": {
             "Components": {
                 "Component_[1940931058615612]": {
@@ -8476,6 +8563,93 @@
             },
             "Id": "Entity_[2541170184805916]",
             "Name": "Plant 113 SM_Art_Veg_Gorse_2"
+        },
+        "Entity_[2558643433005087]": {
+            "Components": {
+                "Component_[1030905730582490]": {
+                    "$type": "EditorMaterialComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "materials": [
+                                {
+                                    "Key": {},
+                                    "Value": {
+                                        "MaterialAsset": {
+                                            "assetHint": "assets/materials/foliage/sm_art_cover_l_highmooreroad_grassblades.azmaterial",
+                                            "assetId": {
+                                                "guid": "{E25E11BC-9FCB-5ACD-8178-7FE9C10B7DB4}",
+                                                "subId": 0
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "Id": 1030905730582490
+                },
+                "Component_[1633593780619031]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 1633593780619031
+                },
+                "Component_[2803023070310494]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 2803023070310494
+                },
+                "Component_[3165802562188290]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 3165802562188290
+                },
+                "Component_[3305059860214064]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 3305059860214064
+                },
+                "Component_[356129186976864]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 356129186976864
+                },
+                "Component_[4410736359797935]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/models/sm_art_cover_l_highmooreroad_grassblades.azmodel",
+                                "assetId": {
+                                    "guid": "{94655930-1C23-55DC-9D91-EFD3C57EA739}",
+                                    "subId": 268666637
+                                }
+                            }
+                        }
+                    },
+                    "Id": 4410736359797935
+                },
+                "Component_[4896728399760332]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 4896728399760332,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            0,
+                            0,
+                            0
+                        ]
+                    }
+                },
+                "Component_[5567817507301228]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 5567817507301228
+                },
+                "Component_[5903787061264707]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 5903787061264707
+                },
+                "Component_[8384276094615393]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 8384276094615393
+                }
+            },
+            "Id": "Entity_[2558643433005087]",
+            "Name": "Ground Cover SM_Art_Cover_L_HighmooreRoad_GrassBlades"
         },
         "Entity_[2569975790356039]": {
             "Components": {
@@ -9531,6 +9705,93 @@
             },
             "Id": "Entity_[2821332756005124]",
             "Name": "Plant 254 SM_Art_Veg_Birch_1_LeavesPale"
+        },
+        "Entity_[2834101539187667]": {
+            "Components": {
+                "Component_[2081603765555574]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 2081603765555574,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            0,
+                            0,
+                            0
+                        ]
+                    }
+                },
+                "Component_[2178198066899771]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 2178198066899771
+                },
+                "Component_[3775678418949762]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 3775678418949762
+                },
+                "Component_[3812560758123353]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 3812560758123353
+                },
+                "Component_[4853113836372268]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 4853113836372268
+                },
+                "Component_[569447241742516]": {
+                    "$type": "EditorMaterialComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "materials": [
+                                {
+                                    "Key": {},
+                                    "Value": {
+                                        "MaterialAsset": {
+                                            "assetHint": "assets/materials/foliage/sm_art_cover_l_highmooreroad_reeds.azmaterial",
+                                            "assetId": {
+                                                "guid": "{64D7923C-8B3D-5D3F-B907-9C1E9179DEC5}",
+                                                "subId": 0
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "Id": 569447241742516
+                },
+                "Component_[7716286814225174]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 7716286814225174
+                },
+                "Component_[8184217147010078]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 8184217147010078
+                },
+                "Component_[8239360567923945]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/models/sm_art_cover_l_highmooreroad_reeds.azmodel",
+                                "assetId": {
+                                    "guid": "{F26A2445-0667-53D0-A560-9B0F29004197}",
+                                    "subId": 278496467
+                                }
+                            }
+                        }
+                    },
+                    "Id": 8239360567923945
+                },
+                "Component_[8727067734806468]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 8727067734806468
+                },
+                "Component_[8952202975799849]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 8952202975799849
+                }
+            },
+            "Id": "Entity_[2834101539187667]",
+            "Name": "Ground Cover SM_Art_Cover_L_HighmooreRoad_Reeds"
         },
         "Entity_[2840813102568100]": {
             "Components": {
@@ -37161,6 +37422,93 @@
             },
             "Id": "Entity_[8935856345394969]",
             "Name": "Plant 196 SM_Art_Veg_Gorse_2"
+        },
+        "Entity_[8942331481243826]": {
+            "Components": {
+                "Component_[3520181686378577]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 3520181686378577
+                },
+                "Component_[4416936158862655]": {
+                    "$type": "EditorMaterialComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "materials": [
+                                {
+                                    "Key": {},
+                                    "Value": {
+                                        "MaterialAsset": {
+                                            "assetHint": "assets/materials/foliage/sm_art_cover_l_highmooreroad_heathersprig.azmaterial",
+                                            "assetId": {
+                                                "guid": "{6F4C8ED7-47B4-5DD6-A2D3-FA17AC633565}",
+                                                "subId": 0
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "Id": 4416936158862655
+                },
+                "Component_[4463967078672989]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 4463967078672989,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            0,
+                            0,
+                            0
+                        ]
+                    }
+                },
+                "Component_[4995591086356633]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 4995591086356633
+                },
+                "Component_[5145015755281069]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 5145015755281069
+                },
+                "Component_[5245828245539632]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 5245828245539632
+                },
+                "Component_[5679487853288258]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/models/sm_art_cover_l_highmooreroad_heathersprig.azmodel",
+                                "assetId": {
+                                    "guid": "{7929C9EC-293B-5667-88D5-DD81E8ADD90D}",
+                                    "subId": 283147424
+                                }
+                            }
+                        }
+                    },
+                    "Id": 5679487853288258
+                },
+                "Component_[6128357077254703]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 6128357077254703
+                },
+                "Component_[6860506756709890]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 6860506756709890
+                },
+                "Component_[6886677132600149]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 6886677132600149
+                },
+                "Component_[7546101033411108]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 7546101033411108
+                }
+            },
+            "Id": "Entity_[8942331481243826]",
+            "Name": "Ground Cover SM_Art_Cover_L_HighmooreRoad_HeatherSprig"
         },
         "Entity_[8960926192035708]": {
             "Components": {

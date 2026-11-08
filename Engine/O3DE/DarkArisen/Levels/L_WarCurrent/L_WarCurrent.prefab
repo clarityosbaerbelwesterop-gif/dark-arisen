@@ -37636,6 +37636,93 @@
             "Id": "Entity_[5580269901240776]",
             "Name": "Plant 203 SM_Art_Veg_Broadleaf_2_Bark"
         },
+        "Entity_[5587379388268137]": {
+            "Components": {
+                "Component_[1497479371290578]": {
+                    "$type": "EditorMaterialComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "materials": [
+                                {
+                                    "Key": {},
+                                    "Value": {
+                                        "MaterialAsset": {
+                                            "assetHint": "assets/materials/foliage/sm_art_cover_l_warcurrent_grassblades.azmaterial",
+                                            "assetId": {
+                                                "guid": "{C4BFDA71-ECFC-5FEB-B3A0-D3B43B71846A}",
+                                                "subId": 0
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "Id": 1497479371290578
+                },
+                "Component_[1657201409716840]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 1657201409716840
+                },
+                "Component_[2671727434014900]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 2671727434014900
+                },
+                "Component_[3619143363606923]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 3619143363606923
+                },
+                "Component_[3680317187980767]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 3680317187980767
+                },
+                "Component_[4010178562788070]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 4010178562788070
+                },
+                "Component_[4867848026620777]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 4867848026620777
+                },
+                "Component_[5604527987764516]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 5604527987764516,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            0,
+                            0,
+                            0
+                        ]
+                    }
+                },
+                "Component_[7621295672948727]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/models/sm_art_cover_l_warcurrent_grassblades.azmodel",
+                                "assetId": {
+                                    "guid": "{E39325D1-84C5-577A-A4B5-75E0C6B583A4}",
+                                    "subId": 270456977
+                                }
+                            }
+                        }
+                    },
+                    "Id": 7621295672948727
+                },
+                "Component_[8597300335040986]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 8597300335040986
+                },
+                "Component_[868087541784264]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 868087541784264
+                }
+            },
+            "Id": "Entity_[5587379388268137]",
+            "Name": "Ground Cover SM_Art_Cover_L_WarCurrent_GrassBlades"
+        },
         "Entity_[5589231589758751]": {
             "Components": {
                 "Component_[1699627048297194]": {

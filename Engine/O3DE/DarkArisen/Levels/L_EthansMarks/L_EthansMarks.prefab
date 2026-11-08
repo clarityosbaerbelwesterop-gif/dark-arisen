@@ -19906,6 +19906,93 @@
             "Id": "Entity_[320001224063300]",
             "Name": "Plant 66 SM_Art_Veg_Shrub_2"
         },
+        "Entity_[3203862974855321]": {
+            "Components": {
+                "Component_[1017578768938949]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 1017578768938949
+                },
+                "Component_[1050604299181707]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 1050604299181707
+                },
+                "Component_[160132615071728]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 160132615071728
+                },
+                "Component_[2537314809430987]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/models/sm_art_cover_l_ethansmarks_grassblades.azmodel",
+                                "assetId": {
+                                    "guid": "{51E147C1-AC61-5D7A-84EB-136E2D6C8968}",
+                                    "subId": 279523231
+                                }
+                            }
+                        }
+                    },
+                    "Id": 2537314809430987
+                },
+                "Component_[3823245122123810]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 3823245122123810
+                },
+                "Component_[4588981336622716]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 4588981336622716
+                },
+                "Component_[4953354872343734]": {
+                    "$type": "EditorMaterialComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "materials": [
+                                {
+                                    "Key": {},
+                                    "Value": {
+                                        "MaterialAsset": {
+                                            "assetHint": "assets/materials/foliage/sm_art_cover_l_ethansmarks_grassblades.azmaterial",
+                                            "assetId": {
+                                                "guid": "{5489FA11-E4D3-5D27-9CD8-C48AEFC7ED3F}",
+                                                "subId": 0
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "Id": 4953354872343734
+                },
+                "Component_[5846540712831404]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 5846540712831404
+                },
+                "Component_[6823237658793990]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 6823237658793990
+                },
+                "Component_[8516154926329487]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 8516154926329487
+                },
+                "Component_[8683075448135976]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 8683075448135976,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            0,
+                            0,
+                            0
+                        ]
+                    }
+                }
+            },
+            "Id": "Entity_[3203862974855321]",
+            "Name": "Ground Cover SM_Art_Cover_L_EthansMarks_GrassBlades"
+        },
         "Entity_[3214157003821496]": {
             "Components": {
                 "Component_[2251754896300269]": {

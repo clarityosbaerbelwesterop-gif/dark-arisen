@@ -2008,6 +2008,93 @@
             "Id": "Entity_[139801808700053]",
             "Name": "Plant 93 SM_Art_Veg_Gorse_1"
         },
+        "Entity_[1413121616941687]": {
+            "Components": {
+                "Component_[1520922492580841]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 1520922492580841
+                },
+                "Component_[1883615087339120]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 1883615087339120
+                },
+                "Component_[2961774546960524]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 2961774546960524
+                },
+                "Component_[3273310506831606]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 3273310506831606
+                },
+                "Component_[3337518974720355]": {
+                    "$type": "EditorMaterialComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "materials": [
+                                {
+                                    "Key": {},
+                                    "Value": {
+                                        "MaterialAsset": {
+                                            "assetHint": "assets/materials/foliage/sm_art_cover_l_thenorthernoath_grassdry.azmaterial",
+                                            "assetId": {
+                                                "guid": "{107802F0-95FA-5AD6-9FA4-7FD6E6DE99E3}",
+                                                "subId": 0
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "Id": 3337518974720355
+                },
+                "Component_[5132300607504054]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/models/sm_art_cover_l_thenorthernoath_grassdry.azmodel",
+                                "assetId": {
+                                    "guid": "{FB76F841-9E08-514B-ABF6-129D29D87E41}",
+                                    "subId": 283951274
+                                }
+                            }
+                        }
+                    },
+                    "Id": 5132300607504054
+                },
+                "Component_[5985346810154653]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 5985346810154653
+                },
+                "Component_[6387740115653745]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 6387740115653745
+                },
+                "Component_[6580644441257301]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 6580644441257301
+                },
+                "Component_[6686858937328219]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 6686858937328219
+                },
+                "Component_[710010279834129]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 710010279834129,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            0,
+                            0,
+                            0
+                        ]
+                    }
+                }
+            },
+            "Id": "Entity_[1413121616941687]",
+            "Name": "Ground Cover SM_Art_Cover_L_TheNorthernOath_GrassDry"
+        },
         "Entity_[1424906789216701]": {
             "Components": {
                 "Component_[245549762548480]": {
@@ -17410,6 +17497,93 @@
             "Id": "Entity_[5578771906380216]",
             "Name": "Plant 223 SM_Art_Veg_StandingStone_2"
         },
+        "Entity_[5580655696980301]": {
+            "Components": {
+                "Component_[3098301351688224]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 3098301351688224
+                },
+                "Component_[3500485350570574]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 3500485350570574
+                },
+                "Component_[3511085828584264]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 3511085828584264
+                },
+                "Component_[3735533155129584]": {
+                    "$type": "EditorMaterialComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "materials": [
+                                {
+                                    "Key": {},
+                                    "Value": {
+                                        "MaterialAsset": {
+                                            "assetHint": "assets/materials/foliage/sm_art_cover_l_thenorthernoath_reeds.azmaterial",
+                                            "assetId": {
+                                                "guid": "{41E7F665-76D1-526E-B7C8-65230E934DB8}",
+                                                "subId": 0
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "Id": 3735533155129584
+                },
+                "Component_[3854397223043877]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/models/sm_art_cover_l_thenorthernoath_reeds.azmodel",
+                                "assetId": {
+                                    "guid": "{B112C662-F8A2-5615-AD17-63E2E3A57F1A}",
+                                    "subId": 282258097
+                                }
+                            }
+                        }
+                    },
+                    "Id": 3854397223043877
+                },
+                "Component_[4239369050451738]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 4239369050451738
+                },
+                "Component_[5479181441613410]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 5479181441613410,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            0,
+                            0,
+                            0
+                        ]
+                    }
+                },
+                "Component_[5894793109380970]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 5894793109380970
+                },
+                "Component_[6224922390516703]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 6224922390516703
+                },
+                "Component_[8294638736027669]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 8294638736027669
+                },
+                "Component_[842223404241069]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 842223404241069
+                }
+            },
+            "Id": "Entity_[5580655696980301]",
+            "Name": "Ground Cover SM_Art_Cover_L_TheNorthernOath_Reeds"
+        },
         "Entity_[5609348540124217]": {
             "Components": {
                 "Component_[1580702244066935]": {
@@ -17595,6 +17769,93 @@
             },
             "Id": "Entity_[5690933381091454]",
             "Name": "Plant 33 SM_Art_Veg_Gorse_2"
+        },
+        "Entity_[5715207075669536]": {
+            "Components": {
+                "Component_[1914796727436772]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 1914796727436772
+                },
+                "Component_[2532244748410572]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 2532244748410572
+                },
+                "Component_[3930810237380442]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 3930810237380442
+                },
+                "Component_[4138233935405830]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 4138233935405830
+                },
+                "Component_[4521078502523052]": {
+                    "$type": "EditorMaterialComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "materials": [
+                                {
+                                    "Key": {},
+                                    "Value": {
+                                        "MaterialAsset": {
+                                            "assetHint": "assets/materials/foliage/sm_art_cover_l_thenorthernoath_heathersprig.azmaterial",
+                                            "assetId": {
+                                                "guid": "{B69A0D2C-7511-5F4C-891D-40B2809E92B2}",
+                                                "subId": 0
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "Id": 4521078502523052
+                },
+                "Component_[5268519962130449]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/models/sm_art_cover_l_thenorthernoath_heathersprig.azmodel",
+                                "assetId": {
+                                    "guid": "{B01FDF9E-9469-5A94-8FD8-C47D8A2231C2}",
+                                    "subId": 270084540
+                                }
+                            }
+                        }
+                    },
+                    "Id": 5268519962130449
+                },
+                "Component_[5347698676939713]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 5347698676939713
+                },
+                "Component_[5802949311397507]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 5802949311397507
+                },
+                "Component_[6570540929628014]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 6570540929628014,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            0,
+                            0,
+                            0
+                        ]
+                    }
+                },
+                "Component_[7025105430803185]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 7025105430803185
+                },
+                "Component_[7428002296931902]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 7428002296931902
+                }
+            },
+            "Id": "Entity_[5715207075669536]",
+            "Name": "Ground Cover SM_Art_Cover_L_TheNorthernOath_HeatherSprig"
         },
         "Entity_[5739323150780832]": {
             "Components": {
@@ -20001,6 +20262,93 @@
             },
             "Id": "Entity_[6532413506691769]",
             "Name": "Plant 42 SM_Art_Veg_Boulder_0"
+        },
+        "Entity_[6545462113684513]": {
+            "Components": {
+                "Component_[1433160686470326]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 1433160686470326
+                },
+                "Component_[162544966186257]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 162544966186257
+                },
+                "Component_[2240256756806164]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 2240256756806164
+                },
+                "Component_[2671531528390958]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 2671531528390958
+                },
+                "Component_[4835466242652275]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 4835466242652275
+                },
+                "Component_[5701386490591745]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 5701386490591745
+                },
+                "Component_[6715462960437185]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/models/sm_art_cover_l_thenorthernoath_grassblades.azmodel",
+                                "assetId": {
+                                    "guid": "{48FC4476-7214-513B-BEE7-70BF26876E10}",
+                                    "subId": 278139388
+                                }
+                            }
+                        }
+                    },
+                    "Id": 6715462960437185
+                },
+                "Component_[7337270326923466]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 7337270326923466
+                },
+                "Component_[7841491778182046]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 7841491778182046,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            0,
+                            0,
+                            0
+                        ]
+                    }
+                },
+                "Component_[8639612778197276]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 8639612778197276
+                },
+                "Component_[8746835266478108]": {
+                    "$type": "EditorMaterialComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "materials": [
+                                {
+                                    "Key": {},
+                                    "Value": {
+                                        "MaterialAsset": {
+                                            "assetHint": "assets/materials/foliage/sm_art_cover_l_thenorthernoath_grassblades.azmaterial",
+                                            "assetId": {
+                                                "guid": "{2730D6C3-1CD8-530E-985C-947CAF8CD1FF}",
+                                                "subId": 0
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "Id": 8746835266478108
+                }
+            },
+            "Id": "Entity_[6545462113684513]",
+            "Name": "Ground Cover SM_Art_Cover_L_TheNorthernOath_GrassBlades"
         },
         "Entity_[6626865543351526]": {
             "Components": {

@@ -103369,6 +103369,93 @@
             "Id": "Entity_[8482732622017144]",
             "Name": "Plant 661 SM_Art_Veg_Broadleaf_1_LeavesDark"
         },
+        "Entity_[8485491312108919]": {
+            "Components": {
+                "Component_[1693041748290520]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 1693041748290520
+                },
+                "Component_[2735064276400445]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 2735064276400445
+                },
+                "Component_[3060377678454309]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 3060377678454309
+                },
+                "Component_[3184071014801365]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/models/sm_art_cover_l_ethansgrove_grassblades.azmodel",
+                                "assetId": {
+                                    "guid": "{E8A10D2F-2633-5E5A-8A69-EED84059B126}",
+                                    "subId": 279749337
+                                }
+                            }
+                        }
+                    },
+                    "Id": 3184071014801365
+                },
+                "Component_[4163890482658127]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 4163890482658127
+                },
+                "Component_[5009286628394592]": {
+                    "$type": "EditorMaterialComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "materials": [
+                                {
+                                    "Key": {},
+                                    "Value": {
+                                        "MaterialAsset": {
+                                            "assetHint": "assets/materials/foliage/sm_art_cover_l_ethansgrove_grassblades.azmaterial",
+                                            "assetId": {
+                                                "guid": "{528C97F5-95A1-5332-AC75-240BDBBFBB8C}",
+                                                "subId": 0
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "Id": 5009286628394592
+                },
+                "Component_[5066442386659474]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 5066442386659474,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            0,
+                            0,
+                            0
+                        ]
+                    }
+                },
+                "Component_[5996655824456766]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 5996655824456766
+                },
+                "Component_[6508653185495690]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 6508653185495690
+                },
+                "Component_[7247828179791066]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 7247828179791066
+                },
+                "Component_[735929416538000]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 735929416538000
+                }
+            },
+            "Id": "Entity_[8485491312108919]",
+            "Name": "Ground Cover SM_Art_Cover_L_EthansGrove_GrassBlades"
+        },
         "Entity_[8489636600123813]": {
             "Components": {
                 "Component_[1155674717568193]": {

@@ -9738,6 +9738,93 @@
             "Id": "Entity_[1914347593400546]",
             "Name": "Plant 411 SM_Art_Veg_Palm_1_Bark"
         },
+        "Entity_[1915134807052745]": {
+            "Components": {
+                "Component_[278823404374268]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 278823404374268,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Translate": [
+                            0,
+                            0,
+                            0
+                        ]
+                    }
+                },
+                "Component_[3551157689451537]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 3551157689451537
+                },
+                "Component_[4213058920714226]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 4213058920714226
+                },
+                "Component_[4518922369687200]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 4518922369687200
+                },
+                "Component_[5341177326287952]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 5341177326287952
+                },
+                "Component_[5382143542905948]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 5382143542905948
+                },
+                "Component_[6115412474082067]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 6115412474082067
+                },
+                "Component_[6753128293611879]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 6753128293611879
+                },
+                "Component_[6875643017959918]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 6875643017959918
+                },
+                "Component_[7313006028631818]": {
+                    "$type": "EditorMaterialComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "materials": [
+                                {
+                                    "Key": {},
+                                    "Value": {
+                                        "MaterialAsset": {
+                                            "assetHint": "assets/materials/foliage/sm_art_cover_l_theprisoncourse_grassblades.azmaterial",
+                                            "assetId": {
+                                                "guid": "{72A3B2E1-6151-5B1C-9D99-717B5D9BD687}",
+                                                "subId": 0
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "Id": 7313006028631818
+                },
+                "Component_[8405877079405343]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/models/sm_art_cover_l_theprisoncourse_grassblades.azmodel",
+                                "assetId": {
+                                    "guid": "{50ECCA5C-9C17-5023-A98B-BA9434DD52FC}",
+                                    "subId": 277769828
+                                }
+                            }
+                        }
+                    },
+                    "Id": 8405877079405343
+                }
+            },
+            "Id": "Entity_[1915134807052745]",
+            "Name": "Ground Cover SM_Art_Cover_L_ThePrisonCourse_GrassBlades"
+        },
         "Entity_[1916843975112528]": {
             "Components": {
                 "Component_[1739274112802329]": {
