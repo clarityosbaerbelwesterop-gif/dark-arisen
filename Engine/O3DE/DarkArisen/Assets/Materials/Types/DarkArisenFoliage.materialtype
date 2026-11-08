@@ -1,0 +1,181 @@
+{
+    "description": "Dark Arisen foliage: alpha-cut leaves and bark that sway in the wind, displaced identically in the forward, depth and shadow passes; sun light through the leaves, engine sun shadows, image-based light and GI through the standard outputs.",
+    "version": 1,
+    "versionUpdates": [],
+    "propertyLayout": {
+        "propertyGroups": [
+            {
+                "name": "baseColor",
+                "displayName": "Base Color",
+                "description": "Leaf or bark colour.",
+                "properties": [
+                    {
+                        "name": "textureMap",
+                        "displayName": "Texture",
+                        "type": "Image",
+                        "connection": {
+                            "type": "ShaderInput",
+                            "name": "m_baseColorMap"
+                        },
+                        "description": "Colour with the leaf cutout in alpha."
+                    },
+                    {
+                        "name": "color",
+                        "displayName": "Tint",
+                        "type": "Color",
+                        "defaultValue": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "connection": {
+                            "type": "ShaderInput",
+                            "name": "m_baseColor"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "translucency",
+                "displayName": "Translucency",
+                "description": "Sunlight seen through the leaves.",
+                "properties": [
+                    {
+                        "name": "color",
+                        "displayName": "Color",
+                        "type": "Color",
+                        "defaultValue": [
+                            0.55,
+                            0.75,
+                            0.25
+                        ],
+                        "connection": {
+                            "type": "ShaderInput",
+                            "name": "m_translucentColor"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "wind",
+                "displayName": "Wind",
+                "description": "Sway grows with the square of the height above the model's base.",
+                "properties": [
+                    {
+                        "name": "direction",
+                        "displayName": "Direction",
+                        "type": "Vector2",
+                        "defaultValue": [
+                            0.8,
+                            0.6
+                        ],
+                        "connection": {
+                            "type": "ShaderInput",
+                            "name": "m_windDirection"
+                        },
+                        "description": "World XY, normalised in the shader."
+                    },
+                    {
+                        "name": "strength",
+                        "displayName": "Strength (m)",
+                        "type": "Float",
+                        "defaultValue": 0.15,
+                        "connection": {
+                            "type": "ShaderInput",
+                            "name": "m_windStrength"
+                        },
+                        "description": "Sway at the bend height.",
+                        "min": 0.0,
+                        "max": 5.0
+                    },
+                    {
+                        "name": "speed",
+                        "displayName": "Speed (Hz)",
+                        "type": "Float",
+                        "defaultValue": 0.3,
+                        "connection": {
+                            "type": "ShaderInput",
+                            "name": "m_windSpeed"
+                        },
+                        "min": 0.0,
+                        "max": 5.0
+                    },
+                    {
+                        "name": "bendHeight",
+                        "displayName": "Bend Height (m)",
+                        "type": "Float",
+                        "defaultValue": 8.0,
+                        "connection": {
+                            "type": "ShaderInput",
+                            "name": "m_bendHeight"
+                        },
+                        "description": "Height above the base where the sway is full; the same for every part of one plant.",
+                        "min": 0.05,
+                        "max": 60.0
+                    },
+                    {
+                        "name": "flutter",
+                        "displayName": "Flutter",
+                        "type": "Float",
+                        "defaultValue": 0.0,
+                        "connection": {
+                            "type": "ShaderInput",
+                            "name": "m_flutter"
+                        },
+                        "description": "Fast leaf flutter as a fraction of the sway (0 for bark).",
+                        "min": 0.0,
+                        "max": 1.0
+                    }
+                ]
+            },
+            {
+                "name": "opacity",
+                "displayName": "Opacity",
+                "properties": [
+                    {
+                        "name": "alphaCutoff",
+                        "displayName": "Alpha Cutoff",
+                        "type": "Float",
+                        "defaultValue": 0.5,
+                        "connection": {
+                            "type": "ShaderInput",
+                            "name": "m_alphaCutoff"
+                        },
+                        "description": "Texels below are cut (0 keeps everything).",
+                        "min": 0.0,
+                        "max": 1.0
+                    }
+                ]
+            },
+            {
+                "name": "surface",
+                "displayName": "Surface",
+                "properties": [
+                    {
+                        "name": "roughness",
+                        "displayName": "Roughness",
+                        "type": "Float",
+                        "defaultValue": 0.75,
+                        "connection": {
+                            "type": "ShaderInput",
+                            "name": "m_roughness"
+                        },
+                        "min": 0.0,
+                        "max": 1.0
+                    }
+                ]
+            }
+        ]
+    },
+    "shaders": [
+        {
+            "file": "../../Shaders/Foliage/DarkArisenFoliage_Forward.shader"
+        },
+        {
+            "file": "../../Shaders/Foliage/DarkArisenFoliage_Depth.shader"
+        },
+        {
+            "file": "../../Shaders/Foliage/DarkArisenFoliage_Shadow.shader"
+        }
+    ]
+}

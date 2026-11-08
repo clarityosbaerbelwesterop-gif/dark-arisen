@@ -76,10 +76,17 @@ namespace DarkArisen::Tools::Art
         std::uint32_t Seed = 1;
     };
 
+    /** One material of a plant as its own model, so each takes its own (wind) material. */
+    struct PlantPart
+    {
+        std::string Model;     // project-relative glTF
+        std::string Material;  // project-relative DarkArisenFoliage .material; empty keeps the model's own (stone)
+    };
+
     struct Planting
     {
-        std::string Model;           // project-relative glTF (shared plant model)
-        double X, Y, Z, Yaw, Scale;  // degrees
+        std::vector<PlantPart> Parts;  // shared plant models
+        double X, Y, Z, Yaw, Scale;    // degrees
     };
 
     struct TerrainArt
@@ -159,6 +166,7 @@ namespace DarkArisen::Tools::Art
         std::map<std::string, std::string, std::less<>> Replacements;
         std::map<std::string, std::string, std::less<>> Collisions;
         std::map<std::string, std::string, std::less<>> Generated;
+        std::map<std::string, std::vector<PlantPart>, std::less<>> PlantModels;
 
         std::string Emit(const std::string& Name, const std::string& Gltf);
     };

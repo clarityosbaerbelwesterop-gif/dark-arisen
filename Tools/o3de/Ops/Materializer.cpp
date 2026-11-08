@@ -637,6 +637,26 @@ namespace DarkArisen::Tools
             return {SourceAssetUuid(Relative), 0, Lower("Assets/Materials/DarkArisenOcean.azmaterial")};
         }
 
+        /** EditorMaterialComponent replacing every slot of the entity's model with one project material. */
+        void AddMaterialOverride(PrefabBuilder& Prefab, const std::string& Entity, const std::string& MaterialRelative)
+        {
+            const std::string Product = Lower(Directory(MaterialRelative) + "/" + Stem(MaterialRelative) + ".azmaterial");
+            JsonValue Assignment = JsonObject();
+            Assignment.Members["MaterialAsset"] = AssetReference(SourceAssetUuid(MaterialRelative), 0, Product);
+            JsonValue Override = JsonObject();
+            Override.Members["Key"] = JsonObject();
+            Override.Members["Value"] = std::move(Assignment);
+            JsonValue Materials = JsonArray();
+            Materials.Items.push_back(std::move(Override));
+            JsonValue Configuration = JsonObject();
+            Configuration.Members["materials"] = std::move(Materials);
+            JsonValue Controller = JsonObject();
+            Controller.Members["Configuration"] = std::move(Configuration);
+            JsonValue Body = JsonObject();
+            Body.Members["Controller"] = std::move(Controller);
+            Prefab.AddComponent(Entity, "EditorMaterialComponent", std::move(Body));
+        }
+
         void AddSea(Session& Work, PrefabBuilder& Prefab)
         {
             const std::string Sea = Prefab.AddEntity("Sea", {});
@@ -1417,9 +1437,14 @@ namespace DarkArisen::Tools
             int Index = 0;
             for (const Art::Planting& P : Art.Plants)
             {
-                const std::string Plant = Prefab.AddEntity("Plant " + std::to_string(++Index) + " " + Stem(P.Model), {P.X, P.Y, P.Z}, {0.0, 0.0, P.Yaw});
-                Prefab.SetUniformScale(Plant, std::floor(P.Scale * 100.0 + 0.5) / 100.0);
-                Prefab.AddComponent(Plant, "AZ::Render::EditorMeshComponent", MeshComponent(Work.Model(P.Model)));
+                ++Index;
+                for (const Art::PlantPart& Part : P.Parts)
+                {
+                    const std::string Plant = Prefab.AddEntity("Plant " + std::to_string(Index) + " " + Stem(Part.Model), {P.X, P.Y, P.Z}, {0.0, 0.0, P.Yaw});
+                    Prefab.SetUniformScale(Plant, std::floor(P.Scale * 100.0 + 0.5) / 100.0);
+                    Prefab.AddComponent(Plant, "AZ::Render::EditorMeshComponent", MeshComponent(Work.Model(Part.Model)));
+                    if (!Part.Material.empty()) AddMaterialOverride(Prefab, Plant, Part.Material);  // wind (DarkArisenFoliage)
+                }
             }
         }
 

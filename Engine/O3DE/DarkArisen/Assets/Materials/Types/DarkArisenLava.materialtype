@@ -1,0 +1,123 @@
+{
+    "description": "Dark Arisen lava: a molten flow under a drifting, cooling crust; cracks glow and breathe. Crust albedo, F0 and normal feed image-based light and GI like any surface.",
+    "version": 1,
+    "versionUpdates": [],
+    "propertyLayout": {
+        "propertyGroups": [
+            {
+                "name": "melt",
+                "displayName": "Melt",
+                "description": "The open, glowing lava.",
+                "properties": [
+                    {
+                        "name": "moltenColor",
+                        "displayName": "Molten Color",
+                        "type": "Color",
+                        "defaultValue": [
+                            1.0,
+                            0.36,
+                            0.08
+                        ],
+                        "connection": {
+                            "type": "ShaderInput",
+                            "name": "m_moltenColor"
+                        }
+                    },
+                    {
+                        "name": "glowIntensity",
+                        "displayName": "Glow Intensity",
+                        "type": "Float",
+                        "defaultValue": 4.0,
+                        "connection": {
+                            "type": "ShaderInput",
+                            "name": "m_glowIntensity"
+                        },
+                        "description": "Brightness of the melt in the level light's units (sun = 1 lux).",
+                        "min": 0.0,
+                        "max": 100.0
+                    },
+                    {
+                        "name": "flowDirection",
+                        "displayName": "Flow (m/s)",
+                        "type": "Vector2",
+                        "defaultValue": [
+                            0.35,
+                            0.0
+                        ],
+                        "connection": {
+                            "type": "ShaderInput",
+                            "name": "m_flowDirection"
+                        },
+                        "description": "World XY drift of the crust in metres per second."
+                    }
+                ]
+            },
+            {
+                "name": "crust",
+                "displayName": "Crust",
+                "description": "The cooled plates floating on the melt.",
+                "properties": [
+                    {
+                        "name": "crustColor",
+                        "displayName": "Crust Color",
+                        "type": "Color",
+                        "defaultValue": [
+                            0.07,
+                            0.06,
+                            0.055
+                        ],
+                        "connection": {
+                            "type": "ShaderInput",
+                            "name": "m_crustColor"
+                        }
+                    },
+                    {
+                        "name": "coverage",
+                        "displayName": "Coverage",
+                        "type": "Float",
+                        "defaultValue": 0.55,
+                        "connection": {
+                            "type": "ShaderInput",
+                            "name": "m_crustCoverage"
+                        },
+                        "description": "0 open melt, 1 all crust.",
+                        "min": 0.0,
+                        "max": 1.0
+                    },
+                    {
+                        "name": "featureSize",
+                        "displayName": "Plate Size (m)",
+                        "type": "Float",
+                        "defaultValue": 1.6,
+                        "connection": {
+                            "type": "ShaderInput",
+                            "name": "m_featureSize"
+                        },
+                        "min": 0.05,
+                        "max": 50.0
+                    },
+                    {
+                        "name": "roughness",
+                        "displayName": "Roughness",
+                        "type": "Float",
+                        "defaultValue": 0.85,
+                        "connection": {
+                            "type": "ShaderInput",
+                            "name": "m_crustRoughness"
+                        },
+                        "min": 0.0,
+                        "max": 1.0
+                    }
+                ]
+            }
+        ]
+    },
+    "shaders": [
+        {
+            "file": "../../Shaders/Lava/DarkArisenLava_Forward.shader"
+        },
+        {
+            "file": "../../Shaders/Lava/DarkArisenLava_Depth.shader"
+        }
+    ]
+}

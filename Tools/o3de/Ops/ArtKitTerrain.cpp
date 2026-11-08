@@ -359,8 +359,82 @@ namespace DarkArisen::Tools::Art
         }
     }
 
+    namespace
+    {
+        struct Wind
+        {
+            double Strength = 0.0, Speed = 0.0, Flutter = 0.0;  // Strength 0: the plant does not sway (stone)
+        };
+
+        Wind WindFor(const Species Kind)
+        {
+            switch (Kind)
+            {
+            case Species::Palm: return {0.35, 0.18, 0.3};
+            case Species::Broadleaf: case Species::Birch: case Species::Mangrove: return {0.2, 0.22, 0.25};
+            case Species::Pine: return {0.16, 0.18, 0.12};
+            case Species::Dead: return {0.06, 0.2, 0.0};
+            case Species::Shrub: case Species::Gorse: case Species::Fern: return {0.07, 0.45, 0.3};
+            case Species::Reeds: return {0.18, 0.6, 0.2};
+            case Species::Stone: case Species::Boulder: default: return {};
+            }
+        }
+
+        /** DarkArisenFoliage material (Assets/Materials/Foliage) for one part of a plant. */
+        std::string FoliageMaterialJson(const Material& Part, const Wind& W, const double BendHeight)
+        {
+            using GltfBits::Num;
+            const bool Leaf = Part.Mask;
+            std::string J = "{\n";
+            J += "    \"materialType\": \"../Types/DarkArisenFoliage.materialtype\",\n";
+            J += "    \"materialTypeVersion\": 1,\n";
+            J += "    \"propertyValues\": {\n";
+            J += "        \"baseColor.color\": [" + Num(Part.BaseColor[0]) + ", " + Num(Part.BaseColor[1]) + ", " + Num(Part.BaseColor[2]) + "],\n";
+            J += "        \"baseColor.textureMap\": \"../../Art/Textures/" + Part.BaseColorTexture + "\",\n";
+            J += "        \"opacity.alphaCutoff\": " + Num(Leaf ? Part.AlphaCutoff : 0.0) + ",\n";
+            J += "        \"surface.roughness\": " + Num(Part.Roughness) + ",\n";
+            J += std::string("        \"translucency.color\": ") + (Leaf ? "[0.55, 0.75, 0.25]" : "[0, 0, 0]") + ",\n";
+            J += "        \"wind.bendHeight\": " + Num(BendHeight) + ",\n";
+            J += "        \"wind.flutter\": " + Num(Leaf ? W.Flutter : 0.0) + ",\n";
+            J += "        \"wind.speed\": " + Num(W.Speed) + ",\n";
+            J += "        \"wind.strength\": " + Num(W.Strength) + "\n";
+            J += "    }\n}\n";
+            return J;
+        }
+    }
+
     TerrainArt Kit::Terrain(const TerrainSpec& Spec)
     {
+        // One model per material of a plant, each with its own wind material; all parts of a plant share the
+        // bend height, so trunk and crown sway together.
+        const auto EmitPlant = [this](const std::string& Key, const Species Kind, const Mesh& Plant)
+        {
+            const Wind W = WindFor(Kind);
+            double Top = 0.05;
+            bool Textured = true;
+            for (const Mesh::Part& P : Plant.Parts())
+            {
+                for (const Vertex& V : P.Vertices) Top = std::max(Top, V.P.Z);
+                Textured = Textured && !P.Mat.BaseColorTexture.empty();
+            }
+            const bool Sways = W.Strength > 0.0 && Textured;
+            std::vector<PlantPart> Parts;
+            for (const Mesh::Part& P : Plant.Parts())
+            {
+                std::string Suffix = P.Mat.Name.rfind("M_Art_", 0) == 0 ? P.Mat.Name.substr(6) : P.Mat.Name;
+                const std::string Model = "SM_Art_Veg_" + Key + (Plant.Parts().size() > 1 ? "_" + Suffix : std::string());
+                Mesh One(Model);
+                One.Indexed(P.Mat, P.Vertices, P.Indices);
+                PlantPart Part{Emit(Model, WriteGltf(One, "Dark Arisen art kit (terrain)")), std::string()};
+                if (Sways)
+                {
+                    Part.Material = "Assets/Materials/Foliage/" + Model + ".material";
+                    Output.push_back({Part.Material, FoliageMaterialJson(P.Mat, W, std::floor(Top * 100.0 + 0.5) / 100.0)});
+                }
+                Parts.push_back(std::move(Part));
+            }
+            return Parts;
+        };
         TerrainArt Art;
         const BiomeRules Rules = RulesFor(Spec.Kind);
         const std::uint32_t Seed = Spec.Seed;
@@ -677,7 +751,6 @@ namespace DarkArisen::Tools::Art
         }
 
         // ---- plants: shared models placed on the ground
-        std::map<std::string, std::string> Emitted;
         const double CellSize = Rules.CellSize;
         const int Cx = static_cast<int>((Ex1 - Ex0) / CellSize), Cy = static_cast<int>((Ey1 - Ey0) / CellSize);
         for (int J = 0; J < Cy; ++J)
@@ -706,15 +779,9 @@ namespace DarkArisen::Tools::Art
                 if (Pick->Tree && NormalAt(static_cast<int>(Fx), static_cast<int>(Fy)).Z < 0.86) continue;
                 const int Variant = static_cast<int>(R.Unit() * 3.0);
                 const std::string Key = std::string(SpeciesName(Pick->Kind)) + "_" + std::to_string(Variant);
-                auto Found = Emitted.find(Key);
-                if (Found == Emitted.end())
-                {
-                    const std::string Model = "SM_Art_Veg_" + Key;
-                    auto Known = Generated.find(Model);
-                    if (Known == Generated.end()) Known = Generated.emplace(Model, Emit(Model, WriteGltf(BuildPlant(Pick->Kind, Variant, Spec.Kind), "Dark Arisen art kit (terrain)"))).first;
-                    Found = Emitted.emplace(Key, Known->second).first;
-                }
-                Art.Plants.push_back({Found->second, X, Y, Z - 0.05, R.Range(0.0, 360.0), R.Range(0.85, 1.2)});
+                auto Known = PlantModels.find(Key);
+                if (Known == PlantModels.end()) Known = PlantModels.emplace(Key, EmitPlant(Key, Pick->Kind, BuildPlant(Pick->Kind, Variant, Spec.Kind))).first;
+                Art.Plants.push_back({Known->second, X, Y, Z - 0.05, R.Range(0.0, 360.0), R.Range(0.85, 1.2)});
             }
         }
 

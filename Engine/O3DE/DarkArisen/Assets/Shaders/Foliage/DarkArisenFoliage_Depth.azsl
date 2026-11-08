@@ -1,0 +1,32 @@
+/*
+ * Dark Arisen foliage, depth and shadow passes: the forward pass's wind, with the leaf cutout.
+ * check: vs_6_2 DepthPassVS
+ * check: ps_6_2 DepthPassPS
+ */
+#include "DarkArisenFoliageCommon.azsli"
+
+struct VSInput
+{
+    float3 m_position : POSITION;
+    float2 m_uv0 : UV0;
+};
+
+struct VSDepthOutput
+{
+    precise float4 m_position : SV_Position;
+    float2 m_uv : TEXCOORD0;
+};
+
+VSDepthOutput DepthPassVS(VSInput IN, uint instanceId : SV_InstanceID)
+{
+    VSDepthOutput OUT;
+    const float3 world = DarkArisenFoliageWorldPosition(IN.m_position, instanceId);
+    OUT.m_position = mul(ViewSrg::m_viewProjectionMatrix, float4(world, 1.0));
+    OUT.m_uv = IN.m_uv0;
+    return OUT;
+}
+
+void DepthPassPS(VSDepthOutput IN)
+{
+    DarkArisenFoliageSampleAndClip(IN.m_uv);
+}

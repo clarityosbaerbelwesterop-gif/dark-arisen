@@ -1,0 +1,74 @@
+/*
+ * Dark Arisen foliage: wind for trees, shrubs, reeds and grass cards, shared by the forward,
+ * depth and shadow passes so colour, depth and shadow move together. Bending grows with the
+ * square of the height above the model's base (stiff trunk, supple crown); every plant has its
+ * own phase from its world origin, gusts roll across the level as slow noise, leaves flutter.
+ */
+#pragma once
+
+#include <scenesrg_all.srgi>
+#include <viewsrg_all.srgi>
+#include <Atom/Features/PBR/DefaultObjectSrg.azsli>
+#include <Atom/RPI/ShaderResourceGroups/DefaultDrawSrg.azsli>
+#include <Atom/Features/InstancedTransforms.azsli>
+#include <Atom/Features/SrgSemantics.azsli>
+
+#include "../Common/DarkArisenNoise.azsli"
+
+ShaderResourceGroup DarkArisenFoliageMaterialSrg : SRG_PerMaterial
+{
+    Texture2D m_baseColorMap;
+    Sampler m_baseColorSampler
+    {
+        MaxAnisotropy = 4;
+        MinFilter = Linear;
+        MagFilter = Linear;
+        MipFilter = Linear;
+        ReductionType = Filter;
+        AddressU = Wrap;
+        AddressV = Wrap;
+        AddressW = Wrap;
+    };
+    float3 m_baseColor;        // tint multiplied into the texture
+    float3 m_translucentColor; // colour of sunlight seen through the leaves
+    float2 m_windDirection;    // world XY, unit
+    float m_windStrength;      // metres of sway at the bend height
+    float m_windSpeed;         // sway cycles per second
+    float m_bendHeight;        // metres above the base where sway is full
+    float m_flutter;           // leaf flutter, fraction of the sway
+    float m_alphaCutoff;
+    float m_roughness;
+}
+
+/** Wind-displaced world position of an object-space vertex. */
+float3 DarkArisenFoliageWorldPosition(float3 objectPosition, uint instanceId)
+{
+    const float4x4 objectToWorld = GetObjectToWorldMatrix(instanceId);
+    float3 world = mul(objectToWorld, float4(objectPosition, 1.0)).xyz;
+    const float3 origin = float3(objectToWorld[0].w, objectToWorld[1].w, objectToWorld[2].w);
+    const float time = SceneSrg::m_time;
+
+    const float height = max(world.z - origin.z, 0.0) / max(DarkArisenFoliageMaterialSrg::m_bendHeight, 0.05);
+    const float bend = height * height;
+    const float2 direction = normalize(DarkArisenFoliageMaterialSrg::m_windDirection + float2(1e-4, 0.0));
+    const float phase = DarkArisenHash(origin.xy) * 6.2831853;
+    const float gust = DarkArisenValueNoise(origin.xy * 0.04 - direction * time * 0.35);
+    const float sway = (0.35 + 0.65 * gust) * (0.6 + 0.4 * sin(time * DarkArisenFoliageMaterialSrg::m_windSpeed * 6.2831853 + phase));
+    const float flutter = sin(time * 9.0 + dot(world, float3(1.7, 2.3, 3.1))) * DarkArisenFoliageMaterialSrg::m_flutter;
+
+    const float amount = DarkArisenFoliageMaterialSrg::m_windStrength * bend;
+    const float2 offset = direction * amount * (sway + flutter);
+    world.xy += offset;
+    // keep the stem's length: the tip sinks as it leans
+    world.z -= 0.5 * dot(offset, offset) / max(DarkArisenFoliageMaterialSrg::m_bendHeight, 0.05);
+    world.z += amount * flutter * 0.3;
+    return world;
+}
+
+/** Texture alpha against the cutoff; discards the pixel when below. */
+float4 DarkArisenFoliageSampleAndClip(float2 uv)
+{
+    const float4 texel = DarkArisenFoliageMaterialSrg::m_baseColorMap.Sample(DarkArisenFoliageMaterialSrg::m_baseColorSampler, uv);
+    clip(texel.a - DarkArisenFoliageMaterialSrg::m_alphaCutoff);
+    return texel;
+}

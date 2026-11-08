@@ -1,0 +1,77 @@
+/*
+ * Dark Arisen foliage, forward pass: two-sided cards and bark lit by the sun with the engine's
+ * cascaded sun shadows, a wrapped diffuse for soft crowns and light through the leaves from
+ * behind. Albedo, F0 and normal go to the later passes for image-based light and GI.
+ * check: vs_6_2 MainVS
+ * check: ps_6_2 MainPS
+ */
+#include "DarkArisenFoliageCommon.azsli"
+#include <Atom/Features/Pipeline/Forward/ForwardPassSrg.azsli>
+#include <Atom/Features/Pipeline/Forward/ForwardPassOutput.azsli>
+#include <Atom/Features/PBR/AlphaUtils.azsli>  // o_opacity_mode, read by the sun shadow lookup
+#include <Atom/Features/Shadow/DirectionalLightShadow.azsli>
+#include <Atom/RPI/Math.azsli>
+
+struct VertexShaderInput
+{
+    float3 m_position : POSITION;
+    float3 m_normal : NORMAL;
+    float2 m_uv0 : UV0;
+};
+
+struct VertexShaderOutput
+{
+    float4 m_position : SV_Position;
+    float3 m_worldPosition : TEXCOORD0;
+    float3 m_normal : NORMAL;
+    float2 m_uv : TEXCOORD1;
+};
+
+VertexShaderOutput MainVS(VertexShaderInput IN, uint instanceId : SV_InstanceID)
+{
+    VertexShaderOutput OUT;
+    const float3 world = DarkArisenFoliageWorldPosition(IN.m_position, instanceId);
+    OUT.m_position = mul(ViewSrg::m_viewProjectionMatrix, float4(world, 1.0));
+    OUT.m_worldPosition = world;
+    OUT.m_normal = normalize(mul(GetObjectToWorldMatrixInverseTranspose(instanceId), IN.m_normal));
+    OUT.m_uv = IN.m_uv0;
+    return OUT;
+}
+
+ForwardPassOutput MainPS(VertexShaderOutput IN, bool isFrontFace : SV_IsFrontFace)
+{
+    ForwardPassOutput OUT;
+    const float4 texel = DarkArisenFoliageSampleAndClip(IN.m_uv);
+    const float3 albedo = texel.rgb * DarkArisenFoliageMaterialSrg::m_baseColor;
+    const float3 normal = normalize(isFrontFace ? IN.m_normal : -IN.m_normal);
+    const float3 toCamera = normalize(ViewSrg::m_worldPosition - IN.m_worldPosition);
+
+    float3 diffuse = float3(0.0, 0.0, 0.0);
+    float3 specular = float3(0.0, 0.0, 0.0);
+    if (SceneSrg::m_directionalLightCount > 0)
+    {
+        const DirectionalLight sun = SceneSrg::m_directionalLights[0];
+        const float3 toSun = normalize(-sun.m_direction);
+        const float lit = DirectionalLightShadow::GetVisibility(ViewSrg::m_shadowIndexDirectionalLight, IN.m_worldPosition, normal, IN.m_position);
+        const float NdotL = dot(normal, toSun);
+        const float wrapped = saturate((NdotL + 0.4) / 1.96);
+        diffuse = albedo * (wrapped / 3.14159265) * sun.m_rgbIntensityLux * lit;
+        // sunlight through the leaf, strongest looking into the sun
+        const float through = saturate(-NdotL) * pow(saturate(dot(-toSun, toCamera) * 0.5 + 0.5), 4.0);
+        diffuse += DarkArisenFoliageMaterialSrg::m_translucentColor * albedo * through * (lit * 0.7 + 0.3) * sun.m_rgbIntensityLux / 3.14159265;
+        // a soft sheen on waxy leaves
+        const float3 halfway = normalize(toSun + toCamera);
+        const float roughness = max(DarkArisenFoliageMaterialSrg::m_roughness, 0.05);
+        const float a2 = roughness * roughness * roughness * roughness;
+        const float NdotH = saturate(dot(normal, halfway));
+        const float d = NdotH * NdotH * (a2 - 1.0) + 1.0;
+        specular = (0.04 * a2 / (3.14159265 * d * d) * 0.25) * saturate(NdotL) * sun.m_rgbIntensityLux * lit;
+    }
+
+    OUT.m_diffuseColor = float4(diffuse, -1.0);
+    OUT.m_specularColor = float4(specular, 1.0);
+    OUT.m_albedo = float4(albedo, 1.0);
+    OUT.m_specularF0 = float4(0.04, 0.04, 0.04, DarkArisenFoliageMaterialSrg::m_roughness);
+    OUT.m_normal = float4(EncodeNormalSignedOctahedron(normal), EncodeUnorm2BitFlags(true, false));
+    return OUT;
+}
