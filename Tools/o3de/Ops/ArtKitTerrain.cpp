@@ -847,6 +847,13 @@ namespace DarkArisen::Tools::Art
                 default: break;
                 }
                 Tuft(Cover, Mat(Card), {X, Y, Z - 0.04}, W, Hh, R.Range(0.0, Pi), 2);
+                if (N.D < 28.0)
+                {
+                    // a second, smaller tuft in the same cell where the player walks: a fuller sward at eye level
+                    const double X2 = X + R.Range(-0.9, 0.9), Y2 = Y + R.Range(-0.9, 0.9);
+                    const double W2 = W * R.Range(0.6, 0.9), H2 = Hh * R.Range(0.7, 1.0), Yaw2 = R.Range(0.0, Pi);
+                    if (Nearest(X2, Y2).D >= 0.9 && !InKeep(X2, Y2, 0.5)) Tuft(Cover, Mat(Card), {X2, Y2, Surface(X2, Y2) - 0.04}, W2, H2, Yaw2, 2);
+                }
             }
         }
 
