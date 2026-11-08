@@ -1,150 +1,59 @@
 # Dark Arisen: ten milestones to Alpha (O3DE, 2026-11)
 
-**Baseline:** `main` after PR #61, which adds world terrain, vegetation, region architecture, and the foliage and lava shaders. The state of each system is in `Docs/O3DE_MIGRATION.md`.
+**Direction (owner, 2026-11-08):**
+- **Open world.** Scale and quality are measured against RDR2 and Elden Ring.
+- **Rework what looks poor.** The bar is AAA.
+- **Cutscenes.**
+- **Then gameplay, main quests, side quests and combat.**
+- **M9** is voice and lip sync. **M10** is polish and the rest of the way to Alpha.
+- **Order.** M1–M9 are worked through in order, each one completely. Milestone contents not named by the owner are set here.
 
-**Definition of Alpha:** unchanged from `Docs/ALPHA_DELIVERY_CHECKLIST.md`. The whole main story must be playable from Harlow to the Chapter 10 credits, in packaged Windows and Linux builds, with a measured 60 fps, and approved by the owner after a full playthrough. Nothing here lowers that bar.
+**Definition of Alpha:** `Docs/ALPHA_DELIVERY_CHECKLIST.md`. A milestone counts as done only with its evidence: CI, probe, render, or runtime capture. Source on its own is PARTIAL.
 
-**Rule for every milestone:** a milestone is done only when its source exists *and* its evidence exists. Evidence means CI, a probe, a render, or a runtime capture, as the milestone states. Work that only exists in source stays PARTIAL.
+**Free and legal only.** Third-party material is CC0 or open licence only (MakeHuman, CMU, Poly Haven, ambientCG), recorded in `ContentSource/ThirdParty`. Nothing is bought without approval.
 
-The milestones are ordered by dependency. Milestones in the same column can run in parallel.
+## Scale target
 
-| # | Milestone | Depends on | Owner decision needed |
-|---|-----------|------------|------------------------|
-| A1 | World complete | — | none |
-| A2 | Cast in motion | — | skin look sign-off |
-| A3 | Combat and encounters | A2 | deflect posture penalty (open item 4) |
-| A4 | Creatures and bosses | A2 | Keeper and Maw boss look |
-| A5 | New regions: Ashenmoor, Quiet Coast, The Maw | A1 | chapter placement of Ashenmoor and the Quiet Coast |
-| A6 | Missions in depth | A1, A2 | none (the contracts are authority) |
-| A7 | Physical world map and navigation | A1 | minimap ruling (open item 5); default is no minimap |
-| A8 | Audio, voice and lip sync | A2, A6 | voice production: actors, ElevenLabs, or local TTS |
-| A9 | Runtime proof and performance | A1–A4 | a GPU host (no purchase without approval) |
-| A10 | Alpha candidate | all | final playthrough and approval |
+The world is one archipelago of about 12 × 10 km (about 120 km², of which about 60–75 km² is land). For comparison, RDR2's map is about 75 km² and Elden Ring's Lands Between about 79 km². Sea lanes join the regions; there is no loading screen inside the world.
 
-## A1 — World complete
+| Region | Character | Main story |
+|---|---|---|
+| Moran | tropical start islands | Chapters 1–2 |
+| Rexa & The Mire | colonial port city, jungle, swamp | Chapters 2–5 |
+| Highmoore | highland basin, barrows, Crystal Caves | optional, mid-game |
+| Ashenmoor | volcanic island chain, ash jungle | Chapters 6–7 |
+| The Quiet Coast (Fjordlund) | cold fjords, villages, lighthouse chain | Chapters 7–8 |
+| Open Sea & Fort Carrion | naval waters, Armada fortress | Chapters 8–10 |
+| The Maw | post-story only, never blocks the credits | — |
 
-- **Goal:** every one of the 34 missions stands in a finished place.
-- **Deliverables:**
-  - Rexa town and harbour on terrain, with streets, houses and the market.
-  - Ship decks dressed: planking, rigging, gear.
-  - Shoreline foam and shallow water on the ocean, using a baked shore depth per level.
-  - Ground cover that sways (split it out of the terrain mesh).
-  - The Driftwood and Moran levels moved onto the shared terrain path.
-- **Exit criteria:**
-  - `materialize --check` is byte-identical on GCC, Clang and an FMA build.
-  - The story probe still reaches 27/27 missions and 93/93 actors on ground.
-  - There is a preview render of every level.
+Mission levels become **places in the world**. The 34 missions keep their contracts; their geometry is placed at world coordinates.
 
-## A2 — Cast in motion
+## Milestones
 
-- **Goal:** the people move and look right in Atom.
-- **Deliverables:**
-  - EMotionFX actors with anim graphs for Jake, the boarders and the world set, driven by the motion library and the gameplay state.
-  - Skin on the engine's `Skin.materialtype`.
-  - Hair cards with cutout.
-  - LODs (three per actor).
-  - Detail normal maps.
-- **Exit criteria:**
-  - Actor and anim graph assets build in the Asset Processor.
-  - The anim graph state machine covers every state in `JakeAnimationManifest.json`.
-  - There is a render of every cast entry.
+| # | Milestone | Already in `main` | Still to do |
+|---|---|---|---|
+| **M1** | Open-world foundation and AAA look | Terrain kit, biomes, vegetation with wind, ponds, dressed architecture, foliage and lava shaders, ocean (Gerstner), byte-identical pipeline | World geography and heightfields at full scale on O3DE's Terrain and Vegetation gems (clipmaps, instanced spawning instead of meshes), region streaming, scanned CC0 materials (Poly Haven, ambientCG) in place of procedural textures, HDRI sky and light, shoreline foam, 1440p Cycles reference renders |
+| **M2** | Regions complete | 17 land levels on terrain, Rexa quay, Moran coast, forts | All seven regions at full size: settlements (Rexa city, villages), landmarks, dungeons and caves, POIs every few hundred metres, Ashenmoor, The Quiet Coast and The Maw new |
+| **M3** | Characters and creatures at AAA level | 27 skinned actors, 34 face shapes, visemes, clothes, hair | Engine Skin material (subsurface scattering), hair cards with anisotropy, LODs, detail normal maps, anim graphs, creatures and bosses (Keeper, sea creatures, Maw boss) |
+| **M4** | Gameplay core | Combat model, enemy AI, swimming, ship voyage, naval combat, camera, lock-on, `CharacterMotion` | Animation-driven combat contact, traversal (climbing, ledges), open-sea sailing between regions, more enemy types, horses (Highmoore) |
+| **M5** | Main quests in depth | 34/34 missions physically materialised, story probe 27/27 | Dialogue with choices and consequences, mission set pieces (chases, boarding, sieges), duels |
+| **M6** | Side quests, activities, living world | LivingWorld, QuestJournal, economy in Core | Side quests from `ContentSource/SideQuests`, activities, world events, NPC daily routines in the settlements |
+| **M7** | Cutscenes and presentation | Opening director, credits, front end | Cutscene system (shots, camera, motion, faces, subtitles), all story cutscenes, physical map (no minimap without an owner ruling) |
+| **M8** | Music, ambience, sound | — | Ambience per biome, sea, footsteps per surface, combat, music cues, the credits cue |
+| **M9** | Voice and lip sync | 15 visemes, 9 emotions | Voices for every line, lip sync from the visemes, subtitle timing; the production choice is in the section below |
+| **M10** | Polish and Alpha | AzCore probe, CI | GPU runtime proof (GameLauncher), 60 fps, packaging for Windows and Linux, credits and attribution, the owner's playthrough and approval |
 
-## A3 — Combat and encounters
+## Decisions taken here, revisable by the owner
 
-- **Goal:** combat feels authored, not greybox.
-- **Deliverables:**
-  - Attack, deflect, dodge, hit and death clips timed on `AlphaCombatTiming.json` and consumed by Core `Combat` and `EnemyBrain`.
-  - Contact through animation events, exactly once.
-  - Lock-on camera.
-  - Encounter layouts on the new terrain.
-  - The duels: Draven, Herrera, Isabel Cruz.
-- **Exit criteria:**
-  - Combat and EnemyBrain tests pass.
-  - The level probe resolves every duel.
-  - A five-minute encounter capture (needs A9 for the frame rate).
+- **World geography** is the region table above. Moran is in the south-west; the sea lanes follow the chapter order.
+- **Generated world data** (heightfields, splat maps) is built on the build host, not committed. The repository holds the generators and checksums. This settles the open "keep committing materialised art" question for world-scale data only.
+- **Lighting reference** is a physically based sun plus a CC0 HDRI sky. Renders use AgX tone mapping.
 
-## A4 — Creatures and bosses
+## Waiting on the owner
 
-- **Goal:** the non-human threats exist.
-- **Deliverables:** the Cenote Keeper, sea creatures for the naval chapters, and The Maw's boss. Each is built through the native mesh pipeline with Blender preview, and each has rig, motion and behaviour states in Core.
-- **Exit criteria:** models and motion pass `materialize --check`, behaviour tests pass, and there are preview renders.
-
-## A5 — New regions: Ashenmoor, The Quiet Coast, The Maw
-
-- **Goal:** the remaining geography of the world progression map (`MORAN_OPENING_WORLD_AUTHORITY_2026_09.md` §6).
-- **Deliverables:**
-  - New biomes on the terrain path:
-    - Ashenmoor: volcanic, with ash and lava (`DarkArisenLava`).
-    - The Quiet Coast: cold fjord, with villages and a lighthouse chain.
-    - The Maw: post-story only; it never blocks the credits.
-- **Exit criteria:** levels materialise, the probe reaches their entries, and there are preview renders.
-- **Limits:** the main chapter order is not changed without an owner ruling.
-
-## A6 — Missions in depth
-
-- **Goal:** the 34 missions play as stories, not as a line of triggers.
-- **Deliverables:**
-  - Dialogue from the contracts, with choices and their consequences in `LivingWorld` and the reputation model.
-  - Journal entries.
-  - Side quests from `ContentSource/SideQuests`.
-  - Mission-specific set pieces: chases, boarding, sieges.
-- **Exit criteria:**
-  - Core tests for every branch.
-  - The story probe walks every resolution path.
-  - The journal and save stay compatible.
-
-## A7 — Physical world map and navigation
-
-- **Goal:** the player finds the way without a HUD marker.
-- **Deliverables:**
-  - A held paper map drawn from the materialised geography: islands, sea lanes, discovered places.
-  - Chart tables on the ship and in Koa's post.
-  - Local directions from people.
-- **Exit criteria:** map rendering is deterministic, and the map shows only discovered places (a test).
-- **Limits:** no minimap unless the owner rules otherwise.
-
-## A8 — Audio, voice and lip sync
-
-- **Goal:** the world sounds and the people speak.
-- **Deliverables:**
-  - Ambience per biome, the sea, footsteps per surface, combat.
-  - Music cues, including the non-reactive credits cue.
-  - Voice lines for the contracts' dialogue.
-  - Lip sync from the 15 visemes in `FaceShapes.json`.
-- **Exit criteria:**
-  - Every line has audio and a viseme track.
-  - The credits attribute every source.
-- **Decision needed:**
-  - Who voices the cast.
-  - Options are human actors, ElevenLabs (paid; needs approval and a key), or a free local TTS (Apache-2.0, for example Kokoro) as a placeholder.
-  - Nothing is bought without approval.
-
-## A9 — Runtime proof and performance
-
-- **Goal:** the game runs in the Editor and the GameLauncher, not only in probes.
-- **Deliverables:**
-  - The Asset Processor builds every asset.
-  - The GameLauncher loads every level.
-  - Frame-time capture on the target GPU.
-  - Graphics presets consumed by Atom.
-- **Exit criteria:** 60 fps floor in every benchmark level, with no runtime errors in the logs.
-- **Limits:**
-  - "DO NOT CLAIM FULL RUNTIME EVIDENCE UNTIL GAMELAUNCHER ACTUALLY RUNS."
-  - A GPU host needs the owner's approval of any cost.
-
-## A10 — Alpha candidate
-
-- **Goal:** the deliverable of `ALPHA_DELIVERY_CHECKLIST.md`.
-- **Deliverables:**
-  - Windows and Linux Shipping packages.
-  - Credits and the complete attribution: third party, tools, music.
-  - Checksums.
-  - A source archive.
-- **Exit criteria:** the owner completes the playthrough and approves.
-
-## Order of work in this branch
-
-1. A1 and A7 need no owner decision, so they go first: shoreline, sway, Rexa, the map.
-2. A2, A3 and A6 follow in source.
-3. A8 waits on the voice decision.
-4. A9 waits on a GPU host.
+- **Voice (M9).** Options:
+  - human actors;
+  - ElevenLabs (paid; needs approval and a key);
+  - a free local TTS such as Kokoro (Apache-2.0) as a placeholder.
+- **GPU host for runtime proof (M10).** Any cost needs approval.
+- **Minimap.** No minimap until the owner rules otherwise.
