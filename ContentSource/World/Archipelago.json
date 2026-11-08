@@ -1,0 +1,144 @@
+{
+  "schemaVersion": 1,
+  "about": "Geography of the open world (Docs/ALPHA_PLAN_O3DE_2026_11.md): one archipelago joined by sea lanes, no loading screen inside it. Positions in metres, X east, Y north, origin at the south-west corner. Each island is a noisy ellipse (rx, ry, rotation in degrees) rising to its peak; shapes: dome (rolling), ridge (highland), volcano (cone with a crater), low (reef, swamp), coast (mainland running off the map edge). Decided on the owner's delegation of 2026-11-08; revisable.",
+  "world": {
+    "width": 14000,
+    "height": 12000,
+    "seaFloor": -60,
+    "seed": 1846
+  },
+  "islands": [
+    {
+      "region": "Moran",
+      "name": "Moran",
+      "x": 2000,
+      "y": 1900,
+      "rx": 2000,
+      "ry": 1400,
+      "rotation": 15,
+      "peak": 210,
+      "shape": "dome",
+      "biome": "tropical"
+    },
+    {
+      "region": "Moran",
+      "name": "Outer Reef",
+      "x": 4300,
+      "y": 1100,
+      "rx": 420,
+      "ry": 300,
+      "rotation": 40,
+      "peak": 6,
+      "shape": "low",
+      "biome": "tropical"
+    },
+    {
+      "region": "Rexa",
+      "name": "Rexa",
+      "x": 8300,
+      "y": 5300,
+      "rx": 3100,
+      "ry": 2200,
+      "rotation": 25,
+      "peak": 290,
+      "shape": "dome",
+      "biome": "tropical"
+    },
+    {
+      "region": "Rexa",
+      "name": "The Mire",
+      "x": 9500,
+      "y": 3800,
+      "rx": 1700,
+      "ry": 1200,
+      "rotation": -10,
+      "peak": 18,
+      "shape": "low",
+      "biome": "mire"
+    },
+    {
+      "region": "Highmoore",
+      "name": "Highmoore",
+      "x": 6400,
+      "y": 9800,
+      "rx": 2700,
+      "ry": 1700,
+      "rotation": -10,
+      "peak": 430,
+      "shape": "ridge",
+      "biome": "moor"
+    },
+    {
+      "region": "Ashenmoor",
+      "name": "Ashen Crown",
+      "x": 12300,
+      "y": 8100,
+      "rx": 1300,
+      "ry": 1100,
+      "rotation": 0,
+      "peak": 820,
+      "shape": "volcano",
+      "biome": "volcanic"
+    },
+    {
+      "region": "Ashenmoor",
+      "name": "Cinder Isle",
+      "x": 13000,
+      "y": 6100,
+      "rx": 800,
+      "ry": 700,
+      "rotation": 30,
+      "peak": 260,
+      "shape": "volcano",
+      "biome": "volcanic"
+    },
+    {
+      "region": "Ashenmoor",
+      "name": "Ember Key",
+      "x": 10500,
+      "y": 10300,
+      "rx": 600,
+      "ry": 480,
+      "rotation": -25,
+      "peak": 170,
+      "shape": "dome",
+      "biome": "volcanic"
+    },
+    {
+      "region": "QuietCoast",
+      "name": "Fjordlund",
+      "x": 12900,
+      "y": 11600,
+      "rx": 3300,
+      "ry": 1600,
+      "rotation": -18,
+      "peak": 640,
+      "shape": "coast",
+      "biome": "cold"
+    },
+    {
+      "region": "OpenSea",
+      "name": "Fort Carrion",
+      "x": 1700,
+      "y": 7700,
+      "rx": 600,
+      "ry": 550,
+      "rotation": 0,
+      "peak": 35,
+      "shape": "dome",
+      "biome": "fortress"
+    },
+    {
+      "region": "TheMaw",
+      "name": "The Maw",
+      "x": 12500,
+      "y": 1500,
+      "rx": 1500,
+      "ry": 1250,
+      "rotation": 10,
+      "peak": 340,
+      "shape": "ridge",
+      "biome": "maw"
+    }
+  ]
+}

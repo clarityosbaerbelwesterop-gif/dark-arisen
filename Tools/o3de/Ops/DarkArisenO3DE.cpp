@@ -5,6 +5,7 @@
 // Every step is deterministic and fails closed with a stable exit code:
 //   0 ok, 2 usage, 3 lock file, 4 missing prerequisite, 5 engine checkout, 6 command failed.
 
+#include "ArtKitArchipelago.h"
 #include "ArtKitDecimate.h"
 #include "AssetPipeline.h"
 #include "Hash.h"
@@ -607,6 +608,35 @@ namespace
     }
 
     /**
+     * The open world's geography (ContentSource/World/Archipelago.json): a 16-bit heightfield at 4 m into
+     * Assets/World/Archipelago_Height.png (build host, git-ignored) and a shaded relief map at 8 m into
+     * Docs/Images/Archipelago_Relief.png.
+     */
+    int CommandWorldMap(const Options& Opts)
+    {
+        std::ifstream In(Opts.RepoRoot / "ContentSource" / "World" / "Archipelago.json");
+        const std::string Text((std::istreambuf_iterator<char>(In)), std::istreambuf_iterator<char>());
+        DarkArisen::Tools::Art::ArchipelagoSpec Spec;
+        std::string Problem;
+        if (!In || !DarkArisen::Tools::Art::ReadArchipelago(Text, Spec, Problem))
+        {
+            std::cerr << "error: " << Problem << "\n";
+            return LockError;
+        }
+        const auto Maps = DarkArisen::Tools::Art::BuildArchipelagoMaps(Spec, 4.0, 8.0);
+        const fs::path World = Opts.RepoRoot / "Engine" / "O3DE" / "DarkArisen" / "Assets" / "World";
+        const fs::path Images = Opts.RepoRoot / "Docs" / "Images";
+        fs::create_directories(World);
+        fs::create_directories(Images);
+        std::ofstream(World / "Archipelago_Height.png", std::ios::binary) << Maps.HeightPng;
+        std::ofstream(Images / "Archipelago_Relief.png", std::ios::binary) << Maps.ReliefPng;
+        std::cout << "archipelago " << Spec.Width / 1000.0 << " x " << Spec.Height / 1000.0 << " km, " << Spec.Islands.size() << " islands, land "
+                  << Maps.LandSquareKm << " km2; heightfield " << Maps.HeightWidth << " x " << Maps.HeightHeight << " (" << Maps.MinHeight << ".."
+                  << Maps.MaxHeight << " m)\n";
+        return Ok;
+    }
+
+    /**
      * The Atom shader path without the Asset Processor: preprocess with the engine's shader
      * include roots, AZSL -> HLSL with O3DE's azslc 1.8.22, then HLSL -> SPIR-V (Vulkan) and DXIL
      * (DX12) with DXC 1.8.2505.1, the compiler O3DE 2605.0 pins. Every .azsl under the project's
@@ -794,7 +824,7 @@ namespace
 
     void PrintUsage()
     {
-        std::cout << "usage: DarkArisenO3DE <doctor|lock|bootstrap|configure|build|test|package|import-glb|probe|shader-check|materialize|fetch-art|decimate-art>\n"
+        std::cout << "usage: DarkArisenO3DE <doctor|lock|bootstrap|configure|build|test|package|import-glb|probe|shader-check|materialize|fetch-art|decimate-art|world-map>\n"
                      "       [--repo=PATH]\n"
                      "       [--engine=PATH] [--build-dir=PATH] [--config=profile|debug|release] [--dry-run]\n"
                      "       import-glb --manifest=PATH --glb=PATH [--min-vertices=N]\n"
@@ -862,6 +892,7 @@ int main(int ArgumentCount, char** Arguments)
     if (Opts.Command == "materialize") return CommandMaterialize(Opts);
     if (Opts.Command == "fetch-art") return CommandFetchArt(Opts);
     if (Opts.Command == "decimate-art") return CommandDecimateArt(Opts);
+    if (Opts.Command == "world-map") return CommandWorldMap(Opts);
     PrintUsage();
     return Usage;
 }

@@ -77,6 +77,8 @@ namespace DarkArisen::Tools::Art
     /** Height (0..65535) to a tangent-space normal map. */
     Image NormalFromHeight(const std::vector<int>& Height, int Size, int StrengthPercent);
     std::string EncodePng(const Image& Img);
+    /** 16-bit greyscale PNG (heightfields). */
+    std::string EncodePng16Gray(int Width, int Height, const std::vector<std::uint16_t>& Pixels);
 
     // ------------------------------------------------------------------ meshes
 
