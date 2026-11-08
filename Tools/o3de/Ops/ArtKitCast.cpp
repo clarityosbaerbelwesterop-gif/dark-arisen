@@ -642,6 +642,38 @@ namespace DarkArisen::Tools::Art::Humans
                 P.Clip = "13_09"; P.Time = 3.6; P.Upright = 0.4;
                 Add(P);
             }
+
+            // Resting faces: subtle weights of the MakeHuman expression units (ContentSource/Animations/FaceShapes.json
+            // names the full emotions), read from the character documents; strong expressions turn masklike on a still figure.
+            using Face = std::vector<std::pair<std::string, double>>;
+            const std::map<std::string, Face> Moods = {
+                {"jake", {{"eyebrows-left-down", 0.2}, {"eyebrows-right-down", 0.2}, {"mouth-compression", 0.15}}},           // set on revenge
+                {"draven", {{"mouth-compression", 0.25}, {"eyebrows-left-down", 0.2}, {"eye-left-slit", 0.2}, {"eye-right-slit", 0.2}}},  // quiet contempt
+                {"mira", {{"eyebrows-left-inner-up", 0.3}, {"eyebrows-right-inner-up", 0.3}}},                               // concern
+                {"bigtom", {{"mouth-corner-puller", 0.3}}},
+                {"esteban", {{"mouth-corner-puller", 0.15}, {"eye-left-slit", 0.15}, {"eye-right-slit", 0.15}}},
+                {"salvio", {{"eye-left-slit", 0.25}, {"eye-right-slit", 0.25}}},
+                {"koa", {{"mouth-corner-puller", 0.15}, {"eyebrows-left-inner-up", 0.15}, {"eyebrows-right-inner-up", 0.15}}},
+                {"herrera", {{"eyebrows-left-down", 0.3}, {"eyebrows-right-down", 0.3}, {"mouth-depression", 0.15}}},
+                {"ethan", {{"eyebrows-left-inner-up", 0.25}, {"eyebrows-right-inner-up", 0.25}, {"mouth-depression", 0.15}}},
+                {"dream_ethan", {{"eye-left-slit", 0.2}, {"eye-right-slit", 0.2}}},
+                {"marc", {{"mouth-corner-puller", 0.2}}},
+                {"denise", {{"mouth-corner-puller", 0.2}}},
+                {"boarder", {{"eyebrows-left-down", 0.35}, {"eyebrows-right-down", 0.35}, {"nose-left-elevation", 0.2}, {"nose-right-elevation", 0.2}, {"mouth-upward-retraction", 0.15}}},
+                {"boarder_heavy", {{"eyebrows-left-down", 0.3}, {"eyebrows-right-down", 0.3}, {"nose-compression", 0.15}, {"mouth-compression", 0.15}}},
+                {"sharpshooter", {{"eye-left-slit", 0.3}, {"eye-right-slit", 0.3}, {"eyebrows-left-down", 0.15}, {"eyebrows-right-down", 0.15}}},
+                {"armada_officer", {{"mouth-compression", 0.2}, {"eyebrows-left-down", 0.15}, {"eyebrows-right-down", 0.15}}},
+                {"imperial_soldier", {{"eyebrows-left-down", 0.15}, {"eyebrows-right-down", 0.15}}},
+                {"albion_soldier", {{"eyebrows-left-down", 0.15}, {"eyebrows-right-down", 0.15}}},
+                {"market_woman", {{"mouth-corner-puller", 0.2}}},
+                {"elder_woman", {{"eyebrows-left-inner-up", 0.15}, {"eyebrows-right-inner-up", 0.15}, {"mouth-depression", 0.1}}},
+                {"fisherman", {{"eye-left-slit", 0.2}, {"eye-right-slit", 0.2}}},
+                {"dockworker", {{"mouth-depression", 0.1}}},
+            };
+            for (auto& [Id, P] : Cast)
+            {
+                if (const auto Found = Moods.find(Id); Found != Moods.end()) P.Expression = Found->second;
+            }
             return Cast;
         }
 
@@ -650,6 +682,13 @@ namespace DarkArisen::Tools::Art::Humans
             static const std::map<std::string, PersonSpec, std::less<>> Table = BuildCast();
             return Table;
         }
+    }
+
+    std::vector<std::string> CastIds()
+    {
+        std::vector<std::string> Ids;
+        for (const auto& Entry : Cast()) Ids.push_back(Entry.first);
+        return Ids;
     }
 
     const PersonSpec* FindPerson(const std::string_view Id)

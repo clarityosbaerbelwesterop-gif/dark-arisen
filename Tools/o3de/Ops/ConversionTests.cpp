@@ -234,6 +234,45 @@ int main()
         JsonValue Parsed;
         Check(JsonReader::Parse(Actor, Parsed, Error) && JsonReader::Parse(Motion, Parsed, Error), "actor and motion are valid JSON");
         Check(!Humans.BuildFigure("nobody", Jake, Files, Problem), "unknown people fail closed");
+        Check(Actor.find("\"targetNames\":[\"eye-left-closure\"") != std::string::npos && Actor.find("\"sparse\"") != std::string::npos &&
+                  Actor.find("_Teeth") != std::string::npos,
+            "actor carries the expression units as sparse morph targets, teeth and tongue");
+
+        // Gameplay motion library: timed, mirrored, looped and layered cuts.
+        MotionSpec Attack;
+        Attack.Name = "AN_Test_LightAttack1";
+        Attack.Clip = "02_08";
+        Attack.From = 1.15;
+        Attack.To = 2.1;
+        Attack.Contact = 1.85;
+        Attack.ContactAt = 0.27;
+        Attack.End = 0.72;
+        Attack.Straighten = true;
+        std::string Timed;
+        Check(Humans.BuildLibraryMotion(Attack, Timed, Problem) && JsonReader::Parse(Timed, Parsed, Error) &&
+                  Timed.find("\"max\":[0.72") != std::string::npos && Timed.find("\"name\":\"AN_Test_LightAttack1\",\"samplers\"") != std::string::npos,
+            "a timed cut lands on the authored duration");
+        MotionSpec Left = Attack;
+        Left.Mirror = true;
+        std::string Mirrored;
+        Check(Humans.BuildLibraryMotion(Left, Mirrored, Problem) && Mirrored != Timed, "a mirrored cut differs from its source");
+        MotionSpec Walk;
+        Walk.Name = "AN_Test_Walk";
+        Walk.Clip = "02_01";
+        Walk.From = 0.7;
+        Walk.To = 1.8;
+        Walk.Loop = true;
+        Walk.Blend = 0.25;
+        Walk.UpperClip = "02_08";
+        Walk.UpperAt = 1.25;
+        std::string Cycle;
+        Check(Humans.BuildLibraryMotion(Walk, Cycle, Problem) && Cycle.find("\"max\":[1.1") != std::string::npos, "a layered walk cycle builds");
+        MotionSpec Bad = Walk;
+        Bad.To = 99.0;
+        Check(!Humans.BuildLibraryMotion(Bad, Cycle, Problem), "a cut past the clip fails closed");
+        Bad = Attack;
+        Bad.Contact = 3.0;
+        Check(!Humans.BuildLibraryMotion(Bad, Cycle, Problem), "a hit outside its cut fails closed");
     }
 
     std::cout << (Failures == 0 ? "conversion tests passed\n" : "conversion tests FAILED\n");

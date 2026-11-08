@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "about": "Visemes (Oculus/Meta 15-viseme set) and emotions as weighted sets of the 34 MakeHuman expression-unit morph targets every SK_Art_* actor carries. A lip-sync track names visemes; the runtime blends their unit weights (EMotionFX morph targets). Weights were tuned on rendered close-ups of the cast.",
+  "units": "Assets/Art/Characters/SK_Art_<id>.gltf mesh extras.targetNames",
+  "visemes": {
+    "sil": {},
+    "PP": {"mouth-compression": 0.75},
+    "FF": {"mouth-depression-retraction": 0.45, "mouth-upward-retraction": 0.35},
+    "TH": {"mouth-open": 0.22, "mouth-parling": 0.35},
+    "DD": {"mouth-open": 0.3, "mouth-retraction": 0.25},
+    "kk": {"mouth-open": 0.35, "mouth-retraction": 0.15},
+    "CH": {"mouth-protusion": 0.55, "mouth-open": 0.15},
+    "SS": {"mouth-retraction": 0.5, "mouth-parling": 0.25},
+    "nn": {"mouth-open": 0.18, "mouth-parling": 0.25},
+    "RR": {"mouth-pursing": 0.45, "mouth-open": 0.18},
+    "aa": {"mouth-open": 0.8},
+    "E": {"mouth-open": 0.38, "mouth-retraction": 0.5},
+    "I": {"mouth-open": 0.22, "mouth-retraction": 0.7},
+    "O": {"mouth-open": 0.5, "mouth-pursing": 0.55},
+    "U": {"mouth-pursing": 0.85, "mouth-protusion": 0.35}
+  },
+  "emotions": {
+    "blink": {"eye-left-closure": 1.0, "eye-right-closure": 1.0},
+    "smile": {"mouth-corner-puller": 0.75, "eye-left-slit": 0.25, "eye-right-slit": 0.25},
+    "anger": {"eyebrows-left-down": 0.8, "eyebrows-right-down": 0.8, "nose-compression": 0.35, "mouth-compression": 0.35},
+    "sadness": {"eyebrows-left-inner-up": 0.8, "eyebrows-right-inner-up": 0.8, "mouth-depression": 0.5},
+    "fear": {"eyebrows-left-inner-up": 0.6, "eyebrows-right-inner-up": 0.6, "eye-left-opened-up": 0.6, "eye-right-opened-up": 0.6, "mouth-retraction": 0.4},
+    "surprise": {"eyebrows-left-up": 0.8, "eyebrows-right-up": 0.8, "eye-left-opened-up": 0.5, "eye-right-opened-up": 0.5, "mouth-open": 0.45},
+    "disgust": {"nose-left-elevation": 0.6, "nose-right-elevation": 0.6, "mouth-upward-retraction": 0.45, "eyebrows-left-down": 0.3, "eyebrows-right-down": 0.3},
+    "contempt": {"mouth-compression": 0.3, "eyebrows-left-down": 0.25, "eye-left-slit": 0.3, "eye-right-slit": 0.3},
+    "pain": {"eye-left-closure": 0.6, "eye-right-closure": 0.6, "eyebrows-left-down": 0.6, "eyebrows-right-down": 0.6, "mouth-retraction": 0.6, "mouth-open": 0.2}
+  }
+}

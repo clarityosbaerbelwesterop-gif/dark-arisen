@@ -516,6 +516,36 @@ namespace DarkArisen::Tools::Art::Humans
         return &(Data.Targets[Name] = std::move(Offsets));
     }
 
+    const std::vector<std::string>& ExpressionUnits()
+    {
+        static const std::vector<std::string> Units = {"eye-left-closure", "eye-left-opened-up", "eye-left-slit", "eye-right-closure", "eye-right-opened-up",
+            "eye-right-slit", "eyebrows-left-down", "eyebrows-left-extern-up", "eyebrows-left-inner-up", "eyebrows-left-up", "eyebrows-right-down",
+            "eyebrows-right-extern-up", "eyebrows-right-inner-up", "eyebrows-right-up", "mouth-compression", "mouth-corner-puller",
+            "mouth-depression-retraction", "mouth-depression", "mouth-elevation", "mouth-eversion", "mouth-open", "mouth-parling", "mouth-part-later",
+            "mouth-protusion", "mouth-pursing", "mouth-retraction", "mouth-upward-retraction", "neck-platysma", "nose-compression", "nose-depression",
+            "nose-left-dilatation", "nose-left-elevation", "nose-right-dilatation", "nose-right-elevation"};
+        return Units;
+    }
+
+    bool ExpressionDelta(const SourceReader& Reader, Source& Data, const Body& B, const std::vector<std::pair<std::string, double>>& Units,
+        std::vector<V3>& Out, std::string& Problem)
+    {
+        static const char* const RaceNames[3] = {"african", "asian", "caucasian"};
+        Out.assign(Data.Positions.size(), V3{});
+        for (const auto& [Unit, Weight] : Units)
+        {
+            for (int R = 0; R < 3; ++R)
+            {
+                const double W = Weight * B.Race[static_cast<std::size_t>(R)] * B.Scale;
+                if (W == 0.0) continue;
+                const auto* Offsets = LoadTarget(Reader, Data, std::string("expression/units/") + RaceNames[R] + "/" + Unit, Problem);
+                if (!Offsets) return false;
+                for (const auto& [Index, D] : *Offsets) Out[static_cast<std::size_t>(Index)] = Out[static_cast<std::size_t>(Index)] + D * W;
+            }
+        }
+        return true;
+    }
+
     const Motion* LoadMotion(const SourceReader& Reader, Source& Data, const std::string& Clip, std::string& Problem)
     {
         if (const auto Found = Data.Motions.find(Clip); Found != Data.Motions.end()) return &Found->second;
@@ -625,6 +655,8 @@ namespace DarkArisen::Tools::Art::Humans
         const double Scale = Spec.Height * 10.0 / (MaxY - MinY);
         for (V3& P : Out.Rest) P = V3{P.X * Scale, (P.Y - MinY) * Scale, P.Z * Scale};
         Out.Stature = Spec.Height * 10.0;
+        Out.Scale = Scale;
+        Out.Race = {Races[0], Races[1], Races[2]};
 
         // Skeleton from the joint vertex groups.
         const auto Joint = [&](const std::string& Name) { return Mean(Out.Rest, Data.Joints.find(Name)->second); };
@@ -652,6 +684,14 @@ namespace DarkArisen::Tools::Art::Humans
         }
         Out.HipY = (Out.Hip[0].Y + Out.Hip[1].Y) * 0.5;
         Out.NeckY = HeadOf("neck01").Y;
+
+        // Resting face (expression units), after the skeleton so the joints keep the neutral face's positions.
+        if (!Spec.Expression.empty())
+        {
+            std::vector<V3> Face;
+            if (!ExpressionDelta(Reader, Data, Out, Spec.Expression, Face, Problem)) return false;
+            for (std::size_t I = 0; I < Out.Rest.size(); ++I) Out.Rest[I] = Out.Rest[I] + Face[I];
+        }
 
         // Rest normals and cavity over the body topology.
         Out.Normals.assign(Out.Rest.size(), V3{});

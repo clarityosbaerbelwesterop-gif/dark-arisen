@@ -18,6 +18,7 @@ was bought. `ThirdPartyManifest.json` records the SHA-256 hash of every file.
     - ideal proportions
     - breast size
     - a selection of face and body detail targets
+    - the 34 expression units per ethnicity (`targets/expression/units/{african,asian,caucasian}/`), fetched 2026-11-08: every actor carries them as morph targets, visemes and emotions are weighted sets of them (`ContentSource/Animations/FaceShapes.json`)
 - **Modifications:** none. Every file is a byte-identical copy of upstream.
 
 ## CMU Graphics Lab Motion Capture Database (`CMU/`)
@@ -58,4 +59,68 @@ was bought. `ThirdPartyManifest.json` records the SHA-256 hash of every file.
 | 13_09 | drink | drinking |
 | 81_07 | pull heavy object | hauling lines |
 | 91_09 | drunk walk | tavern drunk |
+
+Added 2026-11-08 for the gameplay motion library (`ContentSource/Animations/HumanMotionLibrary.json`); same excerpt rule.
+
+| Clip | CMU description | Used for (library state) |
+|---|---|---|
+| 02_08 | swordplay | Jake CombatIdle (upper body), Jake CombatForward (upper body), Jake CombatBack (upper body), Jake CombatStrafeRight (upper body), Jake CombatStrafeLeft (upper body), Jake LightAttack1, Jake LightAttack2, Jake HeavyAttack |
+| 02_09 | swordplay | Boarder HeavyAttack |
+| 13_11 | forward jump | World JumpForward |
+| 13_35 | climb 3 steps | Jake WaterExit, World ClimbSteps |
+| 16_01 | jump | World Jump |
+| 22_12 | A stumbles into B (2 subjects - subject A) | Jake Stagger |
+| 75_01 | run jump | World RunJump |
+| 79_96 | shooting a gun | World AimPistol |
+| 81_12 | jump backwards off ledge | — |
+| 82_02 | Jump off ledge | World FallLand |
+| 90_16 | fall on face | — |
+| 90_18 | RugPullFall | Jake Death, Boarder Death |
+| 91_59 | 360 smallStumble | Jake HitReactionFront, Boarder HitReactionFront |
+| 104_13 | StumbleWalk | Boarder Stagger |
+| 111_02 | Bow | World Bow |
+| 111_03 | Crawling | Jake BeachCrawl |
+| 111_12 | Lay down | World LieDown |
+| 111_17 | Pick up | Jake Pickup |
+| 111_26 | Walk sideways | Jake CombatStrafeRight, Jake CombatStrafeLeft |
+| 111_33 | Throwing | World Throw |
+| 125_01 | Breast Stroke | Jake Swim |
+| 125_05 | Butterfly | Jake StrugglingSwim |
+| 125_06 | Free Style | — |
+| 126_01 | Back Stroke | World SwimBackstroke |
+| 127_03 | Run | — |
+| 127_15 | Run Turn Left | Jake TurnLeft, Jake TurnRight |
+| 127_16 | Run Turn Right | — |
+| 127_23 | Run Dive Over Roll Run | Jake DodgeForward |
+| 128_09 | Run Roll Underneath | — |
+| 136_09 | Walk Crouched | World CrouchWalk |
+| 137_33 | Old Man Walk | World OldWalk |
+| 138_01 | Marching | World March |
+| 139_01 | Looking Around | World LookAround |
+| 139_05 | Pulling a Gun | World DrawPistol |
+| 139_06 | Poking Around On The Ground | World SearchGround |
+| 139_09 | Ducking | World Duck |
+| 139_16 | Get Up From Ground | World GetUpFromFront |
+| 139_19 | Walk Wounded Leg | World WoundedWalk |
+| 139_25 | Giving Directions | World GiveDirections |
+| 139_29 | Sneaking | World Sneak |
+| 140_01 | Get Up Face Down | Jake BeachRecover |
+| 140_05 | Motorcycle | Jake HelmIdle (upper body) |
+| 140_06 | Idle | Jake Idle, Jake CombatIdle, Jake HelmIdle, Boarder Idle, Boarder CombatIdle |
+| 140_08 | Get Up From Ground Laying on Back | World GetUpFromBack |
+| 141_05 | Jump Sideways | — |
+| 141_07 | Walk Up and Over | World ClimbStep |
+| 141_16 | Wave Hello | World Wave |
+| 141_21 | Shrug | World Shrug |
+| 141_23 | Shake Hands | Jake InteractReach, World ShakeHands |
+| 141_31 | Walk Backwards | Jake CombatBack, Jake Backstep, World WalkBackwards |
+| 141_32 | Walk Sideways, Cross Legs | — |
+| 143_01 | Run | — |
+| 143_02 | Run to Stop | Jake Stop |
+| 143_03 | Start to Run | — |
+| 143_07 | Jumping Sideways | Jake DodgeRight, Jake DodgeLeft |
+| 143_11 | Walk And Pick up Box | World PickUpBox |
+| 143_18 | Sit Down And Get Up | World SitDown, World StandUp |
+| 143_23 | Punching | World Punch |
+| 143_24 | Kicking | World Kick |
 | 15_06 | lean forward, reach for | reaching |

@@ -181,6 +181,7 @@ namespace DarkArisen::Tools::Art::Humans
         double African = 0.0, Asian = 0.0, Caucasian = 1.0;
         double Height = 1.75;       // metres
         std::vector<std::pair<std::string, double>> Detail;  // face and body detail targets
+        std::vector<std::pair<std::string, double>> Expression;  // resting face: MakeHuman expression units (ExpressionUnits)
         // skin and eyes
         Rgb Skin{0.78, 0.6, 0.48};
         double Weathered = 0.3, Freckles = 0.0, Ruddy = 0.0, Wrinkles = 0.0;
@@ -215,6 +216,8 @@ namespace DarkArisen::Tools::Art::Humans
 
     /** The authored cast and crowd (ArtKitCast.cpp); nullptr for an unknown id. */
     const PersonSpec* FindPerson(std::string_view Id);
+    /** Every cast and crowd id, sorted. */
+    std::vector<std::string> CastIds();
 
     // ------------------------------------------------------------------ bodies
 
@@ -241,12 +244,23 @@ namespace DarkArisen::Tools::Art::Humans
         V3 EyeL, EyeR, EyeMid, Mouth, MouthL, MouthR, Chin, NoseTip, HeadTop, HeadCentre;
         V3 Ear[2];                                   // [0] left, [1] right: centre of the outer ear
         double HipY = 0, NeckY = 0, Stature = 0;
+        double Scale = 1.0;                          // base mesh units to body decimetres (height)
+        std::array<double, 3> Race{0, 0, 1};         // african, asian, caucasian shares
         V3 Shoulder[2], Elbow[2], Wrist[2], FingerTip[2], Hip[2], Knee[2], Ankle[2], ToeTip[2];  // [0] left, [1] right
         double TorsoF(double Y) const { return (Y - HipY) / (NeckY - HipY); }
         double TorsoY(double F) const { return HipY + F * (NeckY - HipY); }
     };
 
     bool BuildBody(const SourceReader& Reader, Source& Data, const PersonSpec& Spec, Body& Out, std::string& Problem);
+
+    /** The 34 MakeHuman expression units (targets/expression/units/<ethnicity>/<unit>.target), FACS-like. */
+    const std::vector<std::string>& ExpressionUnits();
+    /**
+     * Per base mesh vertex offset (body decimetres) of a weighted set of expression units, blended over the
+     * body's ethnicity as MakeHuman does.
+     */
+    bool ExpressionDelta(const SourceReader& Reader, Source& Data, const Body& B, const std::vector<std::pair<std::string, double>>& Units,
+        std::vector<V3>& Out, std::string& Problem);
 
     /** World rotation (rest = identity) and posed head position of every bone. */
     struct Pose
@@ -271,6 +285,7 @@ namespace DarkArisen::Tools::Art::Humans
         double U = 0, V = 0;
         std::array<int, 4> Joint{0, 0, 0, 0};
         std::array<double, 4> Weight{1, 0, 0, 0};
+        int Source = -1;  // base mesh vertex it was grown from (follows the face's morph targets); -1 for cards, hats, gear
     };
 
     /** Top four influences of base mesh vertex Index, renormalised. */
@@ -287,8 +302,18 @@ namespace DarkArisen::Tools::Art::Humans
         bool Ground = false;  // counts for standing a posed figure on z = 0
     };
 
-    /** Skinned actor (bind pose) glTF: the MakeHuman skeleton, one primitive per part (ArtKitHumanActor.cpp). */
-    std::string WriteActorGltf(const Source& Data, const Body& B, const std::string& Name, const std::vector<FigurePart>& Parts);
+    /** Named morph target: offset of every base mesh vertex (body decimetres); vertices grown from it follow. */
+    struct MorphShape
+    {
+        std::string Name;
+        std::vector<V3> Delta;
+    };
+    /** Skinned actor (bind pose) glTF: the MakeHuman skeleton, one primitive per part, morph targets (ArtKitHumanActor.cpp). */
+    std::string WriteActorGltf(const Source& Data, const Body& B, const std::string& Name, const std::vector<FigurePart>& Parts, const std::vector<MorphShape>& Shapes);
     /** Skeleton plus one animation retargeted from Clip frames First..Last (inclusive). */
     std::string WriteMotionGltf(const Source& Data, const Body& B, const std::string& Name, const Motion& Clip, int First, int Last);
+    /** Skeleton plus one animation from precomputed poses, one every FrameTime seconds. */
+    std::string WriteMotionGltf(const Source& Data, const Body& B, const std::string& Name, const std::vector<Pose>& Poses, double FrameTime);
+    /** Library clip (ArtKitHumanMotion.cpp): cut, time-warped, mirrored, looped and layered as MotionSpec asks. */
+    bool BuildMotionPoses(const Source& Data, const Body& B, const Motion& Clip, const Motion* Upper, const MotionSpec& Spec, std::vector<Pose>& Out, std::string& Problem);
 }

@@ -655,6 +655,7 @@ namespace DarkArisen::Tools::Art::Humans
                     }
                 }
                 InfluencesOf(*Data, static_cast<int>(Found), Out.Joint, Out.Weight);
+                Out.Source = static_cast<int>(Found);  // follows the face where it rests on it (beard cards, collars)
             }
             void Tri(const std::uint32_t A, const std::uint32_t Bv, const std::uint32_t C)
             {
@@ -904,6 +905,8 @@ namespace DarkArisen::Tools::Art
     }
     HumanFactory::~HumanFactory() = default;
 
+    std::vector<std::string> HumanFactory::People() { return CastIds(); }
+
     std::vector<std::string> HumanFactory::MotionClips()
     {
         return {"02_01", "09_01", "17_03", "77_02", "77_01", "40_10", "18_08", "18_10", "13_26", "62_07", "13_23", "70_03", "69_69",
@@ -1127,6 +1130,7 @@ namespace DarkArisen::Tools::Art
             Sv.U = Data.Uvs[static_cast<std::size_t>(T)][0];
             Sv.V = Data.Uvs[static_cast<std::size_t>(T)][1];
             InfluencesOf(Data, V, Sv.Joint, Sv.Weight);
+            Sv.Source = V;
             return Sv;
         };
         /** Adds the triangles of the groups that pass Keep(v0, v1, v2), each vertex displaced by Offset(v). */
@@ -1205,6 +1209,17 @@ namespace DarkArisen::Tools::Art
             Eyes.Mat.BaseColorTexture = EyeTexture;
             Surface(Eyes, {Data.Group("helper-l-eye"), Data.Group("helper-r-eye")}, All, Flat, true);
             Parts.push_back(std::move(Eyes));
+        }
+        // Teeth and tongue (MakeHuman helper geometry): hidden behind closed lips, seen when the face speaks.
+        {
+            FigurePart Teeth;
+            Teeth.Mat = Solid(Tag + "_Teeth", S.Uncanny ? Rgb{0.62, 0.62, 0.6} : Rgb{0.86, 0.82, 0.72}, 0.35);
+            Surface(Teeth, {Data.Group("helper-upper-teeth"), Data.Group("helper-lower-teeth")}, All, Flat, false);
+            Parts.push_back(std::move(Teeth));
+            FigurePart Tongue;
+            Tongue.Mat = Solid(Tag + "_Tongue", Rgb{0.55, 0.24, 0.24}, 0.45);
+            Surface(Tongue, {Data.Group("helper-tongue")}, All, Flat, false);
+            Parts.push_back(std::move(Tongue));
         }
         // Loose trouser legs and shirt sleeves (built below as tubes) hide the shell underneath.
         const bool LegsUnderSkirt = S.Dress.On && S.Dress.OpenFront <= 0.0;
@@ -2107,7 +2122,37 @@ namespace DarkArisen::Tools::Art
         Body B;
         std::vector<FigurePart> Parts;
         if (!P->Dress(*Spec, B, Parts, Files, Problem)) return false;
-        OutGltf = WriteActorGltf(P->Data, B, "SK_Art_" + Spec->Id, Parts);
+        // Face: every expression unit as a morph target (visemes and emotions are weighted sets of them, MotionLibrary data).
+        std::vector<MorphShape> Shapes;
+        for (const std::string& Unit : ExpressionUnits())
+        {
+            MorphShape Shape;
+            Shape.Name = Unit;
+            if (!ExpressionDelta(P->Reader, P->Data, B, {{Unit, 1.0}}, Shape.Delta, Problem)) return false;
+            Shapes.push_back(std::move(Shape));
+        }
+        OutGltf = WriteActorGltf(P->Data, B, "SK_Art_" + Spec->Id, Parts, Shapes);
+        return true;
+    }
+
+    bool HumanFactory::BuildLibraryMotion(const MotionSpec& Spec, std::string& OutGltf, std::string& Problem)
+    {
+        const PersonSpec* Person = FindPerson(Spec.Person);
+        if (!Person)
+        {
+            Problem = "unknown person " + Spec.Person;
+            return false;
+        }
+        if (!P->Ensure(Problem)) return false;
+        Body B;
+        if (!BuildBody(P->Reader, P->Data, *Person, B, Problem)) return false;
+        const Motion* Clip = LoadMotion(P->Reader, P->Data, Spec.Clip, Problem);
+        if (!Clip) return false;
+        const Motion* Upper = nullptr;
+        if (!Spec.UpperClip.empty() && !(Upper = LoadMotion(P->Reader, P->Data, Spec.UpperClip, Problem))) return false;
+        std::vector<Pose> Poses;
+        if (!BuildMotionPoses(P->Data, B, *Clip, Upper, Spec, Poses, Problem)) return false;
+        OutGltf = WriteMotionGltf(P->Data, B, Spec.Name, Poses, Spec.Duration() / static_cast<double>(Poses.size() - 1));
         return true;
     }
 

@@ -8,6 +8,10 @@ if(MSVC)
     add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
 else()
     set(DARKARISEN_TOOL_WARNINGS -Wall -Wextra -Wpedantic -Werror)
+    # Materialised content is checked byte for byte, so arithmetic must not depend on the target ISA:
+    # compilers that default to an FMA-capable ISA (GCC 15 on ubuntu 26.04) would otherwise fuse a*b+c
+    # and round differently. Applies to the core added below as well. MSVC does not contract under /fp:precise.
+    add_compile_options(-ffp-contract=off)
 endif()
 
 # The engine-neutral core supplies the rules the materialiser validates against (mission levels,
@@ -17,7 +21,7 @@ add_subdirectory(../../Core ${CMAKE_CURRENT_BINARY_DIR}/Core)
 
 add_library(DarkArisenAssetPipeline STATIC Ops/AssetPipeline.cpp Ops/Gltf.cpp Ops/Prefab.cpp Ops/Materializer.cpp Ops/StoryContracts.cpp
     Ops/ArtKit.cpp Ops/ArtKitCore.cpp Ops/ArtKitShips.cpp Ops/ArtKitTextures.cpp Ops/ArtKitWorld.cpp
-    Ops/ArtKitCast.cpp Ops/ArtKitHumanActor.cpp Ops/ArtKitHumanBody.cpp Ops/ArtKitHumanDress.cpp)
+    Ops/ArtKitCast.cpp Ops/ArtKitHumanActor.cpp Ops/ArtKitHumanBody.cpp Ops/ArtKitHumanDress.cpp Ops/ArtKitHumanMotion.cpp)
 target_include_directories(DarkArisenAssetPipeline PUBLIC Ops ../../Engine/O3DE/DarkArisen/Gem/Include)
 target_link_libraries(DarkArisenAssetPipeline PUBLIC DarkArisen::Core)
 target_compile_features(DarkArisenAssetPipeline PUBLIC cxx_std_20)
