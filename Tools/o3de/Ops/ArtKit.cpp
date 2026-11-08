@@ -106,6 +106,107 @@ namespace DarkArisen::Tools::Art
         }
 
         std::string Mm(double Metres) { return std::to_string(std::lround(Metres * 100.0)); }
+
+        const char* const MotionLibraryPath = "ContentSource/Animations/HumanMotionLibrary.json";
+        const char* const CombatTimingPath = "ContentSource/Animations/AlphaCombatTiming.json";
+
+        struct LibraryEntry
+        {
+            MotionSpec Spec;
+            std::string Set, State, Timing;
+        };
+
+        double NumberOr(const JsonValue& Object, const char* Key, const double Fallback)
+        {
+            const JsonValue* V = Object.Find(Key);
+            return V && V->IsNumber() ? V->Number : Fallback;
+        }
+        bool BoolOr(const JsonValue& Object, const char* Key, const bool Fallback)
+        {
+            const JsonValue* V = Object.Find(Key);
+            return V && V->Type == JsonValue::Kind::Bool ? V->Boolean : Fallback;
+        }
+        std::string TextOr(const JsonValue& Object, const char* Key)
+        {
+            const JsonValue* V = Object.Find(Key);
+            return V && V->IsString() ? V->Text : std::string();
+        }
+
+        /** The gameplay motion library with its combat timing resolved; fails closed on anything malformed. */
+        bool ReadMotionLibrary(const SourceReader& Read, std::vector<LibraryEntry>& Out, std::string& Problem)
+        {
+            const std::string* LibraryText = Read(MotionLibraryPath);
+            const std::string* TimingText = Read(CombatTimingPath);
+            if (!LibraryText || !TimingText)
+            {
+                Problem = "motion library or combat timing missing";
+                return false;
+            }
+            JsonValue Library, Timing;
+            if (!JsonReader::Parse(*LibraryText, Library, Problem) || !JsonReader::Parse(*TimingText, Timing, Problem)) return false;
+            const JsonValue* Sets = Library.Find("sets");
+            const JsonValue* Motions = Library.Find("motions");
+            const JsonValue* Seconds = Timing.Find("timingSeconds");
+            if (!Sets || !Sets->IsArray() || !Motions || !Motions->IsArray() || !Seconds || !Seconds->IsObject())
+            {
+                Problem = "motion library: sets, motions or timingSeconds missing";
+                return false;
+            }
+            std::map<std::string, std::pair<std::string, std::string>> SetOf;  // id -> person, prefix
+            for (const JsonValue& Set : Sets->Items) SetOf[TextOr(Set, "id")] = {TextOr(Set, "person"), TextOr(Set, "prefix")};
+            for (const JsonValue& M : Motions->Items)
+            {
+                LibraryEntry E;
+                E.Set = TextOr(M, "set");
+                E.State = TextOr(M, "state");
+                const auto Found = SetOf.find(E.Set);
+                if (Found == SetOf.end() || E.State.empty())
+                {
+                    Problem = "motion library: entry without a known set or a state (" + E.Set + "." + E.State + ")";
+                    return false;
+                }
+                MotionSpec& S = E.Spec;
+                S.Person = Found->second.first;
+                S.Name = Found->second.second + E.State;
+                S.Clip = TextOr(M, "clip");
+                S.From = NumberOr(M, "from", 0.0);
+                S.To = NumberOr(M, "to", 0.0);
+                S.Loop = BoolOr(M, "loop", false);
+                S.Blend = NumberOr(M, "blend", 0.3);
+                S.InPlace = BoolOr(M, "inPlace", false);
+                S.Mirror = BoolOr(M, "mirror", false);
+                S.Speed = NumberOr(M, "speed", 1.0);
+                S.Upright = NumberOr(M, "upright", 0.35);
+                S.Curl = NumberOr(M, "curl", 0.35);
+                S.Straighten = BoolOr(M, "straighten", false);
+                if (const JsonValue* Upper = M.Find("upper"); Upper && Upper->IsObject())
+                {
+                    S.UpperClip = TextOr(*Upper, "clip");
+                    S.UpperAt = NumberOr(*Upper, "at", 0.0);
+                }
+                E.Timing = TextOr(M, "timing");
+                if (!E.Timing.empty())
+                {
+                    const JsonValue* T = Seconds->Find(E.Timing);
+                    S.Contact = NumberOr(M, "contact", -1.0);
+                    if (!T || !T->IsObject() || S.Contact < 0.0)
+                    {
+                        Problem = "motion library: " + S.Name + " names timing " + E.Timing + " without a contact or an entry in the combat timing";
+                        return false;
+                    }
+                    // The hit (a deflection's active window) lands on the authored time; recovery follows it.
+                    S.ContactAt = NumberOr(*T, "contact", NumberOr(*T, "activeSeconds", 0.0));
+                    S.End = S.ContactAt + NumberOr(*T, "recovery", 0.0);
+                }
+                if (S.Speed <= 0.0)
+                {
+                    Problem = "motion library: " + S.Name + " has no positive speed";
+                    return false;
+                }
+                Out.push_back(std::move(E));
+            }
+            return true;
+        }
     }
 
     std::string Kit::Emit(const std::string& Name, const std::string& Gltf)
@@ -117,7 +218,7 @@ namespace DarkArisen::Tools::Art
 
     Kit::~Kit() = default;
 
-    Kit::Kit(SourceReader Reader) : Humans(std::make_unique<HumanFactory>(std::move(Reader)))
+    Kit::Kit(SourceReader Reader) : Humans(std::make_unique<HumanFactory>(Reader))
     {
         for (ArtFile& File : BuildTextures()) Output.push_back(std::move(File));
 
@@ -212,17 +313,17 @@ namespace DarkArisen::Tools::Art
         Replacements["ContentSource/Characters/Boarders/SK_Boarder_Alpha.gltf"] = FigureFor("boarder");
 
         // Skinned actors and the retargeted motion library for EMotionFX (runtime verification pending).
-        for (const char* Person : {"jake", "boarder"})
+        for (const std::string& Person : HumanFactory::People())
         {
             std::string Gltf, Problem;
             std::vector<ArtFile> Files;
             if (!Humans->BuildActor(Person, Gltf, Files, Problem))
             {
-                ProblemList.push_back(std::string("actor ") + Person + ": " + Problem);
+                ProblemList.push_back("actor " + Person + ": " + Problem);
                 continue;
             }
             for (ArtFile& File : Files) Output.push_back(std::move(File));
-            Output.push_back({std::string("Assets/Art/Characters/SK_Art_") + Person + ".gltf", std::move(Gltf)});
+            Output.push_back({"Assets/Art/Characters/SK_Art_" + Person + ".gltf", std::move(Gltf)});
         }
         for (const std::string& Clip : HumanFactory::MotionClips())
         {
@@ -234,6 +335,36 @@ namespace DarkArisen::Tools::Art
             }
             Output.push_back({"Assets/Art/Characters/Motions/AN_Art_Human_" + Clip + ".gltf", std::move(Gltf)});
         }
+
+        // Gameplay motion library: every animation state of Jake and the boarders, plus world and crowd actions.
+        std::vector<LibraryEntry> Library;
+        std::string LibraryProblem;
+        if (!ReadMotionLibrary(Reader, Library, LibraryProblem))
+        {
+            ProblemList.push_back(LibraryProblem);
+        }
+        std::string Manifest = "{\n  \"schemaVersion\": 1,\n  \"source\": \"" + std::string(MotionLibraryPath) +
+            "\",\n  \"skeleton\": \"MakeHuman default (163 bones)\",\n  \"motions\": [";
+        bool First = true;
+        for (const LibraryEntry& E : Library)
+        {
+            std::string Gltf, Problem;
+            if (!Humans->BuildLibraryMotion(E.Spec, Gltf, Problem))
+            {
+                ProblemList.push_back("motion " + E.Spec.Name + ": " + Problem);
+                continue;
+            }
+            Output.push_back({"Assets/Art/Characters/Motions/" + E.Spec.Name + ".gltf", std::move(Gltf)});
+            const MotionSpec& S = E.Spec;
+            Manifest += std::string(First ? "" : ",") + "\n    {\"name\": \"" + S.Name + "\", \"set\": \"" + E.Set + "\", \"state\": \"" + E.State +
+                "\", \"file\": \"Assets/Art/Characters/Motions/" + S.Name + ".gltf\", \"duration\": " + GltfBits::Num(S.Duration()) +
+                ", \"loop\": " + (S.Loop ? "true" : "false") + ", \"rootMotion\": " + (S.Loop || S.InPlace ? "false" : "true") +
+                ", \"contact\": " + (S.Contact >= 0.0 ? GltfBits::Num(S.ContactAt) : std::string("null")) + ", \"timing\": " +
+                (E.Timing.empty() ? std::string("null") : "\"" + E.Timing + "\"") + ", \"source\": \"CMU " + S.Clip + " " + GltfBits::Num(S.From) + "-" +
+                GltfBits::Num(S.To) + " s" + (S.Mirror ? ", mirrored" : "") + (S.UpperClip.empty() ? "" : ", upper body CMU " + S.UpperClip + " at " + GltfBits::Num(S.UpperAt) + " s") + "\"}";
+            First = false;
+        }
+        Output.push_back({"Assets/Art/Characters/Motions/MotionLibrary.json", Manifest + "\n  ]\n}\n"});
     }
 
     std::string Kit::ReplacementFor(const std::string_view ContentSourceMesh) const
