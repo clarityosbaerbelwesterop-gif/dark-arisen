@@ -10815,6 +10815,76 @@
             "Id": "Entity_[2961204331105034]",
             "Name": "Plant 248 island_tree_03_0"
         },
+        "Entity_[2967771504468597]": {
+            "Components": {
+                "Component_[1275206094251705]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 1275206094251705
+                },
+                "Component_[1338995294905853]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 1338995294905853,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            120.544546
+                        ],
+                        "Translate": [
+                            59,
+                            0.8,
+                            1.55
+                        ]
+                    }
+                },
+                "Component_[3201597438848719]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 3201597438848719
+                },
+                "Component_[3454307791019569]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 3454307791019569
+                },
+                "Component_[4021482490753013]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 4021482490753013
+                },
+                "Component_[4387032292245922]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 4387032292245922
+                },
+                "Component_[5824640914658061]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 5824640914658061
+                },
+                "Component_[637044118030660]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 637044118030660
+                },
+                "Component_[8518499701530640]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 8518499701530640
+                },
+                "Component_[8878577287536738]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/wooden_lantern_01/wooden_lantern_01_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{B59CA559-219E-5B9E-8060-15E22D86F591}",
+                                    "subId": 284926637
+                                }
+                            }
+                        }
+                    },
+                    "Id": 8878577287536738
+                }
+            },
+            "Id": "Entity_[2967771504468597]",
+            "Name": "Prop HorizonRail 4 wooden_lantern_01_2k"
+        },
         "Entity_[2992067635538627]": {
             "Components": {
                 "Component_[1818149831118403]": {
@@ -13464,6 +13534,76 @@
             "Id": "Entity_[3425640317454286]",
             "Name": "Plant 75 namaqualand_boulder_02_0"
         },
+        "Entity_[3432079880965707]": {
+            "Components": {
+                "Component_[168873626448702]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 168873626448702
+                },
+                "Component_[2893310626053395]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/wooden_crate_01/wooden_crate_01_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{919C6265-9B7A-5F62-A6B6-C1FCDBCC1E25}",
+                                    "subId": 282057039
+                                }
+                            }
+                        }
+                    },
+                    "Id": 2893310626053395
+                },
+                "Component_[2910582887170116]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 2910582887170116
+                },
+                "Component_[4324764583322660]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 4324764583322660
+                },
+                "Component_[4826384170560947]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 4826384170560947
+                },
+                "Component_[5384734071902520]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 5384734071902520
+                },
+                "Component_[5474603602999840]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 5474603602999840,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            96.01289
+                        ],
+                        "Translate": [
+                            -44,
+                            15.3,
+                            0
+                        ]
+                    }
+                },
+                "Component_[5805020792148458]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 5805020792148458
+                },
+                "Component_[6480465776591799]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 6480465776591799
+                },
+                "Component_[8430978125667309]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 8430978125667309
+                }
+            },
+            "Id": "Entity_[3432079880965707]",
+            "Name": "Prop AftermathDeck 3 wooden_crate_01_2k"
+        },
         "Entity_[3454058606371886]": {
             "Components": {
                 "Component_[1364629604074341]": {
@@ -13698,6 +13838,76 @@
             },
             "Id": "Entity_[3471246008518539]",
             "Name": "Plant 46 fern_02_2k"
+        },
+        "Entity_[3476177912338553]": {
+            "Components": {
+                "Component_[1101389799285626]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 1101389799285626
+                },
+                "Component_[1265906818117576]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 1265906818117576
+                },
+                "Component_[3014581601750985]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 3014581601750985
+                },
+                "Component_[3557343909952043]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 3557343909952043
+                },
+                "Component_[3781989588366020]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 3781989588366020,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            210.544546
+                        ],
+                        "Translate": [
+                            59,
+                            0.8,
+                            1.2
+                        ]
+                    }
+                },
+                "Component_[4755984013423046]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 4755984013423046
+                },
+                "Component_[7458941709907711]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 7458941709907711
+                },
+                "Component_[7933293205243671]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/wooden_crate_01/wooden_crate_01_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{919C6265-9B7A-5F62-A6B6-C1FCDBCC1E25}",
+                                    "subId": 282057039
+                                }
+                            }
+                        }
+                    },
+                    "Id": 7933293205243671
+                },
+                "Component_[7979171267832808]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 7979171267832808
+                },
+                "Component_[8401842335101012]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 8401842335101012
+                }
+            },
+            "Id": "Entity_[3476177912338553]",
+            "Name": "Prop HorizonRail 3 wooden_crate_01_2k"
         },
         "Entity_[3476218358826291]": {
             "Components": {
@@ -22210,6 +22420,76 @@
             },
             "Id": "Entity_[4637344000124386]",
             "Name": "Plant 109 SM_Art_Veg_Palm_2_Frond"
+        },
+        "Entity_[4637464581397815]": {
+            "Components": {
+                "Component_[1628952780485461]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 1628952780485461
+                },
+                "Component_[289798305476376]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 289798305476376
+                },
+                "Component_[4248396975759197]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 4248396975759197
+                },
+                "Component_[4294399523437036]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 4294399523437036
+                },
+                "Component_[538119722884682]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 538119722884682
+                },
+                "Component_[7075433570067370]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/barrel_02/barrel_02_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{61F1D84C-E005-5780-8738-FA3EC842B1EB}",
+                                    "subId": 272235546
+                                }
+                            }
+                        }
+                    },
+                    "Id": 7075433570067370
+                },
+                "Component_[7513863536323233]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 7513863536323233
+                },
+                "Component_[8340550362317845]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 8340550362317845,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            46.01289
+                        ],
+                        "Translate": [
+                            -43.3,
+                            16,
+                            0
+                        ]
+                    }
+                },
+                "Component_[8514018873075879]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 8514018873075879
+                },
+                "Component_[8709587444377545]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 8709587444377545
+                }
+            },
+            "Id": "Entity_[4637464581397815]",
+            "Name": "Prop AftermathDeck 2 Barrel_02_2k"
         },
         "Entity_[4639748559526239]": {
             "Components": {
@@ -33200,6 +33480,76 @@
             "Id": "Entity_[6680153308271772]",
             "Name": "Plant 300 searsia_lucida_2"
         },
+        "Entity_[6680202895025411]": {
+            "Components": {
+                "Component_[1550180743113014]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/barrel_01/barrel_01_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{36EDC33D-3BAF-5940-A246-5B6F05FE8830}",
+                                    "subId": 277631988
+                                }
+                            }
+                        }
+                    },
+                    "Id": 1550180743113014
+                },
+                "Component_[1855637000397553]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 1855637000397553
+                },
+                "Component_[3654544608247564]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 3654544608247564
+                },
+                "Component_[3966080568118646]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 3966080568118646
+                },
+                "Component_[3996866560487569]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 3996866560487569,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            6.01289
+                        ],
+                        "Translate": [
+                            -44,
+                            16,
+                            0
+                        ]
+                    }
+                },
+                "Component_[5492156461775721]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 5492156461775721
+                },
+                "Component_[6598496343394800]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 6598496343394800
+                },
+                "Component_[6678116871441693]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 6678116871441693
+                },
+                "Component_[7379628998615259]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 7379628998615259
+                },
+                "Component_[8685331228288981]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 8685331228288981
+                }
+            },
+            "Id": "Entity_[6680202895025411]",
+            "Name": "Prop AftermathDeck 1 Barrel_01_2k"
+        },
         "Entity_[6690546571444351]": {
             "Components": {
                 "Component_[1393736925889194]": {
@@ -37354,6 +37704,146 @@
             },
             "Id": "Entity_[7399603248148698]",
             "Name": "Plant 235 SM_Art_Veg_Palm_0_Frond"
+        },
+        "Entity_[7401154773065177]": {
+            "Components": {
+                "Component_[1131693831900061]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 1131693831900061
+                },
+                "Component_[1363213950824817]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 1363213950824817
+                },
+                "Component_[1833205959073627]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 1833205959073627
+                },
+                "Component_[4120826870312304]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 4120826870312304
+                },
+                "Component_[4641806469878710]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/barrel_02/barrel_02_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{61F1D84C-E005-5780-8738-FA3EC842B1EB}",
+                                    "subId": 272235546
+                                }
+                            }
+                        }
+                    },
+                    "Id": 4641806469878710
+                },
+                "Component_[4668038309801745]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 4668038309801745,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            160.544546
+                        ],
+                        "Translate": [
+                            59.7,
+                            1.5,
+                            1.2
+                        ]
+                    }
+                },
+                "Component_[5026587540494933]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 5026587540494933
+                },
+                "Component_[7115320823446924]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 7115320823446924
+                },
+                "Component_[7425757271690230]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 7425757271690230
+                },
+                "Component_[8457343577555689]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 8457343577555689
+                }
+            },
+            "Id": "Entity_[7401154773065177]",
+            "Name": "Prop HorizonRail 2 Barrel_02_2k"
+        },
+        "Entity_[7408211438328077]": {
+            "Components": {
+                "Component_[1516288258706680]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 1516288258706680
+                },
+                "Component_[2844472444558005]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 2844472444558005
+                },
+                "Component_[531555921005708]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 531555921005708
+                },
+                "Component_[5809404368711274]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 5809404368711274
+                },
+                "Component_[6972097059214377]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 6972097059214377
+                },
+                "Component_[7155414068724554]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/barrel_01/barrel_01_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{36EDC33D-3BAF-5940-A246-5B6F05FE8830}",
+                                    "subId": 277631988
+                                }
+                            }
+                        }
+                    },
+                    "Id": 7155414068724554
+                },
+                "Component_[732110984704577]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 732110984704577
+                },
+                "Component_[7344144426979143]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 7344144426979143
+                },
+                "Component_[8164618907237429]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 8164618907237429,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            120.544546
+                        ],
+                        "Translate": [
+                            59,
+                            1.5,
+                            1.2
+                        ]
+                    }
+                },
+                "Component_[8551707768099453]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 8551707768099453
+                }
+            },
+            "Id": "Entity_[7408211438328077]",
+            "Name": "Prop HorizonRail 1 Barrel_01_2k"
         },
         "Entity_[7465014185764305]": {
             "Components": {
@@ -45638,6 +46128,76 @@
             },
             "Id": "Entity_[9006911115479300]",
             "Name": "Plant 144 SM_Art_Veg_Palm_1_Frond"
+        },
+        "Entity_[907815437615271]": {
+            "Components": {
+                "Component_[1131539760077702]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 1131539760077702
+                },
+                "Component_[1879651057912341]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 1879651057912341
+                },
+                "Component_[1987518859450690]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 1987518859450690
+                },
+                "Component_[2785630692536794]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 2785630692536794,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            6.01289
+                        ],
+                        "Translate": [
+                            -44,
+                            15.3,
+                            0.35
+                        ]
+                    }
+                },
+                "Component_[3469902561412141]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/wooden_lantern_01/wooden_lantern_01_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{B59CA559-219E-5B9E-8060-15E22D86F591}",
+                                    "subId": 284926637
+                                }
+                            }
+                        }
+                    },
+                    "Id": 3469902561412141
+                },
+                "Component_[4494305723074567]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 4494305723074567
+                },
+                "Component_[5714904335068317]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 5714904335068317
+                },
+                "Component_[5973886317101906]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 5973886317101906
+                },
+                "Component_[6745817862535504]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 6745817862535504
+                },
+                "Component_[7974875431885112]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 7974875431885112
+                }
+            },
+            "Id": "Entity_[907815437615271]",
+            "Name": "Prop AftermathDeck 4 wooden_lantern_01_2k"
         },
         "Entity_[927406690605534]": {
             "Components": {

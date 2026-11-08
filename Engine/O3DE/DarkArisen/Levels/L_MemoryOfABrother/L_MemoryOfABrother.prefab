@@ -3353,6 +3353,76 @@
             "Id": "Entity_[2405514383707909]",
             "Name": "Plant 76 SM_Art_Veg_DeadTree_2"
         },
+        "Entity_[2407348642423984]": {
+            "Components": {
+                "Component_[1366813151490711]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 1366813151490711
+                },
+                "Component_[159780756966892]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 159780756966892
+                },
+                "Component_[1980311671677516]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 1980311671677516,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            304.111328
+                        ],
+                        "Translate": [
+                            43.3,
+                            -7,
+                            0.8
+                        ]
+                    }
+                },
+                "Component_[241764750391087]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/barrel_02/barrel_02_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{61F1D84C-E005-5780-8738-FA3EC842B1EB}",
+                                    "subId": 272235546
+                                }
+                            }
+                        }
+                    },
+                    "Id": 241764750391087
+                },
+                "Component_[2782870176142817]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 2782870176142817
+                },
+                "Component_[302381142792131]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 302381142792131
+                },
+                "Component_[3761922523245280]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 3761922523245280
+                },
+                "Component_[5512236279529438]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 5512236279529438
+                },
+                "Component_[5611291542764464]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 5611291542764464
+                },
+                "Component_[6572695410084482]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 6572695410084482
+                }
+            },
+            "Id": "Entity_[2407348642423984]",
+            "Name": "Prop MerchantDeckEcho 6 Barrel_02_2k"
+        },
         "Entity_[2535127665404707]": {
             "Components": {
                 "Component_[2359436282174327]": {
@@ -3587,6 +3657,146 @@
             },
             "Id": "Entity_[2711007413188582]",
             "Name": "Plant 63 SM_Art_Veg_DeadTree_1"
+        },
+        "Entity_[2745764295892776]": {
+            "Components": {
+                "Component_[1255572312036791]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 1255572312036791
+                },
+                "Component_[1536352633044342]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 1536352633044342
+                },
+                "Component_[1736869720749933]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 1736869720749933
+                },
+                "Component_[3740131569443560]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 3740131569443560
+                },
+                "Component_[4023279295210634]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 4023279295210634,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            183.947074
+                        ],
+                        "Translate": [
+                            20,
+                            -6.3,
+                            1.15
+                        ]
+                    }
+                },
+                "Component_[4850254258616130]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 4850254258616130
+                },
+                "Component_[4960535268200925]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/wooden_lantern_01/wooden_lantern_01_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{B59CA559-219E-5B9E-8060-15E22D86F591}",
+                                    "subId": 284926637
+                                }
+                            }
+                        }
+                    },
+                    "Id": 4960535268200925
+                },
+                "Component_[6367696911829029]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 6367696911829029
+                },
+                "Component_[7119970079457888]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 7119970079457888
+                },
+                "Component_[7876090556149810]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 7876090556149810
+                }
+            },
+            "Id": "Entity_[2745764295892776]",
+            "Name": "Prop MerchantDeckEcho 4 wooden_lantern_01_2k"
+        },
+        "Entity_[2842437342261420]": {
+            "Components": {
+                "Component_[1052297219488044]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 1052297219488044
+                },
+                "Component_[1347235512209755]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 1347235512209755
+                },
+                "Component_[2543431651204018]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 2543431651204018
+                },
+                "Component_[4210046423865461]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 4210046423865461
+                },
+                "Component_[5248571551948603]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/barrel_02/barrel_02_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{61F1D84C-E005-5780-8738-FA3EC842B1EB}",
+                                    "subId": 272235546
+                                }
+                            }
+                        }
+                    },
+                    "Id": 5248571551948603
+                },
+                "Component_[5395619024671068]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 5395619024671068
+                },
+                "Component_[5797930353440344]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 5797930353440344,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            223.947074
+                        ],
+                        "Translate": [
+                            20.7,
+                            -7,
+                            0.8
+                        ]
+                    }
+                },
+                "Component_[7581747507615583]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 7581747507615583
+                },
+                "Component_[8353898166320608]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 8353898166320608
+                },
+                "Component_[8872858067457270]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 8872858067457270
+                }
+            },
+            "Id": "Entity_[2842437342261420]",
+            "Name": "Prop MerchantDeckEcho 2 Barrel_02_2k"
         },
         "Entity_[284982742240720]": {
             "Components": {
@@ -4988,6 +5198,76 @@
             "Id": "Entity_[3225765494558352]",
             "Name": "Plant 53 SM_Art_Veg_DeadTree_2"
         },
+        "Entity_[3278270546100832]": {
+            "Components": {
+                "Component_[111400507725064]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 111400507725064
+                },
+                "Component_[1679363575049797]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 1679363575049797
+                },
+                "Component_[1866484839806122]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 1866484839806122,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            183.947074
+                        ],
+                        "Translate": [
+                            20,
+                            -7,
+                            0.8
+                        ]
+                    }
+                },
+                "Component_[2339211473414738]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 2339211473414738
+                },
+                "Component_[3586500630648727]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 3586500630648727
+                },
+                "Component_[4419286072462434]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 4419286072462434
+                },
+                "Component_[5668175584100349]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/barrel_01/barrel_01_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{36EDC33D-3BAF-5940-A246-5B6F05FE8830}",
+                                    "subId": 277631988
+                                }
+                            }
+                        }
+                    },
+                    "Id": 5668175584100349
+                },
+                "Component_[674003461419478]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 674003461419478
+                },
+                "Component_[7491353375349824]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 7491353375349824
+                },
+                "Component_[8526914080862221]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 8526914080862221
+                }
+            },
+            "Id": "Entity_[3278270546100832]",
+            "Name": "Prop MerchantDeckEcho 1 Barrel_01_2k"
+        },
         "Entity_[3381118493742062]": {
             "Components": {
                 "Component_[1608804378390715]": {
@@ -6053,6 +6333,76 @@
             "Id": "Entity_[4406062452460282]",
             "Name": "Plant 74 SM_Art_Veg_DeadTree_1"
         },
+        "Entity_[4424235328171684]": {
+            "Components": {
+                "Component_[1270018855289176]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 1270018855289176
+                },
+                "Component_[1716978985541906]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 1716978985541906,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            264.111328
+                        ],
+                        "Translate": [
+                            44,
+                            -7,
+                            0.8
+                        ]
+                    }
+                },
+                "Component_[2917767566680080]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 2917767566680080
+                },
+                "Component_[303145077050122]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 303145077050122
+                },
+                "Component_[3387751199546045]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 3387751199546045
+                },
+                "Component_[421367563564378]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 421367563564378
+                },
+                "Component_[5240016805340837]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 5240016805340837
+                },
+                "Component_[6345728632800207]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 6345728632800207
+                },
+                "Component_[6914894527284309]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/barrel_01/barrel_01_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{36EDC33D-3BAF-5940-A246-5B6F05FE8830}",
+                                    "subId": 277631988
+                                }
+                            }
+                        }
+                    },
+                    "Id": 6914894527284309
+                },
+                "Component_[7076169907673278]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 7076169907673278
+                }
+            },
+            "Id": "Entity_[4424235328171684]",
+            "Name": "Prop MerchantDeckEcho 5 Barrel_01_2k"
+        },
         "Entity_[4564603891407639]": {
             "Components": {
                 "Component_[1314708395591632]": {
@@ -6309,6 +6659,76 @@
             },
             "Id": "Entity_[465550662918282]",
             "Name": "Plant 67 SM_Art_Veg_DeadTree_1"
+        },
+        "Entity_[4712168594438924]": {
+            "Components": {
+                "Component_[2297901256766576]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 2297901256766576
+                },
+                "Component_[4313613340814435]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 4313613340814435
+                },
+                "Component_[6114453214145068]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/wooden_lantern_01/wooden_lantern_01_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{B59CA559-219E-5B9E-8060-15E22D86F591}",
+                                    "subId": 284926637
+                                }
+                            }
+                        }
+                    },
+                    "Id": 6114453214145068
+                },
+                "Component_[6361189642985955]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 6361189642985955
+                },
+                "Component_[6433886046566009]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 6433886046566009
+                },
+                "Component_[6869067798175423]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 6869067798175423,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            264.111328
+                        ],
+                        "Translate": [
+                            44,
+                            -6.3,
+                            1.15
+                        ]
+                    }
+                },
+                "Component_[7894300179336719]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 7894300179336719
+                },
+                "Component_[80799081611839]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 80799081611839
+                },
+                "Component_[8172969309450854]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 8172969309450854
+                },
+                "Component_[8654328325044330]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 8654328325044330
+                }
+            },
+            "Id": "Entity_[4712168594438924]",
+            "Name": "Prop MerchantDeckEcho 8 wooden_lantern_01_2k"
         },
         "Entity_[4791096885211982]": {
             "Components": {
@@ -7452,6 +7872,76 @@
             },
             "Id": "Entity_[5814045831691891]",
             "Name": "Plant 75 boulder_01_0"
+        },
+        "Entity_[5841744338155268]": {
+            "Components": {
+                "Component_[1268215983831098]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 1268215983831098
+                },
+                "Component_[2834182670716938]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 2834182670716938
+                },
+                "Component_[3696205973324365]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 3696205973324365
+                },
+                "Component_[5895152640696256]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 5895152640696256
+                },
+                "Component_[6424600519923125]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 6424600519923125
+                },
+                "Component_[6469288831817029]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/wooden_crate_01/wooden_crate_01_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{919C6265-9B7A-5F62-A6B6-C1FCDBCC1E25}",
+                                    "subId": 282057039
+                                }
+                            }
+                        }
+                    },
+                    "Id": 6469288831817029
+                },
+                "Component_[6480415099346600]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 6480415099346600
+                },
+                "Component_[7089247093360770]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 7089247093360770,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            354.111328
+                        ],
+                        "Translate": [
+                            44,
+                            -6.3,
+                            0.8
+                        ]
+                    }
+                },
+                "Component_[7456196602323647]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 7456196602323647
+                },
+                "Component_[896701284523054]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 896701284523054
+                }
+            },
+            "Id": "Entity_[5841744338155268]",
+            "Name": "Prop MerchantDeckEcho 7 wooden_crate_01_2k"
         },
         "Entity_[614962384859019]": {
             "Components": {
@@ -10937,6 +11427,76 @@
             },
             "Id": "Entity_[8518420983777309]",
             "Name": "Plant 19 boulder_01_0"
+        },
+        "Entity_[8650629393999304]": {
+            "Components": {
+                "Component_[2363193905684921]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 2363193905684921
+                },
+                "Component_[2490948130040388]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 2490948130040388
+                },
+                "Component_[4289585250281935]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 4289585250281935
+                },
+                "Component_[5475020103679138]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 5475020103679138
+                },
+                "Component_[5534557346148657]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 5534557346148657
+                },
+                "Component_[599288258222864]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 599288258222864
+                },
+                "Component_[6785256468507661]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 6785256468507661
+                },
+                "Component_[7014770591621373]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 7014770591621373,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            273.947074
+                        ],
+                        "Translate": [
+                            20,
+                            -6.3,
+                            0.8
+                        ]
+                    }
+                },
+                "Component_[7942449935649525]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 7942449935649525
+                },
+                "Component_[8868479933465442]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/wooden_crate_01/wooden_crate_01_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{919C6265-9B7A-5F62-A6B6-C1FCDBCC1E25}",
+                                    "subId": 282057039
+                                }
+                            }
+                        }
+                    },
+                    "Id": 8868479933465442
+                }
+            },
+            "Id": "Entity_[8650629393999304]",
+            "Name": "Prop MerchantDeckEcho 3 wooden_crate_01_2k"
         },
         "Entity_[8940258966088600]": {
             "Components": {

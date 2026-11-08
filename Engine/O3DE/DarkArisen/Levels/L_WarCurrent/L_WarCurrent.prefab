@@ -1064,6 +1064,76 @@
             "Id": "Entity_[1136343860474027]",
             "Name": "Plant 70 namaqualand_boulder_02_0"
         },
+        "Entity_[1160555059258091]": {
+            "Components": {
+                "Component_[1109522903650069]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 1109522903650069
+                },
+                "Component_[1774039271805741]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/wooden_crate_01/wooden_crate_01_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{919C6265-9B7A-5F62-A6B6-C1FCDBCC1E25}",
+                                    "subId": 282057039
+                                }
+                            }
+                        }
+                    },
+                    "Id": 1774039271805741
+                },
+                "Component_[1887910386497754]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 1887910386497754,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            371.76743
+                        ],
+                        "Translate": [
+                            72,
+                            -13.3,
+                            0
+                        ]
+                    }
+                },
+                "Component_[5251204916203271]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 5251204916203271
+                },
+                "Component_[54442373840962]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 54442373840962
+                },
+                "Component_[5588852065523280]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 5588852065523280
+                },
+                "Component_[6472903039824797]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 6472903039824797
+                },
+                "Component_[6730785510230610]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 6730785510230610
+                },
+                "Component_[8731774625013816]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 8731774625013816
+                },
+                "Component_[8933931395095174]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 8933931395095174
+                }
+            },
+            "Id": "Entity_[1160555059258091]",
+            "Name": "Prop WarCurrentQuay 7 wooden_crate_01_2k"
+        },
         "Entity_[1198365009876549]": {
             "Components": {
                 "Component_[1255406577840888]": {
@@ -8364,6 +8434,76 @@
             "Id": "Entity_[2007221405901405]",
             "Name": "Plant 253 boulder_01_0"
         },
+        "Entity_[2026438337863295]": {
+            "Components": {
+                "Component_[1625038110715419]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 1625038110715419
+                },
+                "Component_[1963179015041443]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 1963179015041443,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            386.753919
+                        ],
+                        "Translate": [
+                            12,
+                            -13.3,
+                            0
+                        ]
+                    }
+                },
+                "Component_[2797089478898962]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 2797089478898962
+                },
+                "Component_[3038121092312965]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 3038121092312965
+                },
+                "Component_[5565281612511344]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/wooden_crate_01/wooden_crate_01_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{919C6265-9B7A-5F62-A6B6-C1FCDBCC1E25}",
+                                    "subId": 282057039
+                                }
+                            }
+                        }
+                    },
+                    "Id": 5565281612511344
+                },
+                "Component_[6814652069671095]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 6814652069671095
+                },
+                "Component_[7592837266765775]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 7592837266765775
+                },
+                "Component_[7887783923060195]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 7887783923060195
+                },
+                "Component_[8144375027166916]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 8144375027166916
+                },
+                "Component_[8281433745146086]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 8281433745146086
+                }
+            },
+            "Id": "Entity_[2026438337863295]",
+            "Name": "Prop WarCurrentQuay 3 wooden_crate_01_2k"
+        },
         "Entity_[2041980378265116]": {
             "Components": {
                 "Component_[2362944308069313]": {
@@ -14634,6 +14774,76 @@
             },
             "Id": "Entity_[3089368979238538]",
             "Name": "Plant 343 SM_Art_Veg_Palm_1_Bark"
+        },
+        "Entity_[3091236628688419]": {
+            "Components": {
+                "Component_[1044195537135384]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 1044195537135384
+                },
+                "Component_[1587327578197412]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 1587327578197412
+                },
+                "Component_[2473507430575767]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 2473507430575767
+                },
+                "Component_[4832858892110276]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 4832858892110276
+                },
+                "Component_[556085218729856]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 556085218729856,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            281.76743
+                        ],
+                        "Translate": [
+                            72,
+                            -14,
+                            0
+                        ]
+                    }
+                },
+                "Component_[6418498769001107]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 6418498769001107
+                },
+                "Component_[6792517958542195]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/barrel_01/barrel_01_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{36EDC33D-3BAF-5940-A246-5B6F05FE8830}",
+                                    "subId": 277631988
+                                }
+                            }
+                        }
+                    },
+                    "Id": 6792517958542195
+                },
+                "Component_[679432402567178]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 679432402567178
+                },
+                "Component_[7687550352464542]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 7687550352464542
+                },
+                "Component_[8775682399416461]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 8775682399416461
+                }
+            },
+            "Id": "Entity_[3091236628688419]",
+            "Name": "Prop WarCurrentQuay 5 Barrel_01_2k"
         },
         "Entity_[3108605043264585]": {
             "Components": {
@@ -22194,6 +22404,76 @@
             },
             "Id": "Entity_[4303026231407541]",
             "Name": "Plant 378 fern_02_2k"
+        },
+        "Entity_[4340269611210239]": {
+            "Components": {
+                "Component_[1176178835711164]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 1176178835711164
+                },
+                "Component_[1204019910770529]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 1204019910770529
+                },
+                "Component_[1740621648488441]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 1740621648488441
+                },
+                "Component_[320622969208717]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 320622969208717
+                },
+                "Component_[3656447625013121]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 3656447625013121,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            296.753919
+                        ],
+                        "Translate": [
+                            12,
+                            -14,
+                            0
+                        ]
+                    }
+                },
+                "Component_[3805810818596038]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 3805810818596038
+                },
+                "Component_[5817946220733643]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 5817946220733643
+                },
+                "Component_[6979613735333926]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/barrel_01/barrel_01_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{36EDC33D-3BAF-5940-A246-5B6F05FE8830}",
+                                    "subId": 277631988
+                                }
+                            }
+                        }
+                    },
+                    "Id": 6979613735333926
+                },
+                "Component_[7626063932688896]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 7626063932688896
+                },
+                "Component_[8681377429562693]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 8681377429562693
+                }
+            },
+            "Id": "Entity_[4340269611210239]",
+            "Name": "Prop WarCurrentQuay 1 Barrel_01_2k"
         },
         "Entity_[4342664055871385]": {
             "Components": {
@@ -31324,6 +31604,76 @@
             "Id": "Entity_[5866835768957137]",
             "Name": "Plant 194 searsia_lucida_6"
         },
+        "Entity_[5881456966052863]": {
+            "Components": {
+                "Component_[3452387207358970]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 3452387207358970,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            281.76743
+                        ],
+                        "Translate": [
+                            72,
+                            -13.3,
+                            0.35
+                        ]
+                    }
+                },
+                "Component_[4704976680105959]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 4704976680105959
+                },
+                "Component_[4790693000134626]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 4790693000134626
+                },
+                "Component_[4870311315267672]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 4870311315267672
+                },
+                "Component_[5215495912499533]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/wooden_lantern_01/wooden_lantern_01_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{B59CA559-219E-5B9E-8060-15E22D86F591}",
+                                    "subId": 284926637
+                                }
+                            }
+                        }
+                    },
+                    "Id": 5215495912499533
+                },
+                "Component_[5826802933473461]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 5826802933473461
+                },
+                "Component_[6755368818122160]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 6755368818122160
+                },
+                "Component_[7975244999799410]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 7975244999799410
+                },
+                "Component_[8518228060900669]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 8518228060900669
+                },
+                "Component_[8704875180214374]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 8704875180214374
+                }
+            },
+            "Id": "Entity_[5881456966052863]",
+            "Name": "Prop WarCurrentQuay 8 wooden_lantern_01_2k"
+        },
         "Entity_[589278147900941]": {
             "Components": {
                 "Component_[1349922630009988]": {
@@ -35216,6 +35566,76 @@
             "Id": "Entity_[6416733587909301]",
             "Name": "Plant 143 boulder_01_0"
         },
+        "Entity_[6424762201551467]": {
+            "Components": {
+                "Component_[1510720721386033]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/wooden_lantern_01/wooden_lantern_01_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{B59CA559-219E-5B9E-8060-15E22D86F591}",
+                                    "subId": 284926637
+                                }
+                            }
+                        }
+                    },
+                    "Id": 1510720721386033
+                },
+                "Component_[1615574845412113]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 1615574845412113
+                },
+                "Component_[1642156021494753]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 1642156021494753
+                },
+                "Component_[2739205059295075]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 2739205059295075
+                },
+                "Component_[3375241786958118]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 3375241786958118
+                },
+                "Component_[5899229013024186]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 5899229013024186
+                },
+                "Component_[6502228178008974]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 6502228178008974,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            296.753919
+                        ],
+                        "Translate": [
+                            12,
+                            -13.3,
+                            0.35
+                        ]
+                    }
+                },
+                "Component_[7157601043497732]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 7157601043497732
+                },
+                "Component_[8676553905870686]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 8676553905870686
+                },
+                "Component_[8975317261373740]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 8975317261373740
+                }
+            },
+            "Id": "Entity_[6424762201551467]",
+            "Name": "Prop WarCurrentQuay 4 wooden_lantern_01_2k"
+        },
         "Entity_[6431053996768845]": {
             "Components": {
                 "Component_[3819188037405894]": {
@@ -36013,6 +36433,76 @@
             },
             "Id": "Entity_[6601289201137984]",
             "Name": "Plant 238 searsia_lucida_2"
+        },
+        "Entity_[6609941411802455]": {
+            "Components": {
+                "Component_[1470816550232768]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 1470816550232768
+                },
+                "Component_[2587661220416879]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 2587661220416879
+                },
+                "Component_[2728000663686067]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 2728000663686067
+                },
+                "Component_[4036683111228316]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/barrel_02/barrel_02_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{61F1D84C-E005-5780-8738-FA3EC842B1EB}",
+                                    "subId": 272235546
+                                }
+                            }
+                        }
+                    },
+                    "Id": 4036683111228316
+                },
+                "Component_[5331818721729974]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 5331818721729974
+                },
+                "Component_[5448180526015721]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 5448180526015721
+                },
+                "Component_[7505033832404655]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 7505033832404655,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            321.76743
+                        ],
+                        "Translate": [
+                            71.3,
+                            -14,
+                            0
+                        ]
+                    }
+                },
+                "Component_[7759315219307219]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 7759315219307219
+                },
+                "Component_[835087058278874]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 835087058278874
+                },
+                "Component_[8593727442699775]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 8593727442699775
+                }
+            },
+            "Id": "Entity_[6609941411802455]",
+            "Name": "Prop WarCurrentQuay 6 Barrel_02_2k"
         },
         "Entity_[6611509119690154]": {
             "Components": {
@@ -45647,6 +46137,76 @@
             },
             "Id": "Entity_[7960228908875133]",
             "Name": "Anchor LaLiberacionBerth"
+        },
+        "Entity_[7970840388435955]": {
+            "Components": {
+                "Component_[107595039490981]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 107595039490981
+                },
+                "Component_[1515106119468064]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 1515106119468064
+                },
+                "Component_[1780535666955974]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/barrel_02/barrel_02_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{61F1D84C-E005-5780-8738-FA3EC842B1EB}",
+                                    "subId": 272235546
+                                }
+                            }
+                        }
+                    },
+                    "Id": 1780535666955974
+                },
+                "Component_[1941437329205788]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 1941437329205788
+                },
+                "Component_[3529205243015275]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 3529205243015275
+                },
+                "Component_[428087564778470]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 428087564778470
+                },
+                "Component_[4315830568334113]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 4315830568334113,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            336.753919
+                        ],
+                        "Translate": [
+                            12.7,
+                            -14,
+                            0
+                        ]
+                    }
+                },
+                "Component_[4423806764052057]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 4423806764052057
+                },
+                "Component_[6939053860998573]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 6939053860998573
+                },
+                "Component_[7782231782735617]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 7782231782735617
+                }
+            },
+            "Id": "Entity_[7970840388435955]",
+            "Name": "Prop WarCurrentQuay 2 Barrel_02_2k"
         },
         "Entity_[7988134510435524]": {
             "Components": {

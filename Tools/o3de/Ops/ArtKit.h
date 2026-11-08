@@ -108,6 +108,14 @@ namespace DarkArisen::Tools::Art
         unsigned Open = 0;                    // edges the route crosses (1 -X, 2 +X, 4 -Y, 8 +Y): no walls there
     };
 
+    /** A scanned prop (Assets/Art/Scanned) placed in a set piece's frame: origin at the piece's base centre, Z up. */
+    struct PropPlacement
+    {
+        std::string Model;            // project-relative glTF
+        double X = 0, Y = 0, Z = 0;   // metres
+        double Yaw = 0;               // degrees about Z
+    };
+
     class Kit
     {
     public:
@@ -145,6 +153,9 @@ namespace DarkArisen::Tools::Art
         TerrainArt Terrain(const TerrainSpec& Spec);
         /** Architecture for a named story box by what its name says it is (ArtKitAuthored.cpp). */
         std::string Authored(const AuthoredSpec& Spec);
+        /** Scanned props for an authored story box by its style: guns on defences, stores in yards and on decks, a hearth
+         * in a camp field, a table in an interior; only along closed edges and in corners, never on the route. */
+        static std::vector<PropPlacement> AuthoredProps(const AuthoredSpec& Spec);
         static constexpr double GroundTileSize = 50.0;
         /** Quay wall along a harbour edge (x = 0 is the quay face, water towards -X), Length along Y. */
         std::string HarborEdge(double Length);

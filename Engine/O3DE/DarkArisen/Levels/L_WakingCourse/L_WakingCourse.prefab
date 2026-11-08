@@ -7088,6 +7088,76 @@
             "Id": "Entity_[1919170723550627]",
             "Name": "Plant 306 fern_02_2k"
         },
+        "Entity_[1923848038629751]": {
+            "Components": {
+                "Component_[1780792317380490]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/wooden_lantern_01/wooden_lantern_01_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{B59CA559-219E-5B9E-8060-15E22D86F591}",
+                                    "subId": 284926637
+                                }
+                            }
+                        }
+                    },
+                    "Id": 1780792317380490
+                },
+                "Component_[3317706756902273]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 3317706756902273
+                },
+                "Component_[4103118691302389]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 4103118691302389,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            191.032655
+                        ],
+                        "Translate": [
+                            -29,
+                            19.3,
+                            0.35
+                        ]
+                    }
+                },
+                "Component_[4226346259902653]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 4226346259902653
+                },
+                "Component_[5209311641045452]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 5209311641045452
+                },
+                "Component_[5226248165765737]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 5226248165765737
+                },
+                "Component_[5371533924982584]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 5371533924982584
+                },
+                "Component_[6899461542037930]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 6899461542037930
+                },
+                "Component_[7636564009902983]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 7636564009902983
+                },
+                "Component_[8326987203113461]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 8326987203113461
+                }
+            },
+            "Id": "Entity_[1923848038629751]",
+            "Name": "Prop WakeGrove 5 wooden_lantern_01_2k"
+        },
         "Entity_[1929957303482530]": {
             "Components": {
                 "Component_[1089913904147665]": {
@@ -8798,6 +8868,76 @@
             },
             "Id": "Entity_[2165493620854954]",
             "Name": "Plant 370 tree_small_02_0"
+        },
+        "Entity_[2169538684411429]": {
+            "Components": {
+                "Component_[1490726528595341]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 1490726528595341
+                },
+                "Component_[1684327390716758]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 1684327390716758
+                },
+                "Component_[2082412210199176]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 2082412210199176
+                },
+                "Component_[3231540487970770]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 3231540487970770
+                },
+                "Component_[5558611844750615]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 5558611844750615
+                },
+                "Component_[6224608935901738]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 6224608935901738,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            281.032655
+                        ],
+                        "Translate": [
+                            -29,
+                            19.3,
+                            0
+                        ]
+                    }
+                },
+                "Component_[6390297774936546]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 6390297774936546
+                },
+                "Component_[7803565704380608]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 7803565704380608
+                },
+                "Component_[7803900174989693]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/wooden_crate_01/wooden_crate_01_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{919C6265-9B7A-5F62-A6B6-C1FCDBCC1E25}",
+                                    "subId": 282057039
+                                }
+                            }
+                        }
+                    },
+                    "Id": 7803900174989693
+                },
+                "Component_[8584628952340165]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 8584628952340165
+                }
+            },
+            "Id": "Entity_[2169538684411429]",
+            "Name": "Prop WakeGrove 4 wooden_crate_01_2k"
         },
         "Entity_[2185181389460161]": {
             "Components": {
@@ -11153,6 +11293,76 @@
             },
             "Id": "Entity_[2537406831720285]",
             "Name": "Plant 62 searsia_lucida_3"
+        },
+        "Entity_[2557176058390668]": {
+            "Components": {
+                "Component_[2024976746412503]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 2024976746412503
+                },
+                "Component_[2701679483921138]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 2701679483921138
+                },
+                "Component_[3429478329219256]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 3429478329219256
+                },
+                "Component_[4474979225609457]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 4474979225609457
+                },
+                "Component_[5059640704563783]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 5059640704563783
+                },
+                "Component_[6449619386673207]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 6449619386673207,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            346.097467
+                        ],
+                        "Translate": [
+                            -27,
+                            -18,
+                            0
+                        ]
+                    }
+                },
+                "Component_[7058655530010516]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/stone_fire_pit/stone_fire_pit_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{C71950D0-5EA5-5E82-91E8-154FCAAAF339}",
+                                    "subId": 279473722
+                                }
+                            }
+                        }
+                    },
+                    "Id": 7058655530010516
+                },
+                "Component_[7636481157275003]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 7636481157275003
+                },
+                "Component_[7722627076516174]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 7722627076516174
+                },
+                "Component_[7951597567627851]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 7951597567627851
+                }
+            },
+            "Id": "Entity_[2557176058390668]",
+            "Name": "Prop WakeGrove 1 stone_fire_pit_2k"
         },
         "Entity_[2568408883721237]": {
             "Components": {
@@ -15540,6 +15750,76 @@
             },
             "Id": "Entity_[3080299261556997]",
             "Name": "Plant 490 tree_small_02_0"
+        },
+        "Entity_[3113788961105287]": {
+            "Components": {
+                "Component_[1163253035480816]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/barrel_02/barrel_02_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{61F1D84C-E005-5780-8738-FA3EC842B1EB}",
+                                    "subId": 272235546
+                                }
+                            }
+                        }
+                    },
+                    "Id": 1163253035480816
+                },
+                "Component_[1593683794819919]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 1593683794819919
+                },
+                "Component_[2321770665246819]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 2321770665246819
+                },
+                "Component_[2578361769353540]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 2578361769353540
+                },
+                "Component_[2715420487332710]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 2715420487332710
+                },
+                "Component_[40824844821539]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 40824844821539,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            231.032655
+                        ],
+                        "Translate": [
+                            -28.3,
+                            20,
+                            0
+                        ]
+                    }
+                },
+                "Component_[6132963769939090]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 6132963769939090
+                },
+                "Component_[6478207577612805]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 6478207577612805
+                },
+                "Component_[6517753538228379]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 6517753538228379
+                },
+                "Component_[7106643018446647]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 7106643018446647
+                }
+            },
+            "Id": "Entity_[3113788961105287]",
+            "Name": "Prop WakeGrove 3 Barrel_02_2k"
         },
         "Entity_[3126599533271128]": {
             "Components": {
@@ -28032,6 +28312,76 @@
             },
             "Id": "Entity_[4899290290744563]",
             "Name": "Plant 593 tree_small_02_0"
+        },
+        "Entity_[4903103956598293]": {
+            "Components": {
+                "Component_[1387022360892085]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 1387022360892085
+                },
+                "Component_[1547517789781032]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 1547517789781032
+                },
+                "Component_[2244247130315197]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 2244247130315197
+                },
+                "Component_[3326858862206281]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 3326858862206281
+                },
+                "Component_[4217096387622563]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 4217096387622563
+                },
+                "Component_[606868147624505]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 606868147624505,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            191.032655
+                        ],
+                        "Translate": [
+                            -29,
+                            20,
+                            0
+                        ]
+                    }
+                },
+                "Component_[7343666890491361]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 7343666890491361
+                },
+                "Component_[7429669932541060]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 7429669932541060
+                },
+                "Component_[8188105696078030]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 8188105696078030
+                },
+                "Component_[8685341117827406]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/barrel_01/barrel_01_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{36EDC33D-3BAF-5940-A246-5B6F05FE8830}",
+                                    "subId": 277631988
+                                }
+                            }
+                        }
+                    },
+                    "Id": 8685341117827406
+                }
+            },
+            "Id": "Entity_[4903103956598293]",
+            "Name": "Prop WakeGrove 2 Barrel_01_2k"
         },
         "Entity_[4949077823444043]": {
             "Components": {

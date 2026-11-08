@@ -16881,6 +16881,76 @@
             "Id": "Entity_[2104054431307365]",
             "Name": "Plant 683 SM_Art_Veg_Mangrove_0_LeavesDark"
         },
+        "Entity_[2110771284838374]": {
+            "Components": {
+                "Component_[1602992979051197]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/wooden_crate_01/wooden_crate_01_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{919C6265-9B7A-5F62-A6B6-C1FCDBCC1E25}",
+                                    "subId": 282057039
+                                }
+                            }
+                        }
+                    },
+                    "Id": 1602992979051197
+                },
+                "Component_[188158996855240]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 188158996855240
+                },
+                "Component_[3214594700267810]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 3214594700267810
+                },
+                "Component_[4459564844992530]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 4459564844992530
+                },
+                "Component_[522300459038614]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 522300459038614
+                },
+                "Component_[5655558163091799]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 5655558163091799
+                },
+                "Component_[5767983899281357]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 5767983899281357
+                },
+                "Component_[7665345114812677]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 7665345114812677
+                },
+                "Component_[8911650238397162]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 8911650238397162,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            239.889457
+                        ],
+                        "Translate": [
+                            181,
+                            2.7,
+                            0.9
+                        ]
+                    }
+                },
+                "Component_[938025395194368]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 938025395194368
+                }
+            },
+            "Id": "Entity_[2110771284838374]",
+            "Name": "Prop HoldersWakeSafeRoom 6 wooden_crate_01_2k"
+        },
         "Entity_[2117253216884811]": {
             "Components": {
                 "Component_[1099245818349071]": {
@@ -45974,6 +46044,76 @@
             "Id": "Entity_[4430703059991808]",
             "Name": "Plant 240 SM_Art_Veg_DeadTree_0"
         },
+        "Entity_[4434706938846160]": {
+            "Components": {
+                "Component_[1433759620140419]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 1433759620140419
+                },
+                "Component_[1778674910155813]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 1778674910155813
+                },
+                "Component_[2285905381811472]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/wooden_lantern_01/wooden_lantern_01_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{B59CA559-219E-5B9E-8060-15E22D86F591}",
+                                    "subId": 284926637
+                                }
+                            }
+                        }
+                    },
+                    "Id": 2285905381811472
+                },
+                "Component_[353483835201303]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 353483835201303
+                },
+                "Component_[4817810811711675]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 4817810811711675
+                },
+                "Component_[5732773273624495]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 5732773273624495
+                },
+                "Component_[7173143094278083]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 7173143094278083,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            149.889457
+                        ],
+                        "Translate": [
+                            181,
+                            2.7,
+                            1.25
+                        ]
+                    }
+                },
+                "Component_[8057196329384262]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 8057196329384262
+                },
+                "Component_[8399825669479986]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 8399825669479986
+                },
+                "Component_[8573162773522148]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 8573162773522148
+                }
+            },
+            "Id": "Entity_[4434706938846160]",
+            "Name": "Prop HoldersWakeSafeRoom 7 wooden_lantern_01_2k"
+        },
         "Entity_[4444103346186491]": {
             "Components": {
                 "Component_[1145166726257247]": {
@@ -50781,6 +50921,76 @@
             },
             "Id": "Entity_[479316131418711]",
             "Name": "Plant 198 SM_Art_Veg_Mangrove_1_LeavesDark"
+        },
+        "Entity_[4804836862494086]": {
+            "Components": {
+                "Component_[346686204333949]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 346686204333949
+                },
+                "Component_[388986803672346]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 388986803672346
+                },
+                "Component_[4067909977439845]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 4067909977439845
+                },
+                "Component_[4425640071776911]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 4425640071776911
+                },
+                "Component_[4809017613071125]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/jug_01/jug_01_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{3B3F24DB-D97C-59CA-82A4-0D4220228956}",
+                                    "subId": 276556359
+                                }
+                            }
+                        }
+                    },
+                    "Id": 4809017613071125
+                },
+                "Component_[4938614463463294]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 4938614463463294
+                },
+                "Component_[5283181861868824]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 5283181861868824
+                },
+                "Component_[5875463224884818]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 5875463224884818,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            33.506906
+                        ],
+                        "Translate": [
+                            155.4,
+                            2.2,
+                            1.45
+                        ]
+                    }
+                },
+                "Component_[78277045552592]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 78277045552592
+                },
+                "Component_[8641592656491466]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 8641592656491466
+                }
+            },
+            "Id": "Entity_[4804836862494086]",
+            "Name": "Prop HoldersWakeSafeRoom 2 jug_01_2k"
         },
         "Entity_[4813303089540089]": {
             "Components": {
@@ -57634,6 +57844,76 @@
             },
             "Id": "Entity_[5391271885773372]",
             "Name": "Plant 417 SM_Art_Veg_Mangrove_0_LeavesDark"
+        },
+        "Entity_[5396384946773586]": {
+            "Components": {
+                "Component_[1465948073389435]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 1465948073389435
+                },
+                "Component_[1899717068139755]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 1899717068139755,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            149.889457
+                        ],
+                        "Translate": [
+                            181,
+                            2,
+                            0.9
+                        ]
+                    }
+                },
+                "Component_[2061604766529500]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 2061604766529500
+                },
+                "Component_[2787417918489951]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 2787417918489951
+                },
+                "Component_[3091668118187719]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 3091668118187719
+                },
+                "Component_[4324565024927496]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/barrel_01/barrel_01_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{36EDC33D-3BAF-5940-A246-5B6F05FE8830}",
+                                    "subId": 277631988
+                                }
+                            }
+                        }
+                    },
+                    "Id": 4324565024927496
+                },
+                "Component_[608230792862637]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 608230792862637
+                },
+                "Component_[7066669980699027]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 7066669980699027
+                },
+                "Component_[7443352672143454]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 7443352672143454
+                },
+                "Component_[8729707969471242]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 8729707969471242
+                }
+            },
+            "Id": "Entity_[5396384946773586]",
+            "Name": "Prop HoldersWakeSafeRoom 4 Barrel_01_2k"
         },
         "Entity_[5399937076861413]": {
             "Components": {
@@ -77205,6 +77485,76 @@
             "Id": "Entity_[6869560028185906]",
             "Name": "Plant 170 SM_Art_Veg_Mangrove_2_LeavesDark"
         },
+        "Entity_[6880087469660551]": {
+            "Components": {
+                "Component_[219840717341508]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 219840717341508
+                },
+                "Component_[2980840736557296]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/ceramic_pot/ceramic_pot_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{194FF407-A0B0-530F-8C12-EBC9BEAE7C9D}",
+                                    "subId": 272446824
+                                }
+                            }
+                        }
+                    },
+                    "Id": 2980840736557296
+                },
+                "Component_[30284780616338]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 30284780616338
+                },
+                "Component_[355799923692902]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 355799923692902
+                },
+                "Component_[3748312292780343]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 3748312292780343
+                },
+                "Component_[3914152077775515]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 3914152077775515
+                },
+                "Component_[4118587013972997]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 4118587013972997
+                },
+                "Component_[4210698717529635]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 4210698717529635,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            194.891195
+                        ],
+                        "Translate": [
+                            154.9,
+                            2.3,
+                            1.45
+                        ]
+                    }
+                },
+                "Component_[6957637211328847]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 6957637211328847
+                },
+                "Component_[8969349356348003]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 8969349356348003
+                }
+            },
+            "Id": "Entity_[6880087469660551]",
+            "Name": "Prop HoldersWakeSafeRoom 3 ceramic_pot_2k"
+        },
         "Entity_[688242107966568]": {
             "Components": {
                 "Component_[1153796759131054]": {
@@ -92339,6 +92689,76 @@
             "Id": "Entity_[819801146899937]",
             "Name": "Plant 446 searsia_lucida_2"
         },
+        "Entity_[8208090236584359]": {
+            "Components": {
+                "Component_[1312058525230443]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/woodentable_01/woodentable_01_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{7CC10B47-ED2D-5924-9BEC-B4D4228C6B23}",
+                                    "subId": 268816584
+                                }
+                            }
+                        }
+                    },
+                    "Id": 1312058525230443
+                },
+                "Component_[1435643586944171]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 1435643586944171
+                },
+                "Component_[151732314479746]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 151732314479746
+                },
+                "Component_[1925514759740572]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 1925514759740572
+                },
+                "Component_[2046906042002576]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 2046906042002576
+                },
+                "Component_[217492785998024]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 217492785998024,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            90
+                        ],
+                        "Translate": [
+                            155.2,
+                            2.2,
+                            0.9
+                        ]
+                    }
+                },
+                "Component_[2825207885460108]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 2825207885460108
+                },
+                "Component_[3579485552026287]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 3579485552026287
+                },
+                "Component_[3920383314303014]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 3920383314303014
+                },
+                "Component_[4691951070839973]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 4691951070839973
+                }
+            },
+            "Id": "Entity_[8208090236584359]",
+            "Name": "Prop HoldersWakeSafeRoom 1 WoodenTable_01_2k"
+        },
         "Entity_[8208773951350971]": {
             "Components": {
                 "Component_[1134390664853227]": {
@@ -98376,6 +98796,76 @@
             },
             "Id": "Entity_[8795587569494360]",
             "Name": "Plant 609 SM_Art_Veg_Mangrove_1_Bark"
+        },
+        "Entity_[8810832515500536]": {
+            "Components": {
+                "Component_[1547867586691938]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 1547867586691938
+                },
+                "Component_[2446605656359375]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 2446605656359375
+                },
+                "Component_[3219154297973948]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 3219154297973948
+                },
+                "Component_[3854347690654022]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 3854347690654022
+                },
+                "Component_[4663325563049419]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 4663325563049419
+                },
+                "Component_[5343197817332200]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 5343197817332200,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            189.889457
+                        ],
+                        "Translate": [
+                            180.3,
+                            2,
+                            0.9
+                        ]
+                    }
+                },
+                "Component_[6140896075304940]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 6140896075304940
+                },
+                "Component_[6312560751282437]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 6312560751282437
+                },
+                "Component_[7938204762392624]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 7938204762392624
+                },
+                "Component_[8482827571583499]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/barrel_02/barrel_02_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{61F1D84C-E005-5780-8738-FA3EC842B1EB}",
+                                    "subId": 272235546
+                                }
+                            }
+                        }
+                    },
+                    "Id": 8482827571583499
+                }
+            },
+            "Id": "Entity_[8810832515500536]",
+            "Name": "Prop HoldersWakeSafeRoom 5 Barrel_02_2k"
         },
         "Entity_[8811181908692848]": {
             "Components": {

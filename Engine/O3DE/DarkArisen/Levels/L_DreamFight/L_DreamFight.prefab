@@ -1667,6 +1667,76 @@
             "Id": "Entity_[261092814046912]",
             "Name": "Plant 26 SM_Art_Veg_DeadTree_0"
         },
+        "Entity_[2633618851951702]": {
+            "Components": {
+                "Component_[1451156079550419]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 1451156079550419,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            353.109493
+                        ],
+                        "Translate": [
+                            7.7,
+                            -27.5,
+                            1
+                        ]
+                    }
+                },
+                "Component_[2925828840529632]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/barrel_02/barrel_02_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{61F1D84C-E005-5780-8738-FA3EC842B1EB}",
+                                    "subId": 272235546
+                                }
+                            }
+                        }
+                    },
+                    "Id": 2925828840529632
+                },
+                "Component_[3684768571781471]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 3684768571781471
+                },
+                "Component_[3854085939210279]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 3854085939210279
+                },
+                "Component_[5692416632375315]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 5692416632375315
+                },
+                "Component_[5904215003848534]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 5904215003848534
+                },
+                "Component_[69808657199691]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 69808657199691
+                },
+                "Component_[7720582966999316]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 7720582966999316
+                },
+                "Component_[8621294489800821]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 8621294489800821
+                },
+                "Component_[8727114116470818]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 8727114116470818
+                }
+            },
+            "Id": "Entity_[2633618851951702]",
+            "Name": "Prop ArenaEdgeB 2 Barrel_02_2k"
+        },
         "Entity_[3009759497702720]": {
             "Components": {
                 "Component_[2150096229242301]": {
@@ -4040,6 +4110,146 @@
             "Id": "Entity_[4232252403828283]",
             "Name": "Plant 60 boulder_01_0"
         },
+        "Entity_[4362453717507496]": {
+            "Components": {
+                "Component_[1665825930369428]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/wooden_lantern_01/wooden_lantern_01_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{B59CA559-219E-5B9E-8060-15E22D86F591}",
+                                    "subId": 284926637
+                                }
+                            }
+                        }
+                    },
+                    "Id": 1665825930369428
+                },
+                "Component_[3443338892889979]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 3443338892889979
+                },
+                "Component_[56479610906699]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 56479610906699
+                },
+                "Component_[6557126760853326]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 6557126760853326
+                },
+                "Component_[6739021412254962]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 6739021412254962
+                },
+                "Component_[7466820257553080]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 7466820257553080
+                },
+                "Component_[8512321153943281]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 8512321153943281
+                },
+                "Component_[8516335047100983]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 8516335047100983,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            28.078802
+                        ],
+                        "Translate": [
+                            -3,
+                            -34.3,
+                            1.15
+                        ]
+                    }
+                },
+                "Component_[8855150519638999]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 8855150519638999
+                },
+                "Component_[89783378156615]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 89783378156615
+                }
+            },
+            "Id": "Entity_[4362453717507496]",
+            "Name": "Prop DreamArena 4 wooden_lantern_01_2k"
+        },
+        "Entity_[4375969250365828]": {
+            "Components": {
+                "Component_[318675595616578]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 318675595616578
+                },
+                "Component_[3614324642789238]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 3614324642789238
+                },
+                "Component_[3948977778435621]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 3948977778435621
+                },
+                "Component_[5091991789695072]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 5091991789695072
+                },
+                "Component_[5732292415406007]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 5732292415406007
+                },
+                "Component_[5978695409850930]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 5978695409850930
+                },
+                "Component_[6213589824119149]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 6213589824119149
+                },
+                "Component_[6240758169554570]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 6240758169554570,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            317.230997
+                        ],
+                        "Translate": [
+                            -3,
+                            34.3,
+                            0.8
+                        ]
+                    }
+                },
+                "Component_[7080565705599965]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/wooden_crate_01/wooden_crate_01_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{919C6265-9B7A-5F62-A6B6-C1FCDBCC1E25}",
+                                    "subId": 282057039
+                                }
+                            }
+                        }
+                    },
+                    "Id": 7080565705599965
+                },
+                "Component_[8216851672812776]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 8216851672812776
+                }
+            },
+            "Id": "Entity_[4375969250365828]",
+            "Name": "Prop DreamArena 7 wooden_crate_01_2k"
+        },
         "Entity_[4377930266171316]": {
             "Components": {
                 "Component_[1314569593977118]": {
@@ -4181,6 +4391,76 @@
             },
             "Id": "Entity_[4463185225002878]",
             "Name": "Plant 71 namaqualand_boulder_02_0"
+        },
+        "Entity_[4522881266996016]": {
+            "Components": {
+                "Component_[1055276990710225]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 1055276990710225,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            267.230997
+                        ],
+                        "Translate": [
+                            -2.3,
+                            35,
+                            0.8
+                        ]
+                    }
+                },
+                "Component_[199822001605040]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 199822001605040
+                },
+                "Component_[2268964303586013]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 2268964303586013
+                },
+                "Component_[239662058065910]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/barrel_02/barrel_02_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{61F1D84C-E005-5780-8738-FA3EC842B1EB}",
+                                    "subId": 272235546
+                                }
+                            }
+                        }
+                    },
+                    "Id": 239662058065910
+                },
+                "Component_[2434250162432945]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 2434250162432945
+                },
+                "Component_[5479130541872937]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 5479130541872937
+                },
+                "Component_[5927523836479893]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 5927523836479893
+                },
+                "Component_[7981943768140086]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 7981943768140086
+                },
+                "Component_[8461797570445772]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 8461797570445772
+                },
+                "Component_[8521166483398043]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 8521166483398043
+                }
+            },
+            "Id": "Entity_[4522881266996016]",
+            "Name": "Prop DreamArena 6 Barrel_02_2k"
         },
         "Entity_[461547391988344]": {
             "Components": {
@@ -4488,6 +4768,76 @@
             "Id": "Entity_[4740858001392590]",
             "Name": "Plant 18 boulder_01_0"
         },
+        "Entity_[4771748951297785]": {
+            "Components": {
+                "Component_[1275090621518729]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 1275090621518729
+                },
+                "Component_[1486265244315389]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 1486265244315389
+                },
+                "Component_[1519315733745874]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 1519315733745874
+                },
+                "Component_[3260070370875122]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/barrel_02/barrel_02_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{61F1D84C-E005-5780-8738-FA3EC842B1EB}",
+                                    "subId": 272235546
+                                }
+                            }
+                        }
+                    },
+                    "Id": 3260070370875122
+                },
+                "Component_[3425290601302580]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 3425290601302580
+                },
+                "Component_[3691923510407169]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 3691923510407169
+                },
+                "Component_[3770789891762528]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 3770789891762528
+                },
+                "Component_[6591625656278725]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 6591625656278725
+                },
+                "Component_[6726762796968013]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 6726762796968013,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            80.482259
+                        ],
+                        "Translate": [
+                            76.3,
+                            27.5,
+                            1
+                        ]
+                    }
+                },
+                "Component_[7999106713761247]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 7999106713761247
+                }
+            },
+            "Id": "Entity_[4771748951297785]",
+            "Name": "Prop ArenaEdgeA 2 Barrel_02_2k"
+        },
         "Entity_[4784206786220913]": {
             "Components": {
                 "Component_[1600639210847919]": {
@@ -4724,6 +5074,146 @@
             "Id": "Entity_[4922790319229032]",
             "Name": "Plant 17 SM_Art_Veg_DeadTree_0"
         },
+        "Entity_[4960168990089004]": {
+            "Components": {
+                "Component_[1059288103598740]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 1059288103598740
+                },
+                "Component_[1961099138028021]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 1961099138028021
+                },
+                "Component_[2431938483710431]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 2431938483710431
+                },
+                "Component_[2627552528135591]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 2627552528135591
+                },
+                "Component_[2640563074474323]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 2640563074474323,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            68.078802
+                        ],
+                        "Translate": [
+                            -2.3,
+                            -35,
+                            0.8
+                        ]
+                    }
+                },
+                "Component_[4377465918743499]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 4377465918743499
+                },
+                "Component_[4500903181513890]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 4500903181513890
+                },
+                "Component_[7322296376767584]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/barrel_02/barrel_02_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{61F1D84C-E005-5780-8738-FA3EC842B1EB}",
+                                    "subId": 272235546
+                                }
+                            }
+                        }
+                    },
+                    "Id": 7322296376767584
+                },
+                "Component_[8039420535343507]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 8039420535343507
+                },
+                "Component_[8252318418444502]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 8252318418444502
+                }
+            },
+            "Id": "Entity_[4960168990089004]",
+            "Name": "Prop DreamArena 2 Barrel_02_2k"
+        },
+        "Entity_[498850364554322]": {
+            "Components": {
+                "Component_[1855463338365312]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 1855463338365312,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            313.109493
+                        ],
+                        "Translate": [
+                            7,
+                            -27.5,
+                            1
+                        ]
+                    }
+                },
+                "Component_[3443526188305566]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 3443526188305566
+                },
+                "Component_[4340300608996723]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/barrel_01/barrel_01_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{36EDC33D-3BAF-5940-A246-5B6F05FE8830}",
+                                    "subId": 277631988
+                                }
+                            }
+                        }
+                    },
+                    "Id": 4340300608996723
+                },
+                "Component_[4531658235257485]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 4531658235257485
+                },
+                "Component_[6172544678839818]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 6172544678839818
+                },
+                "Component_[6350502668779428]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 6350502668779428
+                },
+                "Component_[7236682521157783]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 7236682521157783
+                },
+                "Component_[8368538425907480]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 8368538425907480
+                },
+                "Component_[8547381229260947]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 8547381229260947
+                },
+                "Component_[8676406025391044]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 8676406025391044
+                }
+            },
+            "Id": "Entity_[498850364554322]",
+            "Name": "Prop ArenaEdgeB 1 Barrel_01_2k"
+        },
         "Entity_[507063632648440]": {
             "Components": {
                 "Component_[1043677031050448]": {
@@ -4910,6 +5400,286 @@
             "Id": "Entity_[5158771126430228]",
             "Name": "Plant 11 SM_Art_Veg_DeadTree_2"
         },
+        "Entity_[5338238323870965]": {
+            "Components": {
+                "Component_[1360408250203167]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 1360408250203167
+                },
+                "Component_[3355639207286614]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 3355639207286614
+                },
+                "Component_[4289915108538259]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 4289915108538259
+                },
+                "Component_[5609451676371081]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 5609451676371081
+                },
+                "Component_[6283938092191667]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 6283938092191667
+                },
+                "Component_[7324456226871482]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 7324456226871482
+                },
+                "Component_[7343948806477455]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 7343948806477455
+                },
+                "Component_[7714105992256352]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 7714105992256352
+                },
+                "Component_[8186192183360079]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 8186192183360079,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            277.851944
+                        ],
+                        "Translate": [
+                            7.7,
+                            27.5,
+                            1
+                        ]
+                    }
+                },
+                "Component_[8986499408690492]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/barrel_02/barrel_02_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{61F1D84C-E005-5780-8738-FA3EC842B1EB}",
+                                    "subId": 272235546
+                                }
+                            }
+                        }
+                    },
+                    "Id": 8986499408690492
+                }
+            },
+            "Id": "Entity_[5338238323870965]",
+            "Name": "Prop ArenaEdgeA 6 Barrel_02_2k"
+        },
+        "Entity_[5343234312610929]": {
+            "Components": {
+                "Component_[174825644877661]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 174825644877661
+                },
+                "Component_[2046306068712293]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 2046306068712293
+                },
+                "Component_[2299333289352594]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/wooden_lantern_01/wooden_lantern_01_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{B59CA559-219E-5B9E-8060-15E22D86F591}",
+                                    "subId": 284926637
+                                }
+                            }
+                        }
+                    },
+                    "Id": 2299333289352594
+                },
+                "Component_[3429859990009965]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 3429859990009965,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            237.851944
+                        ],
+                        "Translate": [
+                            7,
+                            26.8,
+                            1.35
+                        ]
+                    }
+                },
+                "Component_[5571276825791743]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 5571276825791743
+                },
+                "Component_[5747737979652722]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 5747737979652722
+                },
+                "Component_[7981598452669281]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 7981598452669281
+                },
+                "Component_[8285291390713044]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 8285291390713044
+                },
+                "Component_[8298969466410432]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 8298969466410432
+                },
+                "Component_[8916613733018025]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 8916613733018025
+                }
+            },
+            "Id": "Entity_[5343234312610929]",
+            "Name": "Prop ArenaEdgeA 8 wooden_lantern_01_2k"
+        },
+        "Entity_[5396002193928416]": {
+            "Components": {
+                "Component_[142327681329953]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 142327681329953
+                },
+                "Component_[1842476772888534]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 1842476772888534
+                },
+                "Component_[2044997874397779]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 2044997874397779
+                },
+                "Component_[3488864087888305]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 3488864087888305
+                },
+                "Component_[3928980106419134]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 3928980106419134,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            28.078802
+                        ],
+                        "Translate": [
+                            -3,
+                            -35,
+                            0.8
+                        ]
+                    }
+                },
+                "Component_[461226984809422]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 461226984809422
+                },
+                "Component_[6319658320940897]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/barrel_01/barrel_01_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{36EDC33D-3BAF-5940-A246-5B6F05FE8830}",
+                                    "subId": 277631988
+                                }
+                            }
+                        }
+                    },
+                    "Id": 6319658320940897
+                },
+                "Component_[6893757680202108]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 6893757680202108
+                },
+                "Component_[7265263420966570]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 7265263420966570
+                },
+                "Component_[7612767927725364]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 7612767927725364
+                }
+            },
+            "Id": "Entity_[5396002193928416]",
+            "Name": "Prop DreamArena 1 Barrel_01_2k"
+        },
+        "Entity_[5560337300250466]": {
+            "Components": {
+                "Component_[1127817143476159]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 1127817143476159
+                },
+                "Component_[1318601309786793]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 1318601309786793
+                },
+                "Component_[2561287745808282]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 2561287745808282
+                },
+                "Component_[3315570664325235]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 3315570664325235
+                },
+                "Component_[3610677505599324]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/wooden_lantern_01/wooden_lantern_01_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{B59CA559-219E-5B9E-8060-15E22D86F591}",
+                                    "subId": 284926637
+                                }
+                            }
+                        }
+                    },
+                    "Id": 3610677505599324
+                },
+                "Component_[5723485943877679]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 5723485943877679
+                },
+                "Component_[6677491588691840]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 6677491588691840
+                },
+                "Component_[7042466935646867]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 7042466935646867
+                },
+                "Component_[748873409621622]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 748873409621622
+                },
+                "Component_[7531503123619823]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 7531503123619823,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            255.077283
+                        ],
+                        "Translate": [
+                            77,
+                            -26.8,
+                            1.35
+                        ]
+                    }
+                }
+            },
+            "Id": "Entity_[5560337300250466]",
+            "Name": "Prop ArenaEdgeB 8 wooden_lantern_01_2k"
+        },
         "Entity_[5637445761052061]": {
             "Components": {
                 "Component_[1730285996707945]": {
@@ -4980,6 +5750,76 @@
             },
             "Id": "Entity_[5637445761052061]",
             "Name": "Plant 43 namaqualand_boulder_02_0"
+        },
+        "Entity_[5650511387036309]": {
+            "Components": {
+                "Component_[358272724315242]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 358272724315242
+                },
+                "Component_[4490347894115127]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 4490347894115127
+                },
+                "Component_[4520128731185568]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 4520128731185568,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            40.482259
+                        ],
+                        "Translate": [
+                            77,
+                            26.8,
+                            1.35
+                        ]
+                    }
+                },
+                "Component_[4540841179064467]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/wooden_lantern_01/wooden_lantern_01_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{B59CA559-219E-5B9E-8060-15E22D86F591}",
+                                    "subId": 284926637
+                                }
+                            }
+                        }
+                    },
+                    "Id": 4540841179064467
+                },
+                "Component_[6051154782059571]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 6051154782059571
+                },
+                "Component_[6440860243190637]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 6440860243190637
+                },
+                "Component_[7185954998713022]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 7185954998713022
+                },
+                "Component_[7194492100839608]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 7194492100839608
+                },
+                "Component_[7777152293529508]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 7777152293529508
+                },
+                "Component_[920465004693444]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 920465004693444
+                }
+            },
+            "Id": "Entity_[5650511387036309]",
+            "Name": "Prop ArenaEdgeA 4 wooden_lantern_01_2k"
         },
         "Entity_[5739241391079861]": {
             "Components": {
@@ -5502,6 +6342,76 @@
             },
             "Id": "Entity_[5886748296125282]",
             "Name": "Plant 61 boulder_01_0"
+        },
+        "Entity_[5901504614542125]": {
+            "Components": {
+                "Component_[2211939194030326]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 2211939194030326
+                },
+                "Component_[2517183947941175]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 2517183947941175
+                },
+                "Component_[2998481356654317]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 2998481356654317
+                },
+                "Component_[3251902361202610]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 3251902361202610
+                },
+                "Component_[3309428917055141]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 3309428917055141
+                },
+                "Component_[3520305167856650]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 3520305167856650,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            40.482259
+                        ],
+                        "Translate": [
+                            77,
+                            27.5,
+                            1
+                        ]
+                    }
+                },
+                "Component_[3570135947261152]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 3570135947261152
+                },
+                "Component_[5001743205347944]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 5001743205347944
+                },
+                "Component_[6110766382892738]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 6110766382892738
+                },
+                "Component_[8712044068865373]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/barrel_01/barrel_01_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{36EDC33D-3BAF-5940-A246-5B6F05FE8830}",
+                                    "subId": 277631988
+                                }
+                            }
+                        }
+                    },
+                    "Id": 8712044068865373
+                }
+            },
+            "Id": "Entity_[5901504614542125]",
+            "Name": "Prop ArenaEdgeA 1 Barrel_01_2k"
         },
         "Entity_[5982496514331643]": {
             "Components": {
@@ -7116,6 +8026,76 @@
             "Id": "Entity_[6218271064015853]",
             "Name": "PROVISIONAL Path PhaseEdgeB to WakeThreshold 8"
         },
+        "Entity_[6329957527681420]": {
+            "Components": {
+                "Component_[1088289387550900]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 1088289387550900
+                },
+                "Component_[1928326545506017]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/wooden_lantern_01/wooden_lantern_01_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{B59CA559-219E-5B9E-8060-15E22D86F591}",
+                                    "subId": 284926637
+                                }
+                            }
+                        }
+                    },
+                    "Id": 1928326545506017
+                },
+                "Component_[2625048395896481]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 2625048395896481
+                },
+                "Component_[2629175102736190]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 2629175102736190,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            227.230997
+                        ],
+                        "Translate": [
+                            -3,
+                            34.3,
+                            1.15
+                        ]
+                    }
+                },
+                "Component_[3634637473857358]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 3634637473857358
+                },
+                "Component_[4325197487455062]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 4325197487455062
+                },
+                "Component_[4527718588964307]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 4527718588964307
+                },
+                "Component_[5032591011253297]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 5032591011253297
+                },
+                "Component_[7163340291971068]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 7163340291971068
+                },
+                "Component_[822370508869162]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 822370508869162
+                }
+            },
+            "Id": "Entity_[6329957527681420]",
+            "Name": "Prop DreamArena 8 wooden_lantern_01_2k"
+        },
         "Entity_[6415711216810656]": {
             "Components": {
                 "Component_[2171647831732105]": {
@@ -7452,6 +8432,76 @@
             "Id": "Entity_[6523479656644111]",
             "Name": "Plant 45 namaqualand_boulder_02_0"
         },
+        "Entity_[6539767952743716]": {
+            "Components": {
+                "Component_[1640408834500756]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/barrel_01/barrel_01_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{36EDC33D-3BAF-5940-A246-5B6F05FE8830}",
+                                    "subId": 277631988
+                                }
+                            }
+                        }
+                    },
+                    "Id": 1640408834500756
+                },
+                "Component_[2778911327179063]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 2778911327179063,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            227.230997
+                        ],
+                        "Translate": [
+                            -3,
+                            35,
+                            0.8
+                        ]
+                    }
+                },
+                "Component_[4006066939596411]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 4006066939596411
+                },
+                "Component_[5569280483871730]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 5569280483871730
+                },
+                "Component_[5813729174385742]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 5813729174385742
+                },
+                "Component_[6297079329169848]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 6297079329169848
+                },
+                "Component_[6570132523107031]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 6570132523107031
+                },
+                "Component_[7341480713932273]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 7341480713932273
+                },
+                "Component_[7927241704514375]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 7927241704514375
+                },
+                "Component_[821861349819723]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 821861349819723
+                }
+            },
+            "Id": "Entity_[6539767952743716]",
+            "Name": "Prop DreamArena 5 Barrel_01_2k"
+        },
         "Entity_[6629482636463923]": {
             "Components": {
                 "Component_[1065857841152997]": {
@@ -7708,6 +8758,76 @@
             },
             "Id": "Entity_[6651097452417603]",
             "Name": "Plant 9 SM_Art_Veg_DeadTree_2"
+        },
+        "Entity_[6682449683815437]": {
+            "Components": {
+                "Component_[1122884365636052]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 1122884365636052,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            327.851944
+                        ],
+                        "Translate": [
+                            7,
+                            26.8,
+                            1
+                        ]
+                    }
+                },
+                "Component_[2391600167583385]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 2391600167583385
+                },
+                "Component_[4665298095898607]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 4665298095898607
+                },
+                "Component_[5286336407396938]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 5286336407396938
+                },
+                "Component_[619260840797083]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 619260840797083
+                },
+                "Component_[6211676986253415]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/wooden_crate_01/wooden_crate_01_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{919C6265-9B7A-5F62-A6B6-C1FCDBCC1E25}",
+                                    "subId": 282057039
+                                }
+                            }
+                        }
+                    },
+                    "Id": 6211676986253415
+                },
+                "Component_[6644493938887350]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 6644493938887350
+                },
+                "Component_[6664361588194744]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 6664361588194744
+                },
+                "Component_[7947199631005464]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 7947199631005464
+                },
+                "Component_[8059030125426532]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 8059030125426532
+                }
+            },
+            "Id": "Entity_[6682449683815437]",
+            "Name": "Prop ArenaEdgeA 7 wooden_crate_01_2k"
         },
         "Entity_[6717027941977996]": {
             "Components": {
@@ -8204,6 +9324,76 @@
             },
             "Id": "Entity_[7005870051079583]",
             "Name": "Terrain"
+        },
+        "Entity_[7080021039704126]": {
+            "Components": {
+                "Component_[1516796254200988]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 1516796254200988
+                },
+                "Component_[1921895811072337]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 1921895811072337
+                },
+                "Component_[280550517010734]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 280550517010734
+                },
+                "Component_[318214908956978]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 318214908956978
+                },
+                "Component_[3865133764620512]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 3865133764620512
+                },
+                "Component_[5558411692388947]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 5558411692388947
+                },
+                "Component_[5737220015508575]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/barrel_01/barrel_01_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{36EDC33D-3BAF-5940-A246-5B6F05FE8830}",
+                                    "subId": 277631988
+                                }
+                            }
+                        }
+                    },
+                    "Id": 5737220015508575
+                },
+                "Component_[6086004890405052]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 6086004890405052,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            255.077283
+                        ],
+                        "Translate": [
+                            77,
+                            -27.5,
+                            1
+                        ]
+                    }
+                },
+                "Component_[6834457302345383]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 6834457302345383
+                },
+                "Component_[8039377456186256]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 8039377456186256
+                }
+            },
+            "Id": "Entity_[7080021039704126]",
+            "Name": "Prop ArenaEdgeB 5 Barrel_01_2k"
         },
         "Entity_[7117563661674204]": {
             "Components": {
@@ -9175,6 +10365,146 @@
             "Id": "Entity_[7128558777956749]",
             "Name": "PROVISIONAL Path ArenaEntry to ArenaCenter 2"
         },
+        "Entity_[7150306952610758]": {
+            "Components": {
+                "Component_[1969532769306042]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 1969532769306042
+                },
+                "Component_[2519298747830603]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 2519298747830603
+                },
+                "Component_[2684463518683404]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 2684463518683404
+                },
+                "Component_[4615616838250877]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 4615616838250877
+                },
+                "Component_[4826091998182883]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 4826091998182883
+                },
+                "Component_[4962792145305752]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/wooden_lantern_01/wooden_lantern_01_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{B59CA559-219E-5B9E-8060-15E22D86F591}",
+                                    "subId": 284926637
+                                }
+                            }
+                        }
+                    },
+                    "Id": 4962792145305752
+                },
+                "Component_[5767721168159099]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 5767721168159099,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            313.109493
+                        ],
+                        "Translate": [
+                            7,
+                            -26.8,
+                            1.35
+                        ]
+                    }
+                },
+                "Component_[5809347801673647]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 5809347801673647
+                },
+                "Component_[6079621906733422]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 6079621906733422
+                },
+                "Component_[6785704783937207]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 6785704783937207
+                }
+            },
+            "Id": "Entity_[7150306952610758]",
+            "Name": "Prop ArenaEdgeB 4 wooden_lantern_01_2k"
+        },
+        "Entity_[7185953817837640]": {
+            "Components": {
+                "Component_[2620406678602011]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 2620406678602011
+                },
+                "Component_[291615877531145]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/wooden_crate_01/wooden_crate_01_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{919C6265-9B7A-5F62-A6B6-C1FCDBCC1E25}",
+                                    "subId": 282057039
+                                }
+                            }
+                        }
+                    },
+                    "Id": 291615877531145
+                },
+                "Component_[30131092590562]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 30131092590562
+                },
+                "Component_[333769522902180]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 333769522902180
+                },
+                "Component_[3928975368304278]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 3928975368304278,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            118.078802
+                        ],
+                        "Translate": [
+                            -3,
+                            -34.3,
+                            0.8
+                        ]
+                    }
+                },
+                "Component_[4428307137691702]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 4428307137691702
+                },
+                "Component_[6028693623073100]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 6028693623073100
+                },
+                "Component_[6947940292189433]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 6947940292189433
+                },
+                "Component_[8116047530054729]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 8116047530054729
+                },
+                "Component_[8839576167722686]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 8839576167722686
+                }
+            },
+            "Id": "Entity_[7185953817837640]",
+            "Name": "Prop DreamArena 3 wooden_crate_01_2k"
+        },
         "Entity_[7192840779396849]": {
             "Components": {
                 "Component_[2305765791734857]": {
@@ -9649,6 +10979,76 @@
             "Id": "Entity_[7355232831217236]",
             "Name": "Geometry DreamArena"
         },
+        "Entity_[740358631205986]": {
+            "Components": {
+                "Component_[1035453389590007]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 1035453389590007
+                },
+                "Component_[1278791947457585]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 1278791947457585
+                },
+                "Component_[2407301086668185]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 2407301086668185
+                },
+                "Component_[2501944432536668]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 2501944432536668
+                },
+                "Component_[314441548937832]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 314441548937832
+                },
+                "Component_[4285769905532602]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/barrel_02/barrel_02_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{61F1D84C-E005-5780-8738-FA3EC842B1EB}",
+                                    "subId": 272235546
+                                }
+                            }
+                        }
+                    },
+                    "Id": 4285769905532602
+                },
+                "Component_[6736735402492026]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 6736735402492026
+                },
+                "Component_[6840311877881413]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 6840311877881413
+                },
+                "Component_[7973656947101861]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 7973656947101861,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            295.077283
+                        ],
+                        "Translate": [
+                            76.3,
+                            -27.5,
+                            1
+                        ]
+                    }
+                },
+                "Component_[8056454509471533]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 8056454509471533
+                }
+            },
+            "Id": "Entity_[740358631205986]",
+            "Name": "Prop ArenaEdgeB 6 Barrel_02_2k"
+        },
         "Entity_[7488895350402518]": {
             "Components": {
                 "Component_[1534469040688707]": {
@@ -9719,6 +11119,76 @@
             },
             "Id": "Entity_[7488895350402518]",
             "Name": "Plant 1 boulder_01_0"
+        },
+        "Entity_[7594853504463354]": {
+            "Components": {
+                "Component_[2181266826814314]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 2181266826814314
+                },
+                "Component_[3049020098138549]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 3049020098138549
+                },
+                "Component_[3718205908337735]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 3718205908337735
+                },
+                "Component_[4820189267357993]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 4820189267357993
+                },
+                "Component_[5441557046636853]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 5441557046636853,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            345.077283
+                        ],
+                        "Translate": [
+                            77,
+                            -26.8,
+                            1
+                        ]
+                    }
+                },
+                "Component_[568837381176204]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 568837381176204
+                },
+                "Component_[5949929377539965]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 5949929377539965
+                },
+                "Component_[6112272209176385]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 6112272209176385
+                },
+                "Component_[6827607346614346]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/wooden_crate_01/wooden_crate_01_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{919C6265-9B7A-5F62-A6B6-C1FCDBCC1E25}",
+                                    "subId": 282057039
+                                }
+                            }
+                        }
+                    },
+                    "Id": 6827607346614346
+                },
+                "Component_[6895349971550712]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 6895349971550712
+                }
+            },
+            "Id": "Entity_[7594853504463354]",
+            "Name": "Prop ArenaEdgeB 7 wooden_crate_01_2k"
         },
         "Entity_[760374238626295]": {
             "Components": {
@@ -10589,6 +12059,146 @@
             "Id": "Entity_[87552572370775]",
             "Name": "Plant 46 boulder_01_0"
         },
+        "Entity_[8850136871644825]": {
+            "Components": {
+                "Component_[2077159979015444]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 2077159979015444
+                },
+                "Component_[2140886843949821]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 2140886843949821
+                },
+                "Component_[27697376011879]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 27697376011879
+                },
+                "Component_[2816607560917603]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 2816607560917603
+                },
+                "Component_[5092672643593584]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 5092672643593584,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            130.482259
+                        ],
+                        "Translate": [
+                            77,
+                            26.8,
+                            1
+                        ]
+                    }
+                },
+                "Component_[5345521593185742]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 5345521593185742
+                },
+                "Component_[6928965932872264]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 6928965932872264
+                },
+                "Component_[784611243614115]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/wooden_crate_01/wooden_crate_01_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{919C6265-9B7A-5F62-A6B6-C1FCDBCC1E25}",
+                                    "subId": 282057039
+                                }
+                            }
+                        }
+                    },
+                    "Id": 784611243614115
+                },
+                "Component_[8359999668388596]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 8359999668388596
+                },
+                "Component_[8542149731665306]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 8542149731665306
+                }
+            },
+            "Id": "Entity_[8850136871644825]",
+            "Name": "Prop ArenaEdgeA 3 wooden_crate_01_2k"
+        },
+        "Entity_[8850772436760038]": {
+            "Components": {
+                "Component_[1228583351386681]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 1228583351386681
+                },
+                "Component_[1993719869961865]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 1993719869961865
+                },
+                "Component_[2877642938271318]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 2877642938271318,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            403.109493
+                        ],
+                        "Translate": [
+                            7,
+                            -26.8,
+                            1
+                        ]
+                    }
+                },
+                "Component_[3669696640744190]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 3669696640744190
+                },
+                "Component_[4112064096692041]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/wooden_crate_01/wooden_crate_01_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{919C6265-9B7A-5F62-A6B6-C1FCDBCC1E25}",
+                                    "subId": 282057039
+                                }
+                            }
+                        }
+                    },
+                    "Id": 4112064096692041
+                },
+                "Component_[5024092407860964]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 5024092407860964
+                },
+                "Component_[5686113890230306]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 5686113890230306
+                },
+                "Component_[7179407331736694]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 7179407331736694
+                },
+                "Component_[7253793257277275]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 7253793257277275
+                },
+                "Component_[7636363077206668]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 7636363077206668
+                }
+            },
+            "Id": "Entity_[8850772436760038]",
+            "Name": "Prop ArenaEdgeB 3 wooden_crate_01_2k"
+        },
         "Entity_[885208904364724]": {
             "Components": {
                 "Component_[1255405909044538]": {
@@ -10688,6 +12298,76 @@
             },
             "Id": "Entity_[885208904364724]",
             "Name": "C09_03_DreamEthan"
+        },
+        "Entity_[8878719349107625]": {
+            "Components": {
+                "Component_[120356901009220]": {
+                    "$type": "EditorEntityIconComponent",
+                    "Id": 120356901009220
+                },
+                "Component_[1782426217798896]": {
+                    "$type": "AZ::Render::EditorMeshComponent",
+                    "Controller": {
+                        "Configuration": {
+                            "ModelAsset": {
+                                "assetHint": "assets/art/scanned/models/barrel_01/barrel_01_2k.azmodel",
+                                "assetId": {
+                                    "guid": "{36EDC33D-3BAF-5940-A246-5B6F05FE8830}",
+                                    "subId": 277631988
+                                }
+                            }
+                        }
+                    },
+                    "Id": 1782426217798896
+                },
+                "Component_[256316107360614]": {
+                    "$type": "EditorVisibilityComponent",
+                    "Id": 256316107360614
+                },
+                "Component_[3933265040440631]": {
+                    "$type": "EditorLockComponent",
+                    "Id": 3933265040440631
+                },
+                "Component_[4019103197640709]": {
+                    "$type": "EditorOnlyEntityComponent",
+                    "Id": 4019103197640709
+                },
+                "Component_[4428280405031459]": {
+                    "$type": "{27F1E1A1-8D9D-4C3B-BD3A-AFB9762449C0} TransformComponent",
+                    "Id": 4428280405031459,
+                    "Parent Entity": "ContainerEntity",
+                    "Transform Data": {
+                        "Rotate": [
+                            0,
+                            0,
+                            237.851944
+                        ],
+                        "Translate": [
+                            7,
+                            27.5,
+                            1
+                        ]
+                    }
+                },
+                "Component_[5042271424562843]": {
+                    "$type": "EditorPendingCompositionComponent",
+                    "Id": 5042271424562843
+                },
+                "Component_[516354086852242]": {
+                    "$type": "EditorDisabledCompositionComponent",
+                    "Id": 516354086852242
+                },
+                "Component_[7621495842786639]": {
+                    "$type": "EditorInspectorComponent",
+                    "Id": 7621495842786639
+                },
+                "Component_[8869865540015715]": {
+                    "$type": "EditorEntitySortComponent",
+                    "Id": 8869865540015715
+                }
+            },
+            "Id": "Entity_[8878719349107625]",
+            "Name": "Prop ArenaEdgeA 5 Barrel_01_2k"
         },
         "Entity_[979778420415380]": {
             "Components": {

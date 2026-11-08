@@ -1509,6 +1509,13 @@ namespace DarkArisen::Tools
             Spec.Kind = Kind;
             Spec.Open = Open;
             Prefab.AddComponent(Entity, "AZ::Render::EditorMeshComponent", MeshComponent(Work.Model(Work.Kit.Authored(Spec))));
+            int PropIndex = 0;
+            for (const Art::PropPlacement& P : Art::Kit::AuthoredProps(Spec))
+            {
+                const std::string Prop = Prefab.AddEntity("Prop " + Name + " " + std::to_string(++PropIndex) + " " + Stem(P.Model),
+                    {At.X + P.X, At.Y + P.Y, At.Z - Size.Z + P.Z}, {0.0, 0.0, P.Yaw});
+                Prefab.AddComponent(Prop, "AZ::Render::EditorMeshComponent", MeshComponent(Work.Model(P.Model)));
+            }
             AddBoxCollider(Prefab, Entity, Size, false, {0.0, 0.0, Size.Z / 2.0});
         }
 
