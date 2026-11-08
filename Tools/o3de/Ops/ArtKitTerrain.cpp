@@ -727,9 +727,8 @@ namespace DarkArisen::Tools::Art
                     const double P = 0.65 * Fractal(X, Y, 30.0, 3, Seed + 11u) + 0.35 * Fractal(X, Y, 8.0, 2, Seed + 17u);
                     const double Q = Fractal(X, Y, 5.0, 2, Seed + 13u);
                     const double Road = 1.0 - SmoothStep(-0.6, 1.0 + 0.6 * Q, N.D);
-                    const double Steep = SmoothStep(0.88, 0.72, Nn.Z);
                     const double Bank = Ponds.empty() ? 0.0 : SmoothStep(1.12, 0.86, PondAt(X, Y));
-                    double W1 = 0.0, W2 = Steep, W3 = 0.0;
+                    double W1 = 0.0, W2 = SmoothStep(0.80, 0.62, Nn.Z), W3 = 0.0;  // bare rock from about 40 degrees
                     switch (Spec.Kind)
                     {
                     case Biome::Moor: W1 = Road + Bank; W3 = SmoothStep(0.36, 0.26, P); break;
@@ -759,7 +758,8 @@ namespace DarkArisen::Tools::Art
             };
             const Layer Grass{"sparse_grass", 2.0}, Forest{"forrest_ground_01", 2.0}, Cliff{"rock_face_03", 2.7}, Mossy{"rock_pitted_mossy", 1.0},
                 SandL{"sand_01", 1.5}, MudL{"brown_mud_02", 1.3};
-            std::array<Layer, 4> L{Grass, Forest, Cliff, Mossy};
+            // temperate biomes break out in grey, mossy rock; the pale sandstone scan is for the tropics only
+            std::array<Layer, 4> L{Grass, Forest, Mossy, MudL};
             if (Spec.Kind == Biome::Tropical) L = {Grass, SandL, Cliff, Forest};
             if (Spec.Kind == Biome::Mire) L = {Grass, MudL, Mossy, Forest};
             if (Spec.Kind == Biome::Dream) L = {MudL, Forest, Cliff, Mossy};
@@ -776,7 +776,7 @@ namespace DarkArisen::Tools::Art
             J += "        \"macro.blendSharpness\": 3,\n";
             J += "        \"macro.color\": \"../../Art/Textures/T_Terrain_" + Spec.Name + ".png\",\n";
             J += "        \"macro.splat\": \"../../Art/Textures/T_TerrainSplat_" + Spec.Name + ".png\",\n";
-            J += "        \"macro.strength\": 0.6,\n";
+            J += "        \"macro.strength\": 0.8,\n";
             J += "        \"macro.tiles\": [" + Num(L[0].Tile) + ", " + Num(L[1].Tile) + ", " + Num(L[2].Tile) + ", " + Num(L[3].Tile) + "]\n    }\n}\n";
             Art.Material = "Assets/Materials/Terrain/M_Terrain_" + Spec.Name + ".material";
             Output.push_back({Art.Material, J});
