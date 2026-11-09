@@ -349,6 +349,24 @@ namespace DarkArisen::Tools::Art
             const double Lift = Kind == Tradition::Stilt ? 1.7 + 2.0 : 0.0;
             Out.push_back({"Assets/Art/Models/" + ModelName(Kind, V) + ".gltf", X, Y, Z, Yaw, S.W / 2 + 0.3, S.D / 2 + 0.3, S.H + Lift + 2.0});
         };
+        // life at the doors: a scanned barrel, crate or lantern beside a house's door (-Y in its frame)
+        const auto Dress = [&](const Tradition Kind, const int V, const double X, const double Y, const double Yaw)
+        {
+            static const char* const Props[] = {"Assets/Art/Scanned/models/Barrel_01/Barrel_01_2k.gltf", "Assets/Art/Scanned/models/Barrel_02/Barrel_02_2k.gltf",
+                "Assets/Art/Scanned/models/barrel_03/barrel_03_2k.gltf", "Assets/Art/Scanned/models/wooden_crate_01/wooden_crate_01_2k.gltf",
+                "Assets/Art/Scanned/models/wooden_lantern_01/wooden_lantern_01_2k.gltf"};
+            const Size S = VariantSize(Kind, V);
+            const int Count = static_cast<int>(R.Unit() * 3.0);
+            const double Rad = Yaw * Pi / 180.0, Ca = Cos(Rad), Sa = Sin(Rad);
+            for (int K = 0; K < Count; ++K)
+            {
+                const double Lx = (K % 2 ? 1.0 : -1.0) * R.Range(1.0, std::max(1.2, S.W / 2 - 0.4)), Ly = -S.D / 2 - R.Range(0.6, 1.4);
+                const double Px = X + Lx * Ca - Ly * Sa, Py = Y + Lx * Sa + Ly * Ca;
+                const int Pick = static_cast<int>(R.Unit() * 5.0);
+                const double Turn = R.Range(0.0, 360.0);
+                Out.push_back({Props[Pick], Px, Py, Spec.Ground(Px, Py), Turn, 0.4, 0.4, 1.0});
+            }
+        };
         const auto Free = [&](const double X, const double Y, const double Clear)
         {
             if (Spec.Ground(X, Y) < Spec.MinGround) return false;  // the shore, a pond, the sea
@@ -465,7 +483,10 @@ namespace DarkArisen::Tools::Art
                             const double Lu = U + Along + S.W / 2, Lw = W + Side * (Deep / 2 - S.D / 2);
                             const double X = Spec.X + Lu * Ca - Lw * Sa, Y = Spec.Y + Lu * Sa + Lw * Ca;
                             if (Spec.Ground(X, Y) >= Spec.MinGround)
+                            {
                                 Place(Tradition::Colonial, V, X, Y, Spec.StreetAngle + (Side < 0 ? 0.0 : 180.0));  // doors (-Y) on the street
+                                if (R.Unit() < 0.3) Dress(Tradition::Colonial, V, X, Y, Spec.StreetAngle + (Side < 0 ? 0.0 : 180.0));
+                            }
                             Along += S.W + 0.05;
                         }
                     }
@@ -476,6 +497,9 @@ namespace DarkArisen::Tools::Art
 
         // villages and camps grow, they are not drawn: houses in loose clusters, denser towards the middle, each set
         // along the hillside (long side on the contour) with a little give, a path's width from its neighbours
+        // a camp gathers round its fire (placed first, so the tents keep their distance)
+        if (Spec.Kind == Tradition::Camp)
+            Out.push_back({"Assets/Art/Scanned/models/stone_fire_pit/stone_fire_pit_2k.gltf", Spec.X, Spec.Y, Spec.Ground(Spec.X, Spec.Y), 0.0, 3.0, 3.0, 0.6});
         const double Ridge = Spec.StreetAngle;
         for (int Tries = 0; Tries < Spec.MaxBuildings * 30 && static_cast<int>(Out.size()) < Spec.MaxBuildings; ++Tries)
         {
@@ -490,8 +514,11 @@ namespace DarkArisen::Tools::Art
             const double Gx = Spec.Ground(X + 3.0, Y) - Spec.Ground(X - 3.0, Y), Gy = Spec.Ground(X, Y + 3.0) - Spec.Ground(X, Y - 3.0);
             double Along = Ridge;
             if (Gx * Gx + Gy * Gy > 0.04) Along = std::fabs(Gx) > std::fabs(Gy) ? 0.0 : 90.0;  // long side (Y in the model) along the slope's contour
-            Place(Spec.Kind, V, X, Y, Along + Jitter + (R.Unit() < 0.5 ? 180.0 : 0.0));
+            const double Yaw = Along + Jitter + (R.Unit() < 0.5 ? 180.0 : 0.0);
+            Place(Spec.Kind, V, X, Y, Yaw);
+            if (Spec.Kind != Tradition::Camp && R.Unit() < 0.6) Dress(Spec.Kind, V, X, Y, Yaw);
         }
+
         return Out;
     }
 }
