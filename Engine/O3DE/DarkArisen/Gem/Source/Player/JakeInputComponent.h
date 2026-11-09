@@ -2,6 +2,9 @@
 
 #include "Persistence/SaveSlotStore.h"
 
+#include <DarkArisen/Core/Combat.h>
+#include <DarkArisen/Core/Traversal.h>
+
 #include <AzCore/Component/Component.h>
 #include <AzCore/Component/TickBus.h>
 #include <AzCore/Math/Vector2.h>
@@ -25,11 +28,9 @@ namespace DarkArisen
         static void Reflect(AZ::ReflectContext* context);
         static void GetRequiredServices(AZ::ComponentDescriptor::DependencyArrayType& required);
 
-        /** UE AJakeCharacter: 330 cm/s run, 600 cm/s sprint. */
-        static constexpr float RunSpeedMetresPerSecond = 3.3f;
-        static constexpr float SprintSpeedMetresPerSecond = 6.0f;
-        /** UE AJakeCharacter: JumpZVelocity 520 cm/s. */
-        static constexpr float JumpSpeedMetresPerSecond = 5.2f;
+        /** Below this stick deflection Jake walks (traversal.md 2.1), above it he runs (3.1); sprint is held (4.1). */
+        static constexpr float WalkBelowDeflection = 0.6f;
+        static constexpr float GravityMetresPerSecondSquared = 9.81f;
         /** UE AAlphaMenuPlayerController save slot. */
         static constexpr const char* QuickSlot = SaveSlotStore::ManualSlot;
 
@@ -45,9 +46,15 @@ namespace DarkArisen
         bool m_sprintHeld = false;
         bool m_wasSwimming = false;
         AZ::Vector2 m_stickLook = AZ::Vector2::CreateZero();
+        /** traversal.md: gait, speed ramps, exhaustion; it drains the combatant's stamina pool. */
+        Core::TraversalModel m_traversal;
+        /** The pool Jake moves on when the entity has no combatant (a level without combat). */
+        Core::StaminaModel m_ownStamina;
+        /** Last direction of travel, so Jake brakes along it when the stick is released. */
+        AZ::Vector2 m_heading = AZ::Vector2(0.0f, 1.0f);
 
         void Interact() const;
-        void Jump() const;
+        void Jump();
         void QuickSave(bool save) const;
     };
 }

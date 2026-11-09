@@ -7,10 +7,14 @@ using namespace DarkArisen::Core;
 
 namespace
 {
-    /** Runs the model for Seconds at 60 Hz. */
+    /** Runs the model for Seconds at 60 Hz, the pool ticked by its owner after it, as the combatant does. */
     void Run(TraversalModel& Model, StaminaModel& Stamina, const TraversalInput& In, const float Seconds)
     {
-        for (int Frame = 0; Frame < static_cast<int>(Seconds * 60.0f + 0.5f); ++Frame) Model.Tick(1.0f / 60.0f, In, Stamina);
+        for (int Frame = 0; Frame < static_cast<int>(Seconds * 60.0f + 0.5f); ++Frame)
+        {
+            Model.Tick(1.0f / 60.0f, In, Stamina);
+            Stamina.Tick(1.0f / 60.0f);
+        }
     }
 }
 

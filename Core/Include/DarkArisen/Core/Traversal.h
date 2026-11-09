@@ -134,7 +134,9 @@ namespace DarkArisen::Core
     /**
      * Ground movement and the shared stamina pool. Tick advances speed towards the wanted gait (with 2.1/3.1/4.1's
      * acceleration and deceleration), applies sprint exhaustion (4.3: forced walk for 3 s, no sprint, attacks at 75%)
-     * and the minimum sprint of 0.5 s, and sets the pool's regeneration or drain for the state (11.2, 6.6, 8.3, 12.5).
+     * and the minimum sprint of 0.5 s, drains the pool while sprinting, climbing or swimming (4.1, 6.6, 8.3) and sets
+     * the rate it regenerates at otherwise (11.2, 12.5). It owns the drain, so the pool's own sprint flag stays off; the
+     * pool's owner still ticks the pool (its regeneration delays) once per frame.
      */
     class TraversalModel
     {

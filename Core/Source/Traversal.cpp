@@ -245,9 +245,9 @@ namespace DarkArisen::Core
             }
             return;
         }
+        // the pool's owner (the combatant) ticks it; this sets the rate it regenerates at once its delay has run out
         TraversalInput Now = In;
         Now.Wanted = Current;
         Stamina.BaseRegenRate = StaminaRegenFor(Now);
-        Stamina.Tick(Dt);
     }
 }
