@@ -373,32 +373,23 @@ namespace DarkArisen::Tools::Art
             return Out;
         }
 
-        // streets in rings round a square: buildings face the centre, a lane between rings; denser near the middle
-        const double Plaza = Spec.Radius * (Spec.Kind == Tradition::Camp ? 0.15 : 0.2);
-        const int Wanted = Spec.MaxBuildings;
-        for (double Ring = Plaza + 8.0; Ring < Spec.Radius * 0.92 && static_cast<int>(Out.size()) < Wanted; Ring += Spec.Kind == Tradition::Camp ? 6.0 : 15.0)
+        // villages and camps grow, they are not drawn: houses in loose clusters, denser towards the middle, each set
+        // along the hillside (long side on the contour) with a little give, a path's width from its neighbours
+        const double Ridge = Spec.StreetAngle;
+        for (int Tries = 0; Tries < Spec.MaxBuildings * 30 && static_cast<int>(Out.size()) < Spec.MaxBuildings; ++Tries)
         {
-            const double Start = R.Range(0.0, 2.0 * Pi);
-            double Along = 0.0;
-            const double Circumference = 2.0 * Pi * Ring;
-            while (Along < Circumference - 6.0 && static_cast<int>(Out.size()) < Wanted)
-            {
-                const int V = static_cast<int>(R.Unit() * Variants);
-                const Size S = VariantSize(Spec.Kind, V);
-                const double Gap = Spec.Kind == Tradition::Colonial ? R.Range(0.3, 1.5) : R.Range(3.0, 9.0);
-                const double A = Start + (Along + S.W / 2) / Ring;
-                const double X = Spec.X + Ring * Cos(A), Y = Spec.Y + Ring * Sin(A);
-                // the door (-Y in the model) faces the square
-                const double Yaw = A * 180.0 / Pi - 90.0;
-                const double Skip = R.Unit();
-                if (Skip > Spec.Fill || !Free(X, Y, S.W / 2 + 1.0))
-                {
-                    Along += S.W + Gap;
-                    continue;
-                }
-                Place(Spec.Kind, V, X, Y, Yaw);
-                Along += S.W + Gap;
-            }
+            const double A = R.Range(0.0, 2.0 * Pi);
+            const double Rr = Spec.Radius * 0.9 * std::sqrt(R.Unit()) * (0.35 + 0.65 * R.Unit());
+            const double X = Spec.X + Rr * Cos(A), Y = Spec.Y + Rr * Sin(A);
+            const int V = static_cast<int>(R.Unit() * Variants);
+            const Size S = VariantSize(Spec.Kind, V);
+            const double Jitter = R.Range(-14.0, 14.0);
+            if (R.Unit() > Spec.Fill || !Free(X, Y, std::max(S.W, S.D) / 2 + (Spec.Kind == Tradition::Camp ? 2.0 : 4.0))) continue;
+            // the contour: across the downhill direction (from the ground either side), else the village's own axis
+            const double Gx = Spec.Ground(X + 3.0, Y) - Spec.Ground(X - 3.0, Y), Gy = Spec.Ground(X, Y + 3.0) - Spec.Ground(X, Y - 3.0);
+            double Along = Ridge;
+            if (Gx * Gx + Gy * Gy > 0.04) Along = std::fabs(Gx) > std::fabs(Gy) ? 0.0 : 90.0;  // long side (Y in the model) along the slope's contour
+            Place(Spec.Kind, V, X, Y, Along + Jitter + (R.Unit() < 0.5 ? 180.0 : 0.0));
         }
         return Out;
     }

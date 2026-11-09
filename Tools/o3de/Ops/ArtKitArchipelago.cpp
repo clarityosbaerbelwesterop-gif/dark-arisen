@@ -344,7 +344,9 @@ namespace DarkArisen::Tools::Art
                 {
                     if (Si.Kind == Tradition::Entrance) continue;
                     const double Dx = X - Si.Where->X, Dy = Y - Si.Where->Y;
-                    Trodden = std::max(Trodden, 0.7 * Smooth(Si.Where->Radius, 0.7 * Si.Where->Radius, std::sqrt(Dx * Dx + Dy * Dy)));
+                    // towns are mostly street; villages and camps keep their grass between the paths
+                    const double Worn = Si.Kind == Tradition::Colonial || Si.Kind == Tradition::Fort ? 0.7 : 0.3;
+                    Trodden = std::max(Trodden, Worn * Smooth(Si.Where->Radius, 0.7 * Si.Where->Radius, std::sqrt(Dx * Dx + Dy * Dy)));
                 }
                 const double Steep = Smooth(0.80, 0.62, N.Z);
                 const double Shore = Smooth(3.0, 0.5, Z);
@@ -458,7 +460,7 @@ namespace DarkArisen::Tools::Art
             else if (Ends(".harbor") || Ends(".smugglers_reach")) Settle.Centre = Landmark::Warehouse;
             else if (Ends(".noble") || Ends(".plantation_masters_domain")) Settle.Centre = Landmark::Mansion;
             else if (Ends(".cliffside") || Ends(".jernholm") || Ends(".pirate_encampment")) Settle.Centre = Landmark::Watchtower;
-            Settle.StreetAngle = 12.0;  // Rexa's grid runs up from the harbour
+            Settle.StreetAngle = Si.Kind == Tradition::Colonial ? 12.0 : static_cast<double>(Settle.Seed % 180u);  // Rexa's grid runs up from the harbour
             for (const Structure& B : Kit::SettlementLayout(Settle))
             {
                 auto Known = StructureIndex.find(B.Model);
