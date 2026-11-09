@@ -31,6 +31,11 @@ namespace DarkArisen::Tools::Art
             case Tradition::Camp: return {2.4 + 0.4 * (V % 3), 3.0 + 0.6 * (V % 2), 1.8};
             case Tradition::Fort: return {16.0 + 4.0 * (V % 3), 2.6, 7.0};
             case Tradition::Entrance: return {6.0 + 1.0 * (V % 3), 5.0, 4.0 + 0.5 * (V % 2)};
+            case Tradition::Civic:
+            {
+                static const Size Civic[] = {{16.0, 36.0, 14.0}, {18.0, 26.0, 6.0}, {14.0, 30.0, 8.0}, {22.0, 16.0, 11.0}, {7.0, 7.0, 16.0}};
+                return Civic[V % 5];
+            }
             case Tradition::Lighthouse: default: return {5.0, 5.0, 18.0};
             }
         }
@@ -45,6 +50,7 @@ namespace DarkArisen::Tools::Art
             case Tradition::Camp: return "Camp";
             case Tradition::Fort: return "Fort";
             case Tradition::Entrance: return "Entrance";
+            case Tradition::Civic: return "Civic";
             case Tradition::Lighthouse: default: return "Lighthouse";
             }
         }
@@ -151,6 +157,77 @@ namespace DarkArisen::Tools::Art
                 // a stretch of curtain wall with a squat tower at its end
                 return DressFort(Name, {{{-S.W / 2, -S.D / 2, 0.0}, {S.W / 2, S.D / 2, S.H}}, {{S.W / 2 - 2.5, -3.5, 0.0}, {S.W / 2 + 4.5, 3.5, S.H + 3.0}}});
             }
+            case Tradition::Civic:
+            {
+                Mesh Out(Name);
+                switch (V)
+                {
+                case 0:
+                {
+                    // the cathedral: a nave under a tiled gable, a bell tower over the west door (-Y), an apse
+                    Out.Box(Mat(M::PlasterOchre), {-S.W / 2, -S.D / 2, 0.0}, {S.W / 2, S.D / 2, S.H});
+                    Mesh Nave(Name + "_Nave");
+                    Gable(Nave, Mat(M::RoofTile), Mat(M::PlasterOchre), S.D, S.W, S.H, 6.0, 0.6);
+                    Out.Push(Xf::RotateZ(Pi / 2));  // the ridge runs the nave's length (Y)
+                    Out.Append(Nave);
+                    Out.Pop();
+                    Out.Box(Mat(M::Plaster), {-4.0, -S.D / 2 - 7.0, 0.0}, {4.0, -S.D / 2 + 1.0, S.H + 14.0});
+                    Hip(Out, Mat(M::RoofTile), 8.0, 8.0, S.H + 14.0, 5.0, 0.3);
+                    Out.Tube(Mat(M::PlasterOchre), {0.0, S.D / 2, 0.0}, {0.0, S.D / 2, S.H * 0.85}, 6.5, 6.5, 16);
+                    Out.Box(Mat(M::TimberDark), {-1.4, -S.D / 2 - 7.08, 0.0}, {1.4, -S.D / 2 - 6.9, 4.6});
+                    for (int K = 0; K < 5; ++K)
+                        for (const double X : {-S.W / 2 - 0.05, S.W / 2 + 0.05})
+                            Out.Box(Mat(M::Glass), {X - 0.05, -S.D / 2 + 4.0 + K * 6.0, 4.0}, {X + 0.05, -S.D / 2 + 5.8 + K * 6.0, 9.5});
+                    break;
+                }
+                case 1:
+                {
+                    // the market hall: an open arcade of stone pillars under one great tiled roof
+                    for (double X = -S.W / 2; X <= S.W / 2 + 0.01; X += S.W / 4)
+                        for (double Y = -S.D / 2; Y <= S.D / 2 + 0.01; Y += S.D / 5)
+                            Out.Box(Mat(M::Stone), {X - 0.4, Y - 0.4, 0.0}, {X + 0.4, Y + 0.4, S.H});
+                    Out.Box(Mat(M::Paving), {-S.W / 2 - 1.0, -S.D / 2 - 1.0, -0.4}, {S.W / 2 + 1.0, S.D / 2 + 1.0, 0.15});
+                    Hip(Out, Mat(M::RoofTile), S.W, S.D, S.H, 4.0, 1.2);
+                    for (int K = 0; K < 6; ++K) Crate(Out, {-S.W / 2 + 2.0 + 2.5 * K, -2.0, 0.15}, {-S.W / 2 + 3.4 + 2.5 * K, -0.8, 1.0});
+                    break;
+                }
+                case 2:
+                {
+                    // the warehouse: a long store of dark timber on stone, wide doors on both long sides
+                    Out.Box(Mat(M::StoneDark), {-S.W / 2, -S.D / 2, -0.4}, {S.W / 2, S.D / 2, 1.2});
+                    Out.Box(Mat(M::TimberDark), {-S.W / 2, -S.D / 2, 1.2}, {S.W / 2, S.D / 2, S.H});
+                    Gable(Out, Mat(M::RoofTile), Mat(M::TimberDark), S.W, S.D, S.H, 4.5, 0.6);
+                    for (int K = 0; K < 3; ++K)
+                        for (const double Y : {-S.D / 2 - 0.06, S.D / 2 - 0.02})
+                            Out.Box(Mat(M::Timber), {-S.W / 2 + 2.0 + K * 4.5, Y, 0.0}, {-S.W / 2 + 5.0 + K * 4.5, Y + 0.08, 4.0});
+                    break;
+                }
+                case 3:
+                {
+                    // the mansion: a dressed great house behind a garden wall
+                    Out.Append(DressBoxes(Name + "_House", {{{-S.W / 2, -S.D / 2, 0.0}, {S.W / 2, S.D / 2, S.H}}}));
+                    for (const double Y : {-S.D / 2 - 8.0, S.D / 2 + 4.0}) Out.Box(Mat(M::Plaster), {-S.W / 2 - 4.0, Y, 0.0}, {S.W / 2 + 4.0, Y + 0.6, 2.4});
+                    for (const double X : {-S.W / 2 - 4.0, S.W / 2 + 3.4}) Out.Box(Mat(M::Plaster), {X, -S.D / 2 - 8.0, 0.0}, {X + 0.6, S.D / 2 + 4.6, 2.4});
+                    Out.Box(Mat(M::Iron), {-1.6, -S.D / 2 - 8.05, 0.0}, {1.6, -S.D / 2 - 7.35, 2.6});
+                    break;
+                }
+                default:
+                {
+                    // the watchtower: a square stone tower with a crenellated top and a flag
+                    Out.Box(Mat(M::Stone), {-S.W / 2, -S.D / 2, -0.5}, {S.W / 2, S.D / 2, S.H});
+                    for (int K = 0; K < 4; ++K)
+                    {
+                        const double A = Pi / 2 * K;
+                        OrientedBox(Out, Mat(M::Stone), {Cos(A) * (S.W / 2 - 0.3), Sin(A) * (S.W / 2 - 0.3), S.H + 0.6}, -Sin(A), Cos(A), {S.W / 2, 0.3, 0.6});
+                    }
+                    Out.Tube(Mat(M::TimberDark), {0.0, 0.0, S.H}, {0.0, 0.0, S.H + 6.0}, 0.08, 0.06, 6);
+                    Out.Quad(Mat(M::HullBandRed), {0.0, 0.0, S.H + 6.0}, {0.0, 2.2, S.H + 6.0}, {0.0, 2.2, S.H + 4.6}, {0.0, 0.0, S.H + 4.6}, true);
+                    Out.Box(Mat(M::TimberDark), {-0.6, -S.D / 2 - 0.06, 0.0}, {0.6, -S.D / 2 + 0.02, 2.2});
+                    break;
+                }
+                }
+                return Out;
+            }
             case Tradition::Entrance:
             {
                 Mesh Out(Name);
@@ -195,8 +272,9 @@ namespace DarkArisen::Tools::Art
 
     void Kit::BuildSettlementModels()
     {
-        for (const Tradition Kind : {Tradition::Colonial, Tradition::Stilt, Tradition::Nordic, Tradition::Camp, Tradition::Fort, Tradition::Lighthouse, Tradition::Entrance})
-            for (int V = 0; V < (Kind == Tradition::Lighthouse ? 1 : Variants); ++V)
+        for (const Tradition Kind : {Tradition::Colonial, Tradition::Stilt, Tradition::Nordic, Tradition::Camp, Tradition::Fort, Tradition::Lighthouse, Tradition::Entrance,
+                 Tradition::Civic})
+            for (int V = 0; V < (Kind == Tradition::Lighthouse ? 1 : Kind == Tradition::Civic ? 5 : Variants); ++V)
                 Emit(ModelName(Kind, V), WriteGltf(BuildVariant(Kind, V), "Dark Arisen art kit (settlements)"));
     }
 
@@ -252,6 +330,45 @@ namespace DarkArisen::Tools::Art
                     Place(Tradition::Fort, V, Spec.X + Ring * Cos(A), Spec.Y + Ring * Sin(A), A * 180.0 / Pi + 90.0);
                 Along += W + 2.5;  // the tower's width past the stretch
                 V = (V + 1) % 3;
+            }
+            return Out;
+        }
+
+        // the landmark on the square
+        if (Spec.Centre != Landmark::None) Place(Tradition::Civic, static_cast<int>(Spec.Centre), Spec.X, Spec.Y, Spec.StreetAngle);
+
+        if (Spec.Kind == Tradition::Colonial)
+        {
+            // a colonial grid: blocks of 40 x 26 m between 7 m streets on the city's axis, each block lined on its long
+            // sides with terraced houses wall to wall, doors on the street; the square at the middle stays open
+            const double Block = 40.0, Deep = 26.0, Street = 7.0;
+            const double Ca = Cos(Spec.StreetAngle * Pi / 180.0), Sa = Sin(Spec.StreetAngle * Pi / 180.0);
+            const double Square = Spec.Radius * 0.22;
+            const int Reach = static_cast<int>(Spec.Radius / (Deep + Street)) + 1;
+            for (int J = -Reach; J <= Reach && static_cast<int>(Out.size()) < Spec.MaxBuildings; ++J)
+            {
+                for (int I = -Reach; I <= Reach && static_cast<int>(Out.size()) < Spec.MaxBuildings; ++I)
+                {
+                    // block centre in the grid's frame (u along the street axis), offset half a block so the square is a crossing
+                    const double U = (I + 0.5) * (Block + Street), W = (J + 0.5) * (Deep + Street);
+                    if (U * U + W * W > Spec.Radius * 0.9 * Spec.Radius * 0.9 || U * U + W * W < Square * Square) continue;
+                    if (R.Unit() > Spec.Fill) continue;  // a garden, a yard, a ruin
+                    for (const double Side : {-1.0, 1.0})
+                    {
+                        double Along = -Block / 2;
+                        while (Along < Block / 2 - 5.0)
+                        {
+                            const int V = static_cast<int>(R.Unit() * Variants);
+                            const Size S = VariantSize(Tradition::Colonial, V);
+                            if (Along + S.W > Block / 2) break;
+                            const double Lu = U + Along + S.W / 2, Lw = W + Side * (Deep / 2 - S.D / 2);
+                            const double X = Spec.X + Lu * Ca - Lw * Sa, Y = Spec.Y + Lu * Sa + Lw * Ca;
+                            if (Spec.Ground(X, Y) >= Spec.MinGround)
+                                Place(Tradition::Colonial, V, X, Y, Spec.StreetAngle + (Side < 0 ? 0.0 : 180.0));  // doors (-Y) on the street
+                            Along += S.W + 0.05;
+                        }
+                    }
+                }
             }
             return Out;
         }

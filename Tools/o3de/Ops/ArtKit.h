@@ -132,7 +132,14 @@ namespace DarkArisen::Tools::Art
         Camp,        // camps and encampments: canvas tents
         Fort,        // curtain walls with towers
         Lighthouse,  // a whitewashed tower and its keeper's house
-        Entrance     // a dungeon's way in: a cave mouth in the rock or a carved doorway with steps down
+        Entrance,    // a dungeon's way in: a cave mouth in the rock or a carved doorway with steps down
+        Civic        // a town's landmark on its square: cathedral, market hall, warehouse, mansion, watchtower
+    };
+
+    /** Variants of Tradition::Civic. */
+    enum class Landmark
+    {
+        None = -1, Cathedral = 0, MarketHall = 1, Warehouse = 2, Mansion = 3, Watchtower = 4
     };
 
     struct SettlementSpec
@@ -143,6 +150,8 @@ namespace DarkArisen::Tools::Art
         double MinGround = 1.0;                           // nothing is built lower (shore, ponds)
         int MaxBuildings = 40;
         double Fill = 0.8;                                // share of street plots built on
+        Landmark Centre = Landmark::None;                 // what stands on the square
+        double StreetAngle = 0.0;                         // colonial towns: the grid's axis (degrees), shared by a city's districts
         std::uint32_t Seed = 1;
     };
 

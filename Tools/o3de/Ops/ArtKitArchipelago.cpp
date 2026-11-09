@@ -446,10 +446,19 @@ namespace DarkArisen::Tools::Art
             Settle.Ground = Height;
             Settle.MinGround = Si.Where->Kind == "zone" ? 0.2 : 1.2;
             const bool Sparse = Si.Where->Kind == "zone" || Si.Kind == Tradition::Camp;
-            Settle.MaxBuildings = Si.Kind == Tradition::Colonial ? 90 : Sparse ? 14 : 40;
+            Settle.MaxBuildings = Si.Kind == Tradition::Colonial ? 160 : Sparse ? 14 : 40;
             Settle.Fill = Si.Kind == Tradition::Colonial ? 0.92 : Sparse ? 0.35 : 0.75;
             Settle.Seed = 0;
             for (const char C : Si.Where->Id) Settle.Seed = Settle.Seed * 31u + static_cast<std::uint8_t>(C);
+            // a town's landmark on its square (Rexa's districts by their documents, Ashenmoor's Kota Api, Jernholm's old fort)
+            const std::string& Id = Si.Where->Id;
+            const auto Ends = [&Id](const char* Tail) { const std::string T(Tail); return Id.size() >= T.size() && Id.compare(Id.size() - T.size(), T.size(), T) == 0; };
+            if (Ends(".cathedral")) Settle.Centre = Landmark::Cathedral;
+            else if (Ends(".market") || Ends(".graavig") || Ends(".kota_api")) Settle.Centre = Landmark::MarketHall;
+            else if (Ends(".harbor") || Ends(".smugglers_reach")) Settle.Centre = Landmark::Warehouse;
+            else if (Ends(".noble") || Ends(".plantation_masters_domain")) Settle.Centre = Landmark::Mansion;
+            else if (Ends(".cliffside") || Ends(".jernholm") || Ends(".pirate_encampment")) Settle.Centre = Landmark::Watchtower;
+            Settle.StreetAngle = 12.0;  // Rexa's grid runs up from the harbour
             for (const Structure& B : Kit::SettlementLayout(Settle))
             {
                 auto Known = StructureIndex.find(B.Model);
