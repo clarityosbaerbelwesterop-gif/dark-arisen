@@ -27,7 +27,7 @@ namespace DarkArisen
     /** A building of a settlement (world-build from Locations.json): a shared model and a box for collision. */
     struct WorldStructureModel
     {
-        WorldAsset Model;
+        WorldAsset Model, Material;              // Material.Id invalid: the model keeps its own (lava has one)
         float HalfX = 1, HalfY = 1, Height = 1;  // collision box in the model's frame, base at z = 0
     };
 

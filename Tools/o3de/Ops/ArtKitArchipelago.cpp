@@ -498,8 +498,8 @@ namespace DarkArisen::Tools::Art
                 auto Known = StructureIndex.find(B.Model);
                 if (Known == StructureIndex.end())
                 {
-                    StructureTable += std::string(StructureIndex.empty() ? "" : ",") + "\n    {\"model\": " + ModelRef(B.Model) + ", \"box\": [" + GltfBits::Num(B.HalfX) +
-                                      ", " + GltfBits::Num(B.HalfY) + ", " + GltfBits::Num(B.Height) + "]}";
+                    StructureTable += std::string(StructureIndex.empty() ? "" : ",") + "\n    {\"model\": " + ModelRef(B.Model) + ", \"material\": null, \"box\": [" +
+                                      GltfBits::Num(B.HalfX) + ", " + GltfBits::Num(B.HalfY) + ", " + GltfBits::Num(B.Height) + "]}";
                     Known = StructureIndex.emplace(B.Model, StructureIndex.size()).first;
                 }
                 const int Tile = static_cast<int>(B.Y / TileSize) * static_cast<int>(Spec.Width / TileSize + 0.5) + static_cast<int>(B.X / TileSize);
@@ -509,6 +509,66 @@ namespace DarkArisen::Tools::Art
                 ++Out.Structures;
             }
         }
+        // lava in the craters of the volcanoes the documents call active or erupting (Gunung Ibu, Gunung Anak): a molten
+        // disc on the crater floor, found from the ground itself, drawn with the DarkArisenLava material
+        bool AnyLava = false;
+        for (const WorldLocation& L : Locations)
+        {
+            const bool Live = L.Kind == "volcano" && (L.Id.find("gunung_ibu") != std::string::npos || L.Id.find("gunung_anak") != std::string::npos);
+            if (!Live) continue;
+            int Owner = -1;
+            ArchipelagoHeight(Spec, L.X, L.Y, &Owner);
+            if (Owner < 0 || Spec.Islands[static_cast<std::size_t>(Owner)].Shape != "volcano") continue;  // a dome has no crater to fill
+            const ArchipelagoIsland& I = Spec.Islands[static_cast<std::size_t>(Owner)];
+            // the crater floor: the lowest ground within the summit's reach, then out until the wall rises 6 m above it
+            double Cx = I.X, Cy = I.Y, Floor = Height(I.X, I.Y);
+            for (double R = 0.0; R <= 120.0; R += 20.0)
+                for (int K = 0; K < 8; ++K)
+                {
+                    const double X = I.X + R * Cos(Pi * K / 4.0), Y = I.Y + R * Sin(Pi * K / 4.0), Z = Height(X, Y);
+                    if (Z < Floor) { Floor = Z; Cx = X; Cy = Y; }
+                }
+            double Reach = 0.0;
+            for (double R = 5.0; R < 600.0; R += 5.0)
+            {
+                bool Inside = true;
+                for (int K = 0; K < 16 && Inside; ++K) Inside = Height(Cx + R * Cos(Pi * K / 8.0), Cy + R * Sin(Pi * K / 8.0)) < Floor + 6.0;
+                if (!Inside) break;
+                Reach = R;
+            }
+            if (Reach < 15.0) continue;
+            const std::string Name = "SM_World_Lava_" + L.Id.substr(L.Id.find_last_of('.') + 1);
+            Mesh Lake(Name);
+            std::vector<Vertex> LV{Vertex{V3{0.0, 0.0, 0.0}, V3{0, 0, 1}, 0.5, 0.5}};
+            std::vector<std::uint32_t> LI;
+            const int Segments = 48;
+            for (int K = 0; K < Segments; ++K)
+            {
+                const double A = 2.0 * Pi * K / Segments, Rr = Reach * (0.9 + 0.08 * Sin(3.0 * A) + 0.04 * Cos(7.0 * A));
+                LV.push_back(Vertex{V3{Rr * Cos(A), Rr * Sin(A), 0.0}, V3{0, 0, 1}, 0.5 + 0.5 * Cos(A), 0.5 - 0.5 * Sin(A)});
+                LI.insert(LI.end(), {0u, static_cast<std::uint32_t>(1 + K), static_cast<std::uint32_t>(1 + (K + 1) % Segments)});
+            }
+            Material Molten;
+            Molten.Name = "M_World_Lava";
+            Molten.BaseColor = {1.0, 0.35, 0.05, 1.0};
+            Lake.Indexed(Molten, LV, LI);
+            Out.Files.push_back({"Lava/" + Name + ".gltf", WriteGltf(Lake, "Dark Arisen world-build")});
+            const std::string Model = "Assets/World/Lava/" + Name + ".gltf";
+            StructureTable += std::string(StructureIndex.empty() ? "" : ",") + "\n    {\"model\": " + ModelRef(Model) + ", \"material\": " +
+                              MaterialRef("Assets/World/Materials/M_World_Lava.material") + ", \"box\": [0.5, 0.5, 0.1]}";
+            const std::size_t LavaIndex = StructureIndex.emplace(Model, StructureIndex.size()).first->second;
+            const int Tile = static_cast<int>(Cy / TileSize) * static_cast<int>(Spec.Width / TileSize + 0.5) + static_cast<int>(Cx / TileSize);
+            std::string& List = TileStructures[Tile];
+            List += std::string(List.empty() ? "" : ",") + "[" + std::to_string(LavaIndex) + "," + Cm(Cx) + "," + Cm(Cy) + "," + Cm(Floor + 1.5) + ",0]";
+            ++Out.Structures;
+            AnyLava = true;
+        }
+        if (AnyLava)
+            Out.Files.push_back({"Materials/M_World_Lava.material",
+                "{\n    \"materialType\": \"../../Materials/Types/DarkArisenLava.materialtype\",\n    \"materialTypeVersion\": 1,\n    \"propertyValues\": {\n"
+                "        \"melt.moltenColor\": [1.0, 0.36, 0.06],\n        \"melt.glowIntensity\": 6.0,\n        \"crust.crustColor\": [0.05, 0.04, 0.035],\n"
+                "        \"crust.coverage\": 0.55,\n        \"crust.featureSize\": 6.0,\n        \"crust.roughness\": 0.85\n    }\n}\n"});
+
         const auto BiomeOf = [](const std::string& B)
         {
             if (B == "tropical") return Biome::Tropical;
