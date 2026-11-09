@@ -781,6 +781,7 @@ namespace DarkArisen::Tools::Art
         const auto Furnish = [&](const int V, const double X, const double Y, const double Yaw)
         {
             const Size S = VariantSize(Tradition::Street, V);
+            if (V != 0 && Spec.KeepOff && Spec.KeepOff(X, Y, std::max(S.W, S.D) / 2)) return;
             Props.push_back({"Assets/Art/Models/" + ModelName(Tradition::Street, V) + ".gltf", X, Y, Spec.Ground(X, Y), Yaw, S.W / 2, S.D / 2, S.H});
         };
         {
@@ -839,7 +840,8 @@ namespace DarkArisen::Tools::Art
                         const double Half = std::sqrt(S.W * S.W + S.D * S.D) / 2;
                         const bool OffPlaza = Spec.PlazaRadius < 0.0 ||
                             (Lu - Spec.PlazaU) * (Lu - Spec.PlazaU) + (Lw - Spec.PlazaW) * (Lw - Spec.PlazaW) > (Spec.PlazaRadius + Half) * (Spec.PlazaRadius + Half);
-                        if (Spec.Ground(X, Y) >= Spec.MinGround && OffPlaza && Clear(X, Y, Half + 3.0))
+                        const bool OffRoad = !Spec.KeepOff || !Spec.KeepOff(X, Y, Half);
+                        if (Spec.Ground(X, Y) >= Spec.MinGround && OffPlaza && OffRoad && Clear(X, Y, Half + 3.0))
                         {
                             Place(Houses, V, X, Y, Spec.StreetAngle + (Side < 0 ? 0.0 : 180.0));  // doors (-Y) on the street
                             if (R.Unit() < 0.3) Dress(Houses, V, X, Y, Spec.StreetAngle + (Side < 0 ? 0.0 : 180.0));
@@ -878,6 +880,7 @@ namespace DarkArisen::Tools::Art
             const Size S = VariantSize(Houses, V);
             const double Jitter = R.Range(-14.0, 14.0);
             if (R.Unit() > Spec.Fill || !Free(X, Y, std::max(S.W, S.D) / 2 + (Spec.Kind == Tradition::Camp ? 2.0 : 4.0))) continue;
+            if (Spec.KeepOff && Spec.KeepOff(X, Y, std::max(S.W, S.D) / 2)) continue;
             if (Spec.PlazaRadius >= 0.0)
             {
                 const auto [Px, Py] = GridToWorld(Spec.PlazaU, Spec.PlazaW);

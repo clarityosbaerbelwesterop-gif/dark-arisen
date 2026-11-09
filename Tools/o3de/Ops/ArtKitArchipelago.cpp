@@ -334,7 +334,9 @@ namespace DarkArisen::Tools::Art
                 const RoadPoint P = NearestOnRoad(Roads[K], X, Y);
                 const double Half = Roads[K].Width / 2 + 1.0;
                 if (P.Distance >= Half + 10.0) continue;
-                H = H + (P.Z - H) * Smooth(Half + 10.0, Half, P.Distance);
+                // under a stair the ground lies below the treads, so the steps stand on it rather than in it
+                const double Bed = Roads[K].Kind == "stairs" ? 0.7 : 0.0;
+                H = H + (P.Z - Bed - H) * Smooth(Half + 10.0, Half, P.Distance);
             }
             return H;
         };
@@ -600,6 +602,16 @@ namespace DarkArisen::Tools::Art
             Settle.StallPitch = Plan.StallPitch;
             Settle.StallMax = Plan.StallMax;
             Settle.Benches = Plan.Benches;
+            Settle.KeepOff = [&Roads, &RoadBoxes](const double X, const double Y, const double Reach)
+            {
+                for (std::size_t K = 0; K < Roads.size(); ++K)
+                {
+                    const RoadBox& Box = RoadBoxes[K];
+                    if (X < Box.X0 - Reach || X > Box.X1 + Reach || Y < Box.Y0 - Reach || Y > Box.Y1 + Reach) continue;
+                    if (NearestOnRoad(Roads[K], X, Y).Distance < Roads[K].Width / 2 + 1.5 + Reach) return true;
+                }
+                return false;
+            };
             Settle.Seed = 0;
             for (const char C : Si.Where->Id) Settle.Seed = Settle.Seed * 31u + static_cast<std::uint8_t>(C);
             // a town's landmark on its square (Rexa's districts by their documents, Ashenmoor's Kota Api, Jernholm's old fort)
@@ -625,27 +637,56 @@ namespace DarkArisen::Tools::Art
             const bool Stairs = Road.Kind == "stairs";
             if (Stairs)
             {
-                // one flight of steps the width of the stair, about 16 cm a step (E2: 328 steps), on the graded ramp
+                // flights of twenty steps of about 16 cm (E2: 328 steps) with a landing between, following the stair's line
+                // (with its switchbacks), between parapets that step with the treads (layout.md 3.2)
                 const WorldRoad::Point A = Road.Points.front(), B = Road.Points.back();
-                const double Dx = B.X - A.X, Dy = B.Y - A.Y, Run = std::sqrt(Dx * Dx + Dy * Dy), Rise = B.Z - A.Z;
+                std::vector<double> At{0.0};
+                for (std::size_t K = 0; K + 1 < Road.Points.size(); ++K)
+                    At.push_back(At.back() + std::sqrt((Road.Points[K + 1].X - Road.Points[K].X) * (Road.Points[K + 1].X - Road.Points[K].X) +
+                                                       (Road.Points[K + 1].Y - Road.Points[K].Y) * (Road.Points[K + 1].Y - Road.Points[K].Y)));
+                const double Run = At.back(), Rise = B.Z - A.Z;
+                // where along the line (S metres) the stair is, and which way it runs there
+                const auto Along = [&](const double S, double& X, double& Y, double& Dx, double& Dy)
+                {
+                    std::size_t K = 0;
+                    while (K + 2 < At.size() && S > At[K + 1]) ++K;
+                    const double Len = std::max(At[K + 1] - At[K], 1e-9), T = Clamp((S - At[K]) / Len, 0.0, 1.0);
+                    Dx = (Road.Points[K + 1].X - Road.Points[K].X) / Len;
+                    Dy = (Road.Points[K + 1].Y - Road.Points[K].Y) / Len;
+                    X = Road.Points[K].X + (Road.Points[K + 1].X - Road.Points[K].X) * T - A.X;
+                    Y = Road.Points[K].Y + (Road.Points[K + 1].Y - Road.Points[K].Y) * T - A.Y;
+                };
                 const int Steps = std::max(1, static_cast<int>(std::fabs(Rise) / 0.16 + 0.5));
+                const int Flights = (Steps + 19) / 20, Landings = Flights - 1;
+                const double Landing = std::min(3.0, Run * 0.25 / std::max(Landings, 1));
+                const double Tread = (Run - Landing * Landings) / Steps, Riser = Rise / Steps;
                 Mesh Flight("SM_World_Stairs_" + Road.Id.substr(Road.Id.find_last_of('.') + 1));
+                double S = 0.0, Z = 0.0;
                 for (int K = 0; K < Steps; ++K)
                 {
-                    const double T = (K + 0.5) / Steps, Top = Rise * (Rise > 0.0 ? (K + 1.0) : static_cast<double>(K)) / Steps;
-                    OrientedBox(Flight, Mat(M::Stone), {Dx * T, Dy * T, Top - 0.35}, Dx, Dy, {Run / Steps / 2 + 0.01, Road.Width / 2, 0.35});
-                }
-                // low parapets either side, one block per twenty steps
-                for (int K = 0; K < Steps; K += 20)
-                {
-                    const int Last = std::min(Steps, K + 20);
-                    const double T = (K + Last) * 0.5 / Steps, Top = Rise * (K + Last) * 0.5 / Steps;
-                    for (const double Side : {-1.0, 1.0})
-                        OrientedBox(Flight, Mat(M::StoneDark), {Dx * T - Dy / Run * Side * (Road.Width / 2 + 0.25), Dy * T + Dx / Run * Side * (Road.Width / 2 + 0.25), Top + 0.1}, Dx, Dy,
-                            {Run * (Last - K) / Steps / 2, 0.25, 0.7});
+                    // the last step of a flight carries on as its landing; a long piece is laid in pieces so it turns with the line
+                    const double Top = Z + (Riser > 0.0 ? Riser : 0.0);
+                    const double Length = Tread + ((K + 1) % 20 == 0 && K + 1 < Steps ? Landing : 0.0);
+                    const int Pieces = std::max(1, static_cast<int>(Length / 1.0 + 0.5));
+                    for (int P = 0; P < Pieces; ++P)
+                    {
+                        double X, Y, Dx, Dy;
+                        Along(S + Length * (P + 0.5) / Pieces, X, Y, Dx, Dy);
+                        const double Half = Length / Pieces / 2 + 0.02;
+                        OrientedBox(Flight, Mat(M::Paving), {X, Y, Top - 0.3}, Dx, Dy, {Half, Road.Width / 2, 0.3});
+                        for (const double Side : {-1.0, 1.0})
+                            OrientedBox(Flight, Mat(M::StoneDark), {X - Dy * Side * (Road.Width / 2 + 0.25), Y + Dx * Side * (Road.Width / 2 + 0.25), Top - 0.05}, Dx, Dy,
+                                {Half, 0.25, 0.95});
+                    }
+                    S += Length;
+                    Z += Riser;
                 }
                 const std::string Name = Flight.Name();
-                Out.Files.push_back({"Stairs/" + Name + ".gltf", WriteGltf(Flight, "Dark Arisen world-build")});
+                // the kit's glTF points at ../Textures and ../Scanned (from Assets/Art/Models); the stairs live in Assets/World/Stairs
+                std::string Gltf = WriteGltf(Flight, "Dark Arisen world-build");
+                const std::string From = "\"uri\":\"../", To = "\"uri\":\"../../Art/";
+                for (std::size_t At = Gltf.find(From); At != std::string::npos; At = Gltf.find(From, At + To.size())) Gltf.replace(At, From.size(), To);
+                Out.Files.push_back({"Stairs/" + Name + ".gltf", Gltf});
                 AddStructure({"Assets/World/Stairs/" + Name + ".gltf", A.X, A.Y, A.Z, 0.0, 0.5, 0.5, 0.1});
             }
             double Walked = 0.0, NextLamp = 10.0, NextHouse = R.Range(20.0, 40.0);

@@ -165,6 +165,7 @@ namespace DarkArisen::Tools::Art
         double StallRadius = 0, StallPitch = 5;           // market stalls in a ring round the square (0: none)
         int StallMax = 0;
         int Benches = 0;                                  // benches round the square's edge
+        std::function<bool(double, double, double)> KeepOff;  // true where a road runs within the reach of (x, y)
     };
 
     /** One building of a settlement: a shared model, its placement and a box for collision. */
