@@ -406,6 +406,11 @@ namespace DarkArisen::Tools::Art
                 const double SandW = Biome == "mire" || Biome == "volcanic" || Biome == "maw" ? 0.0 : Shore;
                 for (int C = 0; C < 3; ++C) Col[C] = Col[C] + (Sand[C] - Col[C]) * SandW * (1.0 - Steep);
                 for (int C = 0; C < 3; ++C) Col[C] = Col[C] + (Rock[C] - Col[C]) * Steep;
+                // the streets keep their own colour: weathered grey cobbles in the towns, bare earth on the village paths
+                // (the macro re-tints every layer, so without this the paving takes the grass's green)
+                static const double Cobble[3] = {0.35, 0.33, 0.30}, Path[3] = {0.36, 0.29, 0.21};
+                for (int C = 0; C < 3; ++C) Col[C] = Col[C] + (Path[C] - Col[C]) * Trodden * (1.0 - Steep);
+                for (int C = 0; C < 3; ++C) Col[C] = Col[C] + (Cobble[C] - Col[C]) * W[3] * (InTown ? 1.0 : 0.0);
                 std::uint8_t* M = &Macro.Pixels[static_cast<std::size_t>((J * Tw + K) * 3)];
                 for (int C = 0; C < 3; ++C) M[C] = static_cast<std::uint8_t>(std::lround(std::clamp(Col[C], 0.0, 1.0) * 255.0));
             }

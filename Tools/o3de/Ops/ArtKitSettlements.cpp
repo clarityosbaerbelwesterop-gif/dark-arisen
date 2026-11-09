@@ -39,7 +39,7 @@ namespace DarkArisen::Tools::Art
             }
             case Tradition::Civic:
             {
-                static const Size Civic[] = {{16.0, 36.0, 14.0}, {18.0, 26.0, 6.0}, {14.0, 30.0, 8.0}, {22.0, 16.0, 11.0}, {7.0, 7.0, 16.0}};
+                static const Size Civic[] = {{26.0, 50.0, 16.0}, {18.0, 26.0, 6.0}, {14.0, 30.0, 8.0}, {22.0, 16.0, 11.0}, {7.0, 7.0, 16.0}};
                 return Civic[V % 5];
             }
             case Tradition::Lighthouse: default: return {5.0, 5.0, 18.0};
@@ -83,6 +83,113 @@ namespace DarkArisen::Tools::Art
             Out.Quad(Roof, {X1, Y1, Z}, {X0, Y1, Z}, {-R, 0.0, Top}, {R, 0.0, Top}, true);
             Out.Quad(Roof, {X1, Y0, Z}, {X1, Y1, Z}, {R, 0.0, Top}, {R, 0.0, Top}, true);
             Out.Quad(Roof, {X0, Y1, Z}, {X0, Y0, Z}, {-R, 0.0, Top}, {-R, 0.0, Top}, true);
+        }
+
+        // ---------------------------------------------------------------- masonry details (walls face -Y in the local frame)
+
+        /** Round-headed panel on the wall plane y = Y facing -Y: a rectangle W wide from Z0 to the springing at Z0 + H, then a semicircle. */
+        void ArchPanel(Mesh& Out, const Material& M, const double X, const double Y, const double Z0, const double W, const double H)
+        {
+            Out.Box(M, {X - W / 2, Y - 0.02, Z0}, {X + W / 2, Y, Z0 + H});
+            std::vector<V3> Head;
+            for (int K = 0; K <= 10; ++K)
+            {
+                const double A = Pi * K / 10.0;
+                Head.push_back({X + W / 2 * Cos(A), Y - 0.02, Z0 + H + W / 2 * Sin(A)});
+            }
+            Out.Fan(M, Head, {0.0, -1.0, 0.0});
+        }
+
+        /** A round-headed window or door: a stone surround standing proud of the wall and the opening inside it. */
+        void ArchedOpening(Mesh& Out, const Material& Surround, const Material& Fill, const double X, const double Z0, const double W, const double H)
+        {
+            ArchPanel(Out, Surround, X, -0.03, Z0 - 0.2, W + 0.5, H + 0.2);
+            ArchPanel(Out, Fill, X, -0.06, Z0, W, H);
+            Out.Box(Surround, {X - W / 2 - 0.35, -0.22, Z0 - 0.3}, {X + W / 2 + 0.35, 0.0, Z0 - 0.12});  // the sill
+        }
+
+        /** Round window (oculus) of radius R centred at (X, Z) with a moulded ring. */
+        void Oculus(Mesh& Out, const Material& Ring, const Material& Fill, const double X, const double Z, const double R)
+        {
+            Out.Push(Xf::Translate({X, 0.0, Z}) * Xf::RotateX(Pi / 2));
+            Out.Tube(Ring, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.25}, R + 0.3, R + 0.3, 20);
+            Out.Pop();
+            std::vector<V3> Disc;
+            for (int K = 0; K < 20; ++K)
+            {
+                const double A = 2.0 * Pi * K / 20.0;
+                Disc.push_back({X + R * Cos(A), -0.27, Z + R * Sin(A)});
+            }
+            Out.Fan(Fill, Disc, {0.0, -1.0, 0.0});
+        }
+
+        /** Projecting course (cornice, string course or plinth) round a W x D block at Z. */
+        void Course(Mesh& Out, const Material& M, const double W, const double D, const double Z, const double Height, const double Projection)
+        {
+            Out.Box(M, {-W / 2 - Projection, -D / 2 - Projection, Z}, {W / 2 + Projection, D / 2 + Projection, Z + Height});
+        }
+
+        /** Dressed corner stones (quoins) up the four corners of a W x D block, alternating long and short. */
+        void Quoins(Mesh& Out, const Material& M, const double W, const double D, const double Z0, const double Z1)
+        {
+            int K = 0;
+            for (double Z = Z0; Z + 0.45 <= Z1; Z += 0.5, ++K)
+                for (const double Sx : {-1.0, 1.0})
+                    for (const double Sy : {-1.0, 1.0})
+                    {
+                        const double Lx = K % 2 ? 0.9 : 0.5, Ly = K % 2 ? 0.5 : 0.9;
+                        const double Cx = Sx * W / 2, Cy = Sy * D / 2;
+                        Out.Box(M, {std::min(Cx, Cx - Sx * Lx) - (Sx < 0 ? 0.05 : 0.0), std::min(Cy, Cy - Sy * Ly) - (Sy < 0 ? 0.05 : 0.0), Z},
+                                {std::max(Cx, Cx - Sx * Lx) + (Sx > 0 ? 0.05 : 0.0), std::max(Cy, Cy - Sy * Ly) + (Sy > 0 ? 0.05 : 0.0), Z + 0.45});
+                    }
+        }
+
+        /** Dome of radius R springing at Z (Rise tall) over (X, Y), with Rings bands so it shades smoothly. */
+        void Dome(Mesh& Out, const Material& M, const double X, const double Y, const double Z, const double R, const double Rise, const int Sides)
+        {
+            std::vector<Ring> Rings;
+            for (int K = 0; K <= 8; ++K)
+            {
+                const double A = Pi / 2 * K / 8.0;
+                const double Radius = std::max(R * Cos(A), 0.04);
+                Rings.push_back(Ellipse(X, Y, Z + Rise * Sin(A), Radius, Radius, Sides));
+            }
+            Out.Loft(M, Rings, true);
+        }
+
+        /** Iron (or gilt) cross standing on (X, Y, Z). */
+        void CrossOn(Mesh& Out, const Material& M, const double X, const double Y, const double Z, const double Height)
+        {
+            Out.Box(M, {X - 0.08, Y - 0.08, Z}, {X + 0.08, Y + 0.08, Z + Height});
+            Out.Box(M, {X - Height * 0.3, Y - 0.07, Z + Height * 0.62}, {X + Height * 0.3, Y + 0.07, Z + Height * 0.74});
+        }
+
+        /** Bell tower: a quoined shaft, a string course, a belfry pierced on every face, a cornice, an octagonal cupola. */
+        void BellTower(Mesh& Out, const double X, const double Y, const double Side, const double Shaft, const double Belfry)
+        {
+            Out.Push(Xf::Translate({X, Y, 0.0}));
+            Out.Box(Mat(M::Plaster), {-Side / 2, -Side / 2, 0.0}, {Side / 2, Side / 2, Shaft + Belfry});
+            Quoins(Out, Mat(M::Stone), Side, Side, 1.0, Shaft);
+            Course(Out, Mat(M::Stone), Side, Side, Shaft, 0.5, 0.25);
+            for (int Face = 0; Face < 4; ++Face)
+            {
+                // every face of the belfry: an arched opening onto the bells' dark
+                Out.Push(Xf::RotateZ(Pi / 2 * Face) * Xf::Translate({0.0, -Side / 2, 0.0}));
+                ArchedOpening(Out, Mat(M::Stone), Mat(M::StoneDark), 0.0, Shaft + 1.2, Side * 0.42, Belfry - 2.4 - Side * 0.21);
+                Out.Pop();
+            }
+            Course(Out, Mat(M::Stone), Side, Side, Shaft + Belfry, 0.7, 0.4);
+            const double Top = Shaft + Belfry + 0.7;
+            Out.Tube(Mat(M::Plaster), {0.0, 0.0, Top}, {0.0, 0.0, Top + 2.6}, Side * 0.4, Side * 0.4, 8);
+            Out.Tube(Mat(M::Stone), {0.0, 0.0, Top + 2.6}, {0.0, 0.0, Top + 2.9}, Side * 0.44, Side * 0.44, 8);
+            Dome(Out, Mat(M::RoofTile), 0.0, 0.0, Top + 2.9, Side * 0.42, Side * 0.36, 8);
+            Out.Tube(Mat(M::Brass), {0.0, 0.0, Top + 2.9 + Side * 0.36 - 0.1}, {0.0, 0.0, Top + 2.9 + Side * 0.36 + 0.9}, 0.35, 0.18, 8);
+            CrossOn(Out, Mat(M::Iron), 0.0, 0.0, Top + 3.7 + Side * 0.36, 1.8);
+            // the corners of the cornice carry small pinnacles
+            for (const double Sx : {-1.0, 1.0})
+                for (const double Sy : {-1.0, 1.0})
+                    Out.Tube(Mat(M::Stone), {Sx * (Side / 2 - 0.1), Sy * (Side / 2 - 0.1), Top}, {Sx * (Side / 2 - 0.1), Sy * (Side / 2 - 0.1), Top + 1.6}, 0.32, 0.03, 6);
+            Out.Pop();
         }
 
         /** Door (dark inset) in the -Y wall and windows along both long walls. */
@@ -218,22 +325,98 @@ namespace DarkArisen::Tools::Art
                 {
                 case 0:
                 {
-                    // the cathedral: a nave under a tiled gable, a bell tower over the west door (-Y), an apse
-                    Out.Box(Mat(M::PlasterOchre), {-S.W / 2, -S.D / 2, 0.0}, {S.W / 2, S.D / 2, S.H});
-                    Mesh Nave(Name + "_Nave");
-                    Gable(Nave, Mat(M::RoofTile), Mat(M::PlasterOchre), S.D, S.W, S.H, 6.0, 0.6);
-                    Out.Push(Xf::RotateZ(Pi / 2));  // the ridge runs the nave's length (Y)
-                    Out.Append(Nave);
+                    // La Catedral de los Huesos (region_02_rexa_city.md 2.3: "quiet, oppressive, holy; painted gold over
+                    // rot"): a Spanish colonial basilica. Twin bell towers flank a baroque frontispiece on the west front
+                    // (-Y); a tall nave between lower aisles, a dome on a drum over the crossing, a half-round apse. Its
+                    // plaster is ochre gone grey at the foot; the only gold is the lanterns and the finials.
+                    const double Front = -S.D / 2, Back = S.D / 2, Nave = 6.0, Aisle = 13.0, NaveH = 16.0, AisleH = 10.0;
+                    constexpr int Bays = 6;
+                    const double Bay = (Back - 6.0 - (Front + 7.0) - 1.2) / Bays, Crossing = Back - 12.0;
+                    // plinth all round, the stone gone dark with damp
+                    Out.Box(Mat(M::StoneDark), {-Aisle - 0.3, Front + 6.7, -0.6}, {Aisle + 0.3, Back - 5.7, 1.1});
+                    // nave and aisles
+                    Out.Box(Mat(M::PlasterOchre), {-Nave, Front + 1.0, 0.0}, {Nave, Back - 6.0, NaveH});
+                    for (const double Side : {-1.0, 1.0})
+                    {
+                        Out.Box(Mat(M::PlasterOchre), {Side > 0 ? Nave : -Aisle, Front + 7.0, 0.0}, {Side > 0 ? Aisle : -Nave, Back - 6.0, AisleH});
+                        // the aisle's lean-to roof, from under the clerestory down over its wall
+                        const double In = Side * Nave, OutX = Side * (Aisle + 0.5);
+                        Out.Quad(Mat(M::RoofTile), {In, Front + 6.6, AisleH + 2.2}, {In, Back - 5.6, AisleH + 2.2}, {OutX, Back - 5.6, AisleH - 0.15},
+                                 {OutX, Front + 6.6, AisleH - 0.15}, true);
+                        Out.Box(Mat(M::Stone), {Side > 0 ? Aisle - 0.05 : -Aisle - 0.45, Front + 6.8, AisleH - 0.6}, {Side > 0 ? Aisle + 0.45 : -Aisle + 0.05, Back - 5.8, AisleH - 0.15});
+                        // the aisle wall: a pilaster between every bay and a round-headed window in each
+                        Out.Push(Xf::Translate({Side * Aisle, 0.0, 0.0}) * Xf::RotateZ(Side * Pi / 2));
+                        for (int K = 0; K <= Bays; ++K)
+                        {
+                            const double Along = Side * (Front + 7.6 + K * Bay - (Front + Back) / 2);
+                            Out.Box(Mat(M::Plaster), {Along - 0.45, -0.35, 1.1}, {Along + 0.45, 0.0, AisleH - 0.6});
+                            if (K < Bays) ArchedOpening(Out, Mat(M::Stone), Mat(M::Glass), Along + Side * Bay / 2, 3.2, 1.5, 3.4);
+                        }
+                        Out.Pop();
+                        // clerestory: an oculus per bay above the aisle roof
+                        Out.Push(Xf::Translate({Side * Nave, 0.0, 0.0}) * Xf::RotateZ(Side * Pi / 2));
+                        for (int K = 0; K < Bays; ++K) Oculus(Out, Mat(M::Stone), Mat(M::Glass), Side * (Front + 7.6 + (K + 0.5) * Bay - (Front + Back) / 2), 14.0, 0.7);
+                        Out.Pop();
+                    }
+                    Out.Box(Mat(M::Stone), {-Nave - 0.4, Front + 1.0, NaveH - 0.7}, {Nave + 0.4, Back - 6.0, NaveH});
+                    Mesh Roof(Name + "_Roof");
+                    Gable(Roof, Mat(M::RoofTile), Mat(M::PlasterOchre), Back - Front - 7.0, 2.0 * Nave, NaveH, 4.5, 0.4);
+                    Out.Push(Xf::Translate({0.0, (Front + 1.0 + Back - 6.0) / 2, 0.0}) * Xf::RotateZ(Pi / 2));  // ridge along the nave
+                    Out.Append(Roof);
                     Out.Pop();
-                    Out.Box(Mat(M::Plaster), {-4.0, -S.D / 2 - 7.0, 0.0}, {4.0, -S.D / 2 + 1.0, S.H + 14.0});
-                    Out.Push(Xf::Translate({0.0, -S.D / 2 - 3.0, 0.0}));  // the spire on the tower, not on the nave
-                    Hip(Out, Mat(M::RoofTile), 8.0, 8.0, S.H + 14.0, 5.0, 0.3);
+                    // the crossing: an octagonal drum with windows, a tiled dome, a gilt lantern
+                    Out.Tube(Mat(M::Plaster), {0.0, Crossing, NaveH}, {0.0, Crossing, NaveH + 5.0}, 5.4, 5.4, 16);
+                    for (int K = 0; K < 8; ++K)
+                    {
+                        const double A = Pi / 4 * K + Pi / 8;
+                        Out.Push(Xf::Translate({5.45 * Cos(A), Crossing + 5.45 * Sin(A), 0.0}) * Xf::RotateZ(A + Pi / 2));
+                        ArchPanel(Out, Mat(M::Glass), 0.0, 0.0, NaveH + 1.2, 1.1, 2.2);
+                        Out.Pop();
+                    }
+                    Out.Tube(Mat(M::Stone), {0.0, Crossing, NaveH + 5.0}, {0.0, Crossing, NaveH + 5.6}, 5.9, 5.9, 16);
+                    Dome(Out, Mat(M::RoofTile), 0.0, Crossing, NaveH + 5.6, 5.6, 5.2, 24);
+                    Out.Tube(Mat(M::Brass), {0.0, Crossing, NaveH + 10.6}, {0.0, Crossing, NaveH + 12.4}, 1.0, 1.0, 8);
+                    Dome(Out, Mat(M::Brass), 0.0, Crossing, NaveH + 12.4, 1.15, 1.1, 8);
+                    CrossOn(Out, Mat(M::Brass), 0.0, Crossing, NaveH + 13.4, 2.4);
+                    // the apse: half round under a conical roof
+                    Out.Tube(Mat(M::PlasterOchre), {0.0, Back - 6.0, 0.0}, {0.0, Back - 6.0, NaveH - 2.0}, 6.0, 6.0, 20);
+                    Out.Tube(Mat(M::Stone), {0.0, Back - 6.0, NaveH - 2.6}, {0.0, Back - 6.0, NaveH - 2.0}, 6.4, 6.4, 20);
+                    Out.Tube(Mat(M::RoofTile), {0.0, Back - 6.0, NaveH - 2.0}, {0.0, Back - 6.0, NaveH + 2.6}, 6.6, 0.2, 20, false);
+                    // west front: two bell towers and between them the frontispiece
+                    for (const double Side : {-1.0, 1.0}) BellTower(Out, Side * (Aisle - 3.5), Front + 3.5, 7.0, 17.5, 7.0);
+                    Out.Box(Mat(M::Plaster), {-Nave - 0.5, Front + 0.3, 0.0}, {Nave + 0.5, Front + 1.3, 19.5});
+                    Out.Push(Xf::Translate({0.0, Front + 0.3, 0.0}));
+                    Out.Box(Mat(M::StoneDark), {-Nave - 0.6, -0.15, -0.6}, {Nave + 0.6, 0.05, 1.1});
+                    // the portal: a stone arch on paired columns, the great door, a niche either side, the rose above
+                    ArchedOpening(Out, Mat(M::Stone), Mat(M::TimberDark), 0.0, 1.1, 3.4, 4.4);
+                    for (const double X : {-2.6, 2.6})
+                        Out.Tube(Mat(M::Stone), {X, -0.45, 1.1}, {X, -0.45, 7.4}, 0.32, 0.28, 10);
+                    Out.Box(Mat(M::Stone), {-3.3, -0.8, 7.4}, {3.3, 0.0, 8.0});
+                    for (const double X : {-4.4, 4.4}) ArchedOpening(Out, Mat(M::Stone), Mat(M::StoneDark), X, 2.4, 1.1, 2.4);
+                    Out.Box(Mat(M::Stone), {-Nave - 0.6, -0.35, 9.0}, {Nave + 0.6, 0.0, 9.5});
+                    Oculus(Out, Mat(M::Stone), Mat(M::Glass), 0.0, 13.0, 2.0);
+                    Out.Box(Mat(M::Stone), {-Nave - 0.6, -0.4, 17.0}, {Nave + 0.6, 0.0, 17.6});
+                    // a curved baroque crown over the frontispiece, scrolls at its feet, a gilt cross on top
+                    std::vector<V3> Crown;
+                    for (int K = 0; K <= 12; ++K)
+                    {
+                        const double A = Pi * K / 12.0;
+                        Crown.push_back({4.2 * Cos(A), -0.02, 19.5 + 2.6 * Sin(A)});
+                    }
+                    Out.Fan(Mat(M::Plaster), Crown, {0.0, -1.0, 0.0});
+                    Out.Push(Xf::Translate({0.0, 1.0, 0.0}) * Xf::RotateZ(Pi));
+                    Out.Fan(Mat(M::Plaster), Crown, {0.0, -1.0, 0.0});
                     Out.Pop();
-                    Out.Tube(Mat(M::PlasterOchre), {0.0, S.D / 2, 0.0}, {0.0, S.D / 2, S.H * 0.85}, 6.5, 6.5, 16);
-                    Out.Box(Mat(M::TimberDark), {-1.4, -S.D / 2 - 7.08, 0.0}, {1.4, -S.D / 2 - 6.9, 4.6});
-                    for (int K = 0; K < 5; ++K)
-                        for (const double X : {-S.W / 2 - 0.05, S.W / 2 + 0.05})
-                            Out.Box(Mat(M::Glass), {X - 0.05, -S.D / 2 + 4.0 + K * 6.0, 4.0}, {X + 0.05, -S.D / 2 + 5.8 + K * 6.0, 9.5});
+                    for (const double X : {-5.4, 5.4})
+                    {
+                        Out.Push(Xf::Translate({X, 0.5, 19.5}) * Xf::RotateY(Pi / 2));
+                        Out.Tube(Mat(M::Stone), {0.0, 0.0, -0.6}, {0.0, 0.0, 0.6}, 0.9, 0.9, 12);
+                        Out.Pop();
+                    }
+                    CrossOn(Out, Mat(M::Brass), 0.0, 0.5, 22.1, 2.0);
+                    // three steps up to the doors
+                    for (int K = 0; K < 3; ++K) Out.Box(Mat(M::Stone), {-7.0 + K * 0.4, -2.4 + K * 0.6, -0.6}, {7.0 - K * 0.4, 0.0, 0.35 * (K + 1)});
+                    Out.Pop();
                     break;
                 }
                 case 1:
