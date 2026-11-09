@@ -384,6 +384,91 @@ namespace DarkArisen::Tools::Art::Humans
                 Add(P);
             }
 
+            // ---- La Viuda Negra: 47 and looking ten years younger, 1.72 m, slender; deep black hair in a severe chignon with one
+            // silver streak at the right temple; pale, almost translucent skin; dark brown eyes; high cheekbones, strong jaw, thin
+            // lips; a black high-collared Spanish mourning dress of silk, black boots, Rodrigo's locket (la_viuda_negra.md 2).
+            {
+                PersonSpec P;
+                P.Id = "viuda_negra";
+                P.Male = 0.0; P.Age = 40; P.Muscle = 0.4; P.Weight = 0.3; P.Proportions = 0.92; P.Height = 1.72; P.BreastSize = 0.4;
+                P.Detail = {{"cheek/l-cheek-bones-incr", 0.7}, {"cheek/r-cheek-bones-incr", 0.7}, {"chin/chin-width-incr", 0.35}, {"head/head-fat-decr", 0.4},
+                    {"mouth/mouth-upperlip-volume-decr", 0.5}, {"mouth/mouth-lowerlip-volume-decr", 0.4}};
+                P.Skin = Rgb{0.9, 0.78, 0.72}; P.Weathered = 0.03; P.Eyes = DarkEyes;
+                P.Hair = HairBlack; P.Gray = 0.05; P.Hairdo = HairStyle::PinnedUp; P.HairVolume = 0.8;
+                P.Shirt = Top(Black, Cloth::Silk, 1.97, 0.12);
+                P.Shirt.Roughness = 0.35;
+                P.Dress = LongSkirt(Black, Cloth::Silk, 1.97);
+                P.Dress.Flare = 0.16;
+                P.Feet = Boots(Black, 1.5, 0.3);
+                P.Necklace = true;
+                P.Clip = "13_26"; P.Time = 9.4; P.Upright = 0.9;
+                Add(P);
+            }
+            // ---- Capitan Rojas: 56 and looking younger, 1.78 m, athletic; black hair cut short in the imperial naval style, grey at
+            // the temples; a precise goatee; deep tan; tailored black coat with dark crimson piping, white linen shirt, black
+            // trousers, high polished boots; a pair of curved sabres; an officer's bearing (captain_rojas.md 2).
+            {
+                PersonSpec P;
+                P.Id = "rojas";
+                P.Age = 50; P.Muscle = 0.75; P.Weight = 0.4; P.Proportions = 0.9; P.Height = 1.78;
+                P.Caucasian = 0.8; P.African = 0.1; P.Asian = 0.1;
+                P.Detail = {{"head/head-square", 0.4}, {"chin/chin-prominent-incr", 0.3}, {"eyebrows/eyebrows-trans-down", 0.2}};
+                P.Skin = Tanned; P.Weathered = 0.6; P.Wrinkles = 0.3; P.Eyes = BrownEyes;
+                P.Hair = HairBlack; P.Gray = 0.25; P.Hairdo = HairStyle::Cropped; P.Beard = BeardStyle::Trimmed; P.BeardLength = 0.1;
+                P.Scars = {{V3{0.32, -0.9, 0.1}, V3{0.42, -0.55, -0.1}, 0.05, true}};
+                P.Shirt = Top(White, Cloth::Linen, 1.95, 0.45);
+                P.Coat = Coat(Black, Cloth::Wool, 0.35, 8);
+                P.Coat.Trimmed = true; P.Coat.Trim = Crimson; P.Coat.ButtonColor = Black; P.Coat.Wear = 0.15;
+                P.Tails = Tails(Black, Cloth::Wool, 0.95, 0.4);
+                P.Tails.Trimmed = true; P.Tails.Trim = Crimson;
+                P.Legs = Trousers(Black, Cloth::Wool, 1.9);
+                P.Feet = Boots(Black, 1.15, 0.2);
+                P.Belt = Belt(Black);
+                P.Cutlass = true;
+                P.Clip = "40_10"; P.Time = 0.4; P.Upright = 1.0;
+                Add(P);
+            }
+            // ---- El Medico: 54 and looking younger, 1.80 m, thin and ascetic; silver-grey hair combed back; clean-shaven; pale blue
+            // eyes; a gaunt, refined face; a spotless white surgical apron over a charcoal-grey suit; thin leather gloves; a
+            // bandolier of scalpels (el_medico.md 2).
+            {
+                PersonSpec P;
+                P.Id = "medico";
+                P.Age = 48; P.Muscle = 0.35; P.Weight = 0.2; P.Proportions = 0.9; P.Height = 1.8;
+                P.Detail = {{"head/head-fat-decr", 0.7}, {"cheek/l-cheek-volume-decr", 0.5}, {"cheek/r-cheek-volume-decr", 0.5}, {"nose/nose-scale-vert-incr", 0.2}};
+                P.Skin = Fair; P.Weathered = 0.05; P.Wrinkles = 0.15; P.Eyes = PaleBlue;
+                P.Hair = HairIron; P.Gray = 0.85; P.Hairdo = HairStyle::SlickedBack;
+                P.Shirt = Top(White, Cloth::Cotton, 1.95, 0.4);
+                P.Vest = Vest(Rgb{0.2, 0.2, 0.21}, Cloth::Wool, 6);
+                P.Coat = Coat(Rgb{0.22, 0.22, 0.23}, Cloth::Wool, 0.4, 4);
+                P.Legs = Trousers(Rgb{0.22, 0.22, 0.23}, Cloth::Wool, 1.9);
+                P.Feet = Boots(Black, 1.95, 0.25);
+                P.Front.On = true; P.Front.Color = Rgb{0.93, 0.92, 0.9}; P.Front.Fabric = Cloth::Cotton; P.Front.Top = 0.45; P.Front.Hem = 1.5;
+                P.Sash = Sash(Leather, false);
+                P.Clip = "18_08"; P.Time = 9.8; P.Upright = 0.9;
+                Add(P);
+            }
+            // ---- Don Mateo Salazar: mid-fifties and moving like thirty, 1.85 m, thin and upright; pale, gaunt, high cheekbones; a
+            // trimmed black beard streaked with silver; a pristine white linen suit with old bloodstains he will not wash out, a
+            // red silk cravat, white leather gloves (don_mateo_salazar.md 2).
+            {
+                PersonSpec P;
+                P.Id = "salazar";
+                P.Age = 55; P.Muscle = 0.45; P.Weight = 0.22; P.Proportions = 0.95; P.Height = 1.85;
+                P.Detail = {{"head/head-fat-decr", 0.6}, {"cheek/l-cheek-bones-incr", 0.7}, {"cheek/r-cheek-bones-incr", 0.7}, {"head/head-oval", 0.3}};
+                P.Skin = Pale; P.Weathered = 0.1; P.Wrinkles = 0.3; P.Eyes = DarkEyes;
+                P.Hair = HairBlack; P.Gray = 0.3; P.Hairdo = HairStyle::SlickedBack; P.Beard = BeardStyle::Trimmed; P.BeardLength = 0.12;
+                P.Shirt = Top(White, Cloth::Linen, 1.95, 0.3);
+                P.Vest = Vest(Rgb{0.86, 0.84, 0.78}, Cloth::Linen, 6);
+                P.Coat = Coat(Rgb{0.88, 0.86, 0.8}, Cloth::Linen, 0.4, 3);
+                P.Coat.Wear = 0.5;
+                P.Legs = Trousers(Rgb{0.88, 0.86, 0.8}, Cloth::Linen, 1.9);
+                P.Feet = Boots(Rgb{0.85, 0.83, 0.78}, 1.95, 0.35);
+                // the red silk cravat has no garment in the kit yet: left out rather than moved to the waist
+                P.Clip = "40_10"; P.Time = 0.4; P.Upright = 1.0;
+                Add(P);
+            }
+
             // ---- Crimson Armada boarders (catalogue: light, heavy, sharpshooter; no unique hero face).
             {
                 PersonSpec P;
@@ -710,6 +795,10 @@ namespace DarkArisen::Tools::Art
         if (Has("ethan")) return "ethan";
         if (Has("broker") || Has("merchant") || Has("trader") || Has("clerk")) return "merchant";
         if (Has("draven")) return "draven";
+        if (Has("viuda")) return "viuda_negra";
+        if (Has("rojas")) return "rojas";
+        if (Has("medico")) return "medico";
+        if (Has("salazar") || Has("mateo")) return "salazar";
         if (Has("herrera")) return "herrera";
         if (Has("mira")) return "mira";
         if (Has("bigtom") || Has("big tom") || Has("big_tom") || Has("tom")) return "bigtom";
