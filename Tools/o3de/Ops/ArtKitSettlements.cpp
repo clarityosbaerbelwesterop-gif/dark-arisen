@@ -223,8 +223,59 @@ namespace DarkArisen::Tools::Art
             switch (Kind)
             {
             case Tradition::Colonial:
-                // the kit's dressed town house: plaster, tiled roof, doors on -Y
-                return DressBoxes(Name, {{{-S.W / 2, -S.D / 2, 0.0}, {S.W / 2, S.D / 2, S.H}}});
+            {
+                // the kit's dressed town house: plaster, tiled roof, doors on -Y; the street-level features of TC1
+                // (production/levels/rexa-city/layout.md 4): rejas on the ground windows, a wooden balcony on two-storey houses
+                Mesh Out = DressBoxes(Name, {{{-S.W / 2, -S.D / 2, 0.0}, {S.W / 2, S.D / 2, S.H}}});
+                const Material& Iron = Mat(M::Iron);
+                // the ground windows lie where the dressed house puts them: Len / 2.6 per face, clear of the door on -Y
+                const struct { V3 A, B, N; } Faces[4] = {{{-S.W / 2, -S.D / 2, 0}, {S.W / 2, -S.D / 2, 0}, {0, -1, 0}}, {{S.W / 2, -S.D / 2, 0}, {S.W / 2, S.D / 2, 0}, {1, 0, 0}},
+                                                         {{S.W / 2, S.D / 2, 0}, {-S.W / 2, S.D / 2, 0}, {0, 1, 0}}, {{-S.W / 2, S.D / 2, 0}, {-S.W / 2, -S.D / 2, 0}, {-1, 0, 0}}};
+                for (int F = 0; F < 4; ++F)
+                {
+                    const V3 Along = Normalize(Faces[F].B - Faces[F].A);
+                    const double Len = Length(Faces[F].B - Faces[F].A);
+                    const int Count = std::max(1, static_cast<int>(Len / 2.6));
+                    for (int I = 0; I < Count; ++I)
+                    {
+                        const double At = Len * (I + 0.5) / Count;
+                        if (F == 0 && At > S.W / 2 - 1.4 && At < S.W / 2 + 1.4) continue;  // the door
+                        const V3 C = Faces[F].A + Along * At + Faces[F].N * 0.1;
+                        // a reja 0.9 x 1.4: five bars, two rails, set out from the wall
+                        for (int Bar = 0; Bar < 5; ++Bar)
+                        {
+                            const V3 P = C + Along * (-0.4 + 0.2 * Bar);
+                            Out.Tube(Iron, {P.X, P.Y, 1.05}, {P.X, P.Y, 2.45}, 0.012, 0.012, 5);
+                        }
+                        for (const double Z : {1.1, 2.4})
+                            Out.Tube(Iron, V3{C.X, C.Y, Z} - Along * 0.47, V3{C.X, C.Y, Z} + Along * 0.47, 0.016, 0.016, 5);
+                    }
+                }
+                if (S.H > 7.0)
+                {
+                    // the balcony: 0.6 of the frontage wide, 1.1 deep, at +3.4 m, on brackets, a railing; a door onto it
+                    const double Half = S.W * 0.3, Y = -S.D / 2, Z = 3.4;
+                    Out.Box(Mat(M::Deck), {-Half, Y - 1.1, Z - 0.12}, {Half, Y, Z});
+                    for (const double X : {-Half + 0.2, 0.0, Half - 0.2})
+                        Out.Tube(Mat(M::TimberDark), {X, Y, Z - 0.9}, {X, Y - 1.0, Z - 0.13}, 0.06, 0.05, 4);
+                    const int Posts = static_cast<int>(2.0 * Half / 0.18);
+                    for (int K = 0; K <= Posts; ++K)
+                    {
+                        const double X = -Half + 2.0 * Half * K / Posts;
+                        Out.Tube(Mat(M::TimberDark), {X, Y - 1.05, Z}, {X, Y - 1.05, Z + 0.95}, 0.022, 0.022, 4);
+                    }
+                    for (const double Side : {-1.0, 1.0})
+                        for (int K = 0; K <= 5; ++K)
+                        {
+                            const double Yk = Y - 1.05 * K / 5.0;
+                            Out.Tube(Mat(M::TimberDark), {Side * Half, Yk, Z}, {Side * Half, Yk, Z + 0.95}, 0.022, 0.022, 4);
+                        }
+                    Out.Box(Mat(M::TimberDark), {-Half - 0.03, Y - 1.1, Z + 0.95}, {Half + 0.03, Y - 1.0, Z + 1.03});
+                    for (const double Side : {-1.0, 1.0}) Out.Box(Mat(M::TimberDark), {Side * Half - 0.04, Y - 1.1, Z + 0.95}, {Side * Half + 0.04, Y, Z + 1.03});
+                    Out.Box(Mat(M::TimberDark), {-0.5, Y - 0.05, Z}, {0.5, Y + 0.02, Z + 2.2});
+                }
+                return Out;
+            }
             case Tradition::Stilt:
             {
                 // a raised timber house on posts above flood and damp, steep tiled hip roof, a ladder to the porch
