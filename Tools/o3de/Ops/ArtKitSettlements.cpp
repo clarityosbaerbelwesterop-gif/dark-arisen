@@ -349,10 +349,12 @@ namespace DarkArisen::Tools::Art
             const double Lift = Kind == Tradition::Stilt ? 1.7 + 2.0 : 0.0;
             Out.push_back({"Assets/Art/Models/" + ModelName(Kind, V) + ".gltf", X, Y, Z, Yaw, S.W / 2 + 0.3, S.D / 2 + 0.3, S.H + Lift + 2.0});
         };
-        // life at the doors: a scanned barrel, crate or lantern beside a house's door (-Y in its frame)
+        // life at the doors: a scanned barrel, crate or lantern beside a house's door (-Y in its frame). Props are kept
+        // apart and added at the end, so they never count against a settlement's buildings.
+        std::vector<Structure> Props;
         const auto Dress = [&](const Tradition Kind, const int V, const double X, const double Y, const double Yaw)
         {
-            static const char* const Props[] = {"Assets/Art/Scanned/models/Barrel_01/Barrel_01_2k.gltf", "Assets/Art/Scanned/models/Barrel_02/Barrel_02_2k.gltf",
+            static const char* const Kinds[] = {"Assets/Art/Scanned/models/Barrel_01/Barrel_01_2k.gltf", "Assets/Art/Scanned/models/Barrel_02/Barrel_02_2k.gltf",
                 "Assets/Art/Scanned/models/barrel_03/barrel_03_2k.gltf", "Assets/Art/Scanned/models/wooden_crate_01/wooden_crate_01_2k.gltf",
                 "Assets/Art/Scanned/models/wooden_lantern_01/wooden_lantern_01_2k.gltf"};
             const Size S = VariantSize(Kind, V);
@@ -364,7 +366,7 @@ namespace DarkArisen::Tools::Art
                 const double Px = X + Lx * Ca - Ly * Sa, Py = Y + Lx * Sa + Ly * Ca;
                 const int Pick = static_cast<int>(R.Unit() * 5.0);
                 const double Turn = R.Range(0.0, 360.0);
-                Out.push_back({Props[Pick], Px, Py, Spec.Ground(Px, Py), Turn, 0.4, 0.4, 1.0});
+                Props.push_back({Kinds[Pick], Px, Py, Spec.Ground(Px, Py), Turn, 0.4, 0.4, 1.0});
             }
         };
         const auto Free = [&](const double X, const double Y, const double Clear)
@@ -492,6 +494,7 @@ namespace DarkArisen::Tools::Art
                     }
                 }
             }
+            Out.insert(Out.end(), Props.begin(), Props.end());
             return Out;
         }
 
@@ -519,6 +522,7 @@ namespace DarkArisen::Tools::Art
             if (Spec.Kind != Tradition::Camp && R.Unit() < 0.6) Dress(Spec.Kind, V, X, Y, Yaw);
         }
 
+        Out.insert(Out.end(), Props.begin(), Props.end());
         return Out;
     }
 }
