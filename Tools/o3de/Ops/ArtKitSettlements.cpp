@@ -41,8 +41,9 @@ namespace DarkArisen::Tools::Art
             {
                 static const Size Civic[] = {{27.0, 50.0, 31.0},  // the cathedral's box spans its aisles, towers and dome (layout.md R-08)
                                                {18.0, 26.0, 6.0}, {14.0, 30.0, 8.0}, {22.0, 16.0, 11.0}, {7.0, 7.0, 16.0}, {9.0, 9.0, 42.0},
-                                               {18.0, 16.0, 9.0}, {24.0, 18.0, 10.0}};  // LM6 La Sirena Negra, LM5 the Guild (layout.md 4)
-                return Civic[V % 8];
+                                               {18.0, 16.0, 9.0}, {24.0, 18.0, 10.0},  // LM6 La Sirena Negra, LM5 the Guild (layout.md 4)
+                                               {12.0, 1.0, 4.5}, {12.0, 1.0, 4.5}, {6.0, 6.0, 8.0}, {1.3, 1.3, 5.6}};  // W1, W1 with its lamp, W3, a gate pier
+                return Civic[V % 12];
             }
             case Tradition::Street:
             {
@@ -968,6 +969,78 @@ namespace DarkArisen::Tools::Art
                     }
                     break;
                 }
+                case 8:
+                case 9:
+                case 11:
+                {
+                    // W1, the Muro noble (layout.md 4): 12 x 1.0 x 4.5 of pale plaster on a stone footing, tile coping and
+                    // iron spikes, a 0.6 m pilaster at its +X end; every fourth carries a finial lamp. A gate pier (11)
+                    // stands at each side of a gap.
+                    Material Pale = Mat(M::Plaster);
+                    Pale.Name = "M_Art_NobleWall_Plaster";
+                    Pale.BaseColor = {0.94, 0.91, 0.84, 1.0};
+                    Material Lamp = Mat(M::Glass);
+                    Lamp.Name = "M_Art_NobleWall_Lamp";
+                    Lamp.BaseColor = {1.0, 0.82, 0.5, 1.0};
+                    Lamp.Emissive = {1.0, 0.74, 0.4};
+                    Lamp.EmissiveStrength = 3.0;
+                    const auto Finial = [&](const double X, const double Z)
+                    {
+                        Out.Tube(Mat(M::Iron), {X, 0.0, Z}, {X, 0.0, Z + 0.7}, 0.04, 0.03, 6);
+                        Out.Box(Lamp, {X - 0.16, -0.16, Z + 0.7}, {X + 0.16, 0.16, Z + 1.15});
+                        Out.Box(Mat(M::Iron), {X - 0.2, -0.2, Z + 1.15}, {X + 0.2, 0.2, Z + 1.22});
+                        Out.Tube(Mat(M::Iron), {X, 0.0, Z + 1.22}, {X, 0.0, Z + 1.5}, 0.05, 0.005, 6);
+                    };
+                    if (V == 11)
+                    {
+                        Out.Box(Mat(M::Stone), {-0.65, -0.65, -0.8}, {0.65, 0.65, 0.6});
+                        Out.Box(Pale, {-0.55, -0.55, 0.6}, {0.55, 0.55, 4.9});
+                        Out.Box(Mat(M::Stone), {-0.68, -0.68, 4.9}, {0.68, 0.68, 5.15});
+                        Dome(Out, Mat(M::Stone), 0.0, 0.0, 5.15, 0.4, 0.35, 10);
+                        Finial(0.0, 5.45);
+                        break;
+                    }
+                    Out.Box(Mat(M::Stone), {-6.0, -0.55, -0.8}, {6.0, 0.55, 0.5});
+                    Out.Box(Pale, {-6.0, -0.5, 0.5}, {6.0, 0.5, 4.3});
+                    Out.Box(Mat(M::RoofTile), {-6.0, -0.62, 4.3}, {6.0, 0.62, 4.42});
+                    Out.Quad(Mat(M::RoofTile), {-6.0, -0.62, 4.42}, {6.0, -0.62, 4.42}, {6.0, 0.0, 4.55}, {-6.0, 0.0, 4.55}, true);
+                    Out.Quad(Mat(M::RoofTile), {6.0, 0.62, 4.42}, {-6.0, 0.62, 4.42}, {-6.0, 0.0, 4.55}, {6.0, 0.0, 4.55}, true);
+                    for (double X = -5.85; X < 5.6; X += 0.3) Out.Tube(Mat(M::Iron), {X, 0.0, 4.55}, {X, 0.0, 4.85}, 0.012, 0.002, 4);
+                    Out.Box(Pale, {5.7, -0.65, -0.2}, {6.3, 0.65, 4.8});
+                    Out.Box(Mat(M::Stone), {5.65, -0.7, 4.8}, {6.35, 0.7, 4.98});
+                    if (V == 9) Finial(6.0, 4.98);
+                    // the mould line of the salt air at the foot
+                    Material Mould = Mat(M::StoneDark);
+                    Mould.Name = "M_Art_NobleWall_Mould";
+                    Mould.BaseColor = {0.42, 0.42, 0.36, 1.0};
+                    for (const double Y : {-0.505, 0.505}) Out.Box(Mould, {-6.0, Y - 0.004, 0.5}, {6.0, Y + 0.004, 0.75});
+                    break;
+                }
+                case 10:
+                {
+                    // W3, a gatehouse (layout.md 4, 5.4 N7): 6 x 6 x 8 of plaster on a stone storey, a hipped tile roof, a
+                    // door and barred windows, a lamp; the guards' post at the Noble gates
+                    Out.Box(Mat(M::Stone), {-3.0, -3.0, -0.6}, {3.0, 3.0, 3.0});
+                    Out.Box(Mat(M::Plaster), {-2.95, -2.95, 3.0}, {2.95, 2.95, 6.8});
+                    Course(Out, Mat(M::Stone), 6.0, 6.0, 2.9, 0.25, 0.1);
+                    Hip(Out, Mat(M::RoofTile), 5.9, 5.9, 6.8, 1.9, 0.45);
+                    Out.Box(Mat(M::TimberDark), {-0.6, -3.06, 0.0}, {0.6, -2.98, 2.3});
+                    for (const double X : {-1.6, 1.6})
+                    {
+                        Out.Box(Mat(M::TimberDark), {X - 0.4, -3.04, 4.2}, {X + 0.4, -2.98, 5.6});
+                        for (int Bar = 0; Bar < 4; ++Bar) Out.Tube(Mat(M::Iron), {X - 0.3 + 0.2 * Bar, -3.1, 4.15}, {X - 0.3 + 0.2 * Bar, -3.1, 5.65}, 0.015, 0.015, 4);
+                    }
+                    for (const double Y : {-1.5, 1.5})
+                        for (const double X : {-3.04, 3.04}) Out.Box(Mat(M::TimberDark), {X - 0.04, Y - 0.15, 1.4}, {X + 0.04, Y + 0.15, 2.2});
+                    Material Lamp = Mat(M::Glass);
+                    Lamp.Name = "M_Art_NobleWall_Lamp";
+                    Lamp.BaseColor = {1.0, 0.82, 0.5, 1.0};
+                    Lamp.Emissive = {1.0, 0.74, 0.4};
+                    Lamp.EmissiveStrength = 3.0;
+                    Out.Tube(Mat(M::Iron), {1.0, -3.0, 2.7}, {1.0, -3.4, 2.7}, 0.02, 0.02, 4);
+                    Out.Box(Lamp, {0.88, -3.52, 2.3}, {1.12, -3.28, 2.62});
+                    break;
+                }
                 }
                 return Out;
             }
@@ -1017,7 +1090,7 @@ namespace DarkArisen::Tools::Art
     {
         for (const Tradition Kind : {Tradition::Colonial, Tradition::Stilt, Tradition::Nordic, Tradition::Camp, Tradition::Fort, Tradition::Lighthouse, Tradition::Entrance,
                  Tradition::Civic, Tradition::Harbour, Tradition::Street, Tradition::Shanty})
-            for (int V = 0; V < (Kind == Tradition::Lighthouse ? 1 : Kind == Tradition::Civic ? 8 : Kind == Tradition::Harbour ? 5 : Kind == Tradition::Street ? 3 : Variants); ++V)
+            for (int V = 0; V < (Kind == Tradition::Lighthouse ? 1 : Kind == Tradition::Civic ? 12 : Kind == Tradition::Harbour ? 5 : Kind == Tradition::Street ? 3 : Variants); ++V)
                 Emit(ModelName(Kind, V), WriteGltf(BuildVariant(Kind, V), "Dark Arisen art kit (settlements)"));
     }
 
@@ -1155,6 +1228,39 @@ namespace DarkArisen::Tools::Art
         }
         // the level design's own buildings at their world positions (layout.md: the tavern B1, the Guild H2)
         for (const auto& [V, X, Y, Yaw] : Spec.Civic) Place(Tradition::Civic, V, X, Y, Yaw);
+        // a walled district's ring (layout.md 5.4: W1 every 12.6 m round the centre, every fourth with its finial lamp, gaps
+        // for the gates with a pier on each side)
+        const std::size_t BeforeWall = Out.size();
+        if (Spec.WallRadius > 0.0)
+        {
+            const double Step = 12.6;
+            const int Segments = std::max(8, static_cast<int>(2.0 * Pi * Spec.WallRadius / Step + 0.5));
+            const auto InGate = [&](const double A, const double Reach)
+            {
+                for (const auto& [Bearing, Gap] : Spec.WallGates)
+                {
+                    double D = A - Bearing * Pi / 180.0;
+                    while (D > Pi) D -= 2.0 * Pi;
+                    while (D < -Pi) D += 2.0 * Pi;
+                    if (std::fabs(D) * Spec.WallRadius < Gap / 2.0 + Reach) return true;
+                }
+                return false;
+            };
+            for (int K = 0; K < Segments; ++K)
+            {
+                const double A = 2.0 * Pi * (K + 0.5) / Segments;
+                if (InGate(A, 6.3)) continue;
+                Place(Tradition::Civic, K % 4 == 0 ? 9 : 8, Spec.X + Spec.WallRadius * Cos(A), Spec.Y + Spec.WallRadius * Sin(A), A * 180.0 / Pi + 90.0);
+            }
+            for (const auto& [Bearing, Gap] : Spec.WallGates)
+                for (const double Side : {-1.0, 1.0})
+                {
+                    const double A = Bearing * Pi / 180.0 + Side * (Gap / 2.0 + 0.65) / Spec.WallRadius;
+                    Place(Tradition::Civic, 11, Spec.X + Spec.WallRadius * Cos(A), Spec.Y + Spec.WallRadius * Sin(A), A * 180.0 / Pi + 90.0);
+                }
+        }
+        // the wall's pieces do not count against the district's buildings
+        const int MaxBuildings = Spec.MaxBuildings + static_cast<int>(Out.size() - BeforeWall);
         // what a house may not stand on: the landmarks and quays placed so far, each as the circle round its box
         const std::vector<Structure> Reserved = Out;
         const auto Clear = [&](const double X, const double Y, const double Reach)
@@ -1214,13 +1320,13 @@ namespace DarkArisen::Tools::Art
             std::sort(Plots.begin(), Plots.end(), [](const Plot& A, const Plot& B) { return A.Key != B.Key ? A.Key < B.Key : A.J != B.J ? A.J < B.J : A.I < B.I; });
             for (const Plot& P : Plots)
             {
-                if (static_cast<int>(Out.size()) >= Spec.MaxBuildings) break;
+                if (static_cast<int>(Out.size()) >= MaxBuildings) break;
                 const double U = (P.I + 0.5) * (Block + Street), W = (P.J + 0.5) * (Deep + Street);
                 if (R.Unit() > Spec.Fill) continue;  // a garden, a yard, a ruin
                 for (const double Side : {-1.0, 1.0})
                 {
                     double Along = -Block / 2;
-                    while (Along < Block / 2 - 5.0 && static_cast<int>(Out.size()) < Spec.MaxBuildings)
+                    while (Along < Block / 2 - 5.0 && static_cast<int>(Out.size()) < MaxBuildings)
                     {
                         const int V = static_cast<int>(R.Unit() * Variants);
                         const Size S = VariantSize(Houses, V);
@@ -1261,7 +1367,7 @@ namespace DarkArisen::Tools::Art
         if (Spec.Kind == Tradition::Camp)
             Out.push_back({"Assets/Art/Scanned/models/stone_fire_pit/stone_fire_pit_2k.gltf", Spec.X, Spec.Y, Spec.Ground(Spec.X, Spec.Y), 0.0, 3.0, 3.0, 0.6});
         const double Ridge = Spec.StreetAngle;
-        for (int Tries = 0; Tries < Spec.MaxBuildings * 30 && static_cast<int>(Out.size()) < Spec.MaxBuildings; ++Tries)
+        for (int Tries = 0; Tries < Spec.MaxBuildings * 30 && static_cast<int>(Out.size()) < MaxBuildings; ++Tries)
         {
             const double A = R.Range(0.0, 2.0 * Pi);
             const double Rr = Spec.Radius * 0.9 * std::sqrt(R.Unit()) * (0.35 + 0.65 * R.Unit());

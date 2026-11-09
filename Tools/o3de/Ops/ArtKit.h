@@ -168,6 +168,8 @@ namespace DarkArisen::Tools::Art
         int StallMax = 0;
         int Benches = 0;                                  // benches round the square's edge
         std::vector<std::tuple<int, double, double, double>> Civic;  // the level design's civic buildings: variant, world x, y, yaw
+        double WallRadius = 0.0;                          // a walled district's ring (0 for none)
+        std::vector<std::pair<double, double>> WallGates;  // its gates: bearing (degrees from +x), gap (m)
         std::function<bool(double, double, double)> KeepOff;  // true where a road runs within the reach of (x, y)
     };
 
