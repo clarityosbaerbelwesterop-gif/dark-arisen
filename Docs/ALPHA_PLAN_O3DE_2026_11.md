@@ -45,6 +45,18 @@ Mission levels become **places in the world**. The 34 missions keep their contra
 | **M9** | Voice and lip sync | 15 visemes, 9 emotions | Voices for every line, lip sync from the visemes, subtitle timing; the production choice is in the section below |
 | **M10** | Polish and Alpha | AzCore probe, CI | GPU runtime proof (GameLauncher), 60 fps, packaging for Windows and Linux, credits and attribution, the owner's playthrough and approval |
 
+## Progress (2026-11-09)
+
+- **M1, open-world foundation (built, not yet run in a GameLauncher).**
+  - `world-build` turns `Archipelago.json` into 397 streamed 500 m terrain tiles plus a horizon mesh and plants the land with about 930,000 plantings: woods, clearings, a tree line, undergrowth.
+  - The Gem's `WorldStreamerComponent`, `WorldRendererComponent` and `WorldColliderComponent` stream, draw and collide the world around Jake in `L_World`. The streamer is probed on O3DE 2605.0's AzCore runtime; the renderer and collider have a syntax-only compile against the pinned engine's headers.
+  - Scanned CC0 ground layers and fixes to the terrain shader's re-tint and reflectance give the islands their colour.
+- **M2, regions (first pass).**
+  - `Locations.json` places the documents' 95 named locations and all 61 dungeons, checked by `ConversionTests`.
+  - Settlements stand on levelled ground. Rexa is a colonial street grid with a landmark on each district's square (cathedral, market hall, warehouses, mansion, watchtower); Ashenmoor has stilt villages, the Quiet Coast long houses under turf, and there are forts, camps and lighthouses.
+  - Every dungeon has a visible way in.
+  - Still to do: harbour quays and boats, paved streets, props in the streets, interiors, the story levels' own ground stamped into the world, and NPC routines (M6).
+
 ## Decisions taken here, revisable by the owner
 
 - **World geography** is the region table above. Moran is in the south-west; the sea lanes follow the chapter order, and Ashenmoor and the Quiet Coast lie off the main lanes as places to discover.
