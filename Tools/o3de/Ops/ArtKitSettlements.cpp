@@ -40,8 +40,9 @@ namespace DarkArisen::Tools::Art
             case Tradition::Civic:
             {
                 static const Size Civic[] = {{27.0, 50.0, 31.0},  // the cathedral's box spans its aisles, towers and dome (layout.md R-08)
-                                               {18.0, 26.0, 6.0}, {14.0, 30.0, 8.0}, {22.0, 16.0, 11.0}, {7.0, 7.0, 16.0}, {9.0, 9.0, 42.0}};
-                return Civic[V % 6];
+                                               {18.0, 26.0, 6.0}, {14.0, 30.0, 8.0}, {22.0, 16.0, 11.0}, {7.0, 7.0, 16.0}, {9.0, 9.0, 42.0},
+                                               {18.0, 16.0, 9.0}, {24.0, 18.0, 10.0}};  // LM6 La Sirena Negra, LM5 the Guild (layout.md 4)
+                return Civic[V % 8];
             }
             case Tradition::Street:
             {
@@ -223,8 +224,59 @@ namespace DarkArisen::Tools::Art
             switch (Kind)
             {
             case Tradition::Colonial:
-                // the kit's dressed town house: plaster, tiled roof, doors on -Y
-                return DressBoxes(Name, {{{-S.W / 2, -S.D / 2, 0.0}, {S.W / 2, S.D / 2, S.H}}});
+            {
+                // the kit's dressed town house: plaster, tiled roof, doors on -Y; the street-level features of TC1
+                // (production/levels/rexa-city/layout.md 4): rejas on the ground windows, a wooden balcony on two-storey houses
+                Mesh Out = DressBoxes(Name, {{{-S.W / 2, -S.D / 2, 0.0}, {S.W / 2, S.D / 2, S.H}}});
+                const Material& Iron = Mat(M::Iron);
+                // the ground windows lie where the dressed house puts them: Len / 2.6 per face, clear of the door on -Y
+                const struct { V3 A, B, N; } Faces[4] = {{{-S.W / 2, -S.D / 2, 0}, {S.W / 2, -S.D / 2, 0}, {0, -1, 0}}, {{S.W / 2, -S.D / 2, 0}, {S.W / 2, S.D / 2, 0}, {1, 0, 0}},
+                                                         {{S.W / 2, S.D / 2, 0}, {-S.W / 2, S.D / 2, 0}, {0, 1, 0}}, {{-S.W / 2, S.D / 2, 0}, {-S.W / 2, -S.D / 2, 0}, {-1, 0, 0}}};
+                for (int F = 0; F < 4; ++F)
+                {
+                    const V3 Along = Normalize(Faces[F].B - Faces[F].A);
+                    const double Len = Length(Faces[F].B - Faces[F].A);
+                    const int Count = std::max(1, static_cast<int>(Len / 2.6));
+                    for (int I = 0; I < Count; ++I)
+                    {
+                        const double At = Len * (I + 0.5) / Count;
+                        if (F == 0 && At > S.W / 2 - 1.4 && At < S.W / 2 + 1.4) continue;  // the door
+                        const V3 C = Faces[F].A + Along * At + Faces[F].N * 0.1;
+                        // a reja 0.9 x 1.4: five bars, two rails, set out from the wall
+                        for (int Bar = 0; Bar < 5; ++Bar)
+                        {
+                            const V3 P = C + Along * (-0.4 + 0.2 * Bar);
+                            Out.Tube(Iron, {P.X, P.Y, 1.05}, {P.X, P.Y, 2.45}, 0.012, 0.012, 5);
+                        }
+                        for (const double Z : {1.1, 2.4})
+                            Out.Tube(Iron, V3{C.X, C.Y, Z} - Along * 0.47, V3{C.X, C.Y, Z} + Along * 0.47, 0.016, 0.016, 5);
+                    }
+                }
+                if (S.H > 7.0)
+                {
+                    // the balcony: 0.6 of the frontage wide, 1.1 deep, at +3.4 m, on brackets, a railing; a door onto it
+                    const double Half = S.W * 0.3, Y = -S.D / 2, Z = 3.4;
+                    Out.Box(Mat(M::Deck), {-Half, Y - 1.1, Z - 0.12}, {Half, Y, Z});
+                    for (const double X : {-Half + 0.2, 0.0, Half - 0.2})
+                        Out.Tube(Mat(M::TimberDark), {X, Y, Z - 0.9}, {X, Y - 1.0, Z - 0.13}, 0.06, 0.05, 4);
+                    const int Posts = static_cast<int>(2.0 * Half / 0.18);
+                    for (int K = 0; K <= Posts; ++K)
+                    {
+                        const double X = -Half + 2.0 * Half * K / Posts;
+                        Out.Tube(Mat(M::TimberDark), {X, Y - 1.05, Z}, {X, Y - 1.05, Z + 0.95}, 0.022, 0.022, 4);
+                    }
+                    for (const double Side : {-1.0, 1.0})
+                        for (int K = 0; K <= 5; ++K)
+                        {
+                            const double Yk = Y - 1.05 * K / 5.0;
+                            Out.Tube(Mat(M::TimberDark), {Side * Half, Yk, Z}, {Side * Half, Yk, Z + 0.95}, 0.022, 0.022, 4);
+                        }
+                    Out.Box(Mat(M::TimberDark), {-Half - 0.03, Y - 1.1, Z + 0.95}, {Half + 0.03, Y - 1.0, Z + 1.03});
+                    for (const double Side : {-1.0, 1.0}) Out.Box(Mat(M::TimberDark), {Side * Half - 0.04, Y - 1.1, Z + 0.95}, {Side * Half + 0.04, Y, Z + 1.03});
+                    Out.Box(Mat(M::TimberDark), {-0.5, Y - 0.05, Z}, {0.5, Y + 0.02, Z + 2.2});
+                }
+                return Out;
+            }
             case Tradition::Stilt:
             {
                 // a raised timber house on posts above flood and damp, steep tiled hip roof, a ladder to the porch
@@ -580,6 +632,187 @@ namespace DarkArisen::Tools::Art
                     Out.Box(Mat(M::TimberDark), {-0.6, -S.D / 2 - 0.06, 0.0}, {0.6, -S.D / 2 + 0.02, 2.2});
                     break;
                 }
+                case 6:
+                {
+                    // LM6, the tavern La Sirena Negra (layout.md 4, B1): 18 x 16 x 9, a wrap balcony, the black mermaid
+                    // figurehead on a 1.2 m bracket at +4.5 over the door, a 2.4 x 1.6 painted sign; lanterns at the door.
+                    // Its terrace on the apron is the harbour's to furnish.
+                    Out.Append(DressBoxes(Name + "_House", {{{-S.W / 2, -S.D / 2, 0.0}, {S.W / 2, S.D / 2, S.H}}}));
+                    const double F = -S.D / 2, Z = 3.4;
+                    // the wrap balcony: down both sides and along the front, open over the door where the mermaid hangs
+                    const auto Rail = [&](const V3& A, const V3& B, const V3& Out_)
+                    {
+                        const V3 Along = B - A;
+                        const double Len = Length(Along);
+                        const V3 Lo = A + Out_ * 1.1, Hi = B + Out_ * 1.1;
+                        const V3 Min{std::min(A.X, Hi.X), std::min(A.Y, Hi.Y), Z - 0.12}, Max{std::max(A.X, Hi.X), std::max(A.Y, Hi.Y), Z};
+                        Out.Box(Mat(M::Deck), Min, Max);
+                        const int Posts = static_cast<int>(Len / 0.2);
+                        for (int K = 0; K <= Posts; ++K)
+                        {
+                            const V3 P = Lo + (Hi - Lo) * (static_cast<double>(K) / Posts);
+                            Out.Tube(Mat(M::TimberDark), {P.X, P.Y, Z}, {P.X, P.Y, Z + 0.95}, 0.022, 0.022, 4);
+                        }
+                        Out.Tube(Mat(M::TimberDark), {Lo.X, Lo.Y, Z + 1.0}, {Hi.X, Hi.Y, Z + 1.0}, 0.05, 0.05, 4);
+                        for (int K = 0; K <= static_cast<int>(Len / 2.5); ++K)
+                        {
+                            const V3 P = A + Along * (std::min(1.0, 2.5 * K / Len));
+                            Out.Tube(Mat(M::TimberDark), V3{P.X, P.Y, Z - 0.9}, V3{P.X, P.Y, Z - 0.12} + Out_ * 0.95, 0.06, 0.05, 4);
+                        }
+                    };
+                    Rail({-S.W / 2, F, 0}, {-1.6, F, 0}, {0, -1, 0});
+                    Rail({1.6, F, 0}, {S.W / 2, F, 0}, {0, -1, 0});
+                    Rail({-S.W / 2, F, 0}, {-S.W / 2, S.D / 2 - 1.0, 0}, {-1, 0, 0});
+                    Rail({S.W / 2, F, 0}, {S.W / 2, S.D / 2 - 1.0, 0}, {1, 0, 0});
+                    for (const double X : {-4.5, 4.5}) Out.Box(Mat(M::TimberDark), {X - 0.5, F - 0.05, Z}, {X + 0.5, F + 0.02, Z + 2.2});
+                    // the double door and its lanterns
+                    Out.Box(Mat(M::TimberDark), {-1.0, F - 0.07, 0.0}, {1.0, F + 0.02, 2.6});
+                    Out.Box(Mat(M::Iron), {-0.03, F - 0.09, 0.2}, {0.03, F - 0.06, 2.5});
+                    Material Lamp = Mat(M::Glass);
+                    Lamp.Name = "M_Art_Tavern_Lantern";
+                    Lamp.BaseColor = {1.0, 0.78, 0.42, 1.0};
+                    Lamp.Emissive = {1.0, 0.7, 0.35};
+                    Lamp.EmissiveStrength = 3.0;
+                    for (const double X : {-1.6, 1.6})
+                    {
+                        Out.Tube(Mat(M::Iron), {X, F, 2.9}, {X, F - 0.35, 2.9}, 0.02, 0.02, 4);
+                        Out.Box(Lamp, {X - 0.12, F - 0.47, 2.5}, {X + 0.12, F - 0.23, 2.85});
+                        Out.Box(Mat(M::Iron), {X - 0.14, F - 0.49, 2.85}, {X + 0.14, F - 0.21, 2.92});
+                    }
+                    // the black mermaid: a ship's figurehead carved and painted black, leaning out from her bracket
+                    Material Black = Mat(M::HullBlack);
+                    Black.Name = "M_Art_Tavern_Mermaid";
+                    Black.BaseColor = {0.035, 0.035, 0.04, 1.0};
+                    Black.Roughness = 0.35;
+                    Out.Box(Mat(M::TimberDark), {-0.12, F - 1.2, 4.45}, {0.12, F, 4.65});
+                    Out.Tube(Mat(M::TimberDark), {0.0, F, 3.7}, {0.0, F - 1.0, 4.45}, 0.07, 0.07, 4);
+                    const V3 Waist{0.0, F - 1.25, 4.05}, Chest{0.0, F - 1.5, 4.55}, Head{0.0, F - 1.62, 4.86};
+                    Out.Tube(Black, Waist, Chest, 0.15, 0.19, 10);
+                    Out.Tube(Black, Chest, Head - V3{0, 0, 0.12}, 0.19, 0.07, 10);
+                    Dome(Out, Black, Head.X, Head.Y, Head.Z - 0.02, 0.12, 0.14, 10);
+                    Out.Push(Xf::Translate(Head - V3{0, 0, 0.02}) * Xf::Scale({1.0, 1.0, -1.0}));
+                    Dome(Out, Black, 0.0, 0.0, 0.0, 0.12, 0.12, 10);
+                    Out.Pop();
+                    for (int K = 0; K < 7; ++K)
+                    {
+                        const double Xh = -0.12 + 0.04 * K;
+                        Out.Tube(Black, {Xh, Head.Y + 0.05, Head.Z + 0.06}, {Xh * 1.6, F - 1.25, 4.5}, 0.03, 0.02, 5);
+                        Out.Tube(Black, {Xh * 1.6, F - 1.25, 4.5}, {Xh * 1.8, F - 1.05, 4.1}, 0.02, 0.008, 5);
+                    }
+                    for (const double Sd : {-1.0, 1.0})
+                    {
+                        Out.Tube(Black, Chest + V3{Sd * 0.17, 0.02, 0.0}, Chest + V3{Sd * 0.3, -0.12, -0.32}, 0.05, 0.04, 6);
+                        Out.Tube(Black, Chest + V3{Sd * 0.3, -0.12, -0.32}, Chest + V3{Sd * 0.12, -0.2, -0.5}, 0.04, 0.03, 6);
+                    }
+                    const V3 Tail[] = {Waist, {0.0, F - 1.15, 3.75}, {0.0, F - 0.9, 3.55}, {0.0, F - 0.6, 3.6}, {0.0, F - 0.42, 3.82}};
+                    for (int K = 0; K < 4; ++K) Out.Tube(Black, Tail[K], Tail[K + 1], Lerp(0.15, 0.04, K / 4.0), Lerp(0.15, 0.04, (K + 1) / 4.0), 10);
+                    for (const double Sd : {-1.0, 1.0}) Out.Quad(Black, Tail[4], Tail[4] + V3{Sd * 0.22, 0.05, 0.25}, Tail[4] + V3{Sd * 0.08, 0.12, 0.18}, Tail[4], true);
+                    // the painted sign, square to the street, high on the left of the front: cream boards and a black mermaid
+                    {
+                        const double X = -S.W / 2 + 1.2, Y0 = F - 0.3, Y1 = F - 2.7, Zs = 6.9;
+                        Out.Tube(Mat(M::Iron), {X, F, Zs + 0.15}, {X, Y1 - 0.1, Zs + 0.15}, 0.03, 0.03, 4);
+                        Out.Tube(Mat(M::Iron), {X, F, Zs - 0.9}, {X, (Y0 + Y1) / 2.0, Zs + 0.12}, 0.025, 0.025, 4);
+                        for (const double Y : {Y0 + 0.1, Y1 - 0.0}) Out.Tube(Mat(M::Iron), {X, Y, Zs + 0.15}, {X, Y, Zs}, 0.012, 0.012, 4);
+                        Material Board;
+                        Board.Name = "M_Art_Tavern_SignBoard";
+                        Board.BaseColor = {0.78, 0.7, 0.54, 1.0};
+                        Board.Roughness = 0.8;
+                        Out.Box(Board, {X - 0.03, Y1, Zs - 1.6}, {X + 0.03, Y0, Zs});
+                        Out.Box(Mat(M::TimberDark), {X - 0.04, Y1 - 0.04, Zs - 1.64}, {X + 0.04, Y0 + 0.04, Zs - 1.56});
+                        Out.Box(Mat(M::TimberDark), {X - 0.04, Y1 - 0.04, Zs - 0.04}, {X + 0.04, Y0 + 0.04, Zs + 0.04});
+                        for (const double Side : {-1.0, 1.0})
+                        {
+                            const double Xs = X + Side * 0.035, Yc = (Y0 + Y1) / 2.0, Zc = Zs - 0.8;
+                            const V3 Sil[] = {{Xs, Yc + 0.55, Zc + 0.5}, {Xs, Yc + 0.3, Zc + 0.15}, {Xs, Yc + 0.05, Zc - 0.15}, {Xs, Yc - 0.35, Zc - 0.35}, {Xs, Yc - 0.7, Zc - 0.2}};
+                            for (int K = 0; K < 4; ++K) Out.Tube(Black, Sil[K], Sil[K + 1], Lerp(0.12, 0.04, K / 4.0), Lerp(0.12, 0.04, (K + 1) / 4.0), 6);
+                            Out.Tube(Black, {Xs, Yc + 0.62, Zc + 0.66}, {Xs, Yc + 0.62, Zc + 0.67}, 0.09, 0.09, 8);
+                            Out.Quad(Black, Sil[4], Sil[4] + V3{0, -0.2, 0.22}, Sil[4] + V3{0, -0.28, 0.0}, Sil[4] + V3{0, -0.2, -0.2}, true);
+                        }
+                    }
+                    break;
+                }
+                case 7:
+                {
+                    // LM5, the Bounty Hunters Guild (layout.md 4, H2): a fortified casa 24 x 18 x 10 with a 4 x 4 tower to
+                    // 16 m at (+10, +7), an iron-studded door, the wanted-poster wall, a shield-and-manacle sign.
+                    const double F = -S.D / 2;
+                    Out.Box(Mat(M::StoneDark), {-S.W / 2, F, -0.5}, {S.W / 2, S.D / 2, 4.5});
+                    Out.Box(Mat(M::Plaster), {-S.W / 2 + 0.1, F + 0.1, 4.5}, {S.W / 2 - 0.1, S.D / 2 - 0.1, S.H});
+                    Course(Out, Mat(M::Stone), S.W, S.D, 4.4, 0.3, 0.12);
+                    Out.Box(Mat(M::Stone), {-S.W / 2 - 0.1, F - 0.1, S.H}, {S.W / 2 + 0.1, S.D / 2 + 0.1, S.H + 0.3});
+                    const auto Merlons = [&](const double X0, const double X1, const double Y0, const double Y1, const double Zt)
+                    {
+                        for (double X = X0 + 0.4; X < X1 - 0.3; X += 1.5)
+                            for (const double Y : {Y0, Y1}) Out.Box(Mat(M::Stone), {X, Y - 0.25, Zt}, {X + 0.8, Y + 0.25, Zt + 0.7});
+                        for (double Y = Y0 + 1.5; Y < Y1 - 0.3; Y += 1.5)
+                            for (const double X : {X0, X1}) Out.Box(Mat(M::Stone), {X - 0.25, Y, Zt}, {X + 0.25, Y + 0.8, Zt + 0.7});
+                    };
+                    Merlons(-S.W / 2, S.W / 2, F, S.D / 2, S.H + 0.3);
+                    // the tower
+                    Out.Box(Mat(M::Stone), {8.0, 5.0, -0.5}, {12.0, 9.0, 16.0});
+                    Merlons(8.0, 12.0, 5.0, 9.0, 16.0);
+                    Out.Tube(Mat(M::TimberDark), {10.0, 7.0, 16.0}, {10.0, 7.0, 20.0}, 0.06, 0.05, 6);
+                    Out.Quad(Mat(M::HullBandRed), {10.0, 7.0, 20.0}, {11.6, 7.0, 20.0}, {11.6, 7.0, 19.0}, {10.0, 7.0, 19.0}, true);
+                    for (const double Zw : {6.5, 9.5, 12.5}) Out.Box(Mat(M::TimberDark), {9.6, 4.94, Zw}, {10.4, 5.02, Zw + 1.0});
+                    // windows: slits below, barred above
+                    for (const double X : {-9.0, -6.0, 6.0, 9.0})
+                    {
+                        Out.Box(Mat(M::TimberDark), {X - 0.18, F - 0.04, 1.6}, {X + 0.18, F + 0.02, 2.8});
+                        Out.Box(Mat(M::TimberDark), {X - 0.55, F - 0.04, 6.2}, {X + 0.55, F + 0.02, 7.8});
+                        for (int Bar = 0; Bar < 4; ++Bar) Out.Tube(Mat(M::Iron), {X - 0.36 + 0.24 * Bar, F - 0.1, 6.15}, {X - 0.36 + 0.24 * Bar, F - 0.1, 7.85}, 0.02, 0.02, 4);
+                    }
+                    // the iron-studded door
+                    Out.Box(Mat(M::StoneDark), {-1.5, F - 0.25, 0.0}, {1.5, F + 0.02, 3.6});
+                    Out.Box(Mat(M::TimberDark), {-1.0, F - 0.3, 0.0}, {1.0, F - 0.2, 3.0});
+                    for (int Row = 0; Row < 7; ++Row)
+                        for (int Col = 0; Col < 5; ++Col)
+                        {
+                            const double X = -0.8 + 0.4 * Col, Zd = 0.3 + 0.42 * Row;
+                            Out.Box(Mat(M::Iron), {X - 0.035, F - 0.34, Zd - 0.035}, {X + 0.035, F - 0.29, Zd + 0.035});
+                        }
+                    for (const double Zb : {0.5, 1.5, 2.5}) Out.Box(Mat(M::Iron), {-1.0, F - 0.32, Zb - 0.04}, {1.0, F - 0.29, Zb + 0.04});
+                    // the wanted-poster wall: a timber board left of the door, papers pinned all over it
+                    Out.Box(Mat(M::TimberDark), {-5.6, F - 0.12, 0.9}, {-2.4, F + 0.02, 2.9});
+                    Rng Pin(0x9E11u);
+                    Material Paper;
+                    Paper.Name = "M_Art_Guild_Poster";
+                    Paper.BaseColor = {0.86, 0.81, 0.68, 1.0};
+                    Paper.Roughness = 0.9;
+                    Material Ink;
+                    Ink.Name = "M_Art_Guild_PosterInk";
+                    Ink.BaseColor = {0.12, 0.1, 0.08, 1.0};
+                    Ink.Roughness = 0.9;
+                    for (int K = 0; K < 22; ++K)
+                    {
+                        const double Cx = Pin.Range(-5.3, -2.7), Cz = Pin.Range(1.15, 2.65), Hw = Pin.Range(0.16, 0.24), Hh = Pin.Range(0.2, 0.3), Tilt = Pin.Range(-0.12, 0.12);
+                        const double Yp = F - 0.13 - 0.002 * K;
+                        const auto At = [&](const double U, const double W) { return V3{Cx + U * Cos(Tilt) - W * Sin(Tilt), Yp, Cz + U * Sin(Tilt) + W * Cos(Tilt)}; };
+                        Out.Quad(Paper, At(-Hw, -Hh), At(Hw, -Hh), At(Hw, Hh), At(-Hw, Hh));  // facing the street (-Y)
+                        // a face-shaped smudge and lines of text, black on the paper
+                        const auto AtInk = [&](const double U, const double W) { return At(U, W) - V3{0, 0.001, 0}; };
+                        Out.Quad(Ink, AtInk(-Hw * 0.4, Hh * 0.05), AtInk(Hw * 0.4, Hh * 0.05), AtInk(Hw * 0.4, Hh * 0.7), AtInk(-Hw * 0.4, Hh * 0.7));
+                        for (int L = 0; L < 3; ++L)
+                            Out.Quad(Ink, AtInk(-Hw * 0.75, -Hh * (0.2 + 0.22 * L)), AtInk(Hw * 0.75, -Hh * (0.2 + 0.22 * L)), AtInk(Hw * 0.75, -Hh * (0.14 + 0.22 * L)),
+                                     AtInk(-Hw * 0.75, -Hh * (0.14 + 0.22 * L)));
+                    }
+                    // the sign: a shield on a bracket with a manacle hanging under it
+                    {
+                        const double X = 3.2, Ys = F - 1.0, Zs = 4.0;
+                        Out.Tube(Mat(M::Iron), {X, F, Zs + 0.6}, {X, F - 1.6, Zs + 0.6}, 0.03, 0.03, 4);
+                        Out.Fan(Mat(M::HullBandRed), {{X, Ys - 0.5, Zs + 0.5}, {X, Ys + 0.5, Zs + 0.5}, {X, Ys + 0.5, Zs - 0.1}, {X, Ys, Zs - 0.6}, {X, Ys - 0.5, Zs - 0.1}}, {1, 0, 0});
+                        Out.Fan(Mat(M::HullBandRed), {{X, Ys - 0.5, Zs + 0.5}, {X, Ys - 0.5, Zs - 0.1}, {X, Ys, Zs - 0.6}, {X, Ys + 0.5, Zs - 0.1}, {X, Ys + 0.5, Zs + 0.5}}, {-1, 0, 0});
+                        for (const double Dy : {-0.5, 0.5}) Out.Tube(Mat(M::Iron), {X, Ys + Dy, Zs + 0.6}, {X, Ys + Dy, Zs + 0.5}, 0.01, 0.01, 4);
+                        for (const double Dy : {-0.14, 0.14})
+                            for (int K = 0; K < 8; ++K)
+                            {
+                                const double A = 2.0 * Pi * K / 8, B = 2.0 * Pi * (K + 1) / 8;
+                                Out.Tube(Mat(M::Iron), {X, Ys + Dy + 0.1 * Cos(A), Zs - 0.85 + 0.1 * Sin(A)}, {X, Ys + Dy + 0.1 * Cos(B), Zs - 0.85 + 0.1 * Sin(B)}, 0.018, 0.018, 4);
+                            }
+                        Out.Tube(Mat(M::Iron), {X, Ys - 0.04, Zs - 0.85}, {X, Ys + 0.04, Zs - 0.85}, 0.012, 0.012, 4);
+                        Out.Tube(Mat(M::Iron), {X, Ys, Zs - 0.6}, {X, Ys, Zs - 0.75}, 0.01, 0.01, 4);
+                    }
+                    break;
+                }
                 }
                 return Out;
             }
@@ -629,7 +862,7 @@ namespace DarkArisen::Tools::Art
     {
         for (const Tradition Kind : {Tradition::Colonial, Tradition::Stilt, Tradition::Nordic, Tradition::Camp, Tradition::Fort, Tradition::Lighthouse, Tradition::Entrance,
                  Tradition::Civic, Tradition::Harbour, Tradition::Street})
-            for (int V = 0; V < (Kind == Tradition::Lighthouse ? 1 : Kind == Tradition::Civic ? 6 : Kind == Tradition::Harbour ? 5 : Kind == Tradition::Street ? 3 : Variants); ++V)
+            for (int V = 0; V < (Kind == Tradition::Lighthouse ? 1 : Kind == Tradition::Civic ? 8 : Kind == Tradition::Harbour ? 5 : Kind == Tradition::Street ? 3 : Variants); ++V)
                 Emit(ModelName(Kind, V), WriteGltf(BuildVariant(Kind, V), "Dark Arisen art kit (settlements)"));
     }
 
@@ -765,6 +998,8 @@ namespace DarkArisen::Tools::Art
             const auto [Lx, Ly] = GridToWorld(Spec.LandmarkU, Spec.LandmarkW);
             Place(Tradition::Civic, static_cast<int>(Spec.Centre), Lx, Ly, Spec.LandmarkYaw > -1e8 ? Spec.LandmarkYaw : Spec.StreetAngle);
         }
+        // the level design's own buildings at their world positions (layout.md: the tavern B1, the Guild H2)
+        for (const auto& [V, X, Y, Yaw] : Spec.Civic) Place(Tradition::Civic, V, X, Y, Yaw);
         // what a house may not stand on: the landmarks and quays placed so far, each as the circle round its box
         const std::vector<Structure> Reserved = Out;
         const auto Clear = [&](const double X, const double Y, const double Reach)

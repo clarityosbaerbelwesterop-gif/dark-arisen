@@ -18,6 +18,7 @@
 #include <memory>
 #include <string>
 #include <string_view>
+#include <tuple>
 #include <vector>
 
 namespace DarkArisen::Tools::Art
@@ -165,6 +166,7 @@ namespace DarkArisen::Tools::Art
         double StallRadius = 0, StallPitch = 5;           // market stalls in a ring round the square (0: none)
         int StallMax = 0;
         int Benches = 0;                                  // benches round the square's edge
+        std::vector<std::tuple<int, double, double, double>> Civic;  // the level design's civic buildings: variant, world x, y, yaw
         std::function<bool(double, double, double)> KeepOff;  // true where a road runs within the reach of (x, y)
     };
 
@@ -278,5 +280,6 @@ namespace DarkArisen::Tools::Art
         void BuildSettlementModels();
         /** The creature bosses of docs/design/bosses (ArtKitCreatures.cpp). */
         void BuildCreatureModels();
+        void BuildWeaponModels();
     };
 }

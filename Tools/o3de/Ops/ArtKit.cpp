@@ -223,6 +223,7 @@ namespace DarkArisen::Tools::Art
         for (ArtFile& File : BuildTextures()) Output.push_back(std::move(File));
         BuildSettlementModels();
         BuildCreatureModels();
+        BuildWeaponModels();
 
         // Harlow: merchant ship, three masts under full sail, flush main deck at 2.2 m (layout authority).
         ShipSpec Harlow;

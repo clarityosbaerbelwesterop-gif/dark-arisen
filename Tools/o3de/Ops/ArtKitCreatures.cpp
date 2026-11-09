@@ -979,6 +979,176 @@ namespace DarkArisen::Tools::Art
         return Out;
     }
 
+    /**
+     * Havfrue Modor (havfrue_modor.md 2.1): about two hundred metres from head to tail tip; serpentine but soft, whale and
+     * sea serpent and something without earthly parallel, no hard edges; iridescent skin between deep ocean blue,
+     * silver-white and a pale phosphorescent green-gold; eight eyes, each two metres across, in two rows of four, one
+     * along either side of the head; a face roughly humanoid in proportion whose features do not quite resolve, the mouth
+     * present and closed (her teeth are never shown); the long pale scars of the 1847 harpoons on her left flank and tail.
+     * She rises with her head and upper body above the water (3.3) and lights the scene with her own bioluminescence; the
+     * rest of her descends in a slow spiral into the dark. Facing +X; z = 0 is the sea's surface.
+     */
+    Mesh BuildHavfrueModor()
+    {
+        Mesh Out("SM_Art_Creature_HavfrueModor");
+        Material Frill = Flesh("M_Art_Havfrue_Frill", 0.5, 0.66, 0.78, 0.25);
+        Frill.DoubleSided = true;
+        Frill.Emissive = {0.12, 0.3, 0.32};
+        Material Glow = Flesh("M_Art_Havfrue_Light", 0.4, 0.95, 0.88, 0.3);
+        Glow.Emissive = {0.36, 1.0, 0.9};
+        Glow.EmissiveStrength = 6.0;
+        Material Eye = Flesh("M_Art_Havfrue_Eye", 0.02, 0.04, 0.08, 0.03);
+        Eye.Emissive = {0.12, 0.28, 0.32};
+        Material Scar = Flesh("M_Art_Havfrue_Scar", 0.86, 0.79, 0.78, 0.6);
+        Rng R(0x4AF7u);
+
+        struct Knot { V3 P; double W, H; };
+        const std::vector<Knot> Spine{{{-6, -14, -138}, 1.2, 0.8}, {{4, -12, -130}, 2.2, 1.8}, {{13, -2, -118}, 3.2, 2.8}, {{16, 12, -104}, 4.2, 3.8},
+            {{8, 24, -89}, 5.2, 4.8}, {{-8, 26, -75}, 6.2, 5.8}, {{-20, 16, -60.5}, 7.0, 6.6}, {{-24, 2, -46}, 7.6, 7.2}, {{-22, -6, -31.7}, 8.0, 7.6},
+            {{-18, -4, -18.7}, 8.2, 7.8}, {{-15, 0, -8}, 7.8, 7.4}, {{-12, 0, 2}, 7.0, 6.6}, {{-7, 0, 9}, 6.4, 6.0}, {{-1, 0, 13}, 7.2, 6.6},
+            {{5, 0, 14.5}, 7.6, 6.8}, {{10, 0, 14}, 6.4, 6.0}, {{13, 0, 13.4}, 4.0, 4.2}, {{14, 0, 13.2}, 0.8, 1.0}};
+        const double Last = static_cast<double>(Spine.size() - 1);
+        const auto Surface = [&](const double S, const double A, const double Lift, V3* Normal)
+        {
+            const double At = Clamp(S, 0.0, 1.0) * Last;
+            const std::size_t K = std::min(static_cast<std::size_t>(At), Spine.size() - 2);
+            const double F = At - static_cast<double>(K);
+            const V3 P = Spine[K].P + (Spine[K + 1].P - Spine[K].P) * F, T = Normalize(Spine[K + 1].P - Spine[K].P);
+            const V3 Side = Normalize(Cross(T, std::abs(T.Z) > 0.95 ? V3{1, 0, 0} : V3{0, 0, 1})), Up = Cross(Side, T);
+            const double W = Lerp(Spine[K].W, Spine[K + 1].W, F) + Lift, H = Lerp(Spine[K].H, Spine[K + 1].H, F) + Lift;
+            if (Normal) *Normal = Normalize(Side * (Cos(A) / W) + Up * (Sin(A) / H));
+            return P + Side * (W * Cos(A)) + Up * (H * Sin(A));
+        };
+        // the skin graded round her in twelve bands: deep ocean blue along the back, moonlight silver down the flanks,
+        // the pale phosphorescent green-gold beneath; one sheen over all
+        std::vector<Material> Skin;
+        for (int B = 0; B < 12; ++B)
+        {
+            const double A = -Pi / 2 + 2.0 * Pi * (B + 0.5) / 12, Up = Sin(A), Flank = 1.0 - std::abs(Up);
+            const double Top = Clamp(Up, 0.0, 1.0), Under = Clamp(-Up, 0.0, 1.0);
+            Material M = Hide(("M_Art_Havfrue_Skin" + std::to_string(B)).c_str(), "painted_plaster_wall", 0.0, 0.0, 0.0, 6.0, 0.3);
+            M.BaseColor = {0.16 * Top + 0.7 * Flank + 0.6 * Under, 0.28 * Top + 0.76 * Flank + 0.7 * Under, 0.46 * Top + 0.82 * Flank + 0.5 * Under, 1.0};
+            M.Metallic = 0.35;
+            Skin.push_back(M);
+        }
+        for (int B = 0; B < 12; ++B)
+        {
+            const double From = -Pi / 2 + 2.0 * Pi * B / 12, To = From + 2.0 * Pi / 12;
+            std::vector<std::vector<V3>> Rings;
+            for (int K = 0; K <= 260; ++K)
+            {
+                std::vector<V3> Rg;
+                for (int J = 0; J <= 4; ++J) Rg.push_back(Surface(K / 260.0, Lerp(From, To, J / 4.0), 0.0, nullptr));
+                Rings.push_back(Rg);
+            }
+            Out.Loft(Skin[static_cast<std::size_t>(B)], Rings, false);
+        }
+        const Material& Moonlit = Skin[3];  // the flank's silver, for the face
+
+        // the face: roughly humanoid, soft, never quite resolved; a brow, the bridge of a nose, cheeks, the closed mouth
+        const V3 Face{10.4, 0.0, 13.8};
+        const double Deepness = 3.9, Wide = 5.4, Tall = 5.2;
+        FrontCap(Out, Moonlit, Face, Tall, Wide, Deepness, 20);
+        const auto OnFace = [&](const double Y, const double Z, const double Lift)
+        {
+            const double Q = 1.0 - (Y / Wide) * (Y / Wide) - ((Z - Face.Z) / Tall) * ((Z - Face.Z) / Tall);
+            return V3{Face.X + Deepness * std::sqrt(std::max(Q, 0.0)) + Lift, Y, Z};
+        };
+        // the features hint and do not resolve: only the bridge of a nose in her own skin and the line of the wide closed
+        // mouth
+        for (int K = 0; K < 6; ++K)
+            Out.Tube(Moonlit, OnFace(0.0, 15.2 - 0.3 * K, -0.35 + 0.05 * K), OnFace(0.0, 14.9 - 0.3 * K, -0.3 + 0.05 * K), 0.5 + 0.06 * K, 0.56 + 0.06 * K, 12);
+        for (int K = 0; K < 10; ++K)
+        {
+            const double Y0 = -3.0 + 6.0 * K / 10.0, Y1 = -3.0 + 6.0 * (K + 1) / 10.0;
+            const auto Fall = [](const double Y) { return -0.18 * (Y / 3.0) * (Y / 3.0); };
+            Out.Tube(Skin[5], OnFace(Y0, 12.0 + Fall(Y0), -0.08), OnFace(Y1, 12.0 + Fall(Y1), -0.08), 0.06, 0.06, 6);
+        }
+
+        // eight eyes, two metres across: a row of four along either side of the head, the foremost the largest; each a
+        // glossy dark dome with a pale, softly lit iris (they are kind) and a dark pupil
+        Material Iris = Flesh("M_Art_Havfrue_Iris", 0.78, 0.8, 0.66, 0.15);
+        Iris.Emissive = {0.7, 0.74, 0.68};
+        Iris.EmissiveStrength = 1.2;
+        const Material Pupil = Flesh("M_Art_Havfrue_Pupil", 0.01, 0.015, 0.02, 0.05);
+        for (const double A : {0.42, Pi - 0.42})
+            for (int K = 0; K < 4; ++K)
+            {
+                const double S = (14.8 - 0.75 * K) / Last;
+                V3 N;
+                const V3 At = Surface(S, A, 0.0, &N);
+                const double Radius = 1.08 - 0.07 * K;
+                const double Yaw = Atan2(N.Y, N.X), Pitch = Atan2(N.Z, std::sqrt(N.X * N.X + N.Y * N.Y));
+                Out.Push(Xf::Translate(At - N * 0.12) * Xf::RotateZ(Yaw) * Xf::RotateY(-Pitch));
+                FrontCap(Out, Eye, {0, 0, 0}, Radius, Radius, Radius * 0.45, 18);
+                FrontCap(Out, Iris, {0, 0, 0}, Radius * 0.62, Radius * 0.62, Radius * 0.475, 18);
+                FrontCap(Out, Pupil, {0, 0, 0}, Radius * 0.26, Radius * 0.26, Radius * 0.49, 12);
+                Out.Pop();
+            }
+
+        // bioluminescence: lights along each flank's line and freckled about the head; a soft frill down the back
+        for (int K = 0; K < 420; ++K)
+        {
+            const double S = R.Range(0.03, 0.88), Line = K % 2 ? Pi : 0.0, A = Line + R.Range(-0.32, 0.32) + (K % 5 == 0 ? (K % 2 ? 0.6 : -0.6) : 0.0);
+            V3 N;
+            const V3 At = Surface(S, A, 0.0, &N);
+            const double Size = (0.06 + 0.035 * std::sqrt(Spine[static_cast<std::size_t>(S * Last)].W)) * R.Range(0.6, 1.5);
+            Ellipsoid(Out, Glow, At + N * 0.01, Size, Size, Size * 0.5, 6);
+        }
+        for (int K = 0; K < 26; ++K)
+        {
+            const double S = R.Range(12.6, 15.4) / Last, A = R.Range(0.2, Pi - 0.2);
+            V3 N;
+            const V3 At = Surface(S, A, 0.0, &N);
+            Ellipsoid(Out, Glow, At + N * 0.01, 0.07, 0.07, 0.04, 6);
+        }
+        for (int K = 0; K < 110; ++K)
+        {
+            const double S0 = 0.04 + 0.78 * K / 110.0, S1 = 0.04 + 0.78 * (K + 1) / 110.0;
+            V3 N0, N1;
+            const V3 B0 = Surface(S0, Pi / 2, -0.15, &N0), B1 = Surface(S1, Pi / 2, -0.15, &N1);
+            const double H0 = 0.6 + 1.6 * std::abs(Sin(S0 * 60.0)), H1 = 0.6 + 1.6 * std::abs(Sin(S1 * 60.0));
+            Out.Quad(Frill, B0, B1, B1 + N1 * H1, B0 + N0 * H0, true);
+        }
+
+        // whale flippers below the water, and the tail's fluke
+        for (const double Sd : {-1.0, 1.0})
+        {
+            V3 N;
+            const V3 Root = Surface(9.4 / Last, Sd > 0 ? Pi : 0.0, -0.6, &N);
+            const double Yaw = Atan2(Sd * 1.0, -0.55);
+            Out.Push(Xf::Translate(Root) * Xf::RotateZ(Yaw) * Xf::RotateY(0.35));
+            Ellipsoid(Out, Skin[3], {11.0, 0.0, 0.0}, 11.0, 2.4, 0.55, 14);
+            Out.Pop();
+        }
+        {
+            const V3 Tip = Spine[0].P, Dir = Normalize(Spine[0].P - Spine[1].P);
+            const double Heading = Atan2(Dir.Y, Dir.X);
+            for (const double Sd : {-1.0, 1.0})
+            {
+                Out.Push(Xf::Translate(Tip) * Xf::RotateZ(Heading + Sd * 0.95) * Xf::RotateY(0.25));
+                Ellipsoid(Out, Skin[6], {6.5, 0.0, 0.0}, 7.0, 3.0, 0.5, 14);
+                Out.Pop();
+            }
+        }
+
+        // the harpoon scars of 1847: long, pale, unhealed, on her left flank (A = pi) and down her tail
+        const double Scars[][3] = {{0.53, 0.6, Pi - 0.2}, {0.54, 0.62, Pi + 0.05}, {0.56, 0.63, Pi + 0.3}, {0.07, 0.14, Pi - 0.1}, {0.09, 0.15, Pi + 0.25}};
+        for (const auto& Sc : Scars)
+        {
+            V3 Prev = Surface(Sc[0], Sc[2], 0.05, nullptr);
+            for (int Step = 1; Step <= 10; ++Step)
+            {
+                const double S = Lerp(Sc[0], Sc[1], Step / 10.0), A = Sc[2] + 0.06 * Sin(Step * 1.3);
+                const V3 Next = Surface(S, A, 0.05, nullptr);
+                const double Width = 0.32 * Sin(Pi * (Step - 0.5) / 10.0) + 0.06;
+                Out.Tube(Scar, Prev, Next, Width, Width, 7);
+                Prev = Next;
+            }
+        }
+        return Out;
+    }
+
     void Kit::BuildCreatureModels()
     {
         Emit("SM_Art_Creature_JawOfTheMire", WriteGltf(BuildJawOfTheMire(), "Dark Arisen art kit (creatures)"));
@@ -986,5 +1156,6 @@ namespace DarkArisen::Tools::Art
         Emit("SM_Art_Creature_CalderaTitan", WriteGltf(BuildCalderaTitan(), "Dark Arisen art kit (creatures)"));
         Emit("SM_Art_Creature_Sturmkralle", WriteGltf(BuildSturmkralle(), "Dark Arisen art kit (creatures)"));
         Emit("SM_Art_Creature_AshenWyrm", WriteGltf(BuildAshenWyrm(), "Dark Arisen art kit (creatures)"));
+        Emit("SM_Art_Creature_HavfrueModor", WriteGltf(BuildHavfrueModor(), "Dark Arisen art kit (creatures)"));
     }
 }

@@ -602,6 +602,7 @@ namespace DarkArisen::Tools::Art
             Settle.StallPitch = Plan.StallPitch;
             Settle.StallMax = Plan.StallMax;
             Settle.Benches = Plan.Benches;
+            Settle.Civic = Plan.Civic;
             Settle.KeepOff = [&Roads, &RoadBoxes](const double X, const double Y, const double Reach)
             {
                 for (std::size_t K = 0; K < Roads.size(); ++K)
