@@ -510,7 +510,8 @@ namespace DarkArisen::Tools::Art
             else if (Ends(".market") || Ends(".graavig") || Ends(".kota_api")) Settle.Centre = Landmark::MarketHall;
             else if (Ends(".harbor") || Ends(".smugglers_reach")) Settle.Centre = Landmark::Warehouse;
             else if (Ends(".noble") || Ends(".plantation_masters_domain")) Settle.Centre = Landmark::Mansion;
-            else if (Ends(".cliffside") || Ends(".jernholm") || Ends(".pirate_encampment")) Settle.Centre = Landmark::Watchtower;
+            else if (Ends(".cliffside")) Settle.Centre = Landmark::Faro;  // the Old Spanish Lighthouse (region_02_rexa_city.md 2.6)
+            else if (Ends(".jernholm") || Ends(".pirate_encampment")) Settle.Centre = Landmark::Watchtower;
             Settle.StreetAngle = Si.Kind == Tradition::Colonial ? 12.0 : static_cast<double>(Settle.Seed % 180u);  // Rexa's grid runs up from the harbour
             for (const Structure& B : Kit::SettlementLayout(Settle))
             {

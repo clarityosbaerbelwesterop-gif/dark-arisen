@@ -140,7 +140,7 @@ namespace DarkArisen::Tools::Art
     /** Variants of Tradition::Civic. */
     enum class Landmark
     {
-        None = -1, Cathedral = 0, MarketHall = 1, Warehouse = 2, Mansion = 3, Watchtower = 4
+        None = -1, Cathedral = 0, MarketHall = 1, Warehouse = 2, Mansion = 3, Watchtower = 4, Faro = 5
     };
 
     struct SettlementSpec

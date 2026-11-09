@@ -40,8 +40,8 @@ namespace DarkArisen::Tools::Art
             case Tradition::Civic:
             {
                 static const Size Civic[] = {{27.0, 50.0, 31.0},  // the cathedral's box spans its aisles, towers and dome (layout.md R-08)
-                                               {18.0, 26.0, 6.0}, {14.0, 30.0, 8.0}, {22.0, 16.0, 11.0}, {7.0, 7.0, 16.0}};
-                return Civic[V % 5];
+                                               {18.0, 26.0, 6.0}, {14.0, 30.0, 8.0}, {22.0, 16.0, 11.0}, {7.0, 7.0, 16.0}, {9.0, 9.0, 42.0}};
+                return Civic[V % 6];
             }
             case Tradition::Lighthouse: default: return {5.0, 5.0, 18.0};
             }
@@ -451,7 +451,76 @@ namespace DarkArisen::Tools::Art
                     Out.Box(Mat(M::Iron), {-1.6, -S.D / 2 - 8.05, 0.0}, {1.6, -S.D / 2 - 7.35, 2.6});
                     break;
                 }
-                default:
+                case 5:
+                {
+                    // the Old Spanish Lighthouse of the Cliffside (region_02_rexa_city.md 2.6; layout.md LM4, 5.6): a
+                    // stone plinth, a tapering masonry shaft to a gallery at +34 m, a glazed lantern and its cap. The
+                    // door rotted shut long ago, so the climb is outside: a buttress, a timber scaffold, a broken
+                    // exterior stair with three gaps, and an iron ladder to the gallery hatch.
+                    Out.Box(Mat(M::StoneDark), {-4.5, -4.5, -0.8}, {4.5, 4.5, 6.0});
+                    Course(Out, Mat(M::Stone), 9.0, 9.0, 5.6, 0.5, 0.25);
+                    Out.Tube(Mat(M::Stone), {0.0, 0.0, 6.0}, {0.0, 0.0, 34.0}, 3.7, 2.6, 24);
+                    for (const double Z : {13.5, 21.5, 28.0})
+                    {
+                        const double Rz = 3.7 - 1.1 * (Z - 6.0) / 28.0;
+                        Out.Tube(Mat(M::StoneDark), {0.0, 0.0, Z}, {0.0, 0.0, Z + 0.35}, Rz + 0.18, Rz + 0.18, 24);
+                    }
+                    // the rotted door on the plinth's -Y face, and the buttress the climb starts on
+                    Out.Box(Mat(M::TimberDark), {-0.8, -4.58, 0.0}, {0.8, -4.4, 2.6});
+                    for (int K = 0; K < 6; ++K) Out.Box(Mat(M::Stone), {3.0 - 0.0, -1.2, -0.8}, {4.5 + 1.0 * (6 - K) / 6.0 * 2.0, 1.2, K + 1.0});
+                    // R1: timber scaffold round the shaft from +6 to +14, a 0.9 m ledge of planks every 2 m
+                    for (int K = 0; K < 4; ++K)
+                    {
+                        const double Z = 7.5 + 2.0 * K, Rz = 3.7 - 1.1 * (Z - 6.0) / 28.0;
+                        Out.Tube(Mat(M::Deck), {0.0, 0.0, Z}, {0.0, 0.0, Z + 0.12}, Rz + 0.9, Rz + 0.9, 24);
+                    }
+                    for (int K = 0; K < 6; ++K)
+                    {
+                        const double A = Pi / 3 * K;
+                        Out.Tube(Mat(M::TimberDark), {4.5 * Cos(A), 4.5 * Sin(A), 6.0}, {4.4 * Cos(A), 4.4 * Sin(A), 14.2}, 0.1, 0.09, 6);
+                    }
+                    // R2: the broken exterior stair from +14 to +22 winding once round the shaft, with three 1.5 m gaps
+                    for (int K = 0; K < 40; ++K)
+                    {
+                        if (K == 9 || K == 10 || K == 21 || K == 22 || K == 31 || K == 32) continue;
+                        const double A = 2.0 * Pi * K / 40.0, Z = 14.2 + 0.2 * K, Rz = 3.7 - 1.1 * (Z - 6.0) / 28.0;
+                        OrientedBox(Out, Mat(M::Stone), {(Rz + 0.55) * Cos(A), (Rz + 0.55) * Sin(A), Z}, -Sin(A), Cos(A), {0.32, 0.6, 0.1});
+                    }
+                    // R3: a collapsed bay in the shaft between +22 and +28 (the dark of the interior stair), R4: the ladder
+                    Out.Push(Xf::Translate({0.0, -2.95, 0.0}));
+                    ArchPanel(Out, Mat(M::StoneDark), 0.0, -0.05, 22.4, 1.6, 4.0);
+                    Out.Pop();
+                    for (const double X : {-0.25, 0.25}) Out.Box(Mat(M::Iron), {X - 0.03, 2.75, 28.0}, {X + 0.03, 2.82, 34.4});
+                    for (int K = 0; K < 20; ++K) Out.Box(Mat(M::Iron), {-0.25, 2.76, 28.2 + 0.3 * K}, {0.25, 2.81, 28.24 + 0.3 * K});
+                    // the gallery: a stone deck on corbels, an iron rail 1.1 m high
+                    Out.Tube(Mat(M::Stone), {0.0, 0.0, 33.6}, {0.0, 0.0, 34.0}, 4.2, 4.2, 24);
+                    for (int K = 0; K < 12; ++K)
+                    {
+                        const double A = Pi / 6 * K;
+                        OrientedBox(Out, Mat(M::Stone), {3.4 * Cos(A), 3.4 * Sin(A), 33.0}, Cos(A), Sin(A), {0.7, 0.18, 0.4});
+                    }
+                    Out.Tube(Mat(M::Iron), {0.0, 0.0, 35.05}, {0.0, 0.0, 35.12}, 4.15, 4.15, 24, false);
+                    for (int K = 0; K < 24; ++K)
+                    {
+                        const double A = Pi / 12 * K;
+                        Out.Tube(Mat(M::Iron), {4.15 * Cos(A), 4.15 * Sin(A), 34.0}, {4.15 * Cos(A), 4.15 * Sin(A), 35.1}, 0.03, 0.03, 4, false);
+                    }
+                    // the lantern: glass between iron mullions, an iron cap with a brass ball and a vane
+                    Out.Tube(Mat(M::StoneDark), {0.0, 0.0, 34.0}, {0.0, 0.0, 34.9}, 2.3, 2.3, 16);
+                    Out.Tube(Mat(M::Glass), {0.0, 0.0, 34.9}, {0.0, 0.0, 39.2}, 2.2, 2.2, 12);
+                    for (int K = 0; K < 12; ++K)
+                    {
+                        const double A = Pi / 6 * K;
+                        Out.Tube(Mat(M::Iron), {2.22 * Cos(A), 2.22 * Sin(A), 34.9}, {2.22 * Cos(A), 2.22 * Sin(A), 39.2}, 0.05, 0.05, 4, false);
+                    }
+                    Out.Tube(Mat(M::Iron), {0.0, 0.0, 39.2}, {0.0, 0.0, 39.5}, 2.5, 2.5, 16);
+                    Dome(Out, Mat(M::Iron), 0.0, 0.0, 39.5, 2.4, 1.8, 16);
+                    Dome(Out, Mat(M::Brass), 0.0, 0.0, 41.2, 0.35, 0.35, 8);
+                    Out.Tube(Mat(M::Iron), {0.0, 0.0, 41.4}, {0.0, 0.0, 42.6}, 0.04, 0.04, 4);
+                    Out.Quad(Mat(M::Iron), {0.0, 0.0, 42.4}, {0.9, 0.0, 42.4}, {0.9, 0.0, 42.0}, {0.0, 0.0, 42.0}, true);
+                    break;
+                }
+                case 4:
                 {
                     // the watchtower: a square stone tower with a crenellated top and a flag
                     Out.Box(Mat(M::Stone), {-S.W / 2, -S.D / 2, -0.5}, {S.W / 2, S.D / 2, S.H});
@@ -514,7 +583,7 @@ namespace DarkArisen::Tools::Art
     {
         for (const Tradition Kind : {Tradition::Colonial, Tradition::Stilt, Tradition::Nordic, Tradition::Camp, Tradition::Fort, Tradition::Lighthouse, Tradition::Entrance,
                  Tradition::Civic, Tradition::Harbour})
-            for (int V = 0; V < (Kind == Tradition::Lighthouse ? 1 : Kind == Tradition::Civic || Kind == Tradition::Harbour ? 5 : Variants); ++V)
+            for (int V = 0; V < (Kind == Tradition::Lighthouse ? 1 : Kind == Tradition::Civic ? 6 : Kind == Tradition::Harbour ? 5 : Variants); ++V)
                 Emit(ModelName(Kind, V), WriteGltf(BuildVariant(Kind, V), "Dark Arisen art kit (settlements)"));
     }
 
