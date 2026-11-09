@@ -178,6 +178,7 @@ namespace DarkArisen
             {
                 WorldStructureModel model;
                 model.Model = entry.HasMember("model") ? ReadAsset(entry["model"]) : WorldAsset{};
+                model.Material = entry.HasMember("material") ? ReadAsset(entry["material"]) : WorldAsset{};
                 if (entry.HasMember("box") && entry["box"].IsArray() && entry["box"].Size() == 3)
                 {
                     model.HalfX = static_cast<float>(entry["box"][0].GetDouble());

@@ -91,6 +91,10 @@ namespace DarkArisen
             {
                 Material(grass.Material);
             }
+            for (const WorldStructureModel& model : world->GetStructureModels())
+            {
+                Material(model.Material);
+            }
         }
         WorldStreamingNotificationBus::Handler::BusConnect();
         AZ::TickBus::Handler::BusConnect();
@@ -205,7 +209,8 @@ namespace DarkArisen
             {
                 const AZ::Transform transform = AZ::Transform::CreateFromQuaternionAndTranslation(
                     AZ::Quaternion::CreateRotationZ(AZ::DegToRad(structure.Yaw)), AZ::Vector3(structure.X, structure.Y, structure.Z));
-                handles.push_back(Acquire(world->GetStructureModels()[structure.Model].Model, WorldAsset{}, transform, false));
+                const WorldStructureModel& model = world->GetStructureModels()[structure.Model];
+                handles.push_back(Acquire(model.Model, model.Material, transform, false));
             }
         }
     }

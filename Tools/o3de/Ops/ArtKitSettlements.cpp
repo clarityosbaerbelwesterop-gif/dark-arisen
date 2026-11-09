@@ -70,12 +70,8 @@ namespace DarkArisen::Tools::Art
             const double X0 = -W / 2 - Over, X1 = W / 2 + Over, Y0 = -D / 2 - Over, Y1 = D / 2 + Over, Top = Z + Rise;
             Out.Quad(Roof, {X0, Y0, Z}, {X1, Y0, Z}, {X1, 0.0, Top}, {X0, 0.0, Top}, true);
             Out.Quad(Roof, {X1, Y1, Z}, {X0, Y1, Z}, {X0, 0.0, Top}, {X1, 0.0, Top}, true);
-            for (const double X : {-W / 2, W / 2})
-            {
-                // both faces: the gable is seen from outside and, under the eaves, from below
-                Out.Fan(Gables, {{X, -D / 2, Z}, {X, D / 2, Z}, {X, 0.0, Top}}, {X < 0 ? -1.0 : 1.0, 0.0, 0.0});
-                Out.Fan(Gables, {{X, D / 2, Z}, {X, -D / 2, Z}, {X, 0.0, Top}}, {X < 0 ? 1.0 : -1.0, 0.0, 0.0});
-            }
+            // both faces of each gable (a quad folded to a triangle): seen from outside and, under the eaves, from below
+            for (const double X : {-W / 2, W / 2}) Out.Quad(Gables, {X, -D / 2, Z}, {X, D / 2, Z}, {X, 0.0, Top}, {X, 0.0, Top}, true);
         }
 
         /** Hipped roof: a short ridge along X, eaves all round. */
