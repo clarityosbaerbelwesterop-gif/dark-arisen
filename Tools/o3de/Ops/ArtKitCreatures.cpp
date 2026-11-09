@@ -111,7 +111,7 @@ namespace DarkArisen::Tools::Art
          * from the axis (at the start, at the end), Radius each strand's thickness, Twist the turns along the whole length.
          */
         void Bundle(Mesh& Out, const Material& M, const std::vector<V3>& Path, const int Count, const double Spread0, const double Spread1,
-                    const double Radius0, const double Radius1, const double Twist, const std::uint32_t Seed)
+                    const double Radius0, const double Radius1, const double Twist, const std::uint32_t Seed, const int Sides = 7)
         {
             Rng R(Seed);
             const int Steps = 6 * static_cast<int>(Path.size() - 1);
@@ -128,7 +128,7 @@ namespace DarkArisen::Tools::Art
                     const V3 U = Normalize(Cross(D, Ref)), W = Cross(D, U);
                     const double Angle = Phase + Twist * 2.0 * Pi * T, Spread = Lerp(Spread0, Spread1, T);
                     const V3 P = Along(Path, T) + (U * Cos(Angle) + W * Sin(Angle)) * Spread;
-                    if (K) Out.Tube(M, Prev, P, Lerp(Radius0, Radius1, T - 1.0 / Steps) * Thick, Lerp(Radius0, Radius1, T) * Thick, 7);
+                    if (K) Out.Tube(M, Prev, P, Lerp(Radius0, Radius1, T - 1.0 / Steps) * Thick, Lerp(Radius0, Radius1, T) * Thick, Sides);
                     Prev = P;
                 }
             }
@@ -468,9 +468,181 @@ namespace DarkArisen::Tools::Art
         return Out;
     }
 
+    /**
+     * The Caldera Titan, Ibu's Grief (caldera_titan.md 2): fifteen metres, humanoid and feminine, asymmetrical; the left arm
+     * cooled black basalt, the right a flowing river of active magma; a torso of cracked stone over glowing veins of molten
+     * rock; a smooth stone mask in the manner of the Anak Gunung funeral masks, no eyes, two black hollows where tears of
+     * molten rock drip; hair of obsidian glass strands. She rises from the molten rock (1): a skirt of cooled lava flow
+     * falls from the hips. Facing +X, standing on z = 0.
+     */
+    Mesh BuildCalderaTitan()
+    {
+        Mesh Out("SM_Art_Creature_CalderaTitan");
+        const Material Stone = Hide("M_Art_Titan_Stone", "rock_face_03", 0.36, 0.33, 0.31, 2.5, 1.0);
+        const Material Flow = Hide("M_Art_Titan_LavaRock", "rock_face_03", 0.2, 0.17, 0.16, 2.0, 1.0);
+        const Material Basalt = Hide("M_Art_Titan_Basalt", "rock_face_03", 0.1, 0.1, 0.11, 1.4, 0.75);
+        const Material Crust = Hide("M_Art_Titan_Crust", "rock_pitted_mossy", 0.09, 0.07, 0.06, 0.8, 1.0);
+        const Material MaskStone = Hide("M_Art_Titan_Mask", "painted_plaster_wall", 0.5, 0.46, 0.42, 1.5, 0.7);
+        const Material Hollow = Flesh("M_Art_Titan_Hollow", 0.01, 0.008, 0.008, 0.95);
+        Material Obsidian = Flesh("M_Art_Titan_Obsidian", 0.025, 0.022, 0.03, 0.06);
+        Obsidian.Metallic = 0.2;
+        Material Magma = Flesh("M_Art_Titan_Magma", 0.9, 0.3, 0.05, 0.5);
+        Magma.Emissive = {1.0, 0.27, 0.03};
+        Magma.EmissiveStrength = 5.0;
+        Material Vein = Flesh("M_Art_Titan_Vein", 0.95, 0.38, 0.06, 0.5);
+        Vein.Emissive = {1.0, 0.33, 0.04};
+        Vein.EmissiveStrength = 4.0;
+        Rng R(0xCA1Du);
+
+        // the trunk: hips, a narrow waist, the chest, broad shoulders (forward offset, height, half depth, half width)
+        struct Band { double X, Z, Rx, Ry; };
+        const std::vector<Band> Trunk{{0.0, 7.6, 1.2, 1.7}, {0.05, 8.4, 1.25, 1.78}, {0.1, 9.4, 0.92, 1.18}, {0.12, 10.4, 1.12, 1.55},
+                                      {0.14, 11.2, 1.28, 1.88}, {0.08, 12.0, 1.08, 2.1}, {0.04, 12.6, 0.72, 1.42}, {0.08, 12.95, 0.42, 0.5}};
+        std::vector<Ring> Rings;
+        for (const Band& B : Trunk) Rings.push_back(Ellipse(B.X, 0.0, B.Z, B.Rx, B.Ry, 20));
+        Out.Loft(Stone, Rings, true);
+        const auto OnTrunk = [&](const double A, const double Z, const double Lift)
+        {
+            std::size_t K = 0;
+            while (K + 2 < Trunk.size() && Z > Trunk[K + 1].Z) ++K;
+            const double T = Clamp((Z - Trunk[K].Z) / (Trunk[K + 1].Z - Trunk[K].Z), 0.0, 1.0);
+            const double X = Lerp(Trunk[K].X, Trunk[K + 1].X, T), Rx = Lerp(Trunk[K].Rx, Trunk[K + 1].Rx, T), Ry = Lerp(Trunk[K].Ry, Trunk[K + 1].Ry, T);
+            return V3{X + (Rx + Lift) * Cos(A), (Ry + Lift) * Sin(A), Z};
+        };
+        // the breast, modest as a carved figure's
+        for (const double Y : {-0.72, 0.72}) FrontCap(Out, Stone, {0.95, Y, 11.0}, 0.62, 0.6, 0.42, 14);
+
+        // cracks with molten rock beneath: veins wandering down the stone, three wide fissures across the chest
+        for (int K = 0; K < 34; ++K)
+        {
+            double A = R.Range(0.0, 2.0 * Pi), Z = R.Range(8.0, 12.4);
+            const double Width = K < 3 ? 0.13 : R.Range(0.035, 0.07);
+            if (K < 3) { A = R.Range(-0.5, 0.5); Z = R.Range(10.6, 11.8); }
+            V3 Prev = OnTrunk(A, Z, 0.0);
+            for (int Step = 0; Step < 9; ++Step)
+            {
+                A += R.Range(-0.14, 0.14);
+                Z += R.Range(-0.42, 0.06);
+                if (Z < 7.7) break;
+                const V3 Next = OnTrunk(A, Z, 0.0);
+                Out.Tube(Vein, Prev, Next, Width * (1.0 - Step * 0.08), Width * (1.0 - (Step + 1) * 0.08), 5);
+                Prev = Next;
+            }
+        }
+
+        // the skirt of cooled lava flow, its hem in heavy folds; molten seams run down it
+        std::vector<Ring> Skirt;
+        for (int K = 0; K <= 8; ++K)
+        {
+            const double T = K / 8.0, Z = Lerp(8.5, 0.4, T), Fold = 0.06 + 0.3 * T * T;
+            Ring Rg;
+            for (int S = 0; S < 32; ++S)
+            {
+                const double A = 2.0 * Pi * S / 32, Wave = 1.0 + Fold * Sin(5.0 * A + 0.6 * T);
+                Rg.push_back({0.05 + Lerp(1.3, 2.7, T) * Wave * Cos(A), Lerp(1.82, 3.0, T) * Wave * Sin(A), Z});
+            }
+            Skirt.push_back(Rg);
+        }
+        Out.Loft(Flow, Skirt, true);
+        for (int K = 0; K < 12; ++K)
+        {
+            double A = 2.0 * Pi * K / 12 + R.Range(-0.25, 0.25);
+            const double Start = R.Range(0.0, 0.35), Stop = R.Range(0.55, 0.95), Width = R.Range(0.025, 0.06);
+            V3 Prev{};
+            for (int Step = 0; Step <= 12; ++Step)
+            {
+                const double T = Lerp(Start, Stop, Step / 12.0), Z = Lerp(8.5, 0.4, T), Fold = 0.06 + 0.3 * T * T;
+                A += R.Range(-0.07, 0.07);
+                const double Wave = 1.0 + Fold * Sin(5.0 * A + 0.6 * T);
+                const V3 P{0.05 + Lerp(1.3, 2.7, T) * Wave * Cos(A) * 1.005, Lerp(1.82, 3.0, T) * Wave * Sin(A) * 1.005, Z};
+                if (Step && R.Unit() > 0.18) Out.Tube(Vein, Prev, P, Width, Width * R.Range(0.6, 1.3), 5);
+                Prev = P;
+            }
+        }
+        for (const double Y : {-0.95, 0.95}) Rock(Out, Basalt, {2.6, Y, -0.1}, 0.75, 0.75, Y > 0 ? 71u : 72u);
+
+        // the left arm: cooled basalt, a sheaf of hexagonal columns to a hand of columns
+        const V3 ShL{0.15, 2.2, 12.2}, ShR{0.15, -2.2, 12.2};
+        const std::vector<V3> ArmL{ShL, {0.7, 3.0, 9.4}, {1.7, 2.9, 7.3}, {2.1, 2.75, 6.6}};
+        Bundle(Out, Basalt, ArmL, 7, 0.34, 0.26, 0.26, 0.2, 0.06, 73u, 6);
+        Rock(Out, Basalt, ShL + V3{-0.1, 0.1, -0.45}, 0.85, 1.0, 74u);
+        for (int F = 0; F < 5; ++F)
+        {
+            const double A = -0.8 + 0.4 * F;
+            const V3 Knuckle{2.25 + 0.3 * Cos(A), 2.75 + 0.3 * Sin(A), 6.45}, Tip{2.5 + 0.75 * Cos(A), 2.75 + 0.75 * Sin(A), (F == 0 ? 6.2 : 5.55)};
+            Out.Tube(Basalt, ArmL.back(), Knuckle, 0.2, 0.17, 6);
+            Out.Tube(Basalt, Knuckle, Tip, 0.16, 0.1, 6);
+        }
+        // the right arm: a river of magma reshaping itself, crusts of cooling rock riding on it, dripping to the ground
+        const std::vector<V3> ArmR{ShR, {1.0, -3.15, 9.6}, {2.4, -3.0, 8.0}, {2.9, -2.8, 7.3}};
+        Bundle(Out, Magma, ArmR, 5, 0.3, 0.24, 0.28, 0.2, 1.6, 75u);
+        for (int K = 0; K < 22; ++K)
+        {
+            const V3 P = Along(ArmR, R.Range(0.03, 0.95));
+            Rock(Out, Crust, P + V3{R.Range(-0.32, 0.32), R.Range(-0.32, 0.32), -0.12}, R.Range(0.2, 0.36), R.Range(0.14, 0.26), 80u + static_cast<std::uint32_t>(K));
+        }
+        for (int F = 0; F < 4; ++F)
+        {
+            const double A = -0.7 + 0.45 * F;
+            Out.Tube(Magma, ArmR.back(), {3.15 + 0.55 * Cos(A), -2.8 + 0.55 * Sin(A), 6.7 - 0.15 * F}, 0.17, 0.06, 7);
+        }
+        for (int D = 0; D < 6; ++D)
+        {
+            const double X = 3.0 + R.Range(-0.35, 0.35), Y = -2.85 + R.Range(-0.35, 0.35), Top = R.Range(4.5, 6.6);
+            Out.Tube(Magma, {X, Y, Top}, {X, Y, Top - R.Range(0.5, 1.4)}, 0.05, 0.11, 6);
+        }
+        Rock(Out, Crust, {3.0, -2.85, -0.12}, 1.0, 0.22, 79u);
+        Dome(Out, Magma, 3.0, -2.85, 0.02, 0.6, 0.1, 14);
+        Rock(Out, Basalt, ShR + V3{-0.1, -0.1, -0.45}, 0.8, 0.9, 76u);
+
+        // neck and head; the funeral mask, two black hollows, molten tears
+        Out.Tube(Stone, {0.1, 0.0, 12.8}, {0.22, 0.0, 13.6}, 0.46, 0.42, 14);
+        Rock(Out, Stone, {0.1, 0.0, 13.1}, 0.9, 1.9, 77u);
+        const V3 Face{0.72, 0.0, 14.0};
+        const double Tall = 0.98, Wide = 0.72, Deep = 0.42;
+        FrontCap(Out, MaskStone, Face, Tall, Wide, Deep, 20);
+        const auto Surface = [&](const double Y, const double Z)
+        {
+            const double Q = 1.0 - (Y / Wide) * (Y / Wide) - ((Z - Face.Z) / Tall) * ((Z - Face.Z) / Tall);
+            return V3{Face.X + Deep * std::sqrt(std::max(Q, 0.0)), Y, Z};
+        };
+        for (const double Y : {-0.27, 0.27})
+        {
+            FrontCap(Out, Hollow, Surface(Y, 14.2) + V3{-0.035, 0, 0}, 0.24, 0.16, 0.045, 12);
+            V3 Prev = Surface(Y * 1.02, 13.98) + V3{0.012, 0, 0};
+            for (const double Z : {13.8, 13.62, 13.44})
+            {
+                const V3 Next = Surface(Y * (1.0 + (14.0 - Z) * 0.1), Z) + V3{0.012, 0, 0};
+                Out.Tube(Magma, Prev, Next, 0.02, 0.016, 6);
+                Prev = Next;
+            }
+            Dome(Out, Magma, Prev.X, Prev.Y, Prev.Z - 0.04, 0.03, 0.05, 8);
+        }
+        // the carving: a brow band, the ridge of the nose, the closed mouth
+        Out.Tube(Stone, Surface(-0.55, 14.5) + V3{0.01, 0, 0}, Surface(0.0, 14.56) + V3{0.03, 0, 0}, 0.04, 0.05, 6);
+        Out.Tube(Stone, Surface(0.0, 14.56) + V3{0.03, 0, 0}, Surface(0.55, 14.5) + V3{0.01, 0, 0}, 0.05, 0.04, 6);
+        Out.Tube(Stone, Surface(0.0, 14.42) + V3{0.02, 0, 0}, Surface(0.0, 13.92) + V3{0.06, 0, 0}, 0.05, 0.07, 6);
+        Out.Tube(Hollow, Surface(-0.2, 13.62), Surface(0.2, 13.62), 0.022, 0.022, 6);
+
+        // hair: strands of obsidian glass from the crown down the back, shards broken along them
+        for (int K = 0; K < 44; ++K)
+        {
+            const double Y = R.Range(-0.8, 0.8), Long = R.Range(0.7, 1.2), Lift = R.Range(0.0, 0.25);
+            const std::vector<V3> Strand{{0.55, Y * 0.7, 14.75 + Lift * 0.4}, {-0.15, Y * 1.0, 15.0 + Lift}, {-0.95, Y * 1.3, 14.1}, {-1.25, Y * 1.55, 12.6 - 0.6 * Long}, {-1.15, Y * 1.7, 11.6 - 1.6 * Long}};
+            Bundle(Out, Obsidian, Strand, 1, 0.0, 0.0, 0.07, 0.012, 0.0, 90u + static_cast<std::uint32_t>(K), 5);
+            if (K % 4 == 0)
+            {
+                const V3 At = Along(Strand, R.Range(0.45, 0.85));
+                Slab(Out, Obsidian, At + V3{-0.08, 0, 0}, {0.03, 0.09, 0.26}, R.Range(-0.6, 0.6), R.Range(-0.4, 0.4), R.Range(-0.4, 0.4), 140u + static_cast<std::uint32_t>(K), 0.5);
+            }
+        }
+        return Out;
+    }
+
     void Kit::BuildCreatureModels()
     {
         Emit("SM_Art_Creature_JawOfTheMire", WriteGltf(BuildJawOfTheMire(), "Dark Arisen art kit (creatures)"));
         Emit("SM_Art_Creature_JungleWarden", WriteGltf(BuildJungleWarden(), "Dark Arisen art kit (creatures)"));
+        Emit("SM_Art_Creature_CalderaTitan", WriteGltf(BuildCalderaTitan(), "Dark Arisen art kit (creatures)"));
     }
 }
