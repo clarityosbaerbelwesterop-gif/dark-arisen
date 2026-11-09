@@ -80,6 +80,10 @@ namespace DarkArisen::Tools::Art
             double LandmarkU = 0, LandmarkW = 0, LandmarkYaw = 0;  // landmark offset in the street grid's frame and its yaw
             bool HasPlaza = false;
             double PlazaU = 0, PlazaW = 0, PlazaRadius = 0;        // the square kept clear
+            double LampSpacing = 0;                                // street lamps, metres apart on each side
+            double StallRadius = 0, StallPitch = 5;                // market stalls round the square
+            int StallMax = 0;
+            int Benches = 0;
         } Plan;
     };
 
@@ -88,6 +92,15 @@ namespace DarkArisen::Tools::Art
      * Tiles/F_World_<c>_<r>.json for the runtime (trees and rocks as instances, grass patches scattered near the
      * player on the heights), the plant models and grass patches to WorldTiles.json with their O3DE asset ids.
      */
+    /** A route between places (ContentSource/World/Roads.json): graded into the terrain, paved, lit, built along. */
+    struct WorldRoad
+    {
+        std::string Id, Kind;          // Kind: "avenue", "street" or "stairs"
+        double Width = 7;
+        struct Point { double X = 0, Y = 0, Z = 0; };
+        std::vector<Point> Points;     // x, y and the road's height z at each point
+    };
+
     WorldTerrain BuildWorldTerrain(const ArchipelagoSpec& Spec, const std::vector<WorldPlaceMark>& Places, const std::vector<WorldLocation>& Locations,
-        double TileSize, double TileStep, double CoarseStep, double TextureCell);
+        const std::vector<WorldRoad>& Roads, double TileSize, double TileStep, double CoarseStep, double TextureCell);
 }

@@ -1,0 +1,203 @@
+{
+  "schemaVersion": 1,
+  "authority": "docs/design/region_02_rexa_city.md (six interconnected districts); production/levels/rexa-city/layout.md 3.2 (routes, widths, grades)",
+  "policy": "Routes between places, graded into the terrain by world-build. Points are x, y in metres and the road's height z there.",
+  "roads": [
+    {
+      "id": "road.rexa.e1.avenida_del_puerto",
+      "name": "Avenida del Puerto",
+      "kind": "avenue",
+      "width": 14,
+      "points": [
+        [
+          5597,
+          5325,
+          1.6
+        ],
+        [
+          5680,
+          5285,
+          11.2
+        ],
+        [
+          5808,
+          5412,
+          30.0
+        ]
+      ],
+      "source": "production/levels/rexa-city/layout.md 3.2"
+    },
+    {
+      "id": "road.rexa.e2.escalera_del_barrio",
+      "name": "Escalera del Barrio",
+      "kind": "stairs",
+      "width": 4,
+      "points": [
+        [
+          5578,
+          5160,
+          1.6
+        ],
+        [
+          5698,
+          5074,
+          54.0
+        ]
+      ],
+      "source": "production/levels/rexa-city/layout.md 3.2"
+    },
+    {
+      "id": "road.rexa.e3.escalinata_de_la_catedral",
+      "name": "Escalinata de la Catedral",
+      "kind": "stairs",
+      "width": 12,
+      "points": [
+        [
+          5959,
+          5371,
+          30.0
+        ],
+        [
+          5993,
+          5326,
+          58.0
+        ]
+      ],
+      "source": "production/levels/rexa-city/layout.md 3.2"
+    },
+    {
+      "id": "road.rexa.e4.calle_real",
+      "name": "Calle Real",
+      "kind": "avenue",
+      "width": 14,
+      "points": [
+        [
+          5995,
+          5477,
+          30.0
+        ],
+        [
+          6146,
+          5520,
+          47.0
+        ]
+      ],
+      "source": "production/levels/rexa-city/layout.md 3.2"
+    },
+    {
+      "id": "road.rexa.e5.market_slums",
+      "name": "Calle (Market-Slums)",
+      "kind": "street",
+      "width": 9,
+      "points": [
+        [
+          5879,
+          5353,
+          30.0
+        ],
+        [
+          5827,
+          5123,
+          54.0
+        ]
+      ],
+      "source": "production/levels/rexa-city/layout.md 3.2"
+    },
+    {
+      "id": "road.rexa.e6.cathedral_slums",
+      "name": "Calle (Cathedral-Slums)",
+      "kind": "street",
+      "width": 7,
+      "points": [
+        [
+          5983,
+          5183,
+          58.0
+        ],
+        [
+          5889,
+          5089,
+          54.0
+        ]
+      ],
+      "source": "production/levels/rexa-city/layout.md 3.2"
+    },
+    {
+      "id": "road.rexa.e7.cathedral_noble",
+      "name": "Calle (Cathedral-Noble)",
+      "kind": "street",
+      "width": 9,
+      "points": [
+        [
+          6102,
+          5329,
+          58.0
+        ],
+        [
+          6060,
+          5370,
+          55.27
+        ],
+        [
+          6080,
+          5410,
+          53.19
+        ],
+        [
+          6120,
+          5450,
+          50.55
+        ],
+        [
+          6160,
+          5470,
+          48.47
+        ],
+        [
+          6190,
+          5460,
+          47.0
+        ]
+      ],
+      "source": "production/levels/rexa-city/layout.md 3.2"
+    },
+    {
+      "id": "road.rexa.e8.escaleras_del_acantilado",
+      "name": "Escaleras del Acantilado",
+      "kind": "stairs",
+      "width": 5,
+      "points": [
+        [
+          6216,
+          5652,
+          47.0
+        ],
+        [
+          6184,
+          5748,
+          34.0
+        ]
+      ],
+      "source": "production/levels/rexa-city/layout.md 3.2"
+    },
+    {
+      "id": "road.rexa.e9.camino_del_acantilado",
+      "name": "Camino del Acantilado",
+      "kind": "street",
+      "width": 9,
+      "points": [
+        [
+          5952,
+          5534,
+          30.0
+        ],
+        [
+          6093,
+          5758,
+          34.0
+        ]
+      ],
+      "source": "production/levels/rexa-city/layout.md 3.2"
+    }
+  ]
+}

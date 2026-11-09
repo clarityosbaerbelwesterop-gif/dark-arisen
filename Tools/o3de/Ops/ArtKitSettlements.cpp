@@ -43,6 +43,11 @@ namespace DarkArisen::Tools::Art
                                                {18.0, 26.0, 6.0}, {14.0, 30.0, 8.0}, {22.0, 16.0, 11.0}, {7.0, 7.0, 16.0}, {9.0, 9.0, 42.0}};
                 return Civic[V % 6];
             }
+            case Tradition::Street:
+            {
+                static const Size Street[] = {{0.7, 0.7, 4.2}, {3.0, 3.0, 3.0}, {1.8, 0.6, 0.9}};  // gas lamp, market stall, bench
+                return Street[V % 3];
+            }
             case Tradition::Lighthouse: default: return {5.0, 5.0, 18.0};
             }
         }
@@ -59,6 +64,7 @@ namespace DarkArisen::Tools::Art
             case Tradition::Entrance: return "Entrance";
             case Tradition::Civic: return "Civic";
             case Tradition::Harbour: return "Harbour";
+            case Tradition::Street: return "Street";
             case Tradition::Lighthouse: default: return "Lighthouse";
             }
         }
@@ -316,6 +322,46 @@ namespace DarkArisen::Tools::Art
                     Out.Push(Xf::RotateZ(Pi / 2));  // the kit builds bow to +X
                     Out.Append(Hull);
                     Out.Pop();
+                }
+                return Out;
+            }
+            case Tradition::Street:
+            {
+                Mesh Out(Name);
+                if (V == 0)
+                {
+                    // a gas lamp ("gas-lit streets", region_02_rexa_city.md 1): a cast-iron post on a stone base, the
+                    // lamplighter's crossbar, a glazed lantern under a hood
+                    Out.Box(Mat(M::Stone), {-0.3, -0.3, -0.3}, {0.3, 0.3, 0.35});
+                    Out.Tube(Mat(M::Iron), {0.0, 0.0, 0.35}, {0.0, 0.0, 0.9}, 0.14, 0.09, 10);
+                    Out.Tube(Mat(M::Iron), {0.0, 0.0, 0.9}, {0.0, 0.0, 3.4}, 0.06, 0.05, 10);
+                    Out.Box(Mat(M::Iron), {-0.38, -0.03, 3.05}, {0.38, 0.03, 3.11});
+                    Out.Tube(Mat(M::Iron), {0.0, 0.0, 3.4}, {0.0, 0.0, 3.5}, 0.16, 0.16, 8);
+                    Out.Tube(Mat(M::Glass), {0.0, 0.0, 3.5}, {0.0, 0.0, 3.95}, 0.2, 0.26, 4);
+                    for (int K = 0; K < 4; ++K)
+                    {
+                        const double A = Pi / 4 + Pi / 2 * K;
+                        Out.Tube(Mat(M::Iron), {0.2 * Cos(A), 0.2 * Sin(A), 3.5}, {0.26 * Cos(A), 0.26 * Sin(A), 3.95}, 0.012, 0.012, 4, false);
+                    }
+                    Out.Tube(Mat(M::Iron), {0.0, 0.0, 3.95}, {0.0, 0.0, 4.15}, 0.32, 0.05, 4);
+                    Out.Tube(Mat(M::Iron), {0.0, 0.0, 4.15}, {0.0, 0.0, 4.25}, 0.03, 0.03, 6);
+                }
+                else if (V == 1)
+                {
+                    // a market stall (layout.md 5.2, 3 x 3 x 3): four posts, a counter to the front (-Y), a canvas awning
+                    for (const double X : {-1.4, 1.4})
+                        for (const double Y : {-1.4, 1.4}) Out.Tube(Mat(M::Timber), {X, Y, 0.0}, {X, Y, Y < 0 ? 2.6 : 2.2}, 0.05, 0.05, 6);
+                    Out.Box(Mat(M::Timber), {-1.45, -1.5, 0.85}, {1.45, -0.9, 0.95});
+                    Out.Box(Mat(M::TimberDark), {-1.4, -1.4, 0.0}, {1.4, -1.3, 0.85});
+                    Out.Quad(Mat(M::Canvas), {-1.6, -1.9, 2.55}, {1.6, -1.9, 2.55}, {1.6, 1.6, 2.2}, {-1.6, 1.6, 2.2}, true);
+                    for (int K = 0; K < 3; ++K) Crate(Out, {-1.2 + 0.9 * K, 0.3, 0.0}, {-0.5 + 0.9 * K, 1.0, 0.6});
+                }
+                else
+                {
+                    // a bench of stone ends and a timber seat
+                    for (const double X : {-0.75, 0.75}) Out.Box(Mat(M::Stone), {X - 0.1, -0.22, 0.0}, {X + 0.1, 0.22, 0.42});
+                    Out.Box(Mat(M::Timber), {-0.9, -0.25, 0.42}, {0.9, 0.25, 0.48});
+                    Out.Box(Mat(M::Timber), {-0.9, 0.2, 0.55}, {0.9, 0.26, 0.85});
                 }
                 return Out;
             }
@@ -582,9 +628,15 @@ namespace DarkArisen::Tools::Art
     void Kit::BuildSettlementModels()
     {
         for (const Tradition Kind : {Tradition::Colonial, Tradition::Stilt, Tradition::Nordic, Tradition::Camp, Tradition::Fort, Tradition::Lighthouse, Tradition::Entrance,
-                 Tradition::Civic, Tradition::Harbour})
-            for (int V = 0; V < (Kind == Tradition::Lighthouse ? 1 : Kind == Tradition::Civic ? 6 : Kind == Tradition::Harbour ? 5 : Variants); ++V)
+                 Tradition::Civic, Tradition::Harbour, Tradition::Street})
+            for (int V = 0; V < (Kind == Tradition::Lighthouse ? 1 : Kind == Tradition::Civic ? 6 : Kind == Tradition::Harbour ? 5 : Kind == Tradition::Street ? 3 : Variants); ++V)
                 Emit(ModelName(Kind, V), WriteGltf(BuildVariant(Kind, V), "Dark Arisen art kit (settlements)"));
+    }
+
+    Structure Kit::SettlementPiece(const Tradition Kind, const int Variant, const double X, const double Y, const double Z, const double Yaw)
+    {
+        const Size S = VariantSize(Kind, Variant);
+        return {"Assets/Art/Models/" + ModelName(Kind, Variant) + ".gltf", X, Y, Z, Yaw, S.W / 2 + 0.3, S.D / 2 + 0.3, S.H + 2.0};
     }
 
     std::vector<Structure> Kit::SettlementLayout(const SettlementSpec& Spec)
@@ -725,6 +777,29 @@ namespace DarkArisen::Tools::Art
             return true;
         };
         const Tradition Houses = Spec.Kind == Tradition::Colonial ? Spec.Houses : Spec.Kind;
+        // street furniture (layout.md R-09): kept with the props, so it never counts against the buildings
+        const auto Furnish = [&](const int V, const double X, const double Y, const double Yaw)
+        {
+            const Size S = VariantSize(Tradition::Street, V);
+            Props.push_back({"Assets/Art/Models/" + ModelName(Tradition::Street, V) + ".gltf", X, Y, Spec.Ground(X, Y), Yaw, S.W / 2, S.D / 2, S.H});
+        };
+        {
+            // market stalls in a ring round the square, counters to the middle; benches round its edge, facing in
+            const double Pu = Spec.PlazaRadius >= 0.0 ? Spec.PlazaU : 0.0, Pw = Spec.PlazaRadius >= 0.0 ? Spec.PlazaW : 0.0;
+            const auto Ring = [&](const int V, const int Count, const double Radius, const double Phase)
+            {
+                for (int K = 0; K < Count; ++K)
+                {
+                    const double A = 2.0 * Pi * (K + Phase) / Count;
+                    const auto [X, Y] = GridToWorld(Pu + Radius * Cos(A), Pw + Radius * Sin(A));
+                    // the model's front (-Y) towards the square's middle
+                    Furnish(V, X, Y, Spec.StreetAngle + A * 180.0 / Pi - 90.0);
+                }
+            };
+            if (Spec.StallRadius > 0.0 && Spec.StallMax > 0)
+                Ring(1, std::min(Spec.StallMax, static_cast<int>(2.0 * Pi * Spec.StallRadius / std::max(Spec.StallPitch, 3.2))), Spec.StallRadius, 0.0);
+            if (Spec.Benches > 0 && Spec.PlazaRadius > 4.0) Ring(2, Spec.Benches, Spec.PlazaRadius - 2.5, 0.5);
+        }
 
         if (Spec.Kind == Tradition::Colonial && !Spec.Cluster)
         {
@@ -771,6 +846,17 @@ namespace DarkArisen::Tools::Art
                         }
                         Along += S.W + 0.05;
                     }
+                    // gas lamps at the kerb along this side of the block ("gas-lit streets"), so every street has a
+                    // row on both sides from the two blocks that face it
+                    if (Spec.LampSpacing > 0.0)
+                        for (double Lu = U - Block / 2 + Spec.LampSpacing / 2; Lu < U + Block / 2; Lu += Spec.LampSpacing)
+                        {
+                            const double Lw = W + Side * (Deep / 2 + 1.0);
+                            const auto [X, Y] = GridToWorld(Lu, Lw);
+                            const bool OffPlaza = Spec.PlazaRadius < 0.0 ||
+                                (Lu - Spec.PlazaU) * (Lu - Spec.PlazaU) + (Lw - Spec.PlazaW) * (Lw - Spec.PlazaW) > Spec.PlazaRadius * Spec.PlazaRadius;
+                            if (Spec.Ground(X, Y) >= Spec.MinGround && OffPlaza && Clear(X, Y, 1.0)) Furnish(0, X, Y, Spec.StreetAngle);
+                        }
                 }
             }
             Out.insert(Out.end(), Props.begin(), Props.end());

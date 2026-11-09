@@ -691,6 +691,12 @@ namespace
                     P.HasLandmark = true;
                     P.LandmarkU = V->Items[0].Number; P.LandmarkW = V->Items[1].Number; P.LandmarkYaw = V->Items[2].Number;
                 }
+                if (const auto* V = Plan->Find("lamps")) P.LampSpacing = V->Number;
+                if (const auto* V = Plan->Find("benches")) P.Benches = static_cast<int>(V->Number);
+                if (const auto* V = Plan->Find("stalls"); V && V->Items.size() == 3)
+                {
+                    P.StallRadius = V->Items[0].Number; P.StallPitch = V->Items[1].Number; P.StallMax = static_cast<int>(V->Items[2].Number);
+                }
                 if (const auto* V = Plan->Find("plaza"); V && V->Items.size() == 3)
                 {
                     P.HasPlaza = true;
@@ -699,7 +705,26 @@ namespace
             }
             Sites.push_back(Site);
         }
-        const auto World = DarkArisen::Tools::Art::BuildWorldTerrain(Spec, Marks, Sites, 500.0, 5.0, 32.0, 8.0);
+        // the routes between places (Roads.json, optional)
+        std::vector<DarkArisen::Tools::Art::WorldRoad> Roads;
+        if (std::ifstream RoadsIn(Opts.RepoRoot / "ContentSource" / "World" / "Roads.json"); RoadsIn)
+        {
+            const std::string RoadsText((std::istreambuf_iterator<char>(RoadsIn)), std::istreambuf_iterator<char>());
+            DarkArisen::Tools::JsonValue RoadsJson;
+            if (!DarkArisen::Tools::JsonReader::Parse(RoadsText, RoadsJson, Problem) || !RoadsJson.Find("roads"))
+            {
+                std::cerr << "error: ContentSource/World/Roads.json: " << Problem << "\n";
+                return LockError;
+            }
+            for (const DarkArisen::Tools::JsonValue& R : RoadsJson.Find("roads")->Items)
+            {
+                DarkArisen::Tools::Art::WorldRoad Road{R.Find("id")->Text, R.Find("kind")->Text, R.Find("width")->Number, {}};
+                for (const DarkArisen::Tools::JsonValue& P : R.Find("points")->Items)
+                    Road.Points.push_back({P.Items[0].Number, P.Items[1].Number, P.Items[2].Number});
+                Roads.push_back(Road);
+            }
+        }
+        const auto World = DarkArisen::Tools::Art::BuildWorldTerrain(Spec, Marks, Sites, Roads, 500.0, 5.0, 32.0, 8.0);
         const fs::path Root = Opts.RepoRoot / "Engine" / "O3DE" / "DarkArisen" / "Assets" / "World";
         std::size_t Bytes = 0;
         for (const auto& File : World.Files)

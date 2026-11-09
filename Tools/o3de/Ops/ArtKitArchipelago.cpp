@@ -7,6 +7,7 @@
 
 #include "ArtKit.h"
 #include "ArtKitCore.h"
+#include "ArtKitLibrary.h"
 #include "Json.h"
 #include "O3deIds.h"
 
@@ -246,10 +247,48 @@ namespace DarkArisen::Tools::Art
 
     }
 
+    namespace
+    {
+        /** The nearest point of a road's centre line to (X, Y): its distance, the road's height there and the direction. */
+        struct RoadPoint
+        {
+            double Distance = 1e30, Z = 0, Dx = 1, Dy = 0;
+        };
+        RoadPoint NearestOnRoad(const WorldRoad& Road, const double X, const double Y)
+        {
+            RoadPoint Best;
+            for (std::size_t K = 0; K + 1 < Road.Points.size(); ++K)
+            {
+                const WorldRoad::Point& A = Road.Points[K];
+                const WorldRoad::Point& B = Road.Points[K + 1];
+                const double Ex = B.X - A.X, Ey = B.Y - A.Y, Len2 = Ex * Ex + Ey * Ey;
+                const double T = Len2 > 0.0 ? Clamp(((X - A.X) * Ex + (Y - A.Y) * Ey) / Len2, 0.0, 1.0) : 0.0;
+                const double Px = A.X + Ex * T, Py = A.Y + Ey * T;
+                const double D = std::sqrt((X - Px) * (X - Px) + (Y - Py) * (Y - Py));
+                if (D < Best.Distance)
+                {
+                    const double Len = std::sqrt(Len2);
+                    Best = {D, A.Z + (B.Z - A.Z) * T, Len > 0.0 ? Ex / Len : 1.0, Len > 0.0 ? Ey / Len : 0.0};
+                }
+            }
+            return Best;
+        }
+    }
+
     WorldTerrain BuildWorldTerrain(const ArchipelagoSpec& Spec, const std::vector<WorldPlaceMark>& Places, const std::vector<WorldLocation>& Locations,
-        const double TileSize, const double TileStep, const double CoarseStep, const double TextureCell)
+        const std::vector<WorldRoad>& Roads, const double TileSize, const double TileStep, const double CoarseStep, const double TextureCell)
     {
         WorldTerrain Out;
+        // each road's box (with its shoulders), so the ground only asks the roads it is near
+        struct RoadBox { double X0, Y0, X1, Y1; };
+        std::vector<RoadBox> RoadBoxes;
+        for (const WorldRoad& Road : Roads)
+        {
+            RoadBox Box{1e30, 1e30, -1e30, -1e30};
+            for (const WorldRoad::Point& P : Road.Points) Box = {std::min(Box.X0, P.X), std::min(Box.Y0, P.Y), std::max(Box.X1, P.X), std::max(Box.Y1, P.Y)};
+            const double Reach = Road.Width / 2 + 12.0;
+            RoadBoxes.push_back({Box.X0 - Reach, Box.Y0 - Reach, Box.X1 + Reach, Box.Y1 + Reach});
+        }
         // settlements, camps, forts and lighthouses stand on levelled ground: a plateau at the site's own height,
         // easing into the hills over half its radius again (overlapping districts step down a slope as terraces)
         struct Site
@@ -273,7 +312,7 @@ namespace DarkArisen::Tools::Art
             // a level design may set the terrace height (layout.md R-01); otherwise the natural ground, above the tide
             Sites.push_back({&L, L.Plan.HasGround ? L.Plan.GroundZ : std::max(ArchipelagoHeight(Spec, L.X, L.Y, nullptr), 1.5), Kind});
         }
-        const auto Height = [&Spec, &Sites](double X, double Y)
+        const auto Height = [&Spec, &Sites, &Roads, &RoadBoxes](double X, double Y)
         {
             double H = ArchipelagoHeight(Spec, X, Y, nullptr);
             for (const Site& S : Sites)
@@ -286,7 +325,31 @@ namespace DarkArisen::Tools::Art
                 const double T = Smooth(1.5 * R, 0.95 * R, std::sqrt(D2));
                 H = H + (S.Z - H) * T;
             }
+            // the roads are graded into the ground: level across, at their own height along, with 10 m shoulders
+            // (layout.md R-04); stairs sit on a ramp of the same grade
+            for (std::size_t K = 0; K < Roads.size(); ++K)
+            {
+                const RoadBox& Box = RoadBoxes[K];
+                if (X < Box.X0 || X > Box.X1 || Y < Box.Y0 || Y > Box.Y1) continue;
+                const RoadPoint P = NearestOnRoad(Roads[K], X, Y);
+                const double Half = Roads[K].Width / 2 + 1.0;
+                if (P.Distance >= Half + 10.0) continue;
+                H = H + (P.Z - H) * Smooth(Half + 10.0, Half, P.Distance);
+            }
             return H;
+        };
+        /** How much of a road is under (X, Y): 1 on its surface, falling to 0 at its kerb plus Margin. */
+        const auto OnRoad = [&Roads, &RoadBoxes](const double X, const double Y, const double Margin)
+        {
+            double Most = 0.0;
+            for (std::size_t K = 0; K < Roads.size(); ++K)
+            {
+                const RoadBox& Box = RoadBoxes[K];
+                if (X < Box.X0 || X > Box.X1 || Y < Box.Y0 || Y > Box.Y1) continue;
+                const double Half = Roads[K].Width / 2;
+                Most = std::max(Most, Smooth(Half + Margin, Half, NearestOnRoad(Roads[K], X, Y).Distance));
+            }
+            return Most;
         };
         const auto Normal = [&](double X, double Y, double Step)
         {
@@ -368,6 +431,12 @@ namespace DarkArisen::Tools::Art
                     // towns are mostly street; villages and camps keep their grass between the paths
                     const double Worn = Si.Kind == Tradition::Colonial || Si.Kind == Tradition::Fort ? 0.7 : 0.3;
                     Trodden = std::max(Trodden, Worn * Smooth(Si.Where->Radius, 0.7 * Si.Where->Radius, std::sqrt(Dx * Dx + Dy * Dy)));
+                }
+                if (!Roads.empty())
+                {
+                    const double Road = OnRoad(X, Y, 1.5);
+                    if (InTown) Paved = std::max(Paved, 0.9 * Road);
+                    else Trodden = std::max(Trodden, 0.8 * Road);
                 }
                 const double Steep = Smooth(0.80, 0.62, N.Z);
                 const double Shore = Smooth(3.0, 0.5, Z);
@@ -475,11 +544,36 @@ namespace DarkArisen::Tools::Art
         std::vector<WorldTileSpec::Clearing> Clear;
         for (const WorldPlaceMark& P : Places) Clear.push_back({P.X, P.Y, P.Radius});
         for (const WorldLocation& L : Locations) Clear.push_back({L.X, L.Y, L.Radius});
+        // no tree on a road or its verge
+        for (const WorldRoad& Road : Roads)
+            for (std::size_t K = 0; K + 1 < Road.Points.size(); ++K)
+            {
+                const WorldRoad::Point& A = Road.Points[K];
+                const WorldRoad::Point& B = Road.Points[K + 1];
+                const double Len = std::sqrt((B.X - A.X) * (B.X - A.X) + (B.Y - A.Y) * (B.Y - A.Y));
+                for (double D = 0.0; D <= Len; D += 8.0)
+                    Clear.push_back({A.X + (B.X - A.X) * D / std::max(Len, 1e-9), A.Y + (B.Y - A.Y) * D / std::max(Len, 1e-9), Road.Width / 2 + 6.0});
+            }
 
         // the settlements' buildings, each on the tile under it; one model table for the world
         std::map<std::string, std::size_t, std::less<>> StructureIndex;
         std::string StructureTable;
         std::map<int, std::string> TileStructures;
+        const auto AddStructure = [&](const Structure& B)
+        {
+            auto Known = StructureIndex.find(B.Model);
+            if (Known == StructureIndex.end())
+            {
+                StructureTable += std::string(StructureIndex.empty() ? "" : ",") + "\n    {\"model\": " + ModelRef(B.Model) + ", \"material\": null, \"box\": [" +
+                                  GltfBits::Num(B.HalfX) + ", " + GltfBits::Num(B.HalfY) + ", " + GltfBits::Num(B.Height) + "]}";
+                Known = StructureIndex.emplace(B.Model, StructureIndex.size()).first;
+            }
+            const int Tile = static_cast<int>(B.Y / TileSize) * static_cast<int>(Spec.Width / TileSize + 0.5) + static_cast<int>(B.X / TileSize);
+            std::string& List = TileStructures[Tile];
+            List += std::string(List.empty() ? "" : ",") + "[" + std::to_string(Known->second) + "," + Cm(B.X) + "," + Cm(B.Y) + "," + Cm(B.Z) + "," +
+                    std::to_string(static_cast<long long>(std::llround(B.Yaw))) + "]";
+            ++Out.Structures;
+        };
         for (const Site& Si : Sites)
         {
             SettlementSpec Settle;
@@ -501,6 +595,11 @@ namespace DarkArisen::Tools::Art
             if (Plan.Tradition == "Stilt") Settle.Houses = Tradition::Stilt;
             if (Plan.HasLandmark) { Settle.LandmarkU = Plan.LandmarkU; Settle.LandmarkW = Plan.LandmarkW; Settle.LandmarkYaw = Plan.LandmarkYaw; }
             if (Plan.HasPlaza) { Settle.PlazaU = Plan.PlazaU; Settle.PlazaW = Plan.PlazaW; Settle.PlazaRadius = Plan.PlazaRadius; }
+            Settle.LampSpacing = Plan.LampSpacing;
+            Settle.StallRadius = Plan.StallRadius;
+            Settle.StallPitch = Plan.StallPitch;
+            Settle.StallMax = Plan.StallMax;
+            Settle.Benches = Plan.Benches;
             Settle.Seed = 0;
             for (const char C : Si.Where->Id) Settle.Seed = Settle.Seed * 31u + static_cast<std::uint8_t>(C);
             // a town's landmark on its square (Rexa's districts by their documents, Ashenmoor's Kota Api, Jernholm's old fort)
@@ -513,20 +612,81 @@ namespace DarkArisen::Tools::Art
             else if (Ends(".cliffside")) Settle.Centre = Landmark::Faro;  // the Old Spanish Lighthouse (region_02_rexa_city.md 2.6)
             else if (Ends(".jernholm") || Ends(".pirate_encampment")) Settle.Centre = Landmark::Watchtower;
             Settle.StreetAngle = Si.Kind == Tradition::Colonial ? 12.0 : static_cast<double>(Settle.Seed % 180u);  // Rexa's grid runs up from the harbour
-            for (const Structure& B : Kit::SettlementLayout(Settle))
+            for (const Structure& B : Kit::SettlementLayout(Settle)) AddStructure(B);
+        }
+        // along the roads (layout.md 3.2-3.4): stairs where they climb, gas lamps at the kerb, and between the districts a
+        // house every 35-60 m on alternating sides, set back 6 m, so the city reads as one
+        for (const WorldRoad& Road : Roads)
+        {
+            if (Road.Points.size() < 2) continue;
+            std::uint32_t Seed = 2166136261u;
+            for (const char C : Road.Id) Seed = (Seed ^ static_cast<std::uint8_t>(C)) * 16777619u;
+            Rng R(Seed);
+            const bool Stairs = Road.Kind == "stairs";
+            if (Stairs)
             {
-                auto Known = StructureIndex.find(B.Model);
-                if (Known == StructureIndex.end())
+                // one flight of steps the width of the stair, about 16 cm a step (E2: 328 steps), on the graded ramp
+                const WorldRoad::Point A = Road.Points.front(), B = Road.Points.back();
+                const double Dx = B.X - A.X, Dy = B.Y - A.Y, Run = std::sqrt(Dx * Dx + Dy * Dy), Rise = B.Z - A.Z;
+                const int Steps = std::max(1, static_cast<int>(std::fabs(Rise) / 0.16 + 0.5));
+                Mesh Flight("SM_World_Stairs_" + Road.Id.substr(Road.Id.find_last_of('.') + 1));
+                for (int K = 0; K < Steps; ++K)
                 {
-                    StructureTable += std::string(StructureIndex.empty() ? "" : ",") + "\n    {\"model\": " + ModelRef(B.Model) + ", \"material\": null, \"box\": [" +
-                                      GltfBits::Num(B.HalfX) + ", " + GltfBits::Num(B.HalfY) + ", " + GltfBits::Num(B.Height) + "]}";
-                    Known = StructureIndex.emplace(B.Model, StructureIndex.size()).first;
+                    const double T = (K + 0.5) / Steps, Top = Rise * (Rise > 0.0 ? (K + 1.0) : static_cast<double>(K)) / Steps;
+                    OrientedBox(Flight, Mat(M::Stone), {Dx * T, Dy * T, Top - 0.35}, Dx, Dy, {Run / Steps / 2 + 0.01, Road.Width / 2, 0.35});
                 }
-                const int Tile = static_cast<int>(B.Y / TileSize) * static_cast<int>(Spec.Width / TileSize + 0.5) + static_cast<int>(B.X / TileSize);
-                std::string& List = TileStructures[Tile];
-                List += std::string(List.empty() ? "" : ",") + "[" + std::to_string(Known->second) + "," + Cm(B.X) + "," + Cm(B.Y) + "," + Cm(B.Z) + "," +
-                        std::to_string(static_cast<long long>(std::llround(B.Yaw))) + "]";
-                ++Out.Structures;
+                // low parapets either side, one block per twenty steps
+                for (int K = 0; K < Steps; K += 20)
+                {
+                    const int Last = std::min(Steps, K + 20);
+                    const double T = (K + Last) * 0.5 / Steps, Top = Rise * (K + Last) * 0.5 / Steps;
+                    for (const double Side : {-1.0, 1.0})
+                        OrientedBox(Flight, Mat(M::StoneDark), {Dx * T - Dy / Run * Side * (Road.Width / 2 + 0.25), Dy * T + Dx / Run * Side * (Road.Width / 2 + 0.25), Top + 0.1}, Dx, Dy,
+                            {Run * (Last - K) / Steps / 2, 0.25, 0.7});
+                }
+                const std::string Name = Flight.Name();
+                Out.Files.push_back({"Stairs/" + Name + ".gltf", WriteGltf(Flight, "Dark Arisen world-build")});
+                AddStructure({"Assets/World/Stairs/" + Name + ".gltf", A.X, A.Y, A.Z, 0.0, 0.5, 0.5, 0.1});
+            }
+            double Walked = 0.0, NextLamp = 10.0, NextHouse = R.Range(20.0, 40.0);
+            int LampSide = 1, HouseSide = 1;
+            for (std::size_t K = 0; K + 1 < Road.Points.size(); ++K)
+            {
+                const WorldRoad::Point& A = Road.Points[K];
+                const WorldRoad::Point& B = Road.Points[K + 1];
+                const double Len = std::sqrt((B.X - A.X) * (B.X - A.X) + (B.Y - A.Y) * (B.Y - A.Y));
+                if (Len < 1e-6) continue;
+                const double Ux = (B.X - A.X) / Len, Uy = (B.Y - A.Y) / Len;
+                for (double D = 0.0; D < Len; D += 1.0, Walked += 1.0)
+                {
+                    const double Cx = A.X + Ux * D, Cy = A.Y + Uy * D;
+                    if (Walked >= NextLamp)
+                    {
+                        const double Off = Road.Width / 2 + 0.8;
+                        const double X = Cx - Uy * Off * LampSide, Y = Cy + Ux * Off * LampSide;
+                        AddStructure(Kit::SettlementPiece(Tradition::Street, 0, X, Y, Height(X, Y), 0.0));
+                        NextLamp += Stairs ? 20.0 : 30.0;
+                        LampSide = -LampSide;
+                    }
+                    if (!Stairs && Walked >= NextHouse)
+                    {
+                        NextHouse += R.Range(35.0, 60.0);
+                        const int V = static_cast<int>(R.Unit() * 6.0);
+                        const double Off = Road.Width / 2 + 6.0 + 5.0;
+                        const double X = Cx - Uy * Off * HouseSide, Y = Cy + Ux * Off * HouseSide;
+                        bool InDistrict = false;
+                        for (const Site& Si : Sites)
+                        {
+                            const double Ex = X - Si.Where->X, Ey = Y - Si.Where->Y;
+                            InDistrict = InDistrict || Ex * Ex + Ey * Ey < Si.Where->Radius * Si.Where->Radius;
+                        }
+                        const double Z = Height(X, Y);
+                        // the door (-Y in the model) to the road
+                        const double Yaw = Atan2(-Ux * HouseSide, Uy * HouseSide) * 180.0 / Pi - 270.0;
+                        if (!InDistrict && Z > 1.0 && std::fabs(Z - Height(Cx, Cy)) < 2.5) AddStructure(Kit::SettlementPiece(Tradition::Colonial, V, X, Y, Z, Yaw));
+                        HouseSide = -HouseSide;
+                    }
+                }
             }
         }
         // lava in the craters of the volcanoes the documents call active or erupting (Gunung Ibu, Gunung Anak): a molten
@@ -691,6 +851,17 @@ namespace DarkArisen::Tools::Art
             if (Si.Kind == Tradition::Colonial || Si.Kind == Tradition::Fort)
                 Paved += std::string(Paved.empty() ? "" : ", ") + "[" + GltfBits::Num(Si.Where->X) + ", " + GltfBits::Num(Si.Where->Y) + ", " +
                          GltfBits::Num(Si.Where->Radius * 0.9) + "]";
+        // and the roads: a disc every few metres along each, as wide as the road
+        for (const WorldRoad& Road : Roads)
+            for (std::size_t K = 0; K + 1 < Road.Points.size(); ++K)
+            {
+                const WorldRoad::Point& A = Road.Points[K];
+                const WorldRoad::Point& B = Road.Points[K + 1];
+                const double Len = std::sqrt((B.X - A.X) * (B.X - A.X) + (B.Y - A.Y) * (B.Y - A.Y));
+                for (double D = 0.0; D <= Len; D += Road.Width / 2)
+                    Paved += std::string(Paved.empty() ? "" : ", ") + "[" + GltfBits::Num(A.X + (B.X - A.X) * D / std::max(Len, 1e-9)) + ", " +
+                             GltfBits::Num(A.Y + (B.Y - A.Y) * D / std::max(Len, 1e-9)) + ", " + GltfBits::Num(Road.Width / 2 + 1.0) + "]";
+            }
         Index += "\n  ],\n  \"paved\": [" + Paved;
         // which cards grow on each biome's open ground, and how densely (patches per 2 m cell)
         Index += "\n  ],\n  \"biomes\": {\n    \"tropical\": {\"grass\": [\"GrassBlades\"], \"density\": 0.85},\n    \"mire\": {\"grass\": [\"Reeds\", \"GrassBlades\"], \"density\": 0.6},\n"
