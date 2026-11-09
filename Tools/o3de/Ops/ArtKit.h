@@ -137,7 +137,8 @@ namespace DarkArisen::Tools::Art
         Civic,       // a town's landmark on its square: cathedral, market hall, warehouse, mansion, watchtower
         Harbour,     // the waterfront: stone quay, timber pier, fishing boat, merchant brig, rowing boat (afloat at z = 0)
         Street,      // street furniture: gas lamp, market stall, bench
-        Shanty       // Rexa's slums: salvaged ship timber, sailcloth awnings, plank-and-tar roofs (layout.md TC6)
+        Shanty,      // Rexa's slums: salvaged ship timber, sailcloth awnings, plank-and-tar roofs (layout.md TC6)
+        Ruin         // a town's edge gone back to the jungle: roofless shells (layout.md TC7)
     };
 
     /** Variants of Tradition::Civic. */
