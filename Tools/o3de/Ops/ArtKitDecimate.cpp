@@ -335,7 +335,9 @@ namespace DarkArisen::Tools::Art
                         for (std::size_t K = 0; K < 4; ++K) G.Mat.BaseColor[K] = F->Items[K].Number;
                 }
                 G.Mat.NormalTexture = ImageOf(Src.Doc, M.Find("normalTexture"), ImagePrefix);
-                G.Mat.Mask = M.Find("alphaMode") && M.Find("alphaMode")->Text == "MASK";
+                // leaves the scans mark BLEND are cut out in a game: sorted blending of a whole canopy is neither
+                // affordable nor stable, and the shadow and depth passes need a mask anyway
+                G.Mat.Mask = M.Find("alphaMode") && (M.Find("alphaMode")->Text == "MASK" || M.Find("alphaMode")->Text == "BLEND");
                 G.Mat.AlphaCutoff = Number(M.Find("alphaCutoff"), 0.5);
                 G.Mat.DoubleSided = M.Find("doubleSided") && M.Find("doubleSided")->Boolean;
                 Groups.push_back(std::move(G));
