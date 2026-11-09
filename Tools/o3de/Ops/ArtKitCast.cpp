@@ -469,6 +469,161 @@ namespace DarkArisen::Tools::Art::Humans
                 Add(P);
             }
 
+            // ---- The Nine Who Hold (`colonial war bosses.md` 4-12; Docs/M7_TIER1_BOSS_REGISTER.md). The document gives each
+            // commander's age, rank, colony and arms; faces, hair and colours beyond that are neutral choices of the art kit
+            // (Imperial officers in navy and gold like Herrera, Albion officers in red with white like its soldiers), marked
+            // as proposals until a character document says otherwise.
+            const auto Imperial = [](PersonSpec& P, const double Wear)
+            {
+                P.Shirt = Top(White, Cloth::Linen, 1.95, 0.1);
+                P.Vest = Vest(White, Cloth::Wool, 6);
+                P.Coat = Coat(Navy, Cloth::Wool, 0.25, 8);
+                P.Coat.Trimmed = true; P.Coat.Trim = Gold; P.Coat.ButtonColor = Gold; P.Coat.Wear = Wear;
+                P.Tails = Tails(Navy, Cloth::Wool, 1.05, 0.5);
+                P.Tails.Trimmed = true; P.Tails.Trim = Gold;
+                P.Legs = Trousers(White, Cloth::Wool, 1.15);
+                P.Feet = Boots(Black, 1.12, 0.25);
+                P.Clip = "40_10"; P.Time = 0.8; P.Upright = 0.9;
+            };
+            const auto Albion = [](PersonSpec& P, const double Wear)
+            {
+                const Rgb Red{0.62, 0.1, 0.08};
+                P.Shirt = Top(White, Cloth::Linen, 1.95, 0.1);
+                P.Vest = Vest(White, Cloth::Wool, 6);
+                P.Coat = Coat(Red, Cloth::Wool, 0.25, 9);
+                P.Coat.Trimmed = true; P.Coat.Trim = White; P.Coat.ButtonColor = Gold; P.Coat.Wear = Wear;
+                P.Tails = Tails(Red, Cloth::Wool, 1.05, 0.5);
+                P.Tails.Trimmed = true; P.Tails.Trim = White;
+                P.Legs = Trousers(White, Cloth::Wool, 1.15);
+                P.Feet = Boots(Black, 1.12, 0.2);
+                P.Clip = "40_10"; P.Time = 0.6; P.Upright = 0.9;
+            };
+            // General Baltasar Reyes: 47, risen from nothing; cavalry sabre and a brace of pistols (5.1).
+            {
+                PersonSpec P;
+                P.Id = "reyes";
+                P.Age = 47; P.Muscle = 0.65; P.Weight = 0.55; P.Height = 1.76;
+                P.Detail = {{"head/head-square", 0.5}, {"nose/nose-scale-horiz-incr", 0.3}, {"neck/neck-scale-horiz-incr", 0.4}};
+                P.Skin = OliveSkin; P.Weathered = 0.5; P.Wrinkles = 0.3; P.Eyes = DarkEyes;
+                P.Hair = HairBlack; P.Gray = 0.2; P.Hairdo = HairStyle::Cropped; P.Beard = BeardStyle::Mustache;
+                Imperial(P, 0.35);
+                P.Sash = Sash(Crimson, true);
+                P.Cutlass = true; P.Pistol = true;
+                Add(P);
+            }
+            // Comandante Isabel Cruz: 43, thirty years at a mining post at the edge of the world; an infantry sword worn plain (6.1).
+            {
+                PersonSpec P;
+                P.Id = "cruz";
+                P.Male = 0.0; P.Age = 43; P.Muscle = 0.62; P.Weight = 0.4; P.Height = 1.7; P.BreastSize = 0.35;
+                P.Detail = {{"head/head-oval", 0.3}, {"cheek/l-cheek-bones-incr", 0.3}, {"cheek/r-cheek-bones-incr", 0.3}};
+                P.Skin = Tanned; P.Weathered = 0.6; P.Wrinkles = 0.25; P.Eyes = BrownEyes;
+                P.Hair = HairDarkBrown; P.Gray = 0.15; P.Hairdo = HairStyle::PinnedUp;
+                Imperial(P, 0.7);
+                P.Coat.Trimmed = false; P.Tails.Trimmed = false; P.Coat.ButtonColor = Brass;
+                P.Legs = Trousers(Rgb{0.7, 0.66, 0.56}, Cloth::Wool, 1.15);
+                P.Cutlass = true;
+                P.Clip = "40_10"; P.Time = 0.4; P.Upright = 0.9;
+                Add(P);
+            }
+            // Gobernador Francisco de Silva: 61, warm, cultured, corrupt and a coward; he does not fight (7.1).
+            {
+                PersonSpec P;
+                P.Id = "de_silva";
+                P.Age = 61; P.Muscle = 0.3; P.Weight = 0.8; P.Height = 1.72;
+                P.Detail = {{"head/head-fat-incr", 0.6}, {"neck/neck-scale-horiz-incr", 0.4}, {"stomach/stomach-pregnant-incr", 0.4}};
+                P.Skin = Fair; P.Ruddy = 0.35; P.Wrinkles = 0.55; P.Eyes = BrownEyes;
+                P.Hair = HairWhite; P.Gray = 0.9; P.Hairdo = HairStyle::TiedBack; P.HairLength = 1.2;
+                P.Shirt = Top(White, Cloth::Silk, 1.97, 0.1);
+                P.Vest = Vest(Gold, Cloth::Silk, 8);
+                P.Coat = Coat(Rgb{0.36, 0.08, 0.12}, Cloth::Silk, 0.45, 6);
+                P.Coat.Trimmed = true; P.Coat.Trim = Gold; P.Coat.ButtonColor = Gold;
+                P.Tails = Tails(Rgb{0.36, 0.08, 0.12}, Cloth::Silk, 1.05, 0.55);
+                P.Legs = Trousers(Rgb{0.36, 0.08, 0.12}, Cloth::Silk, 1.15);
+                P.Stockings = Stockings(White);
+                P.Feet = Boots(Black, 1.97, 0.2);
+                P.Clip = "18_08"; P.Time = 9.8; P.Upright = 0.6;
+                Add(P);
+            }
+            // General Rodrigo Vega: 58, eleven years abandoned on the cold northern line; a heavy two-handed broadsword (8.1).
+            {
+                PersonSpec P;
+                P.Id = "vega";
+                P.Age = 58; P.Muscle = 0.85; P.Weight = 0.6; P.Height = 1.84;
+                P.Detail = {{"head/head-square", 0.6}, {"eyebrows/eyebrows-trans-down", 0.4}, {"chin/chin-prominent-incr", 0.4}};
+                P.Skin = Rgb{0.8, 0.64, 0.54}; P.Weathered = 0.8; P.Wrinkles = 0.6; P.Eyes = GreyBlue;
+                P.Hair = HairIron; P.Gray = 0.8; P.Hairdo = HairStyle::Short; P.Beard = BeardStyle::Full; P.BeardLength = 0.3;
+                Imperial(P, 0.75);
+                P.Coat.Fabric = Cloth::Wool; P.Coat.Thick = 0.2;
+                P.Tails = Tails(Navy, Cloth::Wool, 1.6, 0.3);
+                P.Tails.Trimmed = true; P.Tails.Trim = Gold;
+                P.Legs = Trousers(Rgb{0.2, 0.2, 0.24}, Cloth::Wool, 1.2);
+                P.Feet = Boots(LeatherDark, 1.0, 0.6);
+                P.Cutlass = true;
+                Add(P);
+            }
+            // Lord-Director Edmund Blackwood: 51, a true believer who does not fight; he carries the Master Ledger (9.1).
+            {
+                PersonSpec P;
+                P.Id = "blackwood";
+                P.Age = 51; P.Muscle = 0.35; P.Weight = 0.45; P.Height = 1.82;
+                P.Detail = {{"head/head-rectangular", 0.5}, {"nose/nose-scale-vert-incr", 0.3}, {"mouth/mouth-upperlip-volume-decr", 0.4}};
+                P.Skin = Pale; P.Weathered = 0.1; P.Wrinkles = 0.3; P.Eyes = GreyBlue;
+                P.Hair = HairGreyBrown; P.Gray = 0.4; P.Hairdo = HairStyle::Short;
+                P.Shirt = Top(White, Cloth::Cotton, 1.97, 0.05);
+                P.Vest = Vest(Rgb{0.1, 0.1, 0.11}, Cloth::Wool, 7);
+                P.Coat = Coat(Rgb{0.08, 0.08, 0.09}, Cloth::Wool, 0.3, 6);
+                P.Tails = Tails(Rgb{0.08, 0.08, 0.09}, Cloth::Wool, 1.05, 0.5);
+                P.Legs = Trousers(Rgb{0.12, 0.12, 0.13}, Cloth::Wool, 1.9);
+                P.Legs.Pattern = Print::Pinstripe; P.Legs.PatternColor = Rgb{0.3, 0.3, 0.32};
+                P.Feet = Boots(Black, 1.97, 0.2);
+                P.Satchel = true;
+                P.Clip = "18_08"; P.Time = 9.8; P.Upright = 0.9;
+                Add(P);
+            }
+            // Admiral Katherine Sterling: 46, the finest officer in the archipelago; fought at sea at the head of her squadron (10.1).
+            {
+                PersonSpec P;
+                P.Id = "sterling";
+                P.Male = 0.0; P.Age = 46; P.Muscle = 0.55; P.Weight = 0.4; P.Height = 1.74; P.BreastSize = 0.35;
+                P.Detail = {{"head/head-oval", 0.3}, {"chin/chin-prominent-incr", 0.3}, {"nose/nose-scale-vert-incr", 0.2}};
+                P.Skin = Fair; P.Weathered = 0.55; P.Freckles = 0.2; P.Wrinkles = 0.25; P.Eyes = GreyBlue;
+                P.Hair = HairBrown; P.Gray = 0.2; P.Hairdo = HairStyle::TiedBack; P.HairLength = 1.5;
+                Albion(P, 0.3);
+                P.Coat.Color = Rgb{0.1, 0.12, 0.24}; P.Tails.Color = Rgb{0.1, 0.12, 0.24};  // the sea service's blue
+                P.Coat.Trim = Gold; P.Tails.Trim = Gold;
+                P.Hat = HatStyle::Bicorne; P.HatColor = Black; P.HatTrimmed = true; P.HatTrim = Gold;
+                P.Cutlass = true;
+                Add(P);
+            }
+            // General Percival Ashcroft: 55, the foreclosure enforcer; a duelling sabre and a bailiff's cudgel (11.1).
+            {
+                PersonSpec P;
+                P.Id = "ashcroft";
+                P.Age = 55; P.Muscle = 0.5; P.Weight = 0.62; P.Height = 1.79;
+                P.Detail = {{"head/head-fat-incr", 0.3}, {"nose/nose-hump-incr", 0.3}, {"chin/chin-width-incr", 0.3}};
+                P.Skin = Pale; P.Ruddy = 0.4; P.Wrinkles = 0.45; P.Eyes = PaleBlue;
+                P.Hair = HairGreyBrown; P.Gray = 0.55; P.Hairdo = HairStyle::SlickedBack; P.Beard = BeardStyle::Mustache;
+                Albion(P, 0.2);
+                P.Coat.Trim = Gold; P.Tails.Trim = Gold;
+                P.Hat = HatStyle::Bicorne; P.HatColor = Black; P.HatTrimmed = true; P.HatTrim = Gold;
+                P.Cutlass = true;
+                Add(P);
+            }
+            // Colonel Marcus Thorne: 29, capable and never having lost anything; a modern Albion officer's sabre (12.1).
+            {
+                PersonSpec P;
+                P.Id = "thorne";
+                P.Age = 29; P.Muscle = 0.68; P.Weight = 0.35; P.Height = 1.83;
+                P.Detail = {{"head/head-triangular", 0.3}, {"chin/chin-prominent-incr", 0.3}, {"cheek/l-cheek-bones-incr", 0.3}, {"cheek/r-cheek-bones-incr", 0.3}};
+                P.Skin = Pale; P.Freckles = 0.1; P.Eyes = IceBlue;
+                P.Hair = Rgb{0.55, 0.42, 0.24}; P.Hairdo = HairStyle::Short;
+                Albion(P, 0.03);
+                P.Hat = HatStyle::Bicorne; P.HatColor = Black; P.HatTrimmed = true; P.HatTrim = White;
+                P.Cutlass = true;
+                Add(P);
+            }
+
             // ---- Crimson Armada boarders (catalogue: light, heavy, sharpshooter; no unique hero face).
             {
                 PersonSpec P;
@@ -795,6 +950,8 @@ namespace DarkArisen::Tools::Art
         if (Has("ethan")) return "ethan";
         if (Has("broker") || Has("merchant") || Has("trader") || Has("clerk")) return "merchant";
         if (Has("draven")) return "draven";
+        for (const char* Commander : {"reyes", "cruz", "de_silva", "vega", "blackwood", "sterling", "ashcroft", "thorne"})
+            if (Has(Commander)) return Commander;
         if (Has("viuda")) return "viuda_negra";
         if (Has("rojas")) return "rojas";
         if (Has("medico")) return "medico";
