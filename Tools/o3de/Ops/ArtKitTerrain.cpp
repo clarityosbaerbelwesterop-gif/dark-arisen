@@ -1081,8 +1081,8 @@ namespace DarkArisen::Tools::Art
             int Tufts;
             double W0, W1, H0, H1;
         };
-        static const Card Cards[] = {{M::GrassBlades, "GrassBlades", 6, 0.6, 1.0, 0.3, 0.6}, {M::GrassDry, "GrassDry", 5, 0.6, 1.0, 0.35, 0.7},
-            {M::HeatherSprig, "HeatherSprig", 4, 0.6, 0.9, 0.28, 0.45}, {M::Reeds, "Reeds", 3, 0.7, 1.1, 0.9, 1.5}};
+        static const Card Cards[] = {{M::GrassBlades, "GrassBlades", 6, 0.6, 1.0, 0.3, 0.6}, {M::GrassDry, "GrassDry", 7, 0.6, 1.0, 0.35, 0.7},
+            {M::HeatherSprig, "HeatherSprig", 8, 0.6, 0.9, 0.28, 0.45}, {M::Reeds, "Reeds", 3, 0.7, 1.1, 0.9, 1.5}};
         std::vector<GrassPatch> Out;
         for (const Card& C : Cards)
         {

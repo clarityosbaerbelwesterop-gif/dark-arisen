@@ -560,7 +560,7 @@ namespace DarkArisen::Tools::Art
         }
         // which cards grow on each biome's open ground, and how densely (patches per 2 m cell)
         Index += "\n  ],\n  \"biomes\": {\n    \"tropical\": {\"grass\": [\"GrassBlades\"], \"density\": 0.85},\n    \"mire\": {\"grass\": [\"Reeds\", \"GrassBlades\"], \"density\": 0.6},\n"
-                 "    \"moor\": {\"grass\": [\"HeatherSprig\", \"GrassDry\"], \"density\": 0.75},\n    \"cold\": {\"grass\": [\"GrassDry\", \"HeatherSprig\"], \"density\": 0.5},\n"
+                 "    \"moor\": {\"grass\": [\"HeatherSprig\", \"GrassDry\"], \"density\": 0.95},\n    \"cold\": {\"grass\": [\"GrassDry\", \"HeatherSprig\"], \"density\": 0.5},\n"
                  "    \"fortress\": {\"grass\": [\"GrassBlades\", \"GrassDry\"], \"density\": 0.65},\n    \"volcanic\": {\"grass\": [\"GrassDry\"], \"density\": 0.12},\n"
                  "    \"maw\": {\"grass\": [\"GrassDry\"], \"density\": 0.05}\n  }\n}\n";
         Out.Files.push_back({"WorldTiles.json", Index});
