@@ -52,7 +52,7 @@ namespace DarkArisen::Tools::Art
         };
         std::vector<File> Files;
         int Tiles = 0;
-        std::size_t Triangles = 0, Plantings = 0;
+        std::size_t Triangles = 0, Plantings = 0, Structures = 0;
     };
 
     /** A place of the story in the world (ContentSource/World/Places.json): the ground there is left clear of plants. */
@@ -61,11 +61,18 @@ namespace DarkArisen::Tools::Art
         double X = 0, Y = 0, Radius = 0;
     };
 
+    /** A location of the design (ContentSource/World/Locations.json): settlements level their ground and get buildings. */
+    struct WorldLocation
+    {
+        std::string Id, Kind, Region;
+        double X = 0, Y = 0, Radius = 0;
+    };
+
     /**
      * Also plants the land tiles (Kit::WorldVegetation): each tile's plantings and its ground heights go to
      * Tiles/F_World_<c>_<r>.json for the runtime (trees and rocks as instances, grass patches scattered near the
      * player on the heights), the plant models and grass patches to WorldTiles.json with their O3DE asset ids.
      */
-    WorldTerrain BuildWorldTerrain(const ArchipelagoSpec& Spec, const std::vector<WorldPlaceMark>& Places, double TileSize, double TileStep, double CoarseStep,
-        double TextureCell);
+    WorldTerrain BuildWorldTerrain(const ArchipelagoSpec& Spec, const std::vector<WorldPlaceMark>& Places, const std::vector<WorldLocation>& Locations,
+        double TileSize, double TileStep, double CoarseStep, double TextureCell);
 }

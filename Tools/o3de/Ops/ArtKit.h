@@ -123,6 +123,36 @@ namespace DarkArisen::Tools::Art
         std::string Material;  // its DarkArisenFoliage material (ground-cover sway), paths relative to Assets/World/Materials
     };
 
+    /** Building traditions of the open world's settlements (ArtKitSettlements.cpp). */
+    enum class Tradition
+    {
+        Colonial,    // Rexa: plaster town houses under clay tiles
+        Stilt,       // Ashenmoor and the Mire: raised timber houses, steep hipped roofs
+        Nordic,      // the Quiet Coast: long timber houses on stone footings under turf
+        Camp,        // camps and encampments: canvas tents
+        Fort,        // curtain walls with towers
+        Lighthouse   // a whitewashed tower and its keeper's house
+    };
+
+    struct SettlementSpec
+    {
+        Tradition Kind = Tradition::Colonial;
+        double X = 0, Y = 0, Radius = 100;               // world metres
+        std::function<double(double, double)> Ground;     // the site's (levelled) ground
+        double MinGround = 1.0;                           // nothing is built lower (shore, ponds)
+        int MaxBuildings = 40;
+        double Fill = 0.8;                                // share of street plots built on
+        std::uint32_t Seed = 1;
+    };
+
+    /** One building of a settlement: a shared model, its placement and a box for collision. */
+    struct Structure
+    {
+        std::string Model;                       // project-relative glTF
+        double X, Y, Z, Yaw;                     // base centre, degrees about Z
+        double HalfX, HalfY, Height;             // collision box in the model's frame
+    };
+
     /** A named story box (its top is the floor the anchors mark), dressed by Kit::Authored. */
     struct AuthoredSpec
     {
@@ -189,6 +219,8 @@ namespace DarkArisen::Tools::Art
         static std::vector<Planting> WorldVegetation(const WorldTileSpec& Spec, std::map<std::string, std::vector<PlantPart>, std::less<>>& Cache);
         /** How wooded the open world is at a point, 0 (open ground) to 1 (the heart of a wood): plantings and macro colour agree. */
         static double WorldWoods(double X, double Y, std::uint32_t Seed);
+        /** Where a settlement's buildings stand on its ground (a pure function: the same streets on every build). */
+        static std::vector<Structure> SettlementLayout(const SettlementSpec& Spec);
         /** The ground-cover patches the runtime scatters near the player, one per card. */
         static std::vector<GrassPatch> WorldGrassPatches();
         /** Quay wall along a harbour edge (x = 0 is the quay face, water towards -X), Length along Y. */
@@ -217,5 +249,7 @@ namespace DarkArisen::Tools::Art
         std::map<std::string, std::vector<PlantPart>, std::less<>> PlantModels;
 
         std::string Emit(const std::string& Name, const std::string& Gltf);
+        /** Every building variant SettlementLayout may place (ArtKitSettlements.cpp). */
+        void BuildSettlementModels();
     };
 }

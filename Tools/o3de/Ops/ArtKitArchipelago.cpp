@@ -245,11 +245,45 @@ namespace DarkArisen::Tools::Art
 
     }
 
-    WorldTerrain BuildWorldTerrain(const ArchipelagoSpec& Spec, const std::vector<WorldPlaceMark>& Places, const double TileSize, const double TileStep,
-        const double CoarseStep, const double TextureCell)
+    WorldTerrain BuildWorldTerrain(const ArchipelagoSpec& Spec, const std::vector<WorldPlaceMark>& Places, const std::vector<WorldLocation>& Locations,
+        const double TileSize, const double TileStep, const double CoarseStep, const double TextureCell)
     {
         WorldTerrain Out;
-        const auto Height = [&Spec](double X, double Y) { return ArchipelagoHeight(Spec, X, Y, nullptr); };
+        // settlements, camps, forts and lighthouses stand on levelled ground: a plateau at the site's own height,
+        // easing into the hills over half its radius again (overlapping districts step down a slope as terraces)
+        struct Site
+        {
+            const WorldLocation* Where;
+            double Z;
+            Tradition Kind;
+        };
+        std::vector<Site> Sites;
+        for (const WorldLocation& L : Locations)
+        {
+            Tradition Kind;
+            if (L.Kind == "district") Kind = Tradition::Colonial;
+            else if (L.Kind == "settlement") Kind = L.Region == "QuietCoast" ? Tradition::Nordic : Tradition::Stilt;
+            else if (L.Kind == "zone") Kind = Tradition::Stilt;
+            else if (L.Kind == "camp") Kind = Tradition::Camp;
+            else if (L.Kind == "fort") Kind = Tradition::Fort;
+            else if (L.Kind == "lighthouse") Kind = Tradition::Lighthouse;
+            else continue;
+            Sites.push_back({&L, std::max(ArchipelagoHeight(Spec, L.X, L.Y, nullptr), 1.5), Kind});
+        }
+        const auto Height = [&Spec, &Sites](double X, double Y)
+        {
+            double H = ArchipelagoHeight(Spec, X, Y, nullptr);
+            for (const Site& S : Sites)
+            {
+                if (S.Kind == Tradition::Stilt && S.Where->Kind == "zone") continue;  // the Mire's houses stand in the bog on posts
+                const double Dx = X - S.Where->X, Dy = Y - S.Where->Y, R = S.Where->Radius;
+                const double D2 = Dx * Dx + Dy * Dy;
+                if (D2 >= 2.25 * R * R) continue;
+                const double T = Smooth(1.5 * R, 0.95 * R, std::sqrt(D2));
+                H = H + (S.Z - H) * T;
+            }
+            return H;
+        };
         const auto Normal = [&](double X, double Y, double Step)
         {
             const double Dx = (Height(X + Step, Y) - Height(X - Step, Y)) / (2.0 * Step), Dy = (Height(X, Y + Step) - Height(X, Y - Step)) / (2.0 * Step);
@@ -297,14 +331,22 @@ namespace DarkArisen::Tools::Art
             {
                 const double X = (K + 0.5) * TextureCell, Y = Spec.Height - (J + 0.5) * TextureCell;
                 int Owner = -1;
-                const double Z = ArchipelagoHeight(Spec, X, Y, &Owner);
+                ArchipelagoHeight(Spec, X, Y, &Owner);
+                const double Z = Height(X, Y);
                 const std::string Biome = Owner >= 0 ? Spec.Islands[static_cast<std::size_t>(Owner)].Biome : std::string("tropical");
                 const double Peak = Owner >= 0 ? Spec.Islands[static_cast<std::size_t>(Owner)].Peak : 100.0;
                 const V3 N = Normal(X, Y, TextureCell);
+                // trodden ground in the settlements: the path layer (sand, mud or litter by biome) under the streets
+                double Trodden = 0.0;
+                for (const Site& Si : Sites)
+                {
+                    const double Dx = X - Si.Where->X, Dy = Y - Si.Where->Y;
+                    Trodden = std::max(Trodden, 0.7 * Smooth(Si.Where->Radius, 0.7 * Si.Where->Radius, std::sqrt(Dx * Dx + Dy * Dy)));
+                }
                 const double Steep = Smooth(0.80, 0.62, N.Z);
                 const double Shore = Smooth(3.0, 0.5, Z);
                 const double Accent = Smooth(0.45, 0.62, Fractal(X, Y, 260.0, 3, Spec.Seed + 77u));
-                double W1 = Biome == "mire" ? Smooth(4.0, 1.0, Z) : Shore, W2 = Steep, W3 = Accent;
+                double W1 = std::max(Biome == "mire" ? Smooth(4.0, 1.0, Z) : Shore, Trodden), W2 = Steep, W3 = Accent;
                 if (Biome == "cold") W3 = Smooth(0.45, 0.8, Z / std::max(Peak, 1.0));  // bare rock towards the tops
                 W1 = std::clamp(W1, 0.0, 1.0) * (1.0 - W2);
                 W3 = std::clamp(W3, 0.0, 1.0) * (1.0 - W2) * (1.0 - W1);
@@ -385,6 +427,42 @@ namespace DarkArisen::Tools::Art
         std::string PlantTable;
         std::vector<WorldTileSpec::Clearing> Clear;
         for (const WorldPlaceMark& P : Places) Clear.push_back({P.X, P.Y, P.Radius});
+        for (const WorldLocation& L : Locations) Clear.push_back({L.X, L.Y, L.Radius});
+
+        // the settlements' buildings, each on the tile under it; one model table for the world
+        std::map<std::string, std::size_t, std::less<>> StructureIndex;
+        std::string StructureTable;
+        std::map<int, std::string> TileStructures;
+        for (const Site& Si : Sites)
+        {
+            SettlementSpec Settle;
+            Settle.Kind = Si.Kind;
+            Settle.X = Si.Where->X;
+            Settle.Y = Si.Where->Y;
+            Settle.Radius = Si.Where->Radius;
+            Settle.Ground = Height;
+            Settle.MinGround = Si.Where->Kind == "zone" ? 0.2 : 1.2;
+            const bool Sparse = Si.Where->Kind == "zone" || Si.Kind == Tradition::Camp;
+            Settle.MaxBuildings = Si.Kind == Tradition::Colonial ? 90 : Sparse ? 14 : 40;
+            Settle.Fill = Si.Kind == Tradition::Colonial ? 0.92 : Sparse ? 0.35 : 0.75;
+            Settle.Seed = 0;
+            for (const char C : Si.Where->Id) Settle.Seed = Settle.Seed * 31u + static_cast<std::uint8_t>(C);
+            for (const Structure& B : Kit::SettlementLayout(Settle))
+            {
+                auto Known = StructureIndex.find(B.Model);
+                if (Known == StructureIndex.end())
+                {
+                    StructureTable += std::string(StructureIndex.empty() ? "" : ",") + "\n    {\"model\": " + ModelRef(B.Model) + ", \"box\": [" + GltfBits::Num(B.HalfX) +
+                                      ", " + GltfBits::Num(B.HalfY) + ", " + GltfBits::Num(B.Height) + "]}";
+                    Known = StructureIndex.emplace(B.Model, StructureIndex.size()).first;
+                }
+                const int Tile = static_cast<int>(B.Y / TileSize) * static_cast<int>(Spec.Width / TileSize + 0.5) + static_cast<int>(B.X / TileSize);
+                std::string& List = TileStructures[Tile];
+                List += std::string(List.empty() ? "" : ",") + "[" + std::to_string(Known->second) + "," + Cm(B.X) + "," + Cm(B.Y) + "," + Cm(B.Z) + "," +
+                        std::to_string(static_cast<long long>(std::llround(B.Yaw))) + "]";
+                ++Out.Structures;
+            }
+        }
         const auto BiomeOf = [](const std::string& B)
         {
             if (B == "tropical") return Biome::Tropical;
@@ -460,11 +538,12 @@ namespace DarkArisen::Tools::Art
 
                 Index += std::string(First ? "" : ",") + "\n    {\"tile\": " + std::to_string(Row * Columns + Column) + ", \"column\": " + std::to_string(Column) + ", \"row\": " +
                          std::to_string(Row) + ", \"biome\": \"" + Biome + "\", \"model\": " + ModelRef("Assets/World/Tiles/" + Name + ".gltf") +
-                         ", \"material\": " + MaterialRef("Assets/World/Materials/M_World_" + Biome + ".material") + ", \"foliage\": \"assets/world/tiles/f_world_" + Suffix + ".json\"}";
+                         ", \"material\": " + MaterialRef("Assets/World/Materials/M_World_" + Biome + ".material") + ", \"foliage\": \"assets/world/tiles/f_world_" + Suffix + ".json\"" +
+                         (TileStructures.count(Row * Columns + Column) ? ", \"structures\": [" + TileStructures[Row * Columns + Column] + "]" : std::string()) + "}";
                 First = false;
                 ++Out.Tiles;
             }
-        Index += "\n  ],\n  \"plants\": [" + PlantTable + "\n  ],\n  \"grass\": [";
+        Index += "\n  ],\n  \"plants\": [" + PlantTable + "\n  ],\n  \"structures\": [" + StructureTable + "\n  ],\n  \"grass\": [";
         bool FirstPatch = true;
         for (const GrassPatch& G : Kit::WorldGrassPatches())
         {

@@ -1,6 +1,7 @@
 #include "WorldColliderComponent.h"
 
 #include <AzCore/Interface/Interface.h>
+#include <AzCore/Math/MathUtils.h>
 #include <AzCore/Serialization/EditContext.h>
 #include <AzCore/Serialization/SerializeContext.h>
 #include <AzCore/std/smart_ptr/make_shared.h>
@@ -61,8 +62,16 @@ namespace DarkArisen
             {
                 scenes->RemoveSimulatedBody(m_scene, body);
             }
+            for (auto& [tile, boxes] : m_buildings)
+            {
+                for (AzPhysics::SimulatedBodyHandle& box : boxes)
+                {
+                    scenes->RemoveSimulatedBody(m_scene, box);
+                }
+            }
         }
         m_bodies.clear();
+        m_buildings.clear();
     }
 
     void WorldColliderComponent::OnFoliageLoaded(const WorldFoliage& foliage)
@@ -117,10 +126,44 @@ namespace DarkArisen
         {
             m_bodies[foliage.Tile] = handle;
         }
+
+        // the settlement buildings standing on the tile: a box each, base on the ground
+        if (const WorldTile* tile = world->GetTile(foliage.Tile))
+        {
+            AZStd::vector<AzPhysics::SimulatedBodyHandle>& boxes = m_buildings[foliage.Tile];
+            for (const WorldStructure& structure : tile->Structures)
+            {
+                const WorldStructureModel& model = world->GetStructureModels()[structure.Model];
+                auto box = AZStd::make_shared<Physics::BoxShapeConfiguration>(AZ::Vector3(2.0f * model.HalfX, 2.0f * model.HalfY, model.Height));
+                auto boxCollider = AZStd::make_shared<Physics::ColliderConfiguration>();
+                boxCollider->m_position = AZ::Vector3(0.0f, 0.0f, 0.5f * model.Height);
+                AzPhysics::StaticRigidBodyConfiguration building;
+                building.m_position = AZ::Vector3(structure.X, structure.Y, structure.Z);
+                building.m_orientation = AZ::Quaternion::CreateRotationZ(AZ::DegToRad(structure.Yaw));
+                building.m_entityId = GetEntityId();
+                building.m_colliderAndShapeData = AzPhysics::ShapeColliderPair(boxCollider, box);
+                const AzPhysics::SimulatedBodyHandle boxHandle = scenes->AddSimulatedBody(m_scene, &building);
+                if (boxHandle != AzPhysics::InvalidSimulatedBodyHandle)
+                {
+                    boxes.push_back(boxHandle);
+                }
+            }
+        }
     }
 
     void WorldColliderComponent::OnFoliageUnloaded(const int tile)
     {
+        if (const auto buildings = m_buildings.find(tile); buildings != m_buildings.end())
+        {
+            if (auto* scenes = AZ::Interface<AzPhysics::SceneInterface>::Get())
+            {
+                for (AzPhysics::SimulatedBodyHandle& box : buildings->second)
+                {
+                    scenes->RemoveSimulatedBody(m_scene, box);
+                }
+            }
+            m_buildings.erase(buildings);
+        }
         const auto found = m_bodies.find(tile);
         if (found == m_bodies.end())
         {

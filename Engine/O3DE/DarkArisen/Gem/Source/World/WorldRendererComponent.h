@@ -64,6 +64,7 @@ namespace DarkArisen
         AZStd::unordered_map<AZ::Data::AssetId, AZ::Data::Asset<AZ::RPI::ModelAsset>> m_models;
         AZStd::unordered_map<AZ::Data::AssetId, AZ::Data::Instance<AZ::RPI::Material>> m_materials;
         AZStd::unordered_map<int, MeshHandle> m_tiles;
+        AZStd::unordered_map<int, AZStd::vector<MeshHandle>> m_structures;
         AZStd::unordered_map<int, AZStd::vector<MeshHandle>> m_plants;
         AZStd::unordered_map<AZ::u64, AZStd::vector<MeshHandle>> m_grass;
         float m_grassClock = 0.0f;

@@ -39,6 +39,7 @@ namespace DarkArisen
         const WorldFoliage* GetFoliage(int tile) const override;
         const AZStd::vector<WorldPlant>& GetPlants() const override { return m_plants; }
         const AZStd::vector<WorldGrass>& GetGrass() const override { return m_grass; }
+        const AZStd::vector<WorldStructureModel>& GetStructureModels() const override { return m_structureModels; }
         const WorldBiomeGrass* GetBiomeGrass(const AZStd::string& biome) const override;
         bool GetGroundHeight(float x, float y, float& height) const override;
         float GetTileSize() const override { return m_tileSize; }
@@ -73,6 +74,7 @@ namespace DarkArisen
         AZStd::unordered_map<int, AZStd::size_t> m_tileByIndex;
         AZStd::vector<WorldPlant> m_plants;
         AZStd::vector<WorldGrass> m_grass;
+        AZStd::vector<WorldStructureModel> m_structureModels;
         AZStd::unordered_map<AZStd::string, WorldBiomeGrass> m_biomes;
 
         // streaming state

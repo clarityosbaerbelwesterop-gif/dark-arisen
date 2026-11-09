@@ -110,12 +110,17 @@ namespace DarkArisen
             {
                 ReleaseAll(handles);
             }
+            for (auto& [index, handles] : m_structures)
+            {
+                ReleaseAll(handles);
+            }
             for (auto& [key, handles] : m_grass)
             {
                 ReleaseAll(handles);
             }
         }
         m_tiles.clear();
+        m_structures.clear();
         m_plants.clear();
         m_grass.clear();
         m_models.clear();
@@ -192,6 +197,17 @@ namespace DarkArisen
         }
         // tile models are authored in world metres: identity transform
         m_tiles[tile.Index] = Acquire(tile.Model, tile.Material, AZ::Transform::CreateIdentity(), false);
+        // the settlement buildings on it are seen as far as the ground
+        if (const WorldStreamingRequests* world = WorldStreamingInterface::Get(); world && !tile.Structures.empty())
+        {
+            AZStd::vector<MeshHandle>& handles = m_structures[tile.Index];
+            for (const WorldStructure& structure : tile.Structures)
+            {
+                const AZ::Transform transform = AZ::Transform::CreateFromQuaternionAndTranslation(
+                    AZ::Quaternion::CreateRotationZ(AZ::DegToRad(structure.Yaw)), AZ::Vector3(structure.X, structure.Y, structure.Z));
+                handles.push_back(Acquire(world->GetStructureModels()[structure.Model].Model, WorldAsset{}, transform, false));
+            }
+        }
     }
 
     void WorldRendererComponent::OnTileUnloaded(const int tile)
@@ -201,6 +217,12 @@ namespace DarkArisen
         {
             m_meshes->ReleaseMesh(found->second);
             m_tiles.erase(found);
+        }
+        const auto buildings = m_structures.find(tile);
+        if (buildings != m_structures.end())
+        {
+            ReleaseAll(buildings->second);
+            m_structures.erase(buildings);
         }
     }
 

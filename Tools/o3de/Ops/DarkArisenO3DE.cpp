@@ -664,7 +664,19 @@ namespace
         }
         for (const DarkArisen::Tools::JsonValue& P : Places.Find("places")->Items)
             if (P.Find("kind") && P.Find("kind")->Text == "land") Marks.push_back({P.Find("x")->Number, P.Find("y")->Number, 220.0});
-        const auto World = DarkArisen::Tools::Art::BuildWorldTerrain(Spec, Marks, 500.0, 5.0, 32.0, 8.0);
+        // the design's locations (Locations.json): settlements level their ground and get their buildings
+        std::vector<DarkArisen::Tools::Art::WorldLocation> Sites;
+        DarkArisen::Tools::JsonValue Locations;
+        std::ifstream LocationsIn(Opts.RepoRoot / "ContentSource" / "World" / "Locations.json");
+        const std::string LocationsText((std::istreambuf_iterator<char>(LocationsIn)), std::istreambuf_iterator<char>());
+        if (!LocationsIn || !DarkArisen::Tools::JsonReader::Parse(LocationsText, Locations, Problem) || !Locations.Find("locations"))
+        {
+            std::cerr << "error: ContentSource/World/Locations.json: " << Problem << "\n";
+            return LockError;
+        }
+        for (const DarkArisen::Tools::JsonValue& L : Locations.Find("locations")->Items)
+            Sites.push_back({L.Find("id")->Text, L.Find("kind")->Text, L.Find("region")->Text, L.Find("x")->Number, L.Find("y")->Number, L.Find("radius")->Number});
+        const auto World = DarkArisen::Tools::Art::BuildWorldTerrain(Spec, Marks, Sites, 500.0, 5.0, 32.0, 8.0);
         const fs::path Root = Opts.RepoRoot / "Engine" / "O3DE" / "DarkArisen" / "Assets" / "World";
         std::size_t Bytes = 0;
         for (const auto& File : World.Files)
@@ -674,7 +686,7 @@ namespace
             std::ofstream(Target, std::ios::binary) << File.Content;
             Bytes += File.Content.size();
         }
-        std::cout << "world terrain: " << World.Tiles << " land tiles, " << World.Triangles << " triangles, " << World.Plantings << " plantings, " << World.Files.size() << " files, "
+        std::cout << "world terrain: " << World.Tiles << " land tiles, " << World.Triangles << " triangles, " << World.Plantings << " plantings, " << World.Structures << " buildings, " << World.Files.size() << " files, "
                   << Bytes / 1000000 << " MB into " << Root.string() << "\n";
         return Ok;
     }

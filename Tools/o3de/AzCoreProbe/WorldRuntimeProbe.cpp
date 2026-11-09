@@ -63,7 +63,8 @@ namespace
                            std::to_string(row) + ", \"biome\": \"tropical\", \"model\": " +
                            Asset("{11111111-2222-3333-4444-555555555555}", 268435457u + static_cast<unsigned>(index), "assets/world/tiles/t.azmodel", model) +
                            ", \"material\": " + Asset("{66666666-7777-8888-9999-AAAAAAAAAAAA}", 0, "assets/world/materials/m.azmaterial", material) +
-                           ", \"foliage\": \"assets/world/tiles/f_world_" + suffix + ".json\"}";
+                           ", \"foliage\": \"assets/world/tiles/f_world_" + suffix + ".json\"" +
+                           (index == 0 ? std::string(", \"structures\": [[0,12000,13000,1250,90],[7,0,0,0,0]]") : std::string()) + "}";
                 first = false;
                 std::string foliage = "{\"tile\": " + std::to_string(index) + ", \"x0\": " + std::to_string(column * 500) + ", \"y0\": " + std::to_string(row * 500) +
                                       ", \"biome\": \"tropical\",\n\"plants\": [[0," + std::to_string(column * 50000 + 25000) + "," + std::to_string(row * 50000 + 25000) +
@@ -77,7 +78,11 @@ namespace
                 foliage += "]}\n";
                 std::ofstream(root / ("assets/world/tiles/f_world_" + suffix + ".json")) << foliage;
             }
-        catalog += std::string("\n  ],\n  \"plants\": [\n    {\"tree\": true, \"parts\": [{\"model\": ") +
+        std::string building;
+        catalog += std::string("\n  ],\n  \"structures\": [\n    {\"model\": ") +
+                   Asset("{ABCDEF00-1111-2222-3333-999999999999}", 268435463u, "assets/art/models/sm_art_settlement_nordic_0.azmodel", building) +
+                   ", \"box\": [3.3, 6.0, 7.5]}\n  ],";
+        catalog += std::string("\n  \"plants\": [\n    {\"tree\": true, \"parts\": [{\"model\": ") +
                    Asset("{ABCDEF00-1111-2222-3333-444444444444}", 268435460u, "assets/art/scanned/game/island_tree_01_0.azmodel", plant) + ", \"material\": null}]},\n" +
                    "    {\"tree\": false, \"parts\": [{\"model\": " + Asset("{ABCDEF00-1111-2222-3333-555555555555}", 268435461u, "assets/art/models/x.azmodel", plant) +
                    ", \"material\": " + Asset("{ABCDEF00-1111-2222-3333-666666666666}", 0, "assets/materials/foliage/x.azmaterial", material) + "}]}\n  ],\n" +
@@ -129,6 +134,13 @@ int main(int argc, char** argv)
     Check(world->GetPlants()[0].Parts.size() == 1 && world->GetPlants()[0].Parts[0].Model.Id.m_subId == 268435460u &&
               !world->GetPlants()[0].Parts[0].Material.Id.IsValid() && world->GetPlants()[1].Parts[0].Material.Id.IsValid(),
         "catalog: asset ids with sub-ids; a missing material keeps the model's own");
+    const DarkArisen::WorldTile* first = world->GetTile(0);
+    Check(world->GetStructureModels().size() == 1 && std::fabs(world->GetStructureModels()[0].HalfY - 6.0f) < 1e-4f &&
+              world->GetStructureModels()[0].Model.Id.m_subId == 268435463u,
+        "catalog: building models with their collision boxes");
+    Check(first && first->Structures.size() == 1 && std::fabs(first->Structures[0].X - 120.0f) < 1e-3f && std::fabs(first->Structures[0].Z - 12.5f) < 1e-3f &&
+              std::fabs(first->Structures[0].Yaw - 90.0f) < 1e-3f,
+        "catalog: a tile's buildings in metres and degrees; one naming a missing model is dropped");
     const DarkArisen::WorldBiomeGrass* grass = world->GetBiomeGrass("tropical");
     Check(grass && grass->Grass.size() == 1 && world->GetGrass()[grass->Grass[0]].Card == "GrassBlades" && std::fabs(grass->Density - 0.7f) < 1e-4f,
         "catalog: the biome's grass cards resolve to patches");

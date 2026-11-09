@@ -24,6 +24,19 @@ namespace DarkArisen
         AZStd::string Hint;
     };
 
+    /** A building of a settlement (world-build from Locations.json): a shared model and a box for collision. */
+    struct WorldStructureModel
+    {
+        WorldAsset Model;
+        float HalfX = 1, HalfY = 1, Height = 1;  // collision box in the model's frame, base at z = 0
+    };
+
+    struct WorldStructure
+    {
+        AZ::u32 Model = 0;                       // index into GetStructureModels()
+        float X = 0, Y = 0, Z = 0, Yaw = 0;      // metres, degrees about Z
+    };
+
     struct WorldTile
     {
         int Index = -1;               // row * columns + column
@@ -31,6 +44,7 @@ namespace DarkArisen
         AZStd::string Biome;
         WorldAsset Model, Material;   // the ground and its DarkArisenTerrain material
         AZStd::string Foliage;        // product path of its plantings and ground heights
+        AZStd::vector<WorldStructure> Structures;  // buildings standing on it (seen as far as the ground)
     };
 
     struct WorldPlant
@@ -88,6 +102,7 @@ namespace DarkArisen
         virtual const WorldFoliage* GetFoliage(int tile) const = 0;
         virtual const AZStd::vector<WorldPlant>& GetPlants() const = 0;
         virtual const AZStd::vector<WorldGrass>& GetGrass() const = 0;
+        virtual const AZStd::vector<WorldStructureModel>& GetStructureModels() const = 0;
         virtual const WorldBiomeGrass* GetBiomeGrass(const AZStd::string& biome) const = 0;
         /** Ground height from the resident foliage tiles; false where none is resident (or at open sea). */
         virtual bool GetGroundHeight(float x, float y, float& height) const = 0;

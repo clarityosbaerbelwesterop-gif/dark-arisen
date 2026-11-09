@@ -11,7 +11,8 @@ namespace DarkArisen
     /**
      * The open world's ground for physics: each tile whose plantings are resident (within the streamer's foliage
      * radius, so everything Jake can reach) gets a static PhysX heightfield from the same 5 m heights its mesh was
-     * built from, with the mesh's diagonal, so what he stands on is what he sees. Removed when the tile leaves.
+     * built from, with the mesh's diagonal, so what he stands on is what he sees, and a box for each building on
+     * it. Removed when the tile leaves.
      */
     class WorldColliderComponent
         : public AZ::Component
@@ -35,5 +36,6 @@ namespace DarkArisen
     private:
         AzPhysics::SceneHandle m_scene = AzPhysics::InvalidSceneHandle;
         AZStd::unordered_map<int, AzPhysics::SimulatedBodyHandle> m_bodies;
+        AZStd::unordered_map<int, AZStd::vector<AzPhysics::SimulatedBodyHandle>> m_buildings;  // one box per building
     };
 }

@@ -127,6 +127,24 @@ namespace DarkArisen
             tile.Model = entry.HasMember("model") ? ReadAsset(entry["model"]) : WorldAsset{};
             tile.Material = entry.HasMember("material") ? ReadAsset(entry["material"]) : WorldAsset{};
             tile.Foliage = entry.HasMember("foliage") && entry["foliage"].IsString() ? AZStd::string("@products@/") + entry["foliage"].GetString() : AZStd::string();
+            if (entry.HasMember("structures") && entry["structures"].IsArray())
+            {
+                for (const rapidjson::Value& row : entry["structures"].GetArray())
+                {
+                    // [model, x cm, y cm, z cm, yaw degrees]
+                    if (!row.IsArray() || row.Size() < 5 || !row[0].IsUint())
+                    {
+                        continue;
+                    }
+                    WorldStructure structure;
+                    structure.Model = row[0].GetUint();
+                    structure.X = static_cast<float>(row[1].GetDouble() * 0.01);
+                    structure.Y = static_cast<float>(row[2].GetDouble() * 0.01);
+                    structure.Z = static_cast<float>(row[3].GetDouble() * 0.01);
+                    structure.Yaw = static_cast<float>(row[4].GetDouble());
+                    tile.Structures.push_back(structure);
+                }
+            }
             if (tile.Index < 0)
             {
                 continue;
@@ -153,6 +171,29 @@ namespace DarkArisen
                 }
                 m_plants.push_back(AZStd::move(plant));
             }
+        }
+        if (document.HasMember("structures") && document["structures"].IsArray())
+        {
+            for (const rapidjson::Value& entry : document["structures"].GetArray())
+            {
+                WorldStructureModel model;
+                model.Model = entry.HasMember("model") ? ReadAsset(entry["model"]) : WorldAsset{};
+                if (entry.HasMember("box") && entry["box"].IsArray() && entry["box"].Size() == 3)
+                {
+                    model.HalfX = static_cast<float>(entry["box"][0].GetDouble());
+                    model.HalfY = static_cast<float>(entry["box"][1].GetDouble());
+                    model.Height = static_cast<float>(entry["box"][2].GetDouble());
+                }
+                m_structureModels.push_back(AZStd::move(model));
+            }
+        }
+        // a structure naming a model the table lacks would index past it: drop it rather than draw garbage
+        for (WorldTile& tile : m_tiles)
+        {
+            tile.Structures.erase(
+                AZStd::remove_if(tile.Structures.begin(), tile.Structures.end(),
+                    [this](const WorldStructure& s) { return s.Model >= m_structureModels.size(); }),
+                tile.Structures.end());
         }
         if (document.HasMember("grass") && document["grass"].IsArray())
         {
@@ -298,6 +339,7 @@ namespace DarkArisen
         m_tileByIndex.clear();
         m_plants.clear();
         m_grass.clear();
+        m_structureModels.clear();
         m_biomes.clear();
     }
 
