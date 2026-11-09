@@ -13,6 +13,7 @@
 #include <algorithm>
 #include <cmath>
 #include <map>
+#include <set>
 
 namespace DarkArisen::Tools::Art
 {
@@ -319,6 +320,18 @@ namespace DarkArisen::Tools::Art
             return M;
         };
 
+        // tiles a colonial district or a fort touches are towns: their accent layer is paving, laid where the town is
+        const int TownColumns = static_cast<int>(Spec.Width / TileSize + 0.5);
+        std::set<int> TownTiles;
+        for (const Site& Si : Sites)
+        {
+            if (Si.Kind != Tradition::Colonial && Si.Kind != Tradition::Fort) continue;
+            const double R = Si.Where->Radius;
+            for (int Row = static_cast<int>((Si.Where->Y - R) / TileSize); Row <= static_cast<int>((Si.Where->Y + R) / TileSize); ++Row)
+                for (int Column = static_cast<int>((Si.Where->X - R) / TileSize); Column <= static_cast<int>((Si.Where->X + R) / TileSize); ++Column)
+                    TownTiles.insert(Row * TownColumns + Column);
+        }
+
         // world textures: macro colour (biome by height) and splat (ground, path/sand/mud, rock, accent)
         const int Tw = static_cast<int>(Spec.Width / TextureCell), Th = static_cast<int>(Spec.Height / TextureCell);
         Image Macro, Splat;
@@ -339,10 +352,17 @@ namespace DarkArisen::Tools::Art
                 const double Peak = Owner >= 0 ? Spec.Islands[static_cast<std::size_t>(Owner)].Peak : 100.0;
                 const V3 N = Normal(X, Y, TextureCell);
                 // trodden ground in the settlements: the path layer (sand, mud or litter by biome) under the streets
-                double Trodden = 0.0;
+                double Trodden = 0.0, Paved = 0.0;
+                const bool InTown = TownTiles.count(static_cast<int>(Y / TileSize) * TownColumns + static_cast<int>(X / TileSize)) != 0;
                 for (const Site& Si : Sites)
                 {
                     if (Si.Kind == Tradition::Entrance) continue;
+                    if (InTown && (Si.Kind == Tradition::Colonial || Si.Kind == Tradition::Fort))
+                    {
+                        const double Dx = X - Si.Where->X, Dy = Y - Si.Where->Y;
+                        Paved = std::max(Paved, 0.9 * Smooth(Si.Where->Radius * 0.95, 0.75 * Si.Where->Radius, std::sqrt(Dx * Dx + Dy * Dy)));
+                        continue;
+                    }
                     const double Dx = X - Si.Where->X, Dy = Y - Si.Where->Y;
                     // towns are mostly street; villages and camps keep their grass between the paths
                     const double Worn = Si.Kind == Tradition::Colonial || Si.Kind == Tradition::Fort ? 0.7 : 0.3;
@@ -353,8 +373,10 @@ namespace DarkArisen::Tools::Art
                 const double Accent = Smooth(0.45, 0.62, Fractal(X, Y, 260.0, 3, Spec.Seed + 77u));
                 double W1 = std::max(Biome == "mire" ? Smooth(4.0, 1.0, Z) : Shore, Trodden), W2 = Steep, W3 = Accent;
                 if (Biome == "cold") W3 = Smooth(0.45, 0.8, Z / std::max(Peak, 1.0));  // bare rock towards the tops
+                if (InTown) W3 = Paved;  // a town tile's accent is its paving: none outside the town
                 W1 = std::clamp(W1, 0.0, 1.0) * (1.0 - W2);
-                W3 = std::clamp(W3, 0.0, 1.0) * (1.0 - W2) * (1.0 - W1);
+                W3 = std::clamp(W3, 0.0, 1.0) * (1.0 - W2) * (InTown ? 1.0 : 1.0 - W1);
+                if (InTown) W1 = W1 * (1.0 - W3);  // paving over the shore's sand
                 const double W[4] = {std::clamp(1.0 - W1 - W2 - W3, 0.0, 1.0), W1, W2, W3};
                 std::uint8_t* S = &Splat.Pixels[static_cast<std::size_t>((J * Tw + K) * 4)];
                 for (int C = 0; C < 4; ++C) S[C] = static_cast<std::uint8_t>(std::lround(W[C] * 255.0));
@@ -400,6 +422,16 @@ namespace DarkArisen::Tools::Art
             J += "        \"macro.strength\": 0.85,\n        \"macro.tiles\": [" + GltfBits::Num(L.Tile[0]) + ", " + GltfBits::Num(L.Tile[1]) + ", " + GltfBits::Num(L.Tile[2]) + ", " +
                  GltfBits::Num(L.Tile[3]) + "]\n    }\n}\n";
             Out.Files.push_back({std::string("Materials/M_World_") + L.Biome + ".material", J});
+            // the town variant: the accent layer is cobblestone paving
+            const std::string Accent = std::string("../../Art/Scanned/") + L.Layer[3] + "/" + L.Layer[3], Paving = "../../Art/Scanned/cobblestone_floor_08/cobblestone_floor_08";
+            std::string Town = J;
+            for (const char* Map : {"_arm_2k.jpg", "_diff_2k.jpg", "_nor_gl_2k.jpg"})
+            {
+                const std::string From = Accent + Map, To = Paving + Map;
+                const std::size_t At = Town.find("\"layer3." + std::string(Map[1] == 'a' ? "arm" : Map[1] == 'd' ? "color" : "normal") + "\": \"" + From);
+                if (At != std::string::npos) Town.replace(Town.find(From, At), From.size(), To);
+            }
+            Out.Files.push_back({std::string("Materials/M_World_") + L.Biome + "_town.material", Town});
         }
 
         Material Placeholder;
@@ -552,7 +584,8 @@ namespace DarkArisen::Tools::Art
 
                 Index += std::string(First ? "" : ",") + "\n    {\"tile\": " + std::to_string(Row * Columns + Column) + ", \"column\": " + std::to_string(Column) + ", \"row\": " +
                          std::to_string(Row) + ", \"biome\": \"" + Biome + "\", \"model\": " + ModelRef("Assets/World/Tiles/" + Name + ".gltf") +
-                         ", \"material\": " + MaterialRef("Assets/World/Materials/M_World_" + Biome + ".material") + ", \"foliage\": \"assets/world/tiles/f_world_" + Suffix + ".json\"" +
+                         ", \"material\": " + MaterialRef("Assets/World/Materials/M_World_" + Biome + (TownTiles.count(Row * Columns + Column) ? "_town" : "") + ".material") +
+                         ", \"foliage\": \"assets/world/tiles/f_world_" + Suffix + ".json\"" +
                          (TileStructures.count(Row * Columns + Column) ? ", \"structures\": [" + TileStructures[Row * Columns + Column] + "]" : std::string()) + "}";
                 First = false;
                 ++Out.Tiles;
