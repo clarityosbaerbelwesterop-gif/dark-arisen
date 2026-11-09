@@ -37,6 +37,7 @@ add_library(DarkArisenCore STATIC
     Source/Cinematics.cpp
     Source/Soundscape.cpp
     Source/Dialogue.cpp
+    Source/NpcSchedule.cpp
 )
 add_library(DarkArisen::Core ALIAS DarkArisenCore)
 target_include_directories(DarkArisenCore PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Include)
@@ -77,6 +78,7 @@ if(DARKARISEN_CORE_TESTS)
         Tests/CinematicsTests.cpp
         Tests/SoundscapeTests.cpp
         Tests/DialogueTests.cpp
+        Tests/NpcScheduleTests.cpp
     )
     target_link_libraries(DarkArisenCoreTests PRIVATE DarkArisen::Core)
     # Parity tests read the Unreal reference sources so the two implementations cannot drift.
