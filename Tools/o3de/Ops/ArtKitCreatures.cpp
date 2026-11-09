@@ -96,6 +96,75 @@ namespace DarkArisen::Tools::Art
             HalfWidth = 0.0;
             return 0.0;
         }
+
+        /** Point at T (0..1) along a polyline, by equal shares per segment. */
+        V3 Along(const std::vector<V3>& Path, const double T)
+        {
+            const double Segments = static_cast<double>(Path.size() - 1), At = Clamp(T, 0.0, 1.0) * Segments;
+            const std::size_t K = std::min(static_cast<std::size_t>(At), Path.size() - 2);
+            const double F = At - static_cast<double>(K);
+            return Path[K] + (Path[K + 1] - Path[K]) * F;
+        }
+
+        /**
+         * A twisted bundle of Count strands round a polyline axis: roots grown into a limb. Spread is the strands' distance
+         * from the axis (at the start, at the end), Radius each strand's thickness, Twist the turns along the whole length.
+         */
+        void Bundle(Mesh& Out, const Material& M, const std::vector<V3>& Path, const int Count, const double Spread0, const double Spread1,
+                    const double Radius0, const double Radius1, const double Twist, const std::uint32_t Seed)
+        {
+            Rng R(Seed);
+            const int Steps = 6 * static_cast<int>(Path.size() - 1);
+            for (int S = 0; S < Count; ++S)
+            {
+                const double Phase = 2.0 * Pi * S / Count + R.Range(-0.3, 0.3), Thick = R.Range(0.8, 1.15);
+                V3 Prev{};
+                for (int K = 0; K <= Steps; ++K)
+                {
+                    const double T = static_cast<double>(K) / Steps;
+                    const V3 A = Along(Path, std::max(T - 0.02, 0.0)), B = Along(Path, std::min(T + 0.02, 1.0));
+                    const V3 D = Normalize(B - A);
+                    const V3 Ref = std::abs(D.Z) > 0.9 ? V3{1, 0, 0} : V3{0, 0, 1};
+                    const V3 U = Normalize(Cross(D, Ref)), W = Cross(D, U);
+                    const double Angle = Phase + Twist * 2.0 * Pi * T, Spread = Lerp(Spread0, Spread1, T);
+                    const V3 P = Along(Path, T) + (U * Cos(Angle) + W * Sin(Angle)) * Spread;
+                    if (K) Out.Tube(M, Prev, P, Lerp(Radius0, Radius1, T - 1.0 / Steps) * Thick, Lerp(Radius0, Radius1, T) * Thick, 7);
+                    Prev = P;
+                }
+            }
+        }
+
+        /**
+         * A broken slab (a carved temple stone, an armour plate) of half sizes H, turned by Yaw, Pitch, Roll about its centre
+         * C; each corner knocked out of true by up to Chip of the half size, so no two read as cut boxes.
+         */
+        void Slab(Mesh& Out, const Material& M, const V3& C, const V3& H, const double Yaw, const double Pitch, const double Roll,
+                  const std::uint32_t Seed = 1u, const double Chip = 0.22)
+        {
+            Rng R(Seed);
+            V3 P[8];
+            for (int K = 0; K < 8; ++K)
+            {
+                const double Sx = (K == 1 || K == 2 || K == 5 || K == 6) ? 1.0 : -1.0, Sy = (K == 2 || K == 3 || K == 6 || K == 7) ? 1.0 : -1.0, Sz = K >= 4 ? 1.0 : -1.0;
+                P[K] = {Sx * H.X * (1.0 - Chip * R.Unit()), Sy * H.Y * (1.0 - Chip * R.Unit()), Sz * H.Z * (1.0 - Chip * R.Unit())};
+            }
+            Out.Push(Xf::Translate(C) * Xf::RotateZ(Yaw) * Xf::RotateY(Pitch) * Xf::RotateX(Roll));
+            Out.Quad(M, P[4], P[5], P[6], P[7]);
+            Out.Quad(M, P[1], P[0], P[3], P[2]);
+            Out.Quad(M, P[5], P[1], P[2], P[6]);
+            Out.Quad(M, P[0], P[4], P[7], P[3]);
+            Out.Quad(M, P[7], P[6], P[2], P[3]);
+            Out.Quad(M, P[0], P[1], P[5], P[4]);
+            Out.Pop();
+        }
+
+        /** An ellipsoid cap (half-ellipsoid) facing +X at C: Tall, Wide, Deep half sizes. */
+        void FrontCap(Mesh& Out, const Material& M, const V3& C, const double Tall, const double Wide, const double Deep, const int Sides)
+        {
+            Out.Push(Xf::Translate(C) * Xf::RotateY(Pi / 2) * Xf::Scale({Tall, Wide, Deep}));
+            Dome(Out, M, 0, 0, 0, 1.0, 1.0, Sides);
+            Out.Pop();
+        }
     }
 
     /**
@@ -234,8 +303,174 @@ namespace DarkArisen::Tools::Art
         return Out;
     }
 
+    /**
+     * The Jungle Warden (jungle_warden.md 2): four and a half metres, vaguely humanoid, built from twisted vines, ancient
+     * stone slabs and weathered armour fragments over a skeleton of ironwood roots grown through stone artefacts; a carved
+     * wooden mask with no eyes, only two black hollows; moss and small flowers on the back and shoulders; the left arm much
+     * larger than the right; a hollow chest where a green light pulses; roots running from the feet into the floor.
+     * Facing +X, standing on z = 0.
+     */
+    Mesh BuildJungleWarden()
+    {
+        Mesh Out("SM_Art_Creature_JungleWarden");
+        const Material Wood = Hide("M_Art_Warden_Ironwood", "bark_brown_02", 0.44, 0.37, 0.3, 0.7, 0.95);
+        const Material Root = Hide("M_Art_Warden_Root", "bark_brown_02", 0.27, 0.22, 0.17, 0.5, 0.95);
+        const Material Stone = Hide("M_Art_Warden_Stone", "rustic_stone_wall_02", 0.66, 0.66, 0.58, 1.1, 1.0);
+        const Material Armour = Hide("M_Art_Warden_Armour", "rusty_metal_02", 0.72, 0.62, 0.52, 0.7, 0.9);
+        const Material Mask = Hide("M_Art_Warden_Mask", "rough_wood", 0.64, 0.5, 0.34, 0.5, 0.85);
+        const Material Carving = Hide("M_Art_Warden_MaskCarving", "rough_wood", 0.42, 0.32, 0.21, 0.5, 0.85);
+        const Material Hollow = Flesh("M_Art_Warden_Hollow", 0.012, 0.01, 0.01, 0.95);
+        const Material Vine = Flesh("M_Art_Warden_Vine", 0.1, 0.15, 0.05, 0.85);
+        Material Heart = Flesh("M_Art_Warden_Heart", 0.3, 0.72, 0.28, 0.35);
+        Heart.Emissive = {0.38, 1.0, 0.32};
+        Heart.EmissiveStrength = 8.0;
+
+        // legs: root bundles, a slight stride; the feet's roots run out into the floor
+        const std::vector<V3> LegL{{0.0, 0.3, 2.15}, {0.26, 0.42, 1.2}, {0.06, 0.44, 0.2}}, LegR{{0.0, -0.3, 2.15}, {0.1, -0.42, 1.15}, {-0.12, -0.44, 0.2}};
+        Bundle(Out, Wood, LegL, 5, 0.13, 0.09, 0.1, 0.07, 0.7, 11u);
+        Bundle(Out, Wood, LegR, 5, 0.12, 0.09, 0.1, 0.07, -0.6, 12u);
+        Rng R(0x57A2u);
+        for (const V3& Ankle : {LegL.back(), LegR.back()})
+            for (int K = 0; K < 7; ++K)
+            {
+                const double A = 2.0 * Pi * K / 7 + R.Range(-0.25, 0.25), Reach = R.Range(0.55, 0.95);
+                const V3 Mid{Ankle.X + 0.45 * Reach * Cos(A), Ankle.Y + 0.45 * Reach * Sin(A), 0.14};
+                const V3 End{Ankle.X + Reach * Cos(A), Ankle.Y + Reach * Sin(A), -0.06};
+                Out.Tube(Root, Ankle, Mid, 0.075, 0.05, 7);
+                Out.Tube(Root, Mid, End, 0.05, 0.012, 6);
+            }
+        // a rusted iron band round the right thigh, a cracked greave on the left shin
+        Out.Push(Xf::Translate({0.05, -0.36, 1.75}) * Xf::RotateX(0.12));
+        Out.Tube(Armour, {0, 0, -0.14}, {0, 0, 0.14}, 0.27, 0.25, 12);
+        Out.Pop();
+        Slab(Out, Armour, {0.3, 0.44, 0.7}, {0.03, 0.17, 0.32}, 0.0, -0.18, 0.0, 51u, 0.3);
+
+        // pelvis: a carved temple block the roots have grown round
+        Slab(Out, Stone, {-0.06, 0.12, 2.12}, {0.26, 0.3, 0.16}, 0.25, 0.1, 0.06, 52u, 0.35);
+        Slab(Out, Stone, {0.02, -0.26, 2.2}, {0.2, 0.2, 0.14}, -0.4, -0.12, 0.2, 53u, 0.35);
+        Bundle(Out, Root, {{0.0, -0.55, 2.3}, {0.34, 0.0, 2.2}, {0.0, 0.55, 2.3}}, 3, 0.03, 0.03, 0.05, 0.05, 1.0, 13u);
+
+        // the trunk: a dark core at the back, ribs of root round a hollow chest; the green light pulses in the hollow
+        std::vector<Ring> Core;
+        for (int K = 0; K <= 8; ++K)
+        {
+            const double T = K / 8.0, Z = 2.25 + 1.6 * T, Lean = 0.22 * T * T;
+            Core.push_back(Ellipse(-0.22 + Lean, 0.0, Z, 0.24 + 0.06 * Sin(Pi * T), 0.42 + 0.14 * T, 12));
+        }
+        Out.Loft(Root, Core, true);
+        Dome(Out, Heart, 0.06, 0.0, 2.95, 0.24, 0.24, 14);
+        Out.Push(Xf::Translate({0.06, 0.0, 2.95}) * Xf::Scale({1.0, 1.0, -1.0}));
+        Dome(Out, Heart, 0.0, 0.0, 0.0, 0.24, 0.24, 14);
+        Out.Pop();
+        Dome(Out, Hollow, -0.04, 0.0, 2.6, 0.36, 0.7, 12);
+        for (int Rib = 0; Rib < 5; ++Rib)
+        {
+            const double Z = 2.55 + 0.24 * Rib, Lean = 0.22 * ((Z - 2.25) / 1.6) * ((Z - 2.25) / 1.6), Depth = 0.48 - 0.03 * Rib, Wide = 0.56 + 0.04 * Rib;
+            for (const double Side : {1.0, -1.0})
+            {
+                std::vector<V3> Arc;
+                for (int K = 0; K <= 6; ++K)
+                {
+                    const double A = Pi - (Pi - 0.42) * K / 6.0;  // from the spine round the flank to the edge of the hollow
+                    Arc.push_back({-0.05 + Lean + Depth * Cos(A), Side * Wide * Sin(A), Z - 0.22 * (K / 6.0) * (K / 6.0)});
+                }
+                Bundle(Out, Wood, Arc, 2, 0.03, 0.02, 0.055, 0.035, 0.5, 20u + static_cast<std::uint32_t>(Rib) * 2u + (Side > 0 ? 1u : 0u));
+            }
+        }
+        // spine and neck
+        Bundle(Out, Wood, {{-0.25, 0.0, 2.2}, {-0.3, 0.0, 2.9}, {-0.1, 0.0, 3.55}, {0.22, 0.0, 3.92}}, 4, 0.1, 0.07, 0.08, 0.06, 0.8, 30u);
+        // a breastplate fragment across the left chest, a tilted temple slab grown into the back
+        Slab(Out, Armour, {0.33, 0.36, 3.18}, {0.035, 0.24, 0.3}, 0.35, -0.3, 0.12, 54u, 0.3);
+        Slab(Out, Stone, {-0.46, 0.18, 3.35}, {0.1, 0.32, 0.36}, 0.12, -0.32, 0.18, 55u, 0.35);
+        Slab(Out, Stone, {-0.44, -0.24, 2.95}, {0.09, 0.24, 0.28}, -0.1, -0.22, -0.25, 56u, 0.35);
+
+        // shoulders: the left a stone slab heaved up by the larger arm, the right a rusted pauldron
+        const V3 ShL{0.12, 0.78, 3.62}, ShR{0.1, -0.62, 3.5};
+        Slab(Out, Stone, {ShL.X - 0.05, ShL.Y + 0.02, ShL.Z + 0.2}, {0.32, 0.26, 0.1}, 0.3, 0.15, -0.45, 57u, 0.35);
+        Out.Push(Xf::Translate({ShR.X, ShR.Y - 0.05, ShR.Z + 0.02}) * Xf::RotateX(0.5) * Xf::Scale({1.0, 0.85, 0.7}));
+        Dome(Out, Armour, 0, 0, 0, 0.3, 0.3, 14);
+        Out.Pop();
+        Bundle(Out, Wood, {{0.0, 0.0, 3.6}, ShL}, 4, 0.08, 0.12, 0.07, 0.09, 0.4, 31u);
+        Bundle(Out, Wood, {{0.0, 0.0, 3.55}, ShR}, 3, 0.06, 0.07, 0.06, 0.06, -0.4, 32u);
+
+        // the left arm, grown far heavier over the centuries, hangs to the knee; a stone artefact is caught in its forearm
+        const std::vector<V3> ArmL{ShL, {0.38, 1.08, 2.62}, {0.6, 1.02, 1.42}, {0.66, 0.98, 1.0}};
+        Bundle(Out, Wood, ArmL, 6, 0.17, 0.13, 0.11, 0.09, 0.9, 33u);
+        Slab(Out, Stone, {0.5, 1.07, 2.0}, {0.14, 0.2, 0.24}, 0.6, -0.35, 0.4, 58u, 0.35);
+        for (int F = 0; F < 5; ++F)
+        {
+            const double A = -0.9 + 0.45 * F;
+            const V3 Knuckle{0.66 + 0.16 * Cos(A), 0.98 + 0.16 * Sin(A), 0.95}, Tip{0.72 + 0.4 * Cos(A), 0.98 + 0.4 * Sin(A), 0.42 + (F == 0 ? 0.25 : 0.0)};
+            Out.Tube(Wood, ArmL.back(), Knuckle, 0.1, 0.08, 7);
+            Out.Tube(Root, Knuckle, {(Knuckle.X + Tip.X) / 2 + 0.06, (Knuckle.Y + Tip.Y) / 2, (Knuckle.Z + Tip.Z) / 2 + 0.08}, 0.08, 0.06, 7);
+            Out.Tube(Root, {(Knuckle.X + Tip.X) / 2 + 0.06, (Knuckle.Y + Tip.Y) / 2, (Knuckle.Z + Tip.Z) / 2 + 0.08}, Tip, 0.06, 0.02, 6);
+        }
+        // the right arm, a thin thing by comparison
+        const std::vector<V3> ArmR{ShR, {0.22, -0.82, 2.72}, {0.48, -0.74, 2.08}, {0.56, -0.7, 1.86}};
+        Bundle(Out, Wood, ArmR, 3, 0.06, 0.05, 0.065, 0.05, -0.8, 34u);
+        for (int F = 0; F < 4; ++F)
+        {
+            const double A = -0.6 + 0.4 * F;
+            Out.Tube(Root, ArmR.back(), {0.66 + 0.18 * Cos(A), -0.7 + 0.18 * Sin(A), 1.62}, 0.04, 0.015, 6);
+        }
+
+        // head: a knot of root behind the mask, roots swept back like a crown
+        Rock(Out, Root, {0.3, 0.0, 3.86}, 0.3, 0.62, 41u);
+        for (int K = 0; K < 9; ++K)
+        {
+            const double Y = -0.26 + 0.065 * K + R.Range(-0.02, 0.02), Long = R.Range(0.7, 1.15);
+            Bundle(Out, Root, {{0.4, Y * 0.7, 4.34}, {0.12, Y * 1.2, 4.5 - 0.3 * std::abs(Y)}, {-0.2 * Long, Y * 1.45, 4.3 - 0.25 * Long}, {-0.32 * Long, Y * 1.5, 3.95 - 0.3 * Long}},
+                   1, 0.0, 0.0, 0.045, 0.012, 0.0, 60u + static_cast<std::uint32_t>(K));
+        }
+        // the mask: carved wood, no eyes, two black hollows; a brow band, a nose ridge, a mouth slit and cheek grooves
+        const V3 Face{0.58, 0.0, 4.16};
+        const double Tall = 0.34, Wide = 0.25, Deep = 0.13;
+        FrontCap(Out, Mask, Face, Tall, Wide, Deep, 18);
+        const auto Surface = [&](const double Y, const double Z)
+        {
+            const double Q = 1.0 - (Y / Wide) * (Y / Wide) - ((Z - Face.Z) / Tall) * ((Z - Face.Z) / Tall);
+            return V3{Face.X + Deep * std::sqrt(std::max(Q, 0.0)), Y, Z};
+        };
+        for (const double Y : {-0.1, 0.1}) FrontCap(Out, Hollow, Surface(Y, 4.2) + V3{-0.015, 0, 0}, 0.09, 0.055, 0.02, 12);
+        Out.Tube(Carving, Surface(-0.2, 4.31) + V3{0.005, 0, 0}, Surface(0.0, 4.33) + V3{0.012, 0, 0}, 0.024, 0.026, 6);
+        Out.Tube(Carving, Surface(0.0, 4.33) + V3{0.012, 0, 0}, Surface(0.2, 4.31) + V3{0.005, 0, 0}, 0.026, 0.024, 6);
+        Out.Tube(Carving, Surface(0.0, 4.28) + V3{0.01, 0, 0}, Surface(0.0, 4.07) + V3{0.025, 0, 0}, 0.024, 0.034, 6);
+        Out.Tube(Hollow, Surface(-0.075, 3.97), Surface(0.075, 3.97), 0.012, 0.012, 6);
+        for (const double Y : {-0.15, 0.15})
+        {
+            for (const double Z : {4.08, 4.02, 3.96})
+                Out.Tube(Carving, Surface(Y * 1.08, Z) + V3{0.003, 0, 0}, Surface(Y * 0.82, Z - 0.02) + V3{0.003, 0, 0}, 0.01, 0.01, 5);
+        }
+
+        // moss and small flowers on the back and shoulders; vines draped over them
+        const Material Petal[] = {Flesh("M_Art_Warden_FlowerPale", 0.92, 0.88, 0.62, 0.6), Flesh("M_Art_Warden_FlowerWhite", 0.9, 0.9, 0.86, 0.6),
+                                  Flesh("M_Art_Warden_FlowerViolet", 0.62, 0.48, 0.78, 0.6)};
+        const V3 Beds[] = {{-0.6, 0.0, 3.72}, {-0.62, 0.35, 3.62}, {-0.6, -0.35, 3.6}, {0.05, 0.85, 3.98}, {0.12, -0.62, 3.78}, {-0.35, 0.1, 3.9}};
+        int Seed = 0;
+        for (const V3& Bed : Beds)
+        {
+            Rock(Out, Mat(M::Moss), Bed + V3{0, 0, -0.08}, R.Range(0.22, 0.3), R.Range(0.1, 0.16), 300u + static_cast<std::uint32_t>(Seed));
+            for (int F = 0; F < 5; ++F)
+            {
+                const V3 Base = Bed + V3{R.Range(-0.18, 0.18), R.Range(-0.18, 0.18), 0.02}, Head = Base + V3{R.Range(-0.03, 0.03), R.Range(-0.03, 0.03), R.Range(0.08, 0.16)};
+                Out.Tube(Vine, Base, Head, 0.008, 0.006, 4);
+                Dome(Out, Petal[(Seed + F) % 3], Head.X, Head.Y, Head.Z - 0.005, 0.045, 0.018, 8);
+            }
+            ++Seed;
+        }
+        for (int K = 0; K < 8; ++K)
+        {
+            const double Side = K % 2 ? 1.0 : -1.0, X = R.Range(-0.4, 0.1);
+            const V3 From{X, Side * R.Range(0.2, 0.5), 3.75}, Mid{X + 0.1, Side * R.Range(0.55, 0.75), R.Range(3.2, 3.45)}, To{X + R.Range(0.0, 0.25), Side * R.Range(0.5, 0.65), R.Range(2.4, 2.9)};
+            Out.Tube(Vine, From, Mid, 0.03, 0.025, 6, false);
+            Out.Tube(Vine, Mid, To, 0.025, 0.012, 6, false);
+        }
+        return Out;
+    }
+
     void Kit::BuildCreatureModels()
     {
         Emit("SM_Art_Creature_JawOfTheMire", WriteGltf(BuildJawOfTheMire(), "Dark Arisen art kit (creatures)"));
+        Emit("SM_Art_Creature_JungleWarden", WriteGltf(BuildJungleWarden(), "Dark Arisen art kit (creatures)"));
     }
 }

@@ -694,6 +694,11 @@ namespace DarkArisen::Tools::Art
             if (Orm >= 0) Mat += ",\"occlusionTexture\":{\"index\":" + std::to_string(Orm) + "}";
             if (M.Mask) Mat += ",\"alphaMode\":\"MASK\",\"alphaCutoff\":" + Num(M.AlphaCutoff);
             if (M.DoubleSided) Mat += ",\"doubleSided\":true";
+            if (M.Emissive[0] > 0.0 || M.Emissive[1] > 0.0 || M.Emissive[2] > 0.0)
+            {
+                Mat += ",\"emissiveFactor\":[" + Num(Linear(M.Emissive[0])) + "," + Num(Linear(M.Emissive[1])) + "," + Num(Linear(M.Emissive[2])) + "]";
+                if (M.EmissiveStrength > 1.0) Mat += ",\"extensions\":{\"KHR_materials_emissive_strength\":{\"emissiveStrength\":" + Num(M.EmissiveStrength) + "}}";
+            }
             return Mat + "}";
         }
     }
@@ -795,6 +800,7 @@ namespace DarkArisen::Tools::Art
             Json += ",\"samplers\":[{\"magFilter\":9729,\"minFilter\":9987,\"wrapS\":10497,\"wrapT\":10497}],\"textures\":[" + Textures +
                 "],\"images\":[" + Images + "]";
         }
+        if (Materials.find("KHR_materials_emissive_strength") != std::string::npos) Json += ",\"extensionsUsed\":[\"KHR_materials_emissive_strength\"]";
         Json += ",\"accessors\":[" + Accessors + "],\"bufferViews\":[" + BufferViews + "],\"buffers\":[{\"byteLength\":" +
             std::to_string(Bin.size()) + ",\"uri\":\"data:application/octet-stream;base64," + Base64(Bin) + "\"}]}\n";
         return Json;
