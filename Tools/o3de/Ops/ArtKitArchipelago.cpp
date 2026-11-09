@@ -267,6 +267,7 @@ namespace DarkArisen::Tools::Art
             else if (L.Kind == "camp") Kind = Tradition::Camp;
             else if (L.Kind == "fort") Kind = Tradition::Fort;
             else if (L.Kind == "lighthouse") Kind = Tradition::Lighthouse;
+            else if (L.Kind == "dungeon") Kind = Tradition::Entrance;
             else continue;
             Sites.push_back({&L, std::max(ArchipelagoHeight(Spec, L.X, L.Y, nullptr), 1.5), Kind});
         }
@@ -275,7 +276,8 @@ namespace DarkArisen::Tools::Art
             double H = ArchipelagoHeight(Spec, X, Y, nullptr);
             for (const Site& S : Sites)
             {
-                if (S.Kind == Tradition::Stilt && S.Where->Kind == "zone") continue;  // the Mire's houses stand in the bog on posts
+                // the Mire's houses stand in the bog on posts; a dungeon's way in keeps its hillside
+                if ((S.Kind == Tradition::Stilt && S.Where->Kind == "zone") || S.Kind == Tradition::Entrance) continue;
                 const double Dx = X - S.Where->X, Dy = Y - S.Where->Y, R = S.Where->Radius;
                 const double D2 = Dx * Dx + Dy * Dy;
                 if (D2 >= 2.25 * R * R) continue;
@@ -340,6 +342,7 @@ namespace DarkArisen::Tools::Art
                 double Trodden = 0.0;
                 for (const Site& Si : Sites)
                 {
+                    if (Si.Kind == Tradition::Entrance) continue;
                     const double Dx = X - Si.Where->X, Dy = Y - Si.Where->Y;
                     Trodden = std::max(Trodden, 0.7 * Smooth(Si.Where->Radius, 0.7 * Si.Where->Radius, std::sqrt(Dx * Dx + Dy * Dy)));
                 }

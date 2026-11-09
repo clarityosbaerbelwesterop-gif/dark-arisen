@@ -131,7 +131,8 @@ namespace DarkArisen::Tools::Art
         Nordic,      // the Quiet Coast: long timber houses on stone footings under turf
         Camp,        // camps and encampments: canvas tents
         Fort,        // curtain walls with towers
-        Lighthouse   // a whitewashed tower and its keeper's house
+        Lighthouse,  // a whitewashed tower and its keeper's house
+        Entrance     // a dungeon's way in: a cave mouth in the rock or a carved doorway with steps down
     };
 
     struct SettlementSpec

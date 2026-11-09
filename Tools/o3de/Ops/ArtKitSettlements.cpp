@@ -30,6 +30,7 @@ namespace DarkArisen::Tools::Art
             case Tradition::Nordic: return {5.0 + 1.0 * (V % 2), 9.0 + 2.5 * (V % 3), 2.6};
             case Tradition::Camp: return {2.4 + 0.4 * (V % 3), 3.0 + 0.6 * (V % 2), 1.8};
             case Tradition::Fort: return {16.0 + 4.0 * (V % 3), 2.6, 7.0};
+            case Tradition::Entrance: return {6.0 + 1.0 * (V % 3), 5.0, 4.0 + 0.5 * (V % 2)};
             case Tradition::Lighthouse: default: return {5.0, 5.0, 18.0};
             }
         }
@@ -43,6 +44,7 @@ namespace DarkArisen::Tools::Art
             case Tradition::Nordic: return "Nordic";
             case Tradition::Camp: return "Camp";
             case Tradition::Fort: return "Fort";
+            case Tradition::Entrance: return "Entrance";
             case Tradition::Lighthouse: default: return "Lighthouse";
             }
         }
@@ -149,6 +151,31 @@ namespace DarkArisen::Tools::Art
                 // a stretch of curtain wall with a squat tower at its end
                 return DressFort(Name, {{{-S.W / 2, -S.D / 2, 0.0}, {S.W / 2, S.D / 2, S.H}}, {{S.W / 2 - 2.5, -3.5, 0.0}, {S.W / 2 + 4.5, 3.5, S.H + 3.0}}});
             }
+            case Tradition::Entrance:
+            {
+                Mesh Out(Name);
+                if (V < 3)
+                {
+                    // a cave mouth: a heap of rock with a dark way in on its -Y face
+                    for (int K = 0; K < 7; ++K)
+                    {
+                        const double A = Pi * (0.15 + 0.7 * K / 6.0);
+                        Rock(Out, Mat(M::Rock), {Cos(A) * S.W * 0.55, Sin(A) * S.D * 0.35, -0.3}, S.W * 0.32, S.H * (0.8 + 0.25 * (K % 3)), 911u * (V + 1) + K);
+                    }
+                    Rock(Out, Mat(M::Rock), {0.0, 0.6, S.H * 0.55}, S.W * 0.45, S.H * 0.6, 37u * (V + 3));
+                    Out.Box(Mat(M::StoneDark), {-1.2, -0.4, -0.2}, {1.2, 1.8, 2.6});
+                }
+                else
+                {
+                    // a carved doorway: two pillars and a lintel over steps going down into the dark
+                    for (const double X : {-1.6, 1.6}) Out.Box(Mat(M::Stone), {X - 0.4, -0.4, 0.0}, {X + 0.4, 0.4, 3.4});
+                    Out.Box(Mat(M::Stone), {-2.3, -0.5, 3.4}, {2.3, 0.5, 4.1});
+                    Out.Box(Mat(M::StoneDark), {-1.2, -0.3, 0.0}, {1.2, 0.3, 3.4});
+                    for (int K = 0; K < 5; ++K) Out.Box(Mat(M::Stone), {-1.25, -1.6 + 0.3 * K, -0.2 - 0.2 * K}, {1.25, -1.3 + 0.3 * K, -0.05 - 0.2 * K});
+                    for (int K = 0; K < 4; ++K) Rock(Out, Mat(M::Lichen), {-3.4 + 2.2 * K, 1.2, -0.2}, 0.7, 0.6 + 0.2 * (K % 2), 53u * (V + K));
+                }
+                return Out;
+            }
             case Tradition::Lighthouse:
             default:
             {
@@ -168,7 +195,7 @@ namespace DarkArisen::Tools::Art
 
     void Kit::BuildSettlementModels()
     {
-        for (const Tradition Kind : {Tradition::Colonial, Tradition::Stilt, Tradition::Nordic, Tradition::Camp, Tradition::Fort, Tradition::Lighthouse})
+        for (const Tradition Kind : {Tradition::Colonial, Tradition::Stilt, Tradition::Nordic, Tradition::Camp, Tradition::Fort, Tradition::Lighthouse, Tradition::Entrance})
             for (int V = 0; V < (Kind == Tradition::Lighthouse ? 1 : Variants); ++V)
                 Emit(ModelName(Kind, V), WriteGltf(BuildVariant(Kind, V), "Dark Arisen art kit (settlements)"));
     }
@@ -192,6 +219,19 @@ namespace DarkArisen::Tools::Art
             return true;
         };
 
+        if (Spec.Kind == Tradition::Entrance)
+        {
+            // a cave mouth or a carved doorway, facing downhill (where the approach is)
+            const double Dx = Spec.Ground(Spec.X - 4.0, Spec.Y) - Spec.Ground(Spec.X + 4.0, Spec.Y), Dy = Spec.Ground(Spec.X, Spec.Y - 4.0) - Spec.Ground(Spec.X, Spec.Y + 4.0);
+            // the downhill direction to the nearest of eight (no libm: every compiler places it alike)
+            const double Ax = std::fabs(Dx), Ay = std::fabs(Dy);
+            double Facing = 0.0;
+            if (Ax > 2.414 * Ay) Facing = Dx >= 0.0 ? 0.0 : 180.0;
+            else if (Ay > 2.414 * Ax) Facing = Dy >= 0.0 ? 90.0 : 270.0;
+            else Facing = Dx >= 0.0 ? (Dy >= 0.0 ? 45.0 : 315.0) : (Dy >= 0.0 ? 135.0 : 225.0);
+            Place(Tradition::Entrance, static_cast<int>(Spec.Seed % Variants), Spec.X, Spec.Y, Facing + 90.0);
+            return Out;
+        }
         if (Spec.Kind == Tradition::Lighthouse)
         {
             Place(Tradition::Lighthouse, 0, Spec.X, Spec.Y, 0.0);
