@@ -675,8 +675,56 @@ namespace
             return LockError;
         }
         for (const DarkArisen::Tools::JsonValue& L : Locations.Find("locations")->Items)
-            Sites.push_back({L.Find("id")->Text, L.Find("kind")->Text, L.Find("region")->Text, L.Find("x")->Number, L.Find("y")->Number, L.Find("radius")->Number});
-        const auto World = DarkArisen::Tools::Art::BuildWorldTerrain(Spec, Marks, Sites, 500.0, 5.0, 32.0, 8.0);
+        {
+            DarkArisen::Tools::Art::WorldLocation Site{L.Find("id")->Text, L.Find("kind")->Text, L.Find("region")->Text, L.Find("x")->Number, L.Find("y")->Number, L.Find("radius")->Number, {}};
+            if (const DarkArisen::Tools::JsonValue* Plan = L.Find("layout"))
+            {
+                auto& P = Site.Plan;
+                if (const auto* V = Plan->Find("groundZ")) { P.HasGround = true; P.GroundZ = V->Number; }
+                if (const auto* V = Plan->Find("cap")) P.Cap = static_cast<int>(V->Number);
+                if (const auto* V = Plan->Find("fill")) P.Fill = V->Number;
+                if (const auto* V = Plan->Find("waterfront")) P.Waterfront = V->Boolean ? 1 : 0;
+                if (const auto* V = Plan->Find("layout")) P.Cluster = V->Text == "cluster";
+                if (const auto* V = Plan->Find("tradition")) P.Tradition = V->Text;
+                if (const auto* V = Plan->Find("landmark"); V && V->Items.size() == 3)
+                {
+                    P.HasLandmark = true;
+                    P.LandmarkU = V->Items[0].Number; P.LandmarkW = V->Items[1].Number; P.LandmarkYaw = V->Items[2].Number;
+                }
+                if (const auto* V = Plan->Find("lamps")) P.LampSpacing = V->Number;
+                if (const auto* V = Plan->Find("benches")) P.Benches = static_cast<int>(V->Number);
+                if (const auto* V = Plan->Find("stalls"); V && V->Items.size() == 3)
+                {
+                    P.StallRadius = V->Items[0].Number; P.StallPitch = V->Items[1].Number; P.StallMax = static_cast<int>(V->Items[2].Number);
+                }
+                if (const auto* V = Plan->Find("plaza"); V && V->Items.size() == 3)
+                {
+                    P.HasPlaza = true;
+                    P.PlazaU = V->Items[0].Number; P.PlazaW = V->Items[1].Number; P.PlazaRadius = V->Items[2].Number;
+                }
+            }
+            Sites.push_back(Site);
+        }
+        // the routes between places (Roads.json, optional)
+        std::vector<DarkArisen::Tools::Art::WorldRoad> Roads;
+        if (std::ifstream RoadsIn(Opts.RepoRoot / "ContentSource" / "World" / "Roads.json"); RoadsIn)
+        {
+            const std::string RoadsText((std::istreambuf_iterator<char>(RoadsIn)), std::istreambuf_iterator<char>());
+            DarkArisen::Tools::JsonValue RoadsJson;
+            if (!DarkArisen::Tools::JsonReader::Parse(RoadsText, RoadsJson, Problem) || !RoadsJson.Find("roads"))
+            {
+                std::cerr << "error: ContentSource/World/Roads.json: " << Problem << "\n";
+                return LockError;
+            }
+            for (const DarkArisen::Tools::JsonValue& R : RoadsJson.Find("roads")->Items)
+            {
+                DarkArisen::Tools::Art::WorldRoad Road{R.Find("id")->Text, R.Find("kind")->Text, R.Find("width")->Number, {}};
+                for (const DarkArisen::Tools::JsonValue& P : R.Find("points")->Items)
+                    Road.Points.push_back({P.Items[0].Number, P.Items[1].Number, P.Items[2].Number});
+                Roads.push_back(Road);
+            }
+        }
+        const auto World = DarkArisen::Tools::Art::BuildWorldTerrain(Spec, Marks, Sites, Roads, 500.0, 5.0, 32.0, 8.0);
         const fs::path Root = Opts.RepoRoot / "Engine" / "O3DE" / "DarkArisen" / "Assets" / "World";
         std::size_t Bytes = 0;
         for (const auto& File : World.Files)

@@ -1,0 +1,54 @@
+# Claude Code Game Studios (CCGS) configuration for Dark Arisen. The CCGS skills read this file
+# (resolve_config); it carries no game logic. Design authority stays with Docs/DesignAuthority.md and the
+# design corpus under docs/design/, which this file only points at.
+
+schema_version: 1
+
+framework:
+  version: 1.2.0
+  last_upgraded: 2026-11-09
+
+project:
+  name: "Dark Arisen"
+  genre: "Open-world action RPG (souls-like combat, naval, colonial war)"
+  version: "0.9.0-prealpha"
+  stage: Production          # Concept | Systems Design | Technical Setup | Pre-Production | Production | Polish | Release
+  kind: game
+
+modes:
+  rigor: standard
+  automation: autonomous     # the owner delegated the remaining decisions ("den Rest musst du selbst festlegen")
+  automation_always_ask:
+    - scope_changes
+    - file_deletions
+    - schema_changes
+
+platform:
+  multiplayer: false
+  online: false
+  targets: [PC]              # Windows x64 and Linux x86_64; Xbox only with authorised GDKX tooling
+  primary_input: "Gamepad"
+  gamepad_support: "Full"
+  touch_support: "None"
+  cert_tier: none
+
+engine:
+  name: "O3DE"
+  version: "2605.0"
+  language: "C++"
+  rendering: "Atom (forward+)"
+  physics: "PhysX 5"
+
+naming:
+  classes: PascalCase
+  variables: PascalCase
+  constants: PascalCase
+  files: PascalCase
+
+accessibility:
+  target: standard
+
+commands:                  # the CI's own steps (.github/workflows/ci.yml)
+  build: "cmake -S Tools/o3de -B build/ops -DCMAKE_BUILD_TYPE=Release && cmake --build build/ops --config Release"
+  test: "ctest --test-dir build/ops --output-on-failure"
+  smoke: "build/ops/DarkArisenO3DE materialize --check"

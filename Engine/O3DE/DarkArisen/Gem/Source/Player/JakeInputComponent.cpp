@@ -93,8 +93,8 @@ namespace DarkArisen
         if (id == Gamepad::ThumbStickAxis1D::LY) { m_stickMove.SetY(value); return false; }
         if (id == Keyboard::ModifierShiftL || id == Gamepad::Button::L3)
         {
+            // the traversal model drains stamina while sprinting, so the pool's own sprint flag stays off
             m_sprintHeld = inputChannel.IsActive();
-            CombatRequestBus::Event(self, &CombatRequests::SetSprinting, m_sprintHeld && !m_wasSwimming);
             return false;
         }
         if (!pressed)
@@ -119,7 +119,7 @@ namespace DarkArisen
         return false;
     }
 
-    void JakeInputComponent::Jump() const
+    void JakeInputComponent::Jump()
     {
         bool committedOrDead = true;
         CombatRequestBus::Event(GetEntityId(), [&committedOrDead](CombatRequests* handler)
@@ -133,8 +133,25 @@ namespace DarkArisen
         {
             return;
         }
+        // traversal.md 5.1: 1.2 m high (2.0 m from a sprint) for 12 stamina; no stamina, no jump
+        const Core::JumpSpec spec = Core::JumpFor(m_traversal.GetGait());
+        bool combatant = false;
+        bool paid = false;
+        CombatRequestBus::Event(GetEntityId(), [&combatant, &paid, &spec](CombatRequests* handler)
+        {
+            combatant = true;
+            paid = handler->GetCombatant().Stamina.Consume(spec.StaminaCost);
+        });
+        if (!combatant)
+        {
+            paid = m_ownStamina.Consume(spec.StaminaCost);
+        }
+        if (!paid)
+        {
+            return;
+        }
         PhysX::CharacterGameplayRequestBus::Event(GetEntityId(), &PhysX::CharacterGameplayRequests::SetFallingVelocity,
-            AZ::Vector3(0.0f, 0.0f, JumpSpeedMetresPerSecond));
+            AZ::Vector3(0.0f, 0.0f, AZ::Sqrt(2.0f * GravityMetresPerSecondSquared * spec.Height)));
     }
 
     void JakeInputComponent::QuickSave(const bool save) const
@@ -175,11 +192,7 @@ namespace DarkArisen
         // In the water the swimmer owns movement: stroke direction and pace, no land sprint drain.
         bool swimming = false;
         SwimRequestBus::EventResult(swimming, GetEntityId(), &SwimRequests::IsSwimming);
-        if (swimming != m_wasSwimming)
-        {
-            m_wasSwimming = swimming;
-            CombatRequestBus::Event(GetEntityId(), &CombatRequests::SetSprinting, !swimming && m_sprintHeld);
-        }
+        m_wasSwimming = swimming;
         if (swimming)
         {
             SwimRequestBus::Event(GetEntityId(), &SwimRequests::SetSwimIntent, move, m_sprintHeld && !committedOrDead);
@@ -190,8 +203,30 @@ namespace DarkArisen
             return;
         }
 
-        const float speed = m_sprintHeld ? SprintSpeedMetresPerSecond : RunSpeedMetresPerSecond;
-        const AZ::Vector3 velocity(move.GetX() * speed, move.GetY() * speed, 0.0f);
+        // traversal.md: the gait follows the stick (walk, run) and the sprint button, and the model ramps the speed up
+        // and down, drains the pool while sprinting and forces a walk when it runs dry (4.3)
+        Core::TraversalInput traversal;
+        const float deflection = AZ::GetMin(input.GetLength(), 1.0f);
+        traversal.Wanted = deflection < 0.1f ? Core::Gait::Idle
+            : m_sprintHeld ? Core::Gait::Sprint
+            : deflection < WalkBelowDeflection ? Core::Gait::Walk : Core::Gait::Run;
+        bool combatant = false;
+        CombatRequestBus::Event(GetEntityId(), [this, &combatant, &traversal, deltaTime](CombatRequests* handler)
+        {
+            combatant = true;
+            m_traversal.Tick(deltaTime, traversal, handler->GetCombatant().Stamina);
+        });
+        if (!combatant)
+        {
+            m_traversal.Tick(deltaTime, traversal, m_ownStamina);
+            m_ownStamina.Tick(deltaTime);
+        }
+        if (move.GetLengthSq() > 0.0001f)
+        {
+            m_heading = move.GetNormalized();
+        }
+        const float speed = m_traversal.GetSpeed();
+        const AZ::Vector3 velocity(m_heading.GetX() * speed, m_heading.GetY() * speed, 0.0f);
         Physics::CharacterRequestBus::Event(GetEntityId(), &Physics::CharacterRequests::AddVelocityForTick, velocity);
         // Locked on, Jake faces the target (Unreal: controller yaw drives the pawn); otherwise he turns to movement.
         AZ::EntityId lockTarget;

@@ -66,6 +66,25 @@ namespace DarkArisen::Tools::Art
     {
         std::string Id, Kind, Region;
         double X = 0, Y = 0, Radius = 0;
+        /** Optional "layout" block of Locations.json (a level design's generator parameters, e.g. layout.md 4.1). */
+        struct Layout
+        {
+            bool HasGround = false;
+            double GroundZ = 0;        // the levelled ground's height instead of the natural one
+            int Cap = 0;               // buildings at most (0: the kind's default)
+            double Fill = -1;          // share of plots built on (negative: the kind's default)
+            int Waterfront = -1;       // -1: wherever the sea is near; 0: never; 1: always
+            bool Cluster = false;      // organic clusters along the contour instead of a street grid
+            std::string Tradition;     // building tradition instead of the kind's (e.g. "Stilt")
+            bool HasLandmark = false;
+            double LandmarkU = 0, LandmarkW = 0, LandmarkYaw = 0;  // landmark offset in the street grid's frame and its yaw
+            bool HasPlaza = false;
+            double PlazaU = 0, PlazaW = 0, PlazaRadius = 0;        // the square kept clear
+            double LampSpacing = 0;                                // street lamps, metres apart on each side
+            double StallRadius = 0, StallPitch = 5;                // market stalls round the square
+            int StallMax = 0;
+            int Benches = 0;
+        } Plan;
     };
 
     /**
@@ -73,6 +92,15 @@ namespace DarkArisen::Tools::Art
      * Tiles/F_World_<c>_<r>.json for the runtime (trees and rocks as instances, grass patches scattered near the
      * player on the heights), the plant models and grass patches to WorldTiles.json with their O3DE asset ids.
      */
+    /** A route between places (ContentSource/World/Roads.json): graded into the terrain, paved, lit, built along. */
+    struct WorldRoad
+    {
+        std::string Id, Kind;          // Kind: "avenue", "street" or "stairs"
+        double Width = 7;
+        struct Point { double X = 0, Y = 0, Z = 0; };
+        std::vector<Point> Points;     // x, y and the road's height z at each point
+    };
+
     WorldTerrain BuildWorldTerrain(const ArchipelagoSpec& Spec, const std::vector<WorldPlaceMark>& Places, const std::vector<WorldLocation>& Locations,
-        double TileSize, double TileStep, double CoarseStep, double TextureCell);
+        const std::vector<WorldRoad>& Roads, double TileSize, double TileStep, double CoarseStep, double TextureCell);
 }

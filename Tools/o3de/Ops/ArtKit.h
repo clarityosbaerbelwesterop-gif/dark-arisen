@@ -134,13 +134,14 @@ namespace DarkArisen::Tools::Art
         Lighthouse,  // a whitewashed tower and its keeper's house
         Entrance,    // a dungeon's way in: a cave mouth in the rock or a carved doorway with steps down
         Civic,       // a town's landmark on its square: cathedral, market hall, warehouse, mansion, watchtower
-        Harbour      // the waterfront: stone quay, timber pier, fishing boat, merchant brig, rowing boat (afloat at z = 0)
+        Harbour,     // the waterfront: stone quay, timber pier, fishing boat, merchant brig, rowing boat (afloat at z = 0)
+        Street       // street furniture: gas lamp, market stall, bench
     };
 
     /** Variants of Tradition::Civic. */
     enum class Landmark
     {
-        None = -1, Cathedral = 0, MarketHall = 1, Warehouse = 2, Mansion = 3, Watchtower = 4
+        None = -1, Cathedral = 0, MarketHall = 1, Warehouse = 2, Mansion = 3, Watchtower = 4, Faro = 5
     };
 
     struct SettlementSpec
@@ -154,6 +155,17 @@ namespace DarkArisen::Tools::Art
         Landmark Centre = Landmark::None;                 // what stands on the square
         double StreetAngle = 0.0;                         // colonial towns: the grid's axis (degrees), shared by a city's districts
         std::uint32_t Seed = 1;
+        int Waterfront = -1;                              // -1: where the sea is near; 0: never; 1: always
+        bool Cluster = false;                             // colonial: organic clusters instead of the grid
+        Tradition Houses = Tradition::Colonial;           // colonial: the houses' tradition (a district of timber shanties)
+        double LandmarkU = 0, LandmarkW = 0;              // the landmark's offset in the grid's frame (u along the streets)
+        double LandmarkYaw = -1e9;                        // its yaw (degrees); -1e9: the street angle
+        double PlazaU = 0, PlazaW = 0, PlazaRadius = -1;  // the square kept clear; a negative radius: 0.22 of the radius at the centre
+        double LampSpacing = 0;                           // gas lamps along both sides of the streets every so many metres (0: none)
+        double StallRadius = 0, StallPitch = 5;           // market stalls in a ring round the square (0: none)
+        int StallMax = 0;
+        int Benches = 0;                                  // benches round the square's edge
+        std::function<bool(double, double, double)> KeepOff;  // true where a road runs within the reach of (x, y)
     };
 
     /** One building of a settlement: a shared model, its placement and a box for collision. */
@@ -232,6 +244,8 @@ namespace DarkArisen::Tools::Art
         static double WorldWoods(double X, double Y, std::uint32_t Seed);
         /** Where a settlement's buildings stand on its ground (a pure function: the same streets on every build). */
         static std::vector<Structure> SettlementLayout(const SettlementSpec& Spec);
+        /** One settlement model placed on its own (a roadside house, a lamp), with its collision box. */
+        static Structure SettlementPiece(Tradition Kind, int Variant, double X, double Y, double Z, double Yaw);
         /** The ground-cover patches the runtime scatters near the player, one per card. */
         static std::vector<GrassPatch> WorldGrassPatches();
         /** Quay wall along a harbour edge (x = 0 is the quay face, water towards -X), Length along Y. */

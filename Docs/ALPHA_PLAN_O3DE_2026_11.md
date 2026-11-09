@@ -37,10 +37,10 @@ Mission levels become **places in the world**. The 34 missions keep their contra
 | **M1** | Open-world foundation and AAA look | Terrain kit, biomes, vegetation with wind, ponds, dressed architecture, foliage and lava shaders, ocean (Gerstner), byte-identical pipeline | World geography and heightfields at full scale on O3DE's Terrain and Vegetation gems (clipmaps, instanced spawning instead of meshes), region streaming, scanned CC0 materials (Poly Haven, ambientCG) in place of procedural textures, HDRI sky and light, shoreline foam, 1440p Cycles reference renders |
 | **M2** | Regions complete | 17 land levels on terrain, Rexa quay, Moran coast, forts | All seven regions at full size: settlements (Rexa city, villages), landmarks, dungeons and caves, POIs every few hundred metres, Ashenmoor, The Quiet Coast and The Maw new |
 | **M3** | Characters and creatures at AAA level | 27 skinned actors, 34 face shapes, visemes, clothes, hair | Engine Skin material (subsurface scattering), hair cards with anisotropy, LODs, detail normal maps, anim graphs, creatures and bosses (Keeper, sea creatures, Maw boss) |
-| **M4** | Gameplay core | Combat model, enemy AI, swimming, ship voyage, naval combat, camera, lock-on, `CharacterMotion` | Animation-driven combat contact, traversal (climbing, ledges), open-sea sailing between regions, more enemy types, horses (Highmoore) |
+| **M4** | Gameplay core | Combat model, enemy AI, swimming, ship voyage, naval combat, camera, lock-on, `CharacterMotion` | Animation-driven combat contact, traversal (climbing, ledges), open-sea sailing between regions, more enemy types, horses (Quiet Coast only, `traversal.md` 10.5) |
 | **M5** | Main quests in depth | 34/34 missions physically materialised, story probe 27/27 | Dialogue with choices and consequences, mission set pieces (chases, boarding, sieges), duels |
 | **M6** | Side quests, activities, living world | LivingWorld, QuestJournal, economy in Core | Side quests from `ContentSource/SideQuests`, activities, world events, NPC daily routines in the settlements |
-| **M7** | Cutscenes and presentation | Opening director, credits, front end | Cutscene system (shots, camera, motion, faces, subtitles), all story cutscenes, physical map (no minimap without an owner ruling) |
+| **M7** | Cutscenes and presentation | Opening director, credits, front end | Cutscene system (shots, camera, motion, faces, subtitles), all story cutscenes, map and minimap (ruled 2026-11-09, below) |
 | **M8** | Music, ambience, sound | — | Ambience per biome, sea, footsteps per surface, combat, music cues, the credits cue |
 | **M9** | Voice and lip sync | 15 visemes, 9 emotions | Voices for every line, lip sync from the visemes, subtitle timing; the production choice is in the section below |
 | **M10** | Polish and Alpha | AzCore probe, CI | GPU runtime proof (GameLauncher), 60 fps, packaging for Windows and Linux, credits and attribution, the owner's playthrough and approval |
@@ -63,11 +63,20 @@ Mission levels become **places in the world**. The 34 missions keep their contra
 - **Generated world data** (heightfields, splat maps) is built on the build host, not committed. The repository holds the generators and checksums. This settles the open "keep committing materialised art" question for world-scale data only.
 - **Lighting reference** is a physically based sun plus a CC0 HDRI sky. Renders use AgX tone mapping.
 
-## Waiting on the owner
+## Decided 2026-11-09 (the owner delegated these: "den Rest musst du selbst festlegen")
 
-- **Voice (M9).** Options:
-  - human actors;
-  - ElevenLabs (paid; needs approval and a key);
-  - a free local TTS such as Kokoro (Apache-2.0) as a placeholder.
-- **GPU host for runtime proof (M10).** Any cost needs approval.
-- **Minimap.** No minimap until the owner rules otherwise.
+- **Voice (M9).**
+  - A free local TTS: Kokoro-82M (Apache-2.0), run offline when the lines are authored.
+  - The voices are credited as synthetic. They are never presented as actors, and a human performance may replace any line later.
+  - ElevenLabs is not used: it is paid.
+- **Map and minimap.** The Alpha has a full map and a minimap, as the owner required on 2026-09-19 (`Docs/DesignAuthority.md`, Alpha navigation override). This replaces the earlier default of "no minimap".
+  - Neither shows objective markers, a route line, enemies, collectibles or an objective arrow.
+  - Water fast travel stays forbidden.
+- **GPU host for runtime proof (M10).** No money is spent (owner, 2026-11-09), so the runtime proof stays open.
+  - The free route to evaluate is O3DE on Mesa's software Vulkan (lavapipe) in CI.
+  - That shows the GameLauncher starts, streams the world and plays the opening. It is not a 60 fps proof.
+- **Horses** are on the Quiet Coast only (`traversal.md` 10.5), not in Highmoore.
+- **Studio tooling.**
+  - The Claude Code Game Studios skills and agents are installed by the environment's setup script.
+  - The `blender` skill (`.claude/skills/blender`) gives every milestone its visual checks.
+  - Level work goes through `/team-level`, for example `production/levels/rexa-city/layout.md`.
