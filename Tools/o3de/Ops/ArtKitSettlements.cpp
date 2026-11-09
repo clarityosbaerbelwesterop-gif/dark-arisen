@@ -31,6 +31,12 @@ namespace DarkArisen::Tools::Art
             case Tradition::Camp: return {2.4 + 0.4 * (V % 3), 3.0 + 0.6 * (V % 2), 1.8};
             case Tradition::Fort: return {16.0 + 4.0 * (V % 3), 2.6, 7.0};
             case Tradition::Entrance: return {6.0 + 1.0 * (V % 3), 5.0, 4.0 + 0.5 * (V % 2)};
+            case Tradition::Harbour:
+            {
+                // footprints along the model's Y (into the water); boats: length along Y, beam along X, deck height
+                static const Size Harbour[] = {{8.0, 26.0, 1.6}, {3.0, 30.0, 1.5}, {2.8, 10.0, 1.2}, {6.4, 24.0, 2.0}, {1.6, 4.4, 0.6}};
+                return Harbour[V % 5];
+            }
             case Tradition::Civic:
             {
                 static const Size Civic[] = {{16.0, 36.0, 14.0}, {18.0, 26.0, 6.0}, {14.0, 30.0, 8.0}, {22.0, 16.0, 11.0}, {7.0, 7.0, 16.0}};
@@ -51,6 +57,7 @@ namespace DarkArisen::Tools::Art
             case Tradition::Fort: return "Fort";
             case Tradition::Entrance: return "Entrance";
             case Tradition::Civic: return "Civic";
+            case Tradition::Harbour: return "Harbour";
             case Tradition::Lighthouse: default: return "Lighthouse";
             }
         }
@@ -156,6 +163,53 @@ namespace DarkArisen::Tools::Art
             {
                 // a stretch of curtain wall with a squat tower at its end
                 return DressFort(Name, {{{-S.W / 2, -S.D / 2, 0.0}, {S.W / 2, S.D / 2, S.H}}, {{S.W / 2 - 2.5, -3.5, 0.0}, {S.W / 2 + 4.5, 3.5, S.H + 3.0}}});
+            }
+            case Tradition::Harbour:
+            {
+                Mesh Out(Name);
+                if (V == 0)
+                {
+                    // a stone quay running out from the shore (+Y), its top 1.6 m above the sea, bollards along its edges
+                    Out.Box(Mat(M::StoneDark), {-S.W / 2, 0.0, -4.0}, {S.W / 2, S.D, S.H - 0.2});
+                    Out.Box(Mat(M::Paving), {-S.W / 2 - 0.1, -2.0, S.H - 0.2}, {S.W / 2 + 0.1, S.D + 0.1, S.H});
+                    for (double Y = 3.0; Y < S.D; Y += 6.0)
+                        for (const double X : {-S.W / 2 + 0.5, S.W / 2 - 0.5}) Out.Tube(Mat(M::Iron), {X, Y, S.H}, {X, Y, S.H + 0.6}, 0.18, 0.15, 8);
+                }
+                else if (V == 1)
+                {
+                    // a timber pier on piles, plank deck 1.5 m above the sea
+                    for (double Y = 1.0; Y < S.D; Y += 3.0)
+                        for (const double X : {-S.W / 2 + 0.2, S.W / 2 - 0.2}) Out.Tube(Mat(M::TimberDark), {X, Y, -4.0}, {X, Y, S.H + 0.6}, 0.14, 0.12, 7);
+                    Out.Box(Mat(M::Deck), {-S.W / 2, -2.0, S.H - 0.15}, {S.W / 2, S.D, S.H});
+                }
+                else
+                {
+                    // boats: a single-masted fishing boat, a two-masted merchant brig, a rowing boat; bow to +Y
+                    ShipSpec Boat;
+                    Boat.Name = Name;
+                    Boat.Bowsprit = 0.0;
+                    Boat.Cargo = V == 3;
+                    if (V == 2)
+                    {
+                        Boat.Stern = -4.6; Boat.Bow = 5.2; Boat.HalfBeam = 1.35; Boat.Deck = 0.9; Boat.Keel = -0.8; Boat.Bulwark = 0.45; Boat.Sheer = 0.35;
+                        Boat.Masts = {0.6}; Boat.MastHeights = {7.5}; Boat.Topsides = M::HullBlack; Boat.Band = M::HullBandRed; Boat.SailsSet = false; Boat.Bowsprit = 1.8;
+                    }
+                    else if (V == 3)
+                    {
+                        Boat.Stern = -11.0; Boat.Bow = 11.5; Boat.HalfBeam = 3.1; Boat.Deck = 1.8; Boat.Keel = -2.0; Boat.Bulwark = 0.9;
+                        Boat.Masts = {-3.5, 4.0}; Boat.MastHeights = {15.0, 16.5}; Boat.SailsSet = false; Boat.Bowsprit = 6.0; Boat.Hatches = {{-1.0, 1.5}};
+                    }
+                    else
+                    {
+                        Boat.Stern = -2.1; Boat.Bow = 2.3; Boat.HalfBeam = 0.75; Boat.Deck = 0.35; Boat.Keel = -0.35; Boat.Bulwark = 0.25; Boat.Sheer = 0.15;
+                        Boat.SternHalf = 0.6;
+                    }
+                    Mesh Hull = BuildShip(Boat, nullptr);
+                    Out.Push(Xf::RotateZ(Pi / 2));  // the kit builds bow to +X
+                    Out.Append(Hull);
+                    Out.Pop();
+                }
+                return Out;
             }
             case Tradition::Civic:
             {
@@ -273,8 +327,8 @@ namespace DarkArisen::Tools::Art
     void Kit::BuildSettlementModels()
     {
         for (const Tradition Kind : {Tradition::Colonial, Tradition::Stilt, Tradition::Nordic, Tradition::Camp, Tradition::Fort, Tradition::Lighthouse, Tradition::Entrance,
-                 Tradition::Civic})
-            for (int V = 0; V < (Kind == Tradition::Lighthouse ? 1 : Kind == Tradition::Civic ? 5 : Variants); ++V)
+                 Tradition::Civic, Tradition::Harbour})
+            for (int V = 0; V < (Kind == Tradition::Lighthouse ? 1 : Kind == Tradition::Civic || Kind == Tradition::Harbour ? 5 : Variants); ++V)
                 Emit(ModelName(Kind, V), WriteGltf(BuildVariant(Kind, V), "Dark Arisen art kit (settlements)"));
     }
 
@@ -285,7 +339,7 @@ namespace DarkArisen::Tools::Art
         const auto Place = [&](const Tradition Kind, const int V, const double X, const double Y, const double Yaw)
         {
             const Size S = VariantSize(Kind, V);
-            const double Z = Spec.Ground(X, Y);
+            const double Z = Kind == Tradition::Harbour ? 0.0 : Spec.Ground(X, Y);  // the waterfront floats at sea level
             const double Lift = Kind == Tradition::Stilt ? 1.7 + 2.0 : 0.0;
             Out.push_back({"Assets/Art/Models/" + ModelName(Kind, V) + ".gltf", X, Y, Z, Yaw, S.W / 2 + 0.3, S.D / 2 + 0.3, S.H + Lift + 2.0});
         };
@@ -332,6 +386,47 @@ namespace DarkArisen::Tools::Art
                 V = (V + 1) % 3;
             }
             return Out;
+        }
+
+        // the waterfront: where the site meets the sea, piers or a quay run out from the shore with boats alongside
+        if (Spec.Kind != Tradition::Camp && Spec.Kind != Tradition::Fort)
+        {
+            int Best = -1;
+            double BestShore = 1e30;
+            for (int K = 0; K < 16; ++K)
+            {
+                const double Ux = Cos(Pi * K / 8.0), Uy = Sin(Pi * K / 8.0);
+                for (double D = 10.0; D < Spec.Radius * 1.8; D += 10.0)
+                {
+                    if (Spec.Ground(Spec.X + Ux * D, Spec.Y + Uy * D) < -1.5)
+                    {
+                        if (D < BestShore) { BestShore = D; Best = K; }
+                        break;
+                    }
+                }
+            }
+            if (Best >= 0)
+            {
+                const double Ux = Cos(Pi * Best / 8.0), Uy = Sin(Pi * Best / 8.0);
+                double Shore = 0.0;  // the waterline along that bearing
+                for (double D = 0.0; D < BestShore; D += 2.0)
+                    if (Spec.Ground(Spec.X + Ux * D, Spec.Y + Uy * D) < 0.3) { Shore = D; break; }
+                const double Yaw = Pi * Best / 8.0 * 180.0 / Pi - 90.0;  // the model's +Y out to sea
+                const bool Town = Spec.Kind == Tradition::Colonial;
+                const int Piers = Town ? 3 : Spec.Kind == Tradition::Lighthouse ? 1 : 2;
+                for (int P = 0; P < Piers; ++P)
+                {
+                    const double Side = (P - (Piers - 1) / 2.0) * (Town ? 30.0 : 22.0);  // along the shore
+                    const double Bx = Spec.X + Ux * (Shore - 3.0) - Uy * Side, By = Spec.Y + Uy * (Shore - 3.0) + Ux * Side;
+                    const int Kind = Town ? 0 : 1;
+                    Place(Tradition::Harbour, Kind, Bx, By, Yaw);
+                    // boats moored alongside: brigs at a town's quays, fishing boats and rowing boats at a village's piers
+                    const double Along = VariantSize(Tradition::Harbour, Kind).D * 0.6, Off = VariantSize(Tradition::Harbour, Kind).W / 2 + (Town ? 4.5 : 2.2);
+                    const int Boat = Town ? (P == 1 ? 2 : 3) : (P % 2 ? 4 : 2);
+                    Place(Tradition::Harbour, Boat, Bx + Ux * Along - Uy * Off, By + Uy * Along + Ux * Off, Yaw);
+                    if (!Town) Place(Tradition::Harbour, 4, Bx + Ux * (Along * 0.5) + Uy * Off, By + Uy * (Along * 0.5) - Ux * Off, Yaw + 8.0);
+                }
+            }
         }
 
         // the landmark on the square
