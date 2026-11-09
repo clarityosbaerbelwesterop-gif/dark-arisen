@@ -165,6 +165,24 @@ namespace DarkArisen::Tools::Art
             Dome(Out, M, 0, 0, 0, 1.0, 1.0, Sides);
             Out.Pop();
         }
+
+        /** A sharpened feather: a long blade from Root along Dir, widest a third of the way, lying across Normal. */
+        void Feather(Mesh& Out, const Material& M, const V3& Root, const V3& Dir, const V3& Normal, const double Length, const double Width)
+        {
+            const V3 Side = Normalize(Cross(Normal, Dir)) * (Width * 0.5), Lift = Normal * (0.02 * Length);
+            Out.Quad(M, Root, Root + Dir * (Length * 0.32) + Side + Lift, Root + Dir * Length + Lift * 2.0, Root + Dir * (Length * 0.32) - Side + Lift, true);
+        }
+
+        /** A closed ellipsoid at C with half sizes Rx, Ry, Rz. */
+        void Ellipsoid(Mesh& Out, const Material& M, const V3& C, const double Rx, const double Ry, const double Rz, const int Sides)
+        {
+            Out.Push(Xf::Translate(C) * Xf::Scale({Rx, Ry, Rz}));
+            Dome(Out, M, 0, 0, 0, 1.0, 1.0, Sides);
+            Out.Push(Xf::Scale({1.0, 1.0, -1.0}));
+            Dome(Out, M, 0, 0, 0, 1.0, 1.0, Sides);
+            Out.Pop();
+            Out.Pop();
+        }
     }
 
     /**
@@ -639,10 +657,176 @@ namespace DarkArisen::Tools::Art
         return Out;
     }
 
+    /**
+     * Sturmkralle, the Sky Terror (sturmkralle_sky_terror.md 2): a massive raptor, part eagle, part condor, part something
+     * older; eight metres tall standing, twenty metres across the wings; blue-black feathers streaked with silver, every
+     * one sharpened; talons the length of a man's forearm, curved and golden; amber eyes. The storm clouds at her wing tips
+     * and the lightning between her primaries are effects of the fight, not of the model. Facing +X, wings spread, standing
+     * on z = 0.
+     */
+    Mesh BuildSturmkralle()
+    {
+        Mesh Out("SM_Art_Creature_Sturmkralle");
+        const Material Down = Flesh("M_Art_Sturm_Down", 0.05, 0.06, 0.09, 0.7);
+        const Material Black = Flesh("M_Art_Sturm_Feather", 0.07, 0.08, 0.12, 0.38);
+        const Material Silver = Flesh("M_Art_Sturm_FeatherSilver", 0.5, 0.54, 0.6, 0.3);
+        const Material Streak = Flesh("M_Art_Sturm_FeatherStreak", 0.2, 0.23, 0.3, 0.34);
+        const Material Scale = Hide("M_Art_Sturm_Scale", "rock_pitted_mossy", 0.45, 0.42, 0.3, 0.25, 0.8);
+        const Material Horn = Flesh("M_Art_Sturm_Beak", 0.16, 0.16, 0.18, 0.32);
+        Material Gold = Flesh("M_Art_Sturm_Talon", 0.86, 0.66, 0.28, 0.28);
+        Gold.Metallic = 0.85;
+        Material Eye = Flesh("M_Art_Sturm_Eye", 1.0, 0.62, 0.12, 0.15);
+        Eye.Emissive = {1.0, 0.58, 0.1};
+        Eye.EmissiveStrength = 2.5;
+        Rng R(0x5778u);
+        const auto Plume = [&]() -> const Material& { const double U = R.Unit(); return U < 0.14 ? Silver : U < 0.36 ? Streak : Black; };
+
+        // the body, tilted upright from the hips; laid over with sharpened feathers pointing to the tail
+        const V3 Hip{-0.3, 0.0, 3.6};
+        const double Tilt = -0.75;
+        const std::vector<Section> Body{{-2.7, 0.35, 0.3, 0, 1}, {-2.0, 0.9, 0.8, 0, 1}, {-1.0, 1.25, 1.1, 0, 1}, {0.0, 1.35, 1.2, 0, 1},
+                                        {1.0, 1.3, 1.15, 0.05, 1}, {2.0, 1.0, 0.95, 0.1, 1}, {2.7, 0.72, 0.72, 0.1, 1}};
+        Out.Push(Xf::Translate(Hip) * Xf::RotateY(Tilt));
+        LoftBody(Out, Down, Down, Down, Body, 16);
+        int Row = 0;
+        for (double X = -2.5; X <= 2.55; X += 0.3, ++Row)
+        {
+            double Half = 0.0;
+            BackAt(Body, X, Half);
+            std::size_t K = 0;
+            while (K + 2 < Body.size() && X > Body[K + 1].X) ++K;
+            const double T = Clamp((X - Body[K].X) / (Body[K + 1].X - Body[K].X), 0.0, 1.0);
+            const double Hh = Lerp(Body[K].HalfHeight, Body[K + 1].HalfHeight, T), Zc = Lerp(Body[K].Z, Body[K + 1].Z, T);
+            const int Count = std::max(8, static_cast<int>(Pi * (Half + Hh) / 0.3));
+            for (int F = 0; F < Count; ++F)
+            {
+                const double A = 2.0 * Pi * (F + 0.5 * (Row % 2)) / Count;
+                const V3 N = Normalize({0.0, -Cos(A) / Half, Sin(A) / Hh});
+                const V3 P{X, -Half * Cos(A), Zc + Hh * Sin(A)};
+                Feather(Out, Plume(), P + N * 0.02, Normalize(V3{-1.0, 0, 0} + N * 0.12), N, 0.95, 0.4);
+            }
+        }
+        // the tail: a fan of long blades
+        for (int F = 0; F < 11; ++F)
+        {
+            const double Spread = -0.5 + F / 10.0;
+            Feather(Out, F % 4 == 1 ? Silver : Black, {-2.6, Spread * 0.5, 0.05 * (F % 2)}, Normalize({-1.0, Spread * 0.7, -0.15}), {0, 0, 1}, 3.0 - 0.6 * std::abs(Spread), 0.55);
+        }
+        Out.Pop();
+
+        // neck and its ruff, the condor in her
+        const V3 Neck0{1.45, 0.0, 5.2}, Neck1{1.78, 0.0, 6.9};
+        Out.Tube(Down, Neck0, Neck1, 0.78, 0.5, 14);
+        for (int Ring = 0; Ring < 3; ++Ring)
+            for (int F = 0; F < 22; ++F)
+            {
+                const double A = 2.0 * Pi * (F + 0.5 * Ring) / 22, Z = 5.6 + 0.32 * Ring;
+                const V3 Out1{Cos(A), Sin(A), 0.0};
+                Feather(Out, Ring == 2 ? Silver : (F % 3 ? Streak : Silver), V3{1.5 + 0.06 * Ring, 0.0, Z} + Out1 * (0.72 - 0.08 * Ring), Normalize(Out1 + V3{0, 0, -0.9}), Out1, 1.1 - 0.15 * Ring, 0.36);
+            }
+
+        for (int Ring = 0; Ring < 3; ++Ring)
+            for (int F = 0; F < 18; ++F)
+            {
+                const double A = 2.0 * Pi * (F + 0.5 * Ring) / 18, T = 0.45 + 0.2 * Ring;
+                const V3 Axis = Neck0 + (Neck1 - Neck0) * T, N{Cos(A), Sin(A), 0.0};
+                Feather(Out, Plume(), Axis + N * Lerp(0.78, 0.5, T), Normalize(N * 0.35 + V3{0, 0, -1}), N, 0.7, 0.32);
+            }
+        // the head: an eagle's skull, a hooked beak, a hard brow over amber eyes, a crest of blades swept back
+        const V3 Head{1.9, 0.0, 7.35};
+        Ellipsoid(Out, Down, Head, 0.72, 0.5, 0.55, 16);
+        Out.Tube(Horn, {2.45, 0.0, 7.36}, {2.95, 0.0, 7.3}, 0.24, 0.17, 12);
+        Out.Tube(Horn, {2.95, 0.0, 7.3}, {3.2, 0.0, 7.12}, 0.17, 0.1, 12);
+        Out.Tube(Horn, {3.2, 0.0, 7.12}, {3.2, 0.0, 6.86}, 0.1, 0.015, 10);
+        Out.Tube(Horn, {2.45, 0.0, 7.18}, {2.92, 0.0, 7.1}, 0.16, 0.07, 10);
+        for (const double S : {-1.0, 1.0})
+        {
+            Ellipsoid(Out, Eye, {2.26, S * 0.37, 7.47}, 0.07, 0.05, 0.08, 10);
+            Out.Tube(Black, {2.02, S * 0.45, 7.62}, {2.44, S * 0.3, 7.6}, 0.09, 0.05, 8);
+        }
+        for (int F = 0; F < 12; ++F)
+        {
+            const double Y = -0.36 + 0.065 * F, Up = 1.0 - std::abs(Y) * 1.6;
+            Feather(Out, Plume(), {2.0, Y, 7.68 + 0.12 * Up}, Normalize({-1.0, Y * 0.6, 0.25 * Up}), {0, 0, 1}, 0.9 + 0.3 * Up, 0.22);
+        }
+        for (const double Dx : {0.35, 0.1, -0.2, -0.45})
+            for (int F = 0; F < 18; ++F)
+            {
+                const double A = 2.0 * Pi * (F + (Dx > 0.0 ? 0.0 : 0.5)) / 18, Shrink = std::sqrt(std::max(1.0 - (Dx / 0.72) * (Dx / 0.72), 0.1));
+                const V3 N{0.0, Cos(A), Sin(A)};
+                if (Dx > 0.2 && N.Z < -0.3) continue;  // the throat under the beak stays clear
+                Feather(Out, Plume(), Head + V3{Dx, N.Y * 0.5 * Shrink, N.Z * 0.55 * Shrink}, Normalize({-1.0, N.Y * 0.25, N.Z * 0.25}), N, 0.5, 0.22);
+            }
+
+        // the wings, spread: a feathered leading edge; primaries off the hand, secondaries off the forearm, coverts over them
+        for (const double S : {-1.0, 1.0})
+        {
+            const V3 Sh{0.75, S * 1.05, 5.25}, El{0.1, S * 3.45, 6.15}, Wr{0.5, S * 5.9, 6.55}, Tp{0.25, S * 7.4, 6.85};  // span 20 m with the primaries
+            Out.Tube(Down, Sh, El, 0.28, 0.17, 10);
+            Out.Tube(Down, El, Wr, 0.17, 0.11, 10);
+            Out.Tube(Down, Wr, Tp, 0.11, 0.05, 8);
+            const V3 Up{0, 0, 1};
+            for (int F = 0; F < 11; ++F)
+            {
+                const double T = F / 10.0;
+                const V3 Root = Wr + (Tp - Wr) * (0.08 + 0.86 * T);
+                Feather(Out, F % 5 == 2 ? Silver : Plume(), Root + V3{0, 0, -0.02 * F}, Normalize({-Lerp(1.0, 0.3, T), S * Lerp(0.25, 1.0, T), -0.03}), Up, Lerp(2.5, 2.9, T), 0.74);
+            }
+            const std::vector<V3> Arm{Sh, El, Wr};
+            for (int F = 0; F < 16; ++F)
+            {
+                const double T = F / 15.0;
+                const V3 Root = Along(Arm, T);
+                Feather(Out, Plume(), Root + V3{0, 0, -0.03}, Normalize({-1.0, S * 0.12 * T, -0.04}), Up, Lerp(2.3, 2.8, T), 0.8);
+                Feather(Out, Plume(), Root + V3{0.12, 0, 0.06}, Normalize({-1.0, S * 0.1, -0.02}), Up, 1.35, 0.58);
+                Feather(Out, Plume(), Root + V3{0.25, 0, 0.12}, Normalize({-1.0, S * 0.08, 0.0}), Up, 0.75, 0.46);
+            }
+            // the leading edge feathered over: marginal coverts laid along the top of the arm
+            for (int F = 0; F < 30; ++F)
+            {
+                const double T = F / 29.0;
+                const V3 Root = Along({Sh, El, Wr, Tp}, T);
+                const double Radius = T < 1.0 / 3 ? Lerp(0.28, 0.17, T * 3) : T < 2.0 / 3 ? Lerp(0.17, 0.11, T * 3 - 1) : Lerp(0.11, 0.05, T * 3 - 2);
+                Feather(Out, Plume(), Root + V3{Radius * 1.1, 0, Radius * 0.6}, Normalize({-1.0, S * 0.15, -0.12}), Normalize({0.5, 0, 1}), 0.75 + Radius, 0.46);
+            }
+            for (int F = 0; F < 6; ++F)
+            {
+                const V3 Root = Wr + (Tp - Wr) * (F / 6.0);
+                Feather(Out, Plume(), Root + V3{0.12, 0, 0.06}, Normalize({-0.9, S * 0.45, -0.02}), Up, 1.2, 0.36);
+            }
+        }
+
+        // legs: feathered thighs, scaled shanks, four toes each with a golden talon a forearm long
+        for (const double S : {-1.0, 1.0})
+        {
+            const V3 Thigh0{-0.35, S * 0.78, 3.35}, Knee{0.0, S * 0.82, 2.0}, Foot{0.22, S * 0.82, 0.42};
+            Out.Tube(Down, Thigh0, Knee, 0.62, 0.32, 12);
+            for (int F = 0; F < 16; ++F)
+            {
+                const double A = 2.0 * Pi * F / 16, Z = 3.0 - 0.35 * (F % 3);
+                const V3 N{Cos(A), Sin(A), 0.0};
+                Feather(Out, Plume(), V3{-0.25, S * 0.8, Z} + N * 0.55, Normalize(V3{0, 0, -1} + N * 0.25), N, 1.0, 0.34);
+            }
+            Out.Tube(Scale, Knee, Foot, 0.22, 0.17, 10);
+            const V3 Toes[] = {{0.95, S * 0.42, -0.24}, {1.0, 0.0, -0.24}, {0.9, -S * 0.36, -0.24}, {-0.75, 0.0, -0.24}};
+            for (const V3& Toe : Toes)
+            {
+                const V3 Tip = Foot + Toe, Dir = Normalize({Toe.X, Toe.Y, 0.0});
+                Out.Tube(Scale, Foot, Tip, 0.15, 0.1, 8);
+                const V3 C1 = Tip + Dir * 0.2 + V3{0, 0, 0.06}, C2 = C1 + Dir * 0.16 + V3{0, 0, -0.16}, C3 = C2 + Dir * 0.03 + V3{0, 0, -0.17};
+                Out.Tube(Gold, Tip, C1, 0.085, 0.07, 8);
+                Out.Tube(Gold, C1, C2, 0.07, 0.04, 8);
+                Out.Tube(Gold, C2, C3, 0.04, 0.006, 8);
+            }
+        }
+        return Out;
+    }
+
     void Kit::BuildCreatureModels()
     {
         Emit("SM_Art_Creature_JawOfTheMire", WriteGltf(BuildJawOfTheMire(), "Dark Arisen art kit (creatures)"));
         Emit("SM_Art_Creature_JungleWarden", WriteGltf(BuildJungleWarden(), "Dark Arisen art kit (creatures)"));
         Emit("SM_Art_Creature_CalderaTitan", WriteGltf(BuildCalderaTitan(), "Dark Arisen art kit (creatures)"));
+        Emit("SM_Art_Creature_Sturmkralle", WriteGltf(BuildSturmkralle(), "Dark Arisen art kit (creatures)"));
     }
 }
