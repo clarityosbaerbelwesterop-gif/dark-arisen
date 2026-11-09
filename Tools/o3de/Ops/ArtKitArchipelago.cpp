@@ -235,12 +235,12 @@ namespace DarkArisen::Tools::Art
             double Tile[4];
         };
         const BiomeLayers Layers[] = {
-            {"tropical", {"sparse_grass", "sand_01", "rock_face_03", "forrest_ground_01"}, {2.0, 1.5, 2.7, 2.0}},
-            {"mire", {"sparse_grass", "brown_mud_02", "rock_pitted_mossy", "forrest_ground_01"}, {2.0, 1.3, 1.0, 2.0}},
-            {"moor", {"sparse_grass", "forrest_ground_01", "rock_pitted_mossy", "brown_mud_02"}, {2.0, 2.0, 1.0, 1.3}},
+            {"tropical", {"leafy_grass", "sand_01", "rock_face_03", "forrest_ground_01"}, {2.0, 1.5, 2.7, 2.0}},
+            {"mire", {"leafy_grass", "brown_mud_02", "rock_pitted_mossy", "forrest_ground_01"}, {2.0, 1.3, 1.0, 2.0}},
+            {"moor", {"withered_grass", "forrest_ground_01", "rock_pitted_mossy", "brown_mud_02"}, {2.0, 2.0, 1.0, 1.3}},
             {"volcanic", {"brown_mud_02", "sand_01", "rock_face_03", "forrest_ground_01"}, {1.3, 1.5, 2.7, 2.0}},
-            {"cold", {"sparse_grass", "sand_01", "rock_pitted_mossy", "rock_face_03"}, {2.0, 1.5, 1.0, 2.7}},
-            {"fortress", {"sparse_grass", "sand_01", "rock_face_03", "cobblestone_floor_08"}, {2.0, 1.5, 2.7, 2.0}},
+            {"cold", {"withered_grass", "sand_01", "rock_pitted_mossy", "rock_face_03"}, {2.0, 1.5, 1.0, 2.7}},
+            {"fortress", {"leafy_grass", "sand_01", "rock_face_03", "cobblestone_floor_08"}, {2.0, 1.5, 2.7, 2.0}},
             {"maw", {"brown_mud_02", "forrest_ground_01", "rock_pitted_mossy", "rock_face_03"}, {1.3, 2.0, 1.0, 2.7}}};
 
     }
@@ -316,12 +316,12 @@ namespace DarkArisen::Tools::Art
                 const double T = std::clamp(Z / std::max(Peak, 1.0), 0.0, 1.0);
                 struct Pal { const char* B; double L[3], H[3], Wood[3]; };
                 static const Pal Palette[] = {
-                    {"tropical", {0.20, 0.30, 0.09}, {0.31, 0.31, 0.17}, {0.07, 0.15, 0.04}},
+                    {"tropical", {0.15, 0.29, 0.06}, {0.27, 0.30, 0.13}, {0.05, 0.13, 0.03}},
                     {"mire", {0.17, 0.21, 0.10}, {0.24, 0.26, 0.14}, {0.08, 0.12, 0.05}},
                     {"moor", {0.36, 0.27, 0.19}, {0.40, 0.31, 0.29}, {0.10, 0.15, 0.08}},
                     {"volcanic", {0.20, 0.18, 0.16}, {0.12, 0.11, 0.10}, {0.12, 0.13, 0.08}},
                     {"cold", {0.26, 0.31, 0.22}, {0.60, 0.62, 0.64}, {0.08, 0.13, 0.09}},
-                    {"fortress", {0.28, 0.32, 0.15}, {0.38, 0.36, 0.24}, {0.09, 0.15, 0.06}},
+                    {"fortress", {0.22, 0.30, 0.11}, {0.34, 0.34, 0.21}, {0.07, 0.13, 0.05}},
                     {"maw", {0.16, 0.14, 0.15}, {0.10, 0.09, 0.10}, {0.10, 0.10, 0.09}}};
                 const double Woods = Kit::WorldWoods(X, Y, Spec.Seed) * Smooth(2.5, 6.0, Z) * (1.0 - Steep);
                 const double Mottle = 0.9 + 0.2 * Fractal(X, Y, 140.0, 3, Spec.Seed + 91u);

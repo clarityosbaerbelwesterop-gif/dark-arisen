@@ -142,6 +142,8 @@ TerrainSurface DarkArisenTerrainEvaluate(float3 worldPosition, float3 vertexNorm
         n2World * blend.z + DarkArisenTerrainGroundNormal(n3, vertexNormal) * blend.w);
     const float3 arm = a0 * blend.x + a1 * blend.y + a2 * blend.z + a3 * blend.w;
     surface.m_occlusion = arm.r;
-    surface.m_roughness = arm.g;
+    // grass, litter, sand and mud scatter light through their own clutter: no sky sheen at grazing angles (the
+    // scans' roughness is measured on flat swatches). Rock keeps its own.
+    surface.m_roughness = lerp(max(arm.g, 0.78), arm.g, blend.z);
     return surface;
 }

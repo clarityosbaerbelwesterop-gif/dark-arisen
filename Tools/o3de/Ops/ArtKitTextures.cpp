@@ -427,7 +427,7 @@ namespace DarkArisen::Tools::Art
             Scan(M::Paving, "M_Art_Paving", "cobblestone_floor_08", {1, 1, 1, 1}, 2.0);
             Scan(M::Sand, "M_Art_Sand", "sand_01", {1, 1, 1, 1}, 1.5);
             Scan(M::WetSand, "M_Art_WetSand", "sand_01", {0.62, 0.56, 0.47, 1}, 1.5, 0.45);
-            Scan(M::Grass, "M_Art_Grass", "sparse_grass", {1, 1, 1, 1}, 2.0);
+            Scan(M::Grass, "M_Art_Grass", "leafy_grass", {1, 1, 1, 1}, 2.0);
             Scan(M::Rock, "M_Art_Rock", "rock_face_03", {1, 1, 1, 1}, 2.7);
             Scan(M::Bark, "M_Art_Bark", "bark_brown_02", {1, 1, 1, 1}, 1.0);
             Set(M::Frond, "M_Art_Frond", "T_Frond", false, {1, 1, 1, 1}, 0.7, 1.0, 0.0, true);

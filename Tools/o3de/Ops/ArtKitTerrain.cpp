@@ -764,7 +764,8 @@ namespace DarkArisen::Tools::Art
                 const char* Set;
                 double Tile;
             };
-            const Layer Grass{"sparse_grass", 2.0}, Forest{"forrest_ground_01", 2.0}, Cliff{"rock_face_03", 2.7}, Mossy{"rock_pitted_mossy", 1.0},
+            // ground: lush leafy grass on the islands and in the groves, withered grass on the moors
+            const Layer Grass{Spec.Kind == Biome::Moor ? "withered_grass" : "leafy_grass", 2.0}, Forest{"forrest_ground_01", 2.0}, Cliff{"rock_face_03", 2.7}, Mossy{"rock_pitted_mossy", 1.0},
                 SandL{"sand_01", 1.5}, MudL{"brown_mud_02", 1.3};
             // temperate biomes break out in grey, mossy rock; the pale sandstone scan is for the tropics only
             std::array<Layer, 4> L{Grass, Forest, Mossy, MudL};
