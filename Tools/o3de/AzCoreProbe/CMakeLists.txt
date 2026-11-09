@@ -240,9 +240,23 @@ add_test(NAME DarkArisenStoryProbe COMMAND DarkArisenStoryProbe)
 
 # Remaining Gem sources, compiled (not linked) against the pinned engine headers so every adapter is
 # checked on each run: input devices and the module entry point need the full AzFramework and launcher.
+# The open world's renderer (Atom's mesh feature processor) and collider (PhysX heightfields and boxes) are
+# compiled here too, against the pinned Atom and physics headers.
 add_library(DarkArisenGemCompileCheck OBJECT
     ${GEM}/Source/Player/JakeInputComponent.cpp
+    ${GEM}/Source/World/WorldRendererComponent.cpp
+    ${GEM}/Source/World/WorldColliderComponent.cpp
     ${GEM}/Source/DarkArisenModule.cpp)
 target_include_directories(DarkArisenGemCompileCheck PRIVATE ${AZF} ${AZF}/Platform/Linux ${AZF}/Platform/Common
-    ${GEM}/Include ${GEM}/Source ${O3DE_ENGINE_ROOT}/Gems/PhysX/Core/Code/Include)
+    ${GEM}/Include ${GEM}/Source ${O3DE_ENGINE_ROOT}/Gems/PhysX/Core/Code/Include
+    ${O3DE_ENGINE_ROOT}/Code/Framework/AtomCore
+    ${O3DE_ENGINE_ROOT}/Gems/Atom/Asset/Shader/Code/Include
+    ${O3DE_ENGINE_ROOT}/Gems/Atom/Feature/Common/Code/Include
+    ${O3DE_ENGINE_ROOT}/Gems/Atom/RHI/Code/Include
+    ${O3DE_ENGINE_ROOT}/Gems/Atom/RHI/Code/Include/Atom/RHI.Reflect/Platform/Linux
+    ${O3DE_ENGINE_ROOT}/Gems/Atom/RHI/Code/Platform/Linux
+    ${O3DE_ENGINE_ROOT}/Gems/Atom/RHI/Code/Source/Platform/Linux
+    ${O3DE_ENGINE_ROOT}/Gems/Atom/RPI/Code/Include
+    ${O3DE_ENGINE_ROOT}/Gems/Atom/RPI/Code/Platform/Linux
+    ${O3DE_ENGINE_ROOT}/Gems/Atom/Utils/Code/Include)
 target_link_libraries(DarkArisenGemCompileCheck PRIVATE AzCore DarkArisen::Core)

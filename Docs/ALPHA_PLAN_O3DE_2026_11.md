@@ -49,7 +49,7 @@ Mission levels become **places in the world**. The 34 missions keep their contra
 
 - **M1, open-world foundation (built, not yet run in a GameLauncher).**
   - `world-build` turns `Archipelago.json` into 397 streamed 500 m terrain tiles plus a horizon mesh and plants the land with about 930,000 plantings: woods, clearings, a tree line, undergrowth.
-  - The Gem's `WorldStreamerComponent`, `WorldRendererComponent` and `WorldColliderComponent` stream, draw and collide the world around Jake in `L_World`. The streamer is probed on O3DE 2605.0's AzCore runtime; the renderer and collider have a syntax-only compile against the pinned engine's headers.
+  - The Gem's `WorldStreamerComponent`, `WorldRendererComponent` and `WorldColliderComponent` stream, draw and collide the world around Jake in `L_World`. The streamer is probed on O3DE 2605.0's AzCore runtime. The renderer and collider compile against the pinned Atom and physics headers in CI.
   - Scanned CC0 ground layers and fixes to the terrain shader's re-tint and reflectance give the islands their colour.
 - **M2, regions (first pass).**
   - `Locations.json` places the documents' 95 named locations and all 61 dungeons, checked by `ConversionTests`.
