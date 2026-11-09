@@ -43,8 +43,9 @@ namespace DarkArisen::Tools::Art
                                                {18.0, 26.0, 6.0}, {14.0, 30.0, 8.0}, {22.0, 16.0, 11.0}, {7.0, 7.0, 16.0}, {9.0, 9.0, 42.0},
                                                {18.0, 16.0, 9.0}, {24.0, 18.0, 10.0},  // LM6 La Sirena Negra, LM5 the Guild (layout.md 4)
                                                {12.0, 1.0, 4.5}, {12.0, 1.0, 4.5}, {6.0, 6.0, 8.0}, {1.3, 1.3, 5.6},  // W1, W1 with its lamp, W3, a gate pier
-                                               {11.0, 12.6, 8.0}, {34.0, 40.0, 8.0}, {44.0, 36.0, 11.0}, {20.0, 14.0, 7.0}, {16.0, 16.0, 0.9}};  // TC2, TC4 lot, LM10 lot, LM11, N2
-                return Civic[V % 17];
+                                               {11.0, 12.6, 8.0}, {34.0, 40.0, 8.0}, {44.0, 36.0, 11.0}, {20.0, 14.0, 7.0}, {16.0, 16.0, 0.9},  // TC2, TC4 lot, LM10 lot, LM11, N2
+                                               {8.0, 2.5, 6.5}, {4.6, 0.8, 1.7}};  // W2 the seam arch, a stair's low gate (layout.md 3.3)
+                return Civic[V % 19];
             }
             case Tradition::Street:
             {
@@ -1167,6 +1168,59 @@ namespace DarkArisen::Tools::Art
                         Out.Box(Inlay, {-5.0 * std::fabs(Cos(A)) - 0.05, -5.0 * std::fabs(Sin(A)) - 0.05, 0.5}, {5.0 * std::fabs(Cos(A)) + 0.05, 5.0 * std::fabs(Sin(A)) + 0.05, 0.505});
                     break;
                 }
+                case 17:
+                {
+                    // W2, a seam arch (layout.md 3.3): 8 x 2.5 x 6.5, an opening 5.5 x 4.5 under a segmental arch, two grille
+                    // leaves folded back against the piers (they close for a 5-star lockdown), a painted name board on the lintel
+                    // (the lettering is the district's, left to the sign pass), a 3 x 3 x 3.5 guard post beside it and a
+                    // fingerpost 5 m outside (+Y, along the road away from the district)
+                    Out.Box(Mat(M::Stone), {-4.0, -1.25, -0.6}, {-2.75, 1.25, 6.5});
+                    Out.Box(Mat(M::Stone), {2.75, -1.25, -0.6}, {4.0, 1.25, 6.5});
+                    Out.Box(Mat(M::Plaster), {-2.75, -1.25, 5.2}, {2.75, 1.25, 6.5});
+                    for (int K = 0; K < 8; ++K)
+                    {
+                        const double A0 = Pi * K / 8, A1 = Pi * (K + 1) / 8;
+                        for (const double Y : {-1.15, 1.15})
+                            Out.Tube(Mat(M::Stone), {2.75 * Cos(A0), Y, 4.5 + 0.7 * Sin(A0)}, {2.75 * Cos(A1), Y, 4.5 + 0.7 * Sin(A1)}, 0.14, 0.14, 6);
+                        OrientedBox(Out, Mat(M::Plaster), {2.75 * (Cos(A0) + Cos(A1)) / 2, 0.0, 4.5 + 0.7 * (Sin(A0) + Sin(A1)) / 2 + 0.4}, 1.0, 0.0, {0.18, 1.2, 0.42});
+                    }
+                    Out.Box(Mat(M::StoneDark), {-4.15, -1.4, 6.5}, {4.15, 1.4, 6.8});
+                    for (const double Y : {-1.27, 1.27}) Out.Box(Mat(M::TimberDark), {-2.4, Y - 0.03, 5.45}, {2.4, Y + 0.03, 6.35});
+                    for (const double Side : {-1.0, 1.0})
+                        for (int Bar = 0; Bar <= 7; ++Bar)
+                        {
+                            const double Y = -1.1 + 0.3 * Bar;
+                            Out.Tube(Mat(M::Iron), {Side * 2.6, Y, 0.0}, {Side * 2.6, Y, 4.3}, 0.02, 0.02, 4);
+                            if (Bar == 0) for (const double Z : {0.3, 2.2, 4.2}) Out.Tube(Mat(M::Iron), {Side * 2.6, -1.1, Z}, {Side * 2.6, 1.0, Z}, 0.025, 0.025, 4);
+                        }
+                    // the guard post beside the east pier
+                    Out.Box(Mat(M::Stone), {4.3, -1.5, -0.5}, {7.3, 1.5, 3.5});
+                    Out.Push(Xf::Translate({5.8, 0.0, 0.0}));
+                    Hip(Out, Mat(M::RoofTile), 3.0, 3.0, 3.5, 1.0, 0.25);
+                    Out.Pop();
+                    Out.Box(Mat(M::TimberDark), {5.3, 1.46, 0.0}, {6.3, 1.54, 2.1});
+                    // the fingerpost outside
+                    Out.Tube(Mat(M::TimberDark), {-5.2, 5.0, 0.0}, {-5.2, 5.0, 3.0}, 0.06, 0.05, 6);
+                    for (const double Dir : {-1.0, 1.0}) Out.Box(Mat(M::Timber), {-5.2 + (Dir < 0 ? -0.9 : 0.0), 4.97, 2.45 + (Dir < 0 ? 0.0 : 0.3)}, {-5.2 + (Dir < 0 ? 0.0 : 0.9), 5.03, 2.65 + (Dir < 0 ? 0.0 : 0.3)});
+                    break;
+                }
+                case 18:
+                {
+                    // a stair's low gate (layout.md 3.3): a 3 m grille between two stone posts at the foot of the stair, open
+                    for (const double X : {-1.9, 1.9})
+                    {
+                        Out.Box(Mat(M::Stone), {X - 0.35, -0.35, -0.4}, {X + 0.35, 0.35, 1.6});
+                        Out.Box(Mat(M::StoneDark), {X - 0.42, -0.42, 1.6}, {X + 0.42, 0.42, 1.72});
+                    }
+                    for (const double Side : {-1.0, 1.0})
+                        for (int Bar = 0; Bar <= 6; ++Bar)
+                        {
+                            const double Y = 0.1 + 0.22 * Bar;
+                            Out.Tube(Mat(M::Iron), {Side * 1.5, Y, 0.05}, {Side * 1.5, Y, 1.4}, 0.016, 0.016, 4);
+                            if (Bar == 0) for (const double Z : {0.15, 1.35}) Out.Tube(Mat(M::Iron), {Side * 1.5, 0.1, Z}, {Side * 1.5, 1.45, Z}, 0.02, 0.02, 4);
+                        }
+                    break;
+                }
                 }
                 return Out;
             }
@@ -1216,7 +1270,7 @@ namespace DarkArisen::Tools::Art
     {
         for (const Tradition Kind : {Tradition::Colonial, Tradition::Stilt, Tradition::Nordic, Tradition::Camp, Tradition::Fort, Tradition::Lighthouse, Tradition::Entrance,
                  Tradition::Civic, Tradition::Harbour, Tradition::Street, Tradition::Shanty})
-            for (int V = 0; V < (Kind == Tradition::Lighthouse ? 1 : Kind == Tradition::Civic ? 17 : Kind == Tradition::Harbour ? 5 : Kind == Tradition::Street ? 3 : Variants); ++V)
+            for (int V = 0; V < (Kind == Tradition::Lighthouse ? 1 : Kind == Tradition::Civic ? 19 : Kind == Tradition::Harbour ? 5 : Kind == Tradition::Street ? 3 : Variants); ++V)
                 Emit(ModelName(Kind, V), WriteGltf(BuildVariant(Kind, V), "Dark Arisen art kit (settlements)"));
     }
 
