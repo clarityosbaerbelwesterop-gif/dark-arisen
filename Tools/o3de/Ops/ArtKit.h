@@ -87,6 +87,7 @@ namespace DarkArisen::Tools::Art
     {
         std::vector<PlantPart> Parts;  // shared plant models
         double X, Y, Z, Yaw, Scale;    // degrees
+        bool Tree;                     // a tree (seen from afar) rather than undergrowth or a rock
     };
 
     struct TerrainArt
@@ -97,6 +98,29 @@ namespace DarkArisen::Tools::Art
         std::string CollisionGltf;   // walkable ground triangles
         std::vector<Planting> Plants;
         std::vector<PlantPart> Cover;  // ground cover cards, one model per card material, placed at the origin
+    };
+
+    /** One open-world tile to plant (Kit::WorldVegetation): ground from the archipelago, the island's biome. */
+    struct WorldTileSpec
+    {
+        Biome Kind = Biome::Tropical;
+        double X0 = 0, Y0 = 0, Size = 500;               // world metres, X east, Y north
+        std::function<double(double, double)> Height;    // ground height at a world point
+        struct Clearing
+        {
+            double X, Y, Radius;                         // a place (town, fort, set piece): nothing grows inside
+        };
+        std::vector<Clearing> Clear;
+        double TreeLine = 1e9;                           // no trees above this height (m)
+        std::uint32_t Seed = 1;
+    };
+
+    /** A grass patch model for the runtime's ground cover: a few crossed cards on a 2 m square, foot at z = 0. */
+    struct GrassPatch
+    {
+        std::string Card;      // GrassBlades, GrassDry, HeatherSprig, Reeds
+        std::string Gltf;      // the patch model
+        std::string Material;  // its DarkArisenFoliage material (ground-cover sway), paths relative to Assets/World/Materials
     };
 
     /** A named story box (its top is the floor the anchors mark), dressed by Kit::Authored. */
@@ -157,6 +181,16 @@ namespace DarkArisen::Tools::Art
          * in a camp field, a table in an interior; only along closed edges and in corners, never on the route. */
         static std::vector<PropPlacement> AuthoredProps(const AuthoredSpec& Spec);
         static constexpr double GroundTileSize = 50.0;
+        /**
+         * Trees, shrubs, ferns and rocks of an open-world tile by its biome, clustered into woods and clearings;
+         * scanned CC0 models where a game-ready one exists, else the kit's plants (which materialize emits).
+         * Cache keeps the parts of each plant across tiles.
+         */
+        static std::vector<Planting> WorldVegetation(const WorldTileSpec& Spec, std::map<std::string, std::vector<PlantPart>, std::less<>>& Cache);
+        /** How wooded the open world is at a point, 0 (open ground) to 1 (the heart of a wood): plantings and macro colour agree. */
+        static double WorldWoods(double X, double Y, std::uint32_t Seed);
+        /** The ground-cover patches the runtime scatters near the player, one per card. */
+        static std::vector<GrassPatch> WorldGrassPatches();
         /** Quay wall along a harbour edge (x = 0 is the quay face, water towards -X), Length along Y. */
         std::string HarborEdge(double Length);
         /** Row of town houses 6 m deep centred on the origin, Length along X; doors face +Y (north) or -Y. */

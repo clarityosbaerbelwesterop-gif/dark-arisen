@@ -426,13 +426,12 @@ namespace DarkArisen::Tools::Art
             J += "    }\n}\n";
             return J;
         }
-    }
-
-    TerrainArt Kit::Terrain(const TerrainSpec& Spec)
-    {
-        // One model per material of a plant, each with its own wind material; all parts of a plant share the
-        // bend height, so trunk and crown sway together.
-        const auto EmitPlant = [this](const std::string& Key, const Species Kind, const Mesh& Plant)
+        /**
+         * One model per material of a plant, each with its own wind material; all parts of a plant share the bend
+         * height, so trunk and crown sway together. With Out the models and materials are emitted; without, only
+         * their (deterministic) paths are named, for plantings that refer to what materialize already writes.
+         */
+        std::vector<PlantPart> PlantPartsOf(const std::string& Key, const Species Kind, const Mesh& Plant, std::vector<ArtFile>* Out)
         {
             const Wind W = WindFor(Kind);
             double Top = 0.05;
@@ -448,18 +447,27 @@ namespace DarkArisen::Tools::Art
             {
                 std::string Suffix = P.Mat.Name.rfind("M_Art_", 0) == 0 ? P.Mat.Name.substr(6) : P.Mat.Name;
                 const std::string Model = "SM_Art_Veg_" + Key + (Plant.Parts().size() > 1 ? "_" + Suffix : std::string());
-                Mesh One(Model);
-                One.Indexed(P.Mat, P.Vertices, P.Indices);
-                PlantPart Part{Emit(Model, WriteGltf(One, "Dark Arisen art kit (terrain)")), std::string()};
+                PlantPart Part{"Assets/Art/Models/" + Model + ".gltf", std::string()};
+                if (Out)
+                {
+                    Mesh One(Model);
+                    One.Indexed(P.Mat, P.Vertices, P.Indices);
+                    Out->push_back({Part.Model, WriteGltf(One, "Dark Arisen art kit (terrain)")});
+                }
                 if (Sways)
                 {
                     Part.Material = "Assets/Materials/Foliage/" + Model + ".material";
-                    Output.push_back({Part.Material, FoliageMaterialJson(P.Mat, W, std::floor(Top * 100.0 + 0.5) / 100.0)});
+                    if (Out) Out->push_back({Part.Material, FoliageMaterialJson(P.Mat, W, std::floor(Top * 100.0 + 0.5) / 100.0)});
                 }
                 Parts.push_back(std::move(Part));
             }
             return Parts;
-        };
+        }
+    }
+
+    TerrainArt Kit::Terrain(const TerrainSpec& Spec)
+    {
+        const auto EmitPlant = [this](const std::string& Key, const Species Kind, const Mesh& Plant) { return PlantPartsOf(Key, Kind, Plant, &Output); };
         TerrainArt Art;
         const BiomeRules Rules = RulesFor(Spec.Kind);
         const std::uint32_t Seed = Spec.Seed;
@@ -893,10 +901,14 @@ namespace DarkArisen::Tools::Art
                 {
                     // scanned CC0 models where a game-ready one exists (ContentSource/ThirdParty/PolyHaven/Scanned.lock), else the kit's own
                     const std::string Scanned = ScannedPlant(Pick->Kind, Variant, Spec.Kind);
-                    Known = !Scanned.empty() ? PlantModels.emplace(CacheKey, std::vector<PlantPart>{{Scanned, ""}}).first
-                                             : PlantModels.emplace(CacheKey, EmitPlant(Key, Pick->Kind, BuildPlant(Pick->Kind, Variant, Spec.Kind))).first;
+                    std::vector<PlantPart> Parts;
+                    if (!Scanned.empty()) Parts.push_back({Scanned, ""});
+                    else Parts = EmitPlant(Key, Pick->Kind, BuildPlant(Pick->Kind, Variant, Spec.Kind));
+                    Known = PlantModels.emplace(CacheKey, std::move(Parts)).first;
                 }
-                Art.Plants.push_back({Known->second, X, Y, Z - 0.05, R.Range(0.0, 360.0), R.Range(0.85, 1.2)});
+                const double Yaw = R.Range(0.0, 360.0);
+                const double Scale = R.Range(0.85, 1.2);
+                Art.Plants.push_back({Known->second, X, Y, Z - 0.05, Yaw, Scale, Pick->Tree});
             }
         }
 
@@ -933,5 +945,158 @@ namespace DarkArisen::Tools::Art
         Art.Model = Emit(Ground.Name(), WriteGltf(Ground, "Dark Arisen art kit (terrain)"));
         Art.CollisionGltf = WriteCollisionGltf(Collide);
         return Art;
+    }
+}
+
+namespace DarkArisen::Tools::Art
+{
+    double Kit::WorldWoods(const double X, const double Y, const std::uint32_t Seed)
+    {
+        return SmoothStep(0.40, 0.62, Fractal(X, Y, 380.0, 4, Seed + 11u));
+    }
+
+    std::vector<Planting> Kit::WorldVegetation(const WorldTileSpec& Spec, std::map<std::string, std::vector<PlantPart>, std::less<>>& Cache)
+    {
+        std::vector<Planting> Plants;
+        const BiomeRules Rules = RulesFor(Spec.Kind);
+        const auto Up = [&Spec](const double X, const double Y)
+        {
+            const double Dx = (Spec.Height(X + 2.0, Y) - Spec.Height(X - 2.0, Y)) / 4.0, Dy = (Spec.Height(X, Y + 2.0) - Spec.Height(X, Y - 2.0)) / 4.0;
+            return 1.0 / std::sqrt(1.0 + Dx * Dx + Dy * Dy);
+        };
+        const auto Cleared = [&Spec](const double X, const double Y)
+        {
+            for (const WorldTileSpec::Clearing& C : Spec.Clear)
+                if ((X - C.X) * (X - C.X) + (Y - C.Y) * (Y - C.Y) < C.Radius * C.Radius) return true;
+            return false;
+        };
+        const auto Plant = [&](const Species Kind, Rng& R, const double X, const double Y, const double Z, const double Woods, const bool Tree)
+        {
+            const int Variant = static_cast<int>(R.Unit() * 3.0);
+            const std::string Key = std::string(SpeciesName(Kind)) + "_" + std::to_string(Variant);
+            const std::string CacheKey = Key + "@" + std::to_string(static_cast<int>(Spec.Kind));
+            auto Known = Cache.find(CacheKey);
+            if (Known == Cache.end())
+            {
+                // scanned CC0 models where a game-ready one exists, else the kit's own (materialize emits those)
+                const std::string Scanned = ScannedPlant(Kind, Variant, Spec.Kind);
+                std::vector<PlantPart> Parts;
+                if (!Scanned.empty()) Parts.push_back({Scanned, ""});
+                else Parts = PlantPartsOf(Key, Kind, BuildPlant(Kind, Variant, Spec.Kind), nullptr);
+                Known = Cache.emplace(CacheKey, std::move(Parts)).first;
+            }
+            const double Yaw = R.Range(0.0, 360.0);
+            const double Scale = R.Range(0.85, 1.2) * (Tree ? 0.9 + 0.25 * Woods : 1.0);  // taller in the heart of a wood
+            Plants.push_back({Known->second, X, Y, Z - 0.05, Yaw, Scale, Tree});
+        };
+        const auto Cells = [&Spec](const double Size) { return static_cast<int>(Spec.Size / Size); };
+        const auto Origin = [&Spec](const double Size, const int I, const int J)
+        {
+            return std::pair<std::int64_t, std::int64_t>{static_cast<std::int64_t>(std::floor(Spec.X0 / Size)) + I, static_cast<std::int64_t>(std::floor(Spec.Y0 / Size)) + J};
+        };
+
+        // trees on a 6 m grid (world-anchored, so the same whichever tile asks): a closed canopy in the woods, a few
+        // standing alone on open ground; palms along the shore, the biome's broadleaf or conifers inland
+        std::vector<std::pair<Species, double>> TreeKinds;
+        double Previous = 0.0;
+        for (const PlantKind& P : Rules.Plants)
+        {
+            if (P.Tree) TreeKinds.push_back({P.Kind, P.Share - Previous});
+            Previous = P.Share;
+        }
+        const double TreeCell = 6.0;
+        for (int J = 0; J < Cells(TreeCell) && !TreeKinds.empty(); ++J)
+        {
+            for (int I = 0; I < Cells(TreeCell); ++I)
+            {
+                const auto [Gx, Gy] = Origin(TreeCell, I, J);
+                Rng R(Mix(static_cast<std::uint32_t>(Gy * 50331653 + Gx * 12582917) ^ (Spec.Seed * 131u)));
+                const double Jx = R.Unit(), Jy = R.Unit();
+                const double X = (static_cast<double>(Gx) + 0.1 + 0.8 * Jx) * TreeCell, Y = (static_cast<double>(Gy) + 0.1 + 0.8 * Jy) * TreeCell;
+                const double Woods = WorldWoods(X, Y, Spec.Seed);
+                if (R.Unit() > 0.015 + 0.8 * Woods * Woods) continue;
+                const double Z = Spec.Height(X, Y);
+                const bool Swamp = Spec.Kind == Biome::Mire;
+                if (Z < (Swamp ? 0.3 : 2.5) || Z > Spec.TreeLine || Cleared(X, Y) || Up(X, Y) < 0.86) continue;
+                Species Kind = TreeKinds.front().first;
+                const bool Coastal = Spec.Kind == Biome::Tropical || Spec.Kind == Biome::Grove;
+                const double Roll = R.Unit();
+                if (Coastal) Kind = Roll < (Z < 14.0 ? 0.75 : 0.12) ? Species::Palm : Species::Broadleaf;
+                else
+                {
+                    double Total = 0.0, Acc = 0.0;
+                    for (const auto& K : TreeKinds) Total += K.second;
+                    for (const auto& K : TreeKinds)
+                    {
+                        Acc += K.second;
+                        if (Roll * Total < Acc) { Kind = K.first; break; }
+                    }
+                }
+                Plant(Kind, R, X, Y, Z, Woods, true);
+            }
+        }
+
+        // undergrowth and rocks on the biome's own grid, thicker along the edges of the woods than on open ground
+        const double CellSize = Rules.CellSize;
+        for (int J = 0; J < Cells(CellSize); ++J)
+        {
+            for (int I = 0; I < Cells(CellSize); ++I)
+            {
+                const auto [Gx, Gy] = Origin(CellSize, I, J);
+                Rng R(Mix(static_cast<std::uint32_t>(Gy * 92821 + Gx * 68917) ^ (Spec.Seed * 31u)));
+                const double Jx = R.Unit(), Jy = R.Unit();
+                const double X = (static_cast<double>(Gx) + 0.15 + 0.7 * Jx) * CellSize, Y = (static_cast<double>(Gy) + 0.15 + 0.7 * Jy) * CellSize;
+                const double Roll = R.Unit();
+                const PlantKind* Pick = nullptr;
+                for (const PlantKind& P : Rules.Plants)
+                {
+                    if (Roll < P.Share)
+                    {
+                        Pick = &P;
+                        break;
+                    }
+                }
+                if (!Pick || Pick->Tree) continue;
+                const double Woods = WorldWoods(X, Y, Spec.Seed);
+                if (R.Unit() > 0.55 + 0.45 * Woods) continue;
+                if (Cleared(X, Y)) continue;
+                const double Z = Spec.Height(X, Y);
+                if (Z < (Pick->Kind == Species::Reeds ? 0.3 : 1.2) || Up(X, Y) < 0.74) continue;
+                Plant(Pick->Kind, R, X, Y, Z, Woods, false);
+            }
+        }
+        return Plants;
+    }
+
+    std::vector<GrassPatch> Kit::WorldGrassPatches()
+    {
+        struct Card
+        {
+            M Id;
+            const char* Name;
+            int Tufts;
+            double W0, W1, H0, H1;
+        };
+        static const Card Cards[] = {{M::GrassBlades, "GrassBlades", 4, 0.6, 1.0, 0.3, 0.6}, {M::GrassDry, "GrassDry", 4, 0.6, 1.0, 0.35, 0.7},
+            {M::HeatherSprig, "HeatherSprig", 4, 0.6, 0.9, 0.28, 0.45}, {M::Reeds, "Reeds", 3, 0.7, 1.1, 0.9, 1.5}};
+        std::vector<GrassPatch> Out;
+        for (const Card& C : Cards)
+        {
+            Mesh Patch(std::string("SM_World_Grass_") + C.Name);
+            Rng R(Mix(static_cast<std::uint32_t>(C.Id) * 2654435761u + 17u));
+            for (int K = 0; K < C.Tufts; ++K)
+            {
+                // one tuft per quarter of the 2 m square, jittered, so neighbouring patches tile without clumps
+                const double X = (K % 2 == 0 ? -0.5 : 0.5) + R.Range(-0.35, 0.35), Y = (K / 2 == 0 ? -0.5 : 0.5) + R.Range(-0.35, 0.35);
+                const double W = R.Range(C.W0, C.W1), H = R.Range(C.H0, C.H1), Yaw = R.Range(0.0, Pi);
+                Tuft(Patch, Mat(C.Id), {X, Y, -0.04}, W, H, Yaw, 2);
+            }
+            const Wind Grass{0.09, 0.55, 0.25};
+            std::string Material = FoliageMaterialJson(Mat(C.Id), Grass, 0.6, true);
+            const std::string From = "\"../Types/DarkArisenFoliage.materialtype\"", To = "\"../../Materials/Types/DarkArisenFoliage.materialtype\"";
+            Material.replace(Material.find(From), From.size(), To);
+            Out.push_back({C.Name, WriteGltf(Patch, "Dark Arisen world-build"), Material});
+        }
+        return Out;
     }
 }

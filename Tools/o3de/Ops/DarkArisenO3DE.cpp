@@ -652,7 +652,19 @@ namespace
             std::cerr << "error: " << Problem << "\n";
             return LockError;
         }
-        const auto World = DarkArisen::Tools::Art::BuildWorldTerrain(Spec, 500.0, 5.0, 32.0, 8.0);
+        // the story's places are cleared of plants: land places only (sea places float, vessel and dream levels are nowhere)
+        std::vector<DarkArisen::Tools::Art::WorldPlaceMark> Marks;
+        DarkArisen::Tools::JsonValue Places;
+        std::ifstream PlacesIn(Opts.RepoRoot / "ContentSource" / "World" / "Places.json");
+        const std::string PlacesText((std::istreambuf_iterator<char>(PlacesIn)), std::istreambuf_iterator<char>());
+        if (!PlacesIn || !DarkArisen::Tools::JsonReader::Parse(PlacesText, Places, Problem) || !Places.Find("places"))
+        {
+            std::cerr << "error: ContentSource/World/Places.json: " << Problem << "\n";
+            return LockError;
+        }
+        for (const DarkArisen::Tools::JsonValue& P : Places.Find("places")->Items)
+            if (P.Find("kind") && P.Find("kind")->Text == "land") Marks.push_back({P.Find("x")->Number, P.Find("y")->Number, 220.0});
+        const auto World = DarkArisen::Tools::Art::BuildWorldTerrain(Spec, Marks, 500.0, 5.0, 32.0, 8.0);
         const fs::path Root = Opts.RepoRoot / "Engine" / "O3DE" / "DarkArisen" / "Assets" / "World";
         std::size_t Bytes = 0;
         for (const auto& File : World.Files)
@@ -662,7 +674,7 @@ namespace
             std::ofstream(Target, std::ios::binary) << File.Content;
             Bytes += File.Content.size();
         }
-        std::cout << "world terrain: " << World.Tiles << " land tiles, " << World.Triangles << " triangles, " << World.Files.size() << " files, "
+        std::cout << "world terrain: " << World.Tiles << " land tiles, " << World.Triangles << " triangles, " << World.Plantings << " plantings, " << World.Files.size() << " files, "
                   << Bytes / 1000000 << " MB into " << Root.string() << "\n";
         return Ok;
     }

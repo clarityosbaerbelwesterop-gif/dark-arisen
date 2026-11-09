@@ -5,11 +5,14 @@
 
 #include "ArtKitArchipelago.h"
 
+#include "ArtKit.h"
 #include "ArtKitCore.h"
 #include "Json.h"
+#include "O3deIds.h"
 
 #include <algorithm>
 #include <cmath>
+#include <map>
 
 namespace DarkArisen::Tools::Art
 {
@@ -242,7 +245,8 @@ namespace DarkArisen::Tools::Art
 
     }
 
-    WorldTerrain BuildWorldTerrain(const ArchipelagoSpec& Spec, const double TileSize, const double TileStep, const double CoarseStep, const double TextureCell)
+    WorldTerrain BuildWorldTerrain(const ArchipelagoSpec& Spec, const std::vector<WorldPlaceMark>& Places, const double TileSize, const double TileStep,
+        const double CoarseStep, const double TextureCell)
     {
         WorldTerrain Out;
         const auto Height = [&Spec](double X, double Y) { return ArchipelagoHeight(Spec, X, Y, nullptr); };
@@ -306,15 +310,28 @@ namespace DarkArisen::Tools::Art
                 const double W[4] = {std::clamp(1.0 - W1 - W2 - W3, 0.0, 1.0), W1, W2, W3};
                 std::uint8_t* S = &Splat.Pixels[static_cast<std::size_t>((J * Tw + K) * 4)];
                 for (int C = 0; C < 4; ++C) S[C] = static_cast<std::uint8_t>(std::lround(W[C] * 255.0));
-                double Col[3] = {0.45, 0.5, 0.35};
+                // macro colour: the biome's ground from shore to summit, woods darker and greener (from afar the trees are
+                // this colour), sand along the shore, bare rock on steep ground, and a broad mottle so no slope is flat
+                double Col[3] = {0.30, 0.34, 0.20};
                 const double T = std::clamp(Z / std::max(Peak, 1.0), 0.0, 1.0);
-                struct Pal { const char* B; double L[3], H[3]; };
-                static const Pal Palette[] = {{"tropical", {0.30, 0.42, 0.16}, {0.40, 0.38, 0.24}}, {"mire", {0.24, 0.30, 0.16}, {0.30, 0.33, 0.20}},
-                    {"moor", {0.42, 0.34, 0.24}, {0.46, 0.36, 0.34}}, {"volcanic", {0.27, 0.25, 0.23}, {0.18, 0.16, 0.15}}, {"cold", {0.34, 0.40, 0.32}, {0.62, 0.64, 0.66}},
-                    {"fortress", {0.40, 0.42, 0.26}, {0.48, 0.45, 0.32}}, {"maw", {0.22, 0.20, 0.22}, {0.15, 0.13, 0.15}}};
+                struct Pal { const char* B; double L[3], H[3], Wood[3]; };
+                static const Pal Palette[] = {
+                    {"tropical", {0.20, 0.30, 0.09}, {0.31, 0.31, 0.17}, {0.07, 0.15, 0.04}},
+                    {"mire", {0.17, 0.21, 0.10}, {0.24, 0.26, 0.14}, {0.08, 0.12, 0.05}},
+                    {"moor", {0.36, 0.27, 0.19}, {0.40, 0.31, 0.29}, {0.10, 0.15, 0.08}},
+                    {"volcanic", {0.20, 0.18, 0.16}, {0.12, 0.11, 0.10}, {0.12, 0.13, 0.08}},
+                    {"cold", {0.26, 0.31, 0.22}, {0.60, 0.62, 0.64}, {0.08, 0.13, 0.09}},
+                    {"fortress", {0.28, 0.32, 0.15}, {0.38, 0.36, 0.24}, {0.09, 0.15, 0.06}},
+                    {"maw", {0.16, 0.14, 0.15}, {0.10, 0.09, 0.10}, {0.10, 0.10, 0.09}}};
+                const double Woods = Kit::WorldWoods(X, Y, Spec.Seed) * Smooth(2.5, 6.0, Z) * (1.0 - Steep);
+                const double Mottle = 0.9 + 0.2 * Fractal(X, Y, 140.0, 3, Spec.Seed + 91u);
                 for (const Pal& P : Palette)
                     if (Biome == P.B)
-                        for (int C = 0; C < 3; ++C) Col[C] = P.L[C] + (P.H[C] - P.L[C]) * T;
+                        for (int C = 0; C < 3; ++C) Col[C] = (P.L[C] + (P.H[C] - P.L[C]) * T) * Mottle * (1.0 - Woods) + P.Wood[C] * Woods;
+                static const double Sand[3] = {0.55, 0.49, 0.36}, Rock[3] = {0.33, 0.32, 0.30};
+                const double SandW = Biome == "mire" || Biome == "volcanic" || Biome == "maw" ? 0.0 : Shore;
+                for (int C = 0; C < 3; ++C) Col[C] = Col[C] + (Sand[C] - Col[C]) * SandW * (1.0 - Steep);
+                for (int C = 0; C < 3; ++C) Col[C] = Col[C] + (Rock[C] - Col[C]) * Steep;
                 std::uint8_t* M = &Macro.Pixels[static_cast<std::size_t>((J * Tw + K) * 3)];
                 for (int C = 0; C < 3; ++C) M[C] = static_cast<std::uint8_t>(std::lround(std::clamp(Col[C], 0.0, 1.0) * 255.0));
             }
@@ -343,8 +360,43 @@ namespace DarkArisen::Tools::Art
         Placeholder.Roughness = 0.95;
         Out.Files.push_back({"SM_World_Coarse.gltf", WriteGltf(Grid("SM_World_Coarse", 0.0, 0.0, Spec.Width, Spec.Height, CoarseStep, 0.6, Placeholder), "Dark Arisen world-build")});
 
+        // asset references as the runtime takes them: source UUID, product sub-id, product path (scan folder: the project)
+        const auto ModelRef = [](const std::string& ProjectRelative)
+        {
+            const std::size_t Slash = ProjectRelative.find_last_of('/'), Dot = ProjectRelative.find_last_of('.');
+            const std::string Stem = ProjectRelative.substr(Slash + 1, Dot - Slash - 1);
+            std::string Hint = ProjectRelative.substr(0, Slash + 1) + Stem + ".azmodel";
+            std::transform(Hint.begin(), Hint.end(), Hint.begin(), [](char C) { return C >= 'A' && C <= 'Z' ? static_cast<char>(C + 32) : C; });
+            return "{\"id\": \"" + SourceAssetUuid(ProjectRelative) + "\", \"subId\": " + std::to_string(AtomModelSubId(Stem)) + ", \"hint\": \"" + Hint + "\"}";
+        };
+        const auto MaterialRef = [](const std::string& ProjectRelative)
+        {
+            if (ProjectRelative.empty()) return std::string("null");
+            std::string Hint = ProjectRelative.substr(0, ProjectRelative.find_last_of('.')) + ".azmaterial";
+            std::transform(Hint.begin(), Hint.end(), Hint.begin(), [](char C) { return C >= 'A' && C <= 'Z' ? static_cast<char>(C + 32) : C; });
+            return "{\"id\": \"" + SourceAssetUuid(ProjectRelative) + "\", \"subId\": 0, \"hint\": \"" + Hint + "\"}";
+        };
+        const auto Cm = [](double V) { return std::to_string(static_cast<long long>(std::llround(V * 100.0))); };
+
+        // the plants of the world: one table, each tile's plantings index into it
+        std::map<std::string, std::vector<PlantPart>, std::less<>> PlantCache;
+        std::map<std::string, std::size_t, std::less<>> PlantIndex;
+        std::string PlantTable;
+        std::vector<WorldTileSpec::Clearing> Clear;
+        for (const WorldPlaceMark& P : Places) Clear.push_back({P.X, P.Y, P.Radius});
+        const auto BiomeOf = [](const std::string& B)
+        {
+            if (B == "tropical") return Biome::Tropical;
+            if (B == "mire") return Biome::Mire;
+            if (B == "volcanic" || B == "maw") return Biome::Dream;
+            if (B == "fortress") return Biome::Grove;
+            return Biome::Moor;  // moor, cold
+        };
+
         const int Columns = static_cast<int>(Spec.Width / TileSize + 0.5), Rows = static_cast<int>(Spec.Height / TileSize + 0.5);
-        std::string Index = "{\n  \"tileSize\": " + GltfBits::Num(TileSize) + ",\n  \"columns\": " + std::to_string(Columns) + ",\n  \"rows\": " + std::to_string(Rows) + ",\n  \"tiles\": [";
+        const int Samples = static_cast<int>(TileSize / TileStep + 0.5) + 1;
+        std::string Index = "{\n  \"tileSize\": " + GltfBits::Num(TileSize) + ",\n  \"columns\": " + std::to_string(Columns) + ",\n  \"rows\": " + std::to_string(Rows) +
+                            ",\n  \"heightStep\": " + GltfBits::Num(TileStep) + ",\n  \"heightSamples\": " + std::to_string(Samples) + ",\n  \"tiles\": [";
         bool First = true;
         for (int Row = 0; Row < Rows; ++Row)
             for (int Column = 0; Column < Columns; ++Column)
@@ -360,15 +412,78 @@ namespace DarkArisen::Tools::Art
                         if (O >= 0 && Votes == 0) { Owner = O; Votes = 1; }
                     }
                 if (Top < -2.0) continue;  // open sea: the ocean alone
-                const std::string Biome = Owner >= 0 ? Spec.Islands[static_cast<std::size_t>(Owner)].Biome : std::string("tropical");
-                const std::string Name = "SM_World_Tile_" + std::to_string(Column) + "_" + std::to_string(Row);
+                const ArchipelagoIsland* Island = Owner >= 0 ? &Spec.Islands[static_cast<std::size_t>(Owner)] : nullptr;
+                const std::string Biome = Island ? Island->Biome : std::string("tropical");
+                const std::string Suffix = std::to_string(Column) + "_" + std::to_string(Row);
+                const std::string Name = "SM_World_Tile_" + Suffix;
                 Out.Files.push_back({"Tiles/" + Name + ".gltf", WriteGltf(Grid(Name, X0, Y0, X0 + TileSize, Y0 + TileSize, TileStep, 0.0, Placeholder), "Dark Arisen world-build")});
+
+                // plantings and the ground heights (cm, rows from the south) for the runtime's grass
+                WorldTileSpec Plant;
+                Plant.Kind = BiomeOf(Biome);
+                Plant.X0 = X0;
+                Plant.Y0 = Y0;
+                Plant.Size = TileSize;
+                Plant.Height = Height;
+                Plant.Clear = Clear;
+                Plant.TreeLine = Island ? Island->Peak * (Biome == "cold" ? 0.55 : Biome == "volcanic" ? 0.4 : 0.85) : 1e9;
+                Plant.Seed = Spec.Seed;
+                std::string Foliage = "{\"tile\": " + std::to_string(Row * Columns + Column) + ", \"x0\": " + GltfBits::Num(X0) + ", \"y0\": " + GltfBits::Num(Y0) +
+                                      ", \"biome\": \"" + Biome + "\",\n\"plants\": [";
+                std::size_t Count = 0;
+                for (const Planting& P : Kit::WorldVegetation(Plant, PlantCache))
+                {
+                    std::string Key;
+                    for (const PlantPart& Part : P.Parts) Key += Part.Model + "|" + Part.Material + ";";
+                    auto Known = PlantIndex.find(Key);
+                    if (Known == PlantIndex.end())
+                    {
+                        std::string Parts;
+                        for (const PlantPart& Part : P.Parts)
+                            Parts += std::string(Parts.empty() ? "" : ", ") + "{\"model\": " + ModelRef(Part.Model) + ", \"material\": " + MaterialRef(Part.Material) + "}";
+                        PlantTable += std::string(PlantIndex.empty() ? "" : ",") + "\n    {\"tree\": " + (P.Tree ? "true" : "false") + ", \"parts\": [" + Parts + "]}";
+                        Known = PlantIndex.emplace(Key, PlantIndex.size()).first;
+                    }
+                    Foliage += std::string(Count++ ? ",\n" : "\n") + "[" + std::to_string(Known->second) + "," + Cm(P.X) + "," + Cm(P.Y) + "," + Cm(P.Z) + "," +
+                               std::to_string(static_cast<long long>(std::llround(P.Yaw))) + "," + std::to_string(static_cast<long long>(std::llround(P.Scale * 100.0))) + "]";
+                }
+                Foliage += "],\n\"heights\": [";
+                for (int J = 0; J < Samples; ++J)
+                {
+                    Foliage += J ? ",\n" : "\n";
+                    for (int K = 0; K < Samples; ++K) Foliage += (K ? "," : "") + Cm(Height(X0 + K * TileStep, Y0 + J * TileStep));
+                }
+                Foliage += "]}\n";
+                Out.Plantings += Count;
+                Out.Files.push_back({"Tiles/F_World_" + Suffix + ".json", Foliage});
+
                 Index += std::string(First ? "" : ",") + "\n    {\"tile\": " + std::to_string(Row * Columns + Column) + ", \"column\": " + std::to_string(Column) + ", \"row\": " +
-                         std::to_string(Row) + ", \"model\": \"Tiles/" + Name + ".gltf\", \"material\": \"Materials/M_World_" + Biome + ".material\"}";
+                         std::to_string(Row) + ", \"biome\": \"" + Biome + "\", \"model\": " + ModelRef("Assets/World/Tiles/" + Name + ".gltf") +
+                         ", \"material\": " + MaterialRef("Assets/World/Materials/M_World_" + Biome + ".material") + ", \"foliage\": \"assets/world/tiles/f_world_" + Suffix + ".json\"}";
                 First = false;
                 ++Out.Tiles;
             }
-        Out.Files.push_back({"WorldTiles.json", Index + "\n  ]\n}\n"});
+        Index += "\n  ],\n  \"plants\": [" + PlantTable + "\n  ],\n  \"grass\": [";
+        bool FirstPatch = true;
+        for (const GrassPatch& G : Kit::WorldGrassPatches())
+        {
+            const std::string Model = "Grass/SM_World_Grass_" + G.Card + ".gltf", Material = "Materials/M_World_Grass_" + G.Card + ".material";
+            // the patch lives in Assets/World/Grass, the kit's card textures in Assets/Art/Textures
+            std::string Gltf = G.Gltf;
+            const std::string From = "\"uri\":\"../Textures/", To = "\"uri\":\"../../Art/Textures/";
+            for (std::size_t At = Gltf.find(From); At != std::string::npos; At = Gltf.find(From, At + To.size())) Gltf.replace(At, From.size(), To);
+            Out.Files.push_back({Model, Gltf});
+            Out.Files.push_back({Material, G.Material});
+            Index += std::string(FirstPatch ? "" : ",") + "\n    {\"card\": \"" + G.Card + "\", \"model\": " + ModelRef("Assets/World/" + Model) + ", \"material\": " +
+                     MaterialRef("Assets/World/" + Material) + "}";
+            FirstPatch = false;
+        }
+        // which cards grow on each biome's open ground, and how densely (patches per 2 m cell)
+        Index += "\n  ],\n  \"biomes\": {\n    \"tropical\": {\"grass\": [\"GrassBlades\"], \"density\": 0.7},\n    \"mire\": {\"grass\": [\"Reeds\", \"GrassBlades\"], \"density\": 0.6},\n"
+                 "    \"moor\": {\"grass\": [\"HeatherSprig\", \"GrassDry\"], \"density\": 0.75},\n    \"cold\": {\"grass\": [\"GrassDry\", \"HeatherSprig\"], \"density\": 0.5},\n"
+                 "    \"fortress\": {\"grass\": [\"GrassBlades\", \"GrassDry\"], \"density\": 0.65},\n    \"volcanic\": {\"grass\": [\"GrassDry\"], \"density\": 0.12},\n"
+                 "    \"maw\": {\"grass\": [\"GrassDry\"], \"density\": 0.05}\n  }\n}\n";
+        Out.Files.push_back({"WorldTiles.json", Index});
         return Out;
     }
 }
