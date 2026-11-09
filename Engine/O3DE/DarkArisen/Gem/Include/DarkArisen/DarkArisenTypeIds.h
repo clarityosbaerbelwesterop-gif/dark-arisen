@@ -15,6 +15,9 @@ namespace DarkArisen
     inline constexpr const char* JakeInputComponentTypeId = "{ADB14533-41E7-4192-A2C6-711B7888F20A}";
     inline constexpr const char* EnemyBrainComponentTypeId = "{87EEEB01-C57D-4E8C-B6E1-AB4015B40DD2}";
     inline constexpr const char* OceanComponentTypeId = "{C1A5E0F2-7D34-4B9A-8E26-5F3B9D0A7C18}";
+    inline constexpr const char* WorldStreamerComponentTypeId = "{7964FB3F-9B96-438A-8371-CA711B44C291}";
+    inline constexpr const char* WorldRendererComponentTypeId = "{93E922B2-A546-493F-A9B6-0F313B713DA2}";
+    inline constexpr const char* WorldColliderComponentTypeId = "{9B1BB845-3FD1-452B-B22B-BD491A2F02A8}";
     inline constexpr const char* SwimmerComponentTypeId = "{3F9C2A71-5B8E-4D06-9E4A-1C7B6D2E8F35}";
     inline constexpr const char* WaterVolumeComponentTypeId = "{9A4E1D63-2C7F-4B58-8D19-6E3A5F0C2B74}";
     inline constexpr const char* OpeningDirectorComponentTypeId = "{5D2C8E17-9A40-4B6F-B3E1-7C0F2A9D4E58}";
@@ -41,6 +44,7 @@ namespace DarkArisen
     inline constexpr const char* MainMenuComponentTypeId = "{703B4BAE-5DD5-44B0-8355-A489968FA1D5}";
     inline constexpr const char* FrontEndRequestsTypeId = "{618DC656-363E-4D98-91CE-F93DA26CB818}";
     inline constexpr const char* OceanRequestsTypeId = "{E6B2D48A-9C07-4F1E-A35B-8D2C6F1E0B93}";
+    inline constexpr const char* WorldStreamingRequestsTypeId = "{CF906C72-3E8C-41FF-B8C1-82428C731807}";
     inline constexpr const char* SwimRequestsTypeId = "{B7D1E5A2-4F93-4C6E-A0B8-2D5C9E7F1A46}";
     inline constexpr const char* PresentationNotificationsTypeId = "{2C5E8A13-F74B-4D96-9A1C-5B3F7E0D8C62}";
     inline constexpr const char* CameraRigRequestsTypeId = "{8A2E6C14-D95B-4F37-B1E0-4C7A9D2F6E83}";

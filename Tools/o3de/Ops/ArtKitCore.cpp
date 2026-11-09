@@ -367,6 +367,44 @@ namespace DarkArisen::Tools::Art
         return Png;
     }
 
+    std::string EncodePng16Gray(const int Width, const int Height, const std::vector<std::uint16_t>& Pixels)
+    {
+        std::string Raw;
+        Raw.reserve(static_cast<std::size_t>((Width * 2 + 1) * Height));
+        for (int Y = 0; Y < Height; ++Y)
+        {
+            Raw.push_back(0);  // no filter
+            for (int X = 0; X < Width; ++X)
+            {
+                const std::uint16_t V = Pixels[static_cast<std::size_t>(Y * Width + X)];
+                Raw.push_back(static_cast<char>(V >> 8));
+                Raw.push_back(static_cast<char>(V & 0xFF));
+            }
+        }
+        std::string Z;
+        Z.push_back(static_cast<char>(0x78));
+        Z.push_back(static_cast<char>(0x01));
+        Z += Deflate(Raw);
+        std::uint32_t A = 1, B = 0;
+        for (const char C : Raw)
+        {
+            A = (A + static_cast<std::uint8_t>(C)) % 65521u;
+            B = (B + A) % 65521u;
+        }
+        Be32(Z, (B << 16) | A);
+        std::string Png("\x89PNG\r\n\x1a\n", 8);
+        std::string Header;
+        Be32(Header, static_cast<std::uint32_t>(Width));
+        Be32(Header, static_cast<std::uint32_t>(Height));
+        Header.push_back(16);
+        Header.push_back(0);  // greyscale
+        Header.append(3, '\0');
+        Chunk(Png, "IHDR", Header);
+        Chunk(Png, "IDAT", Z);
+        Chunk(Png, "IEND", {});
+        return Png;
+    }
+
     // ------------------------------------------------------------------ mesh builder
 
     void Mesh::Push(const Xf& T) { Stack.push_back(Stack.back() * T); }
@@ -645,8 +683,15 @@ namespace DarkArisen::Tools::Art
             std::string Pbr = "\"baseColorFactor\":[" + Num(Linear(M.BaseColor[0])) + "," + Num(Linear(M.BaseColor[1])) + "," + Num(Linear(M.BaseColor[2])) + "," +
                 Num(M.BaseColor[3]) + "],\"metallicFactor\":" + Num(M.Metallic) + ",\"roughnessFactor\":" + Num(M.Roughness);
             if (!M.BaseColorTexture.empty()) Pbr += ",\"baseColorTexture\":{\"index\":" + std::to_string(Texture(M.BaseColorTexture)) + "}";
+            int Orm = -1;
+            if (!M.OrmTexture.empty())
+            {
+                Orm = Texture(M.OrmTexture);
+                Pbr += ",\"metallicRoughnessTexture\":{\"index\":" + std::to_string(Orm) + "}";
+            }
             std::string Mat = "{\"name\":\"" + Escape(M.Name) + "\",\"pbrMetallicRoughness\":{" + Pbr + "}";
             if (!M.NormalTexture.empty()) Mat += ",\"normalTexture\":{\"index\":" + std::to_string(Texture(M.NormalTexture)) + "}";
+            if (Orm >= 0) Mat += ",\"occlusionTexture\":{\"index\":" + std::to_string(Orm) + "}";
             if (M.Mask) Mat += ",\"alphaMode\":\"MASK\",\"alphaCutoff\":" + Num(M.AlphaCutoff);
             if (M.DoubleSided) Mat += ",\"doubleSided\":true";
             return Mat + "}";
@@ -682,7 +727,8 @@ namespace DarkArisen::Tools::Art
                 Image = static_cast<int>(ImageIndex.size());
                 ImageIndex[File] = Image;
                 if (Image) Images += ",";
-                Images += "{\"uri\":\"../Textures/" + File + "\"}";
+                // kit textures by name under Textures; scanned art by its path under Assets/Art (e.g. Scanned/<set>/<file>)
+                Images += "{\"uri\":\"../" + (File.find('/') == std::string::npos ? "Textures/" + File : File) + "\"}";
             }
             else Image = Found->second;
             if (TextureCount) Textures += ",";
@@ -723,8 +769,8 @@ namespace DarkArisen::Tools::Art
             const std::size_t UvOffset = Bin.size();
             for (const Vertex& V : P.Vertices)
             {
-                PutF(Bin, Quantize(V.U, 1024.0));
-                PutF(Bin, Quantize(V.V, 1024.0));
+                PutF(Bin, Quantize(V.U, Model.GetUvSteps()));
+                PutF(Bin, Quantize(V.V, Model.GetUvSteps()));
             }
             const int UvAcc = Accessor(View(UvOffset, Bin.size() - UvOffset, 34962), 5126, P.Vertices.size(), "VEC2", "");
             const std::size_t IdxOffset = Bin.size();

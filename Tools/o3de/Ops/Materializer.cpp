@@ -1,6 +1,7 @@
 #include "Materializer.h"
 
 #include "ArtKit.h"
+#include "ArtKitArchipelago.h"
 #include "ArtKitCore.h"
 #include "Gltf.h"
 #include "Hash.h"
@@ -1433,6 +1434,12 @@ namespace DarkArisen::Tools
             const Art::TerrainArt Art = Work.Kit.Terrain(Spec);
             const std::string Terrain = Prefab.AddEntity("Terrain", {});
             Prefab.AddComponent(Terrain, "AZ::Render::EditorMeshComponent", MeshComponent(Work.Model(Art.Model)));
+            AddMaterialOverride(Prefab, Terrain, Art.Material);  // scanned layers (DarkArisenTerrain)
+            if (!Art.Ponds.empty())
+            {
+                const std::string Ponds = Prefab.AddEntity("Ponds", {});
+                Prefab.AddComponent(Ponds, "AZ::Render::EditorMeshComponent", MeshComponent(Work.Model(Art.Ponds)));
+            }
             AddMeshCollider(Prefab, Terrain, Work.ArtCollision("Assets/Art/Collision/SM_Art_Terrain_" + LevelName + "_Collision.gltf", Art.CollisionGltf));
             for (const Art::PlantPart& Part : Art.Cover)
             {
@@ -1503,6 +1510,13 @@ namespace DarkArisen::Tools
             Spec.Kind = Kind;
             Spec.Open = Open;
             Prefab.AddComponent(Entity, "AZ::Render::EditorMeshComponent", MeshComponent(Work.Model(Work.Kit.Authored(Spec))));
+            int PropIndex = 0;
+            for (const Art::PropPlacement& P : Art::Kit::AuthoredProps(Spec))
+            {
+                const std::string Prop = Prefab.AddEntity("Prop " + Name + " " + std::to_string(++PropIndex) + " " + Stem(P.Model),
+                    {At.X + P.X, At.Y + P.Y, At.Z - Size.Z + P.Z}, {0.0, 0.0, P.Yaw});
+                Prefab.AddComponent(Prop, "AZ::Render::EditorMeshComponent", MeshComponent(Work.Model(P.Model)));
+            }
             AddBoxCollider(Prefab, Entity, Size, false, {0.0, 0.0, Size.Z / 2.0});
         }
 
@@ -2002,6 +2016,42 @@ namespace DarkArisen::Tools
             return Prefab.Write();
         }
 
+        /**
+         * The open world: the archipelago (ContentSource/World/Archipelago.json) streamed around Jake by
+         * WorldStreamerComponent, drawn by WorldRendererComponent and walked on through WorldColliderComponent, the coarse 32 m mesh always resident as the
+         * horizon, the ocean everywhere. Its terrain, plantings and catalog come from DarkArisenO3DE world-build on
+         * the build host (Assets/World, not committed). Jake starts on the shore by Rexa Harbor.
+         */
+        std::string BuildWorld(Session& Work)
+        {
+            PrefabBuilder Prefab("L_World");
+            AddEnvironment(Work, Prefab);
+            AddSea(Work, Prefab);
+            const std::string Horizon = Prefab.AddEntity("World Horizon", {});
+            Prefab.AddComponent(Horizon, "AZ::Render::EditorMeshComponent", MeshComponent(Work.Model("Assets/World/SM_World_Coarse.gltf")));
+            AddMaterialOverride(Prefab, Horizon, "Assets/World/Materials/M_World_tropical.material");
+
+            Art::ArchipelagoSpec World;
+            std::string Problem;
+            const std::string* Source = Work.Text("ContentSource/World/Archipelago.json");
+            if (!Source || !Art::ReadArchipelago(*Source, World, Problem))
+            {
+                Work.Error("ContentSource/World/Archipelago.json: " + Problem);
+                return Prefab.Write();
+            }
+            constexpr double StartX = 5650.0, StartY = 5320.0;  // the shore east of Rexa Harbor (Places.json 5500, 5300)
+            const double Ground = Art::ArchipelagoHeight(World, StartX, StartY, nullptr);
+            const std::string Jake = AddJake(Work, Prefab, {StartX, StartY, std::floor(Ground * 100.0 + 0.5) / 100.0 + 0.5});
+
+            const std::string Streamer = Prefab.AddEntity("World Streamer", {});
+            JsonValue Follow = JsonObject();
+            Follow.Members["Follow"] = JsonString(Jake);
+            AddGame(Prefab, Streamer, WorldStreamerComponentTypeId, "WorldStreamerComponent", std::move(Follow));
+            AddGame(Prefab, Streamer, WorldRendererComponentTypeId, "WorldRendererComponent");
+            AddGame(Prefab, Streamer, WorldColliderComponentTypeId, "WorldColliderComponent");
+            return Prefab.Write();
+        }
+
         // ----------------------------------------------------------------------------- Chapter 2: Moran to Rexa
 
         // PROVISIONAL authoring defaults for Chapter 2 beats (the layouts give points, not sizes).
@@ -2377,6 +2427,7 @@ namespace DarkArisen::Tools
             std::string Credits = BuildCredits(Work);
             Work.Emit(ProjectDir + "/Levels/L_Credits/L_Credits.prefab", std::move(Credits));
             Work.Emit(ProjectDir + "/Levels/L_FrontEnd/L_FrontEnd.prefab", BuildFrontEnd(Work));
+            Work.Emit(ProjectDir + "/Levels/L_World/L_World.prefab", BuildWorld(Work));
             Work.EmitArt();
 
             // Physical coverage: every catalogue mission with a materialised level contract.

@@ -1,0 +1,22 @@
+/*
+ * Dark Arisen terrain, depth and shadow passes (the ground is not displaced).
+ * check: vs_6_2 DepthPassVS
+ */
+#include "DarkArisenTerrainCommon.azsli"
+
+struct VSInput
+{
+    float3 m_position : POSITION;
+};
+
+struct VSDepthOutput
+{
+    precise float4 m_position : SV_Position;
+};
+
+VSDepthOutput DepthPassVS(VSInput IN, uint instanceId : SV_InstanceID)
+{
+    VSDepthOutput OUT;
+    OUT.m_position = mul(ViewSrg::m_viewProjectionMatrix, mul(GetObjectToWorldMatrix(instanceId), float4(IN.m_position, 1.0)));
+    return OUT;
+}

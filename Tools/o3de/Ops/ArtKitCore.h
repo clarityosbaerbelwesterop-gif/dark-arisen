@@ -77,6 +77,8 @@ namespace DarkArisen::Tools::Art
     /** Height (0..65535) to a tangent-space normal map. */
     Image NormalFromHeight(const std::vector<int>& Height, int Size, int StrengthPercent);
     std::string EncodePng(const Image& Img);
+    /** 16-bit greyscale PNG (heightfields). */
+    std::string EncodePng16Gray(int Width, int Height, const std::vector<std::uint16_t>& Pixels);
 
     // ------------------------------------------------------------------ meshes
 
@@ -91,6 +93,7 @@ namespace DarkArisen::Tools::Art
         std::string Name;
         std::string BaseColorTexture;   // file name under Assets/Art/Textures, empty for none
         std::string NormalTexture;
+        std::string OrmTexture;         // occlusion (R), roughness (G), metal (B): glTF's packing, Poly Haven's ARM map
         std::array<double, 4> BaseColor{1, 1, 1, 1};
         double Metallic = 0.0;
         double Roughness = 0.8;
@@ -137,9 +140,16 @@ namespace DarkArisen::Tools::Art
         const std::vector<Part>& Parts() const { return PartList; }
         const std::string& Name() const { return MeshName; }
         void Append(const Mesh& Other);
+        /**
+         * UVs are written rounded to 1/Steps (byte-identical output on every compiler). The kit's 1/1024 is two
+         * texels of a 2k map; UVs spanning the whole 14 km world (macro colour, splat) need 1/2^20.
+         */
+        void SetUvSteps(const double Steps) { UvSteps = Steps; }
+        double GetUvSteps() const { return UvSteps; }
 
     private:
         std::string MeshName;
+        double UvSteps = 1024.0;
         std::vector<Part> PartList;
         std::vector<Xf> Stack{Xf{}};
         Part& PartFor(const Material& M);

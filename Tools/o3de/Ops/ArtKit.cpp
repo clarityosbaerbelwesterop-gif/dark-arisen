@@ -221,6 +221,7 @@ namespace DarkArisen::Tools::Art
     Kit::Kit(SourceReader Reader) : Humans(std::make_unique<HumanFactory>(Reader))
     {
         for (ArtFile& File : BuildTextures()) Output.push_back(std::move(File));
+        BuildSettlementModels();
 
         // Harlow: merchant ship, three masts under full sail, flush main deck at 2.2 m (layout authority).
         ShipSpec Harlow;

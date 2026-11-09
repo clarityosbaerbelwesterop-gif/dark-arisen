@@ -16,15 +16,17 @@
 
 The world is one archipelago of about 12 × 10 km (about 120 km², of which about 60–75 km² is land). For comparison, RDR2's map is about 75 km² and Elden Ring's Lands Between about 79 km². Sea lanes join the regions; there is no loading screen inside the world.
 
-| Region | Character | Main story |
+| Region | Character | Main story (from the contracts) |
 |---|---|---|
-| Moran | tropical start islands | Chapters 1–2 |
-| Rexa & The Mire | colonial port city, jungle, swamp | Chapters 2–5 |
-| Highmoore | highland basin, barrows, Crystal Caves | optional, mid-game |
-| Ashenmoor | volcanic island chain, ash jungle | Chapters 6–7 |
-| The Quiet Coast (Fjordlund) | cold fjords, villages, lighthouse chain | Chapters 7–8 |
-| Open Sea & Fort Carrion | naval waters, Armada fortress | Chapters 8–10 |
+| Moran | tropical start islands, Ethan's Grove | Chapters 1–2, 9 |
+| Rexa & The Mire | colonial port, Puerto de la Corona, swamp back routes | Chapters 3–5 |
+| Highmoore (the contested holding) | highland moor, Crystal Passage, northern oath | Chapters 5–7 |
+| Open Sea & Fort Carrion | naval waters, Armada occupation and final screen | Chapters 5, 7, 8, 10 |
+| Ashenmoor | volcanic island chain, ash jungle | no main-story contract yet: open-world region (exploration, side quests) |
+| The Quiet Coast (Fjordlund) | cold fjords, villages, lighthouse chain | no main-story contract yet: open-world region (exploration, side quests) |
 | The Maw | post-story only, never blocks the credits | — |
+
+Ship decks (La Liberación, Draven's flagship, the prison navigator) and the Harlow dream are places the story moves into, not regions on the map.
 
 Mission levels become **places in the world**. The 34 missions keep their contracts; their geometry is placed at world coordinates.
 
@@ -43,9 +45,21 @@ Mission levels become **places in the world**. The 34 missions keep their contra
 | **M9** | Voice and lip sync | 15 visemes, 9 emotions | Voices for every line, lip sync from the visemes, subtitle timing; the production choice is in the section below |
 | **M10** | Polish and Alpha | AzCore probe, CI | GPU runtime proof (GameLauncher), 60 fps, packaging for Windows and Linux, credits and attribution, the owner's playthrough and approval |
 
+## Progress (2026-11-09)
+
+- **M1, open-world foundation (built, not yet run in a GameLauncher).**
+  - `world-build` turns `Archipelago.json` into 397 streamed 500 m terrain tiles plus a horizon mesh and plants the land with about 930,000 plantings: woods, clearings, a tree line, undergrowth.
+  - The Gem's `WorldStreamerComponent`, `WorldRendererComponent` and `WorldColliderComponent` stream, draw and collide the world around Jake in `L_World`. The streamer is probed on O3DE 2605.0's AzCore runtime. The renderer and collider compile against the pinned Atom and physics headers in CI.
+  - Scanned CC0 ground layers and fixes to the terrain shader's re-tint and reflectance give the islands their colour.
+- **M2, regions (first pass).**
+  - `Locations.json` places the documents' 95 named locations and all 61 dungeons, checked by `ConversionTests`.
+  - Settlements stand on levelled ground. Rexa is a colonial street grid with a landmark on each district's square (cathedral, market hall, warehouses, mansion, watchtower); Ashenmoor has stilt villages, the Quiet Coast long houses under turf, and there are forts, camps and lighthouses.
+  - Every dungeon has a visible way in.
+  - Still to do: harbour quays and boats, paved streets, props in the streets, interiors, the story levels' own ground stamped into the world, and NPC routines (M6).
+
 ## Decisions taken here, revisable by the owner
 
-- **World geography** is the region table above. Moran is in the south-west; the sea lanes follow the chapter order.
+- **World geography** is the region table above. Moran is in the south-west; the sea lanes follow the chapter order, and Ashenmoor and the Quiet Coast lie off the main lanes as places to discover.
 - **Generated world data** (heightfields, splat maps) is built on the build host, not committed. The repository holds the generators and checksums. This settles the open "keep committing materialised art" question for world-scale data only.
 - **Lighting reference** is a physically based sun plus a CC0 HDRI sky. Renders use AgX tone mapping.
 

@@ -8,6 +8,7 @@
 #include "ArtKitLibrary.h"
 
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <map>
 
@@ -380,6 +381,28 @@ namespace DarkArisen::Tools::Art
             }
         }
 
+        /**
+         * Game-ready scanned model for a species, or empty to build the kit's own. Light scans are used as fetched
+         * (Assets/Art/Scanned/models); heavy ones as decimate-art writes them (Assets/Art/Scanned/game/<id>_<n>).
+         */
+        std::string ScannedPlant(const Species Kind, const int Variant, const Biome Where)
+        {
+            const auto Game = [](const char* Id, int N) { return std::string("Assets/Art/Scanned/game/") + Id + "_" + std::to_string(N) + ".gltf"; };
+            switch (Kind)
+            {
+            case Species::Fern: return "Assets/Art/Scanned/models/fern_02/fern_02_2k.gltf";
+            case Species::Stone:
+                return Variant % 2 == 0 ? "Assets/Art/Scanned/models/rock_moss_set_01/rock_moss_set_01_2k.gltf"
+                                        : "Assets/Art/Scanned/models/rock_moss_set_02/rock_moss_set_02_2k.gltf";
+            case Species::Boulder: return Variant % 2 == 0 ? Game("boulder_01", 0) : Game("namaqualand_boulder_02", 0);
+            case Species::Shrub: case Species::Gorse: return Game("searsia_lucida", (Variant * 3 + static_cast<int>(Kind)) % 7);
+            case Species::Broadleaf:
+                if (Where == Biome::Tropical) return Variant == 0 ? Game("island_tree_01", 0) : Variant == 1 ? Game("island_tree_02", 0) : Game("island_tree_03", 0);
+                return Variant == 1 ? Game("island_tree_02", 0) : Game("tree_small_02", 0);
+            default: return {};
+            }
+        }
+
         /** DarkArisenFoliage material (Assets/Materials/Foliage) for one part of a plant. */
         std::string FoliageMaterialJson(const Material& Part, const Wind& W, const double BendHeight, const bool GroundCover = false)
         {
@@ -390,7 +413,8 @@ namespace DarkArisen::Tools::Art
             J += "    \"materialTypeVersion\": 1,\n";
             J += "    \"propertyValues\": {\n";
             J += "        \"baseColor.color\": [" + Num(Part.BaseColor[0]) + ", " + Num(Part.BaseColor[1]) + ", " + Num(Part.BaseColor[2]) + "],\n";
-            J += "        \"baseColor.textureMap\": \"../../Art/Textures/" + Part.BaseColorTexture + "\",\n";
+            const std::string Texture = Part.BaseColorTexture.find('/') == std::string::npos ? "Textures/" + Part.BaseColorTexture : Part.BaseColorTexture;
+            J += "        \"baseColor.textureMap\": \"../../Art/" + Texture + "\",\n";
             J += "        \"opacity.alphaCutoff\": " + Num(Leaf ? Part.AlphaCutoff : 0.0) + ",\n";
             J += "        \"surface.roughness\": " + Num(Part.Roughness) + ",\n";
             J += std::string("        \"translucency.color\": ") + (Leaf ? "[0.55, 0.75, 0.25]" : "[0, 0, 0]") + ",\n";
@@ -402,13 +426,12 @@ namespace DarkArisen::Tools::Art
             J += "    }\n}\n";
             return J;
         }
-    }
-
-    TerrainArt Kit::Terrain(const TerrainSpec& Spec)
-    {
-        // One model per material of a plant, each with its own wind material; all parts of a plant share the
-        // bend height, so trunk and crown sway together.
-        const auto EmitPlant = [this](const std::string& Key, const Species Kind, const Mesh& Plant)
+        /**
+         * One model per material of a plant, each with its own wind material; all parts of a plant share the bend
+         * height, so trunk and crown sway together. With Out the models and materials are emitted; without, only
+         * their (deterministic) paths are named, for plantings that refer to what materialize already writes.
+         */
+        std::vector<PlantPart> PlantPartsOf(const std::string& Key, const Species Kind, const Mesh& Plant, std::vector<ArtFile>* Out)
         {
             const Wind W = WindFor(Kind);
             double Top = 0.05;
@@ -424,18 +447,27 @@ namespace DarkArisen::Tools::Art
             {
                 std::string Suffix = P.Mat.Name.rfind("M_Art_", 0) == 0 ? P.Mat.Name.substr(6) : P.Mat.Name;
                 const std::string Model = "SM_Art_Veg_" + Key + (Plant.Parts().size() > 1 ? "_" + Suffix : std::string());
-                Mesh One(Model);
-                One.Indexed(P.Mat, P.Vertices, P.Indices);
-                PlantPart Part{Emit(Model, WriteGltf(One, "Dark Arisen art kit (terrain)")), std::string()};
+                PlantPart Part{"Assets/Art/Models/" + Model + ".gltf", std::string()};
+                if (Out)
+                {
+                    Mesh One(Model);
+                    One.Indexed(P.Mat, P.Vertices, P.Indices);
+                    Out->push_back({Part.Model, WriteGltf(One, "Dark Arisen art kit (terrain)")});
+                }
                 if (Sways)
                 {
                     Part.Material = "Assets/Materials/Foliage/" + Model + ".material";
-                    Output.push_back({Part.Material, FoliageMaterialJson(P.Mat, W, std::floor(Top * 100.0 + 0.5) / 100.0)});
+                    if (Out) Out->push_back({Part.Material, FoliageMaterialJson(P.Mat, W, std::floor(Top * 100.0 + 0.5) / 100.0)});
                 }
                 Parts.push_back(std::move(Part));
             }
             return Parts;
-        };
+        }
+    }
+
+    TerrainArt Kit::Terrain(const TerrainSpec& Spec)
+    {
+        const auto EmitPlant = [this](const std::string& Key, const Species Kind, const Mesh& Plant) { return PlantPartsOf(Key, Kind, Plant, &Output); };
         TerrainArt Art;
         const BiomeRules Rules = RulesFor(Spec.Kind);
         const std::uint32_t Seed = Spec.Seed;
@@ -684,6 +716,81 @@ namespace DarkArisen::Tools::Art
                 for (int K = 0; K < 3; ++K) Px[K] = static_cast<std::uint8_t>(std::lround(Clamp(C[static_cast<std::size_t>(K)] * Grain, 0.0, 1.0) * 255.0));
             }
         }
+        // Splat for the DarkArisenTerrain material: weights of four scanned layers (ground, path, rock, accent)
+        // from the same masks as the macro colour, at half its resolution.
+        {
+            const int Sw = std::max(2, Tw / 2), Sh = std::max(2, Th / 2);
+            Image Splat;
+            Splat.Width = Sw;
+            Splat.Height = Sh;
+            Splat.Channels = 4;
+            Splat.Pixels.assign(static_cast<std::size_t>(Sw * Sh * 4), 0);
+            for (int Sy = 0; Sy < Sh; ++Sy)
+            {
+                for (int Sx = 0; Sx < Sw; ++Sx)
+                {
+                    const double X = Ex0 + (Sx + 0.5) * (Ex1 - Ex0) / Sw, Y = Ey1 - (Sy + 0.5) * (Ey1 - Ey0) / Sh;
+                    const auto [Z, Nn] = Bilinear(X, Y);
+                    const Near N = Nearest(X, Y);
+                    const double P = 0.65 * Fractal(X, Y, 30.0, 3, Seed + 11u) + 0.35 * Fractal(X, Y, 8.0, 2, Seed + 17u);
+                    const double Q = Fractal(X, Y, 5.0, 2, Seed + 13u);
+                    const double Road = 1.0 - SmoothStep(-0.6, 1.0 + 0.6 * Q, N.D);
+                    const double Bank = Ponds.empty() ? 0.0 : SmoothStep(1.12, 0.86, PondAt(X, Y));
+                    double W1 = 0.0, W2 = SmoothStep(0.80, 0.62, Nn.Z), W3 = 0.0;  // bare rock from about 40 degrees
+                    switch (Spec.Kind)
+                    {
+                    case Biome::Moor: W1 = Road + Bank; W3 = SmoothStep(0.36, 0.26, P); break;
+                    case Biome::Tropical:
+                        W1 = SmoothStep(Spec.BaseZ + 0.4, Spec.BaseZ - 0.1, Z) * SmoothStep(10.0, 16.0, N.D);
+                        W3 = Road + 0.6 * SmoothStep(0.58, 0.72, P);
+                        break;
+                    case Biome::Mire: W1 = Road + Bank + SmoothStep(Spec.BaseZ - 0.1, Spec.BaseZ - 0.5, Z); W3 = SmoothStep(0.45, 0.6, P); break;
+                    case Biome::Grove: W1 = Road; W3 = SmoothStep(0.52, 0.66, P); break;
+                    case Biome::Dream: default: W1 = SmoothStep(0.4, 0.7, P); break;
+                    }
+                    W1 = Clamp(W1, 0.0, 1.0) * (1.0 - W2);
+                    W3 = Clamp(W3, 0.0, 1.0) * (1.0 - W2) * (1.0 - W1);
+                    const double W0 = Clamp(1.0 - W1 - W2 - W3, 0.0, 1.0);
+                    std::uint8_t* Px = &Splat.Pixels[static_cast<std::size_t>((Sy * Sw + Sx) * 4)];
+                    const double W[4] = {W0, W1, W2, W3};
+                    for (int K = 0; K < 4; ++K) Px[K] = static_cast<std::uint8_t>(std::lround(Clamp(W[K], 0.0, 1.0) * 255.0));
+                }
+            }
+            Output.push_back({"Assets/Art/Textures/T_TerrainSplat_" + Spec.Name + ".png", EncodePng(Splat)});
+
+            // scanned layers per biome: ground, path, rock (triplanar), accent; tiles are the scans' real widths
+            struct Layer
+            {
+                const char* Set;
+                double Tile;
+            };
+            // ground: lush leafy grass on the islands and in the groves, withered grass on the moors
+            const Layer Grass{Spec.Kind == Biome::Moor ? "withered_grass" : "leafy_grass", 2.0}, Forest{"forrest_ground_01", 2.0}, Cliff{"rock_face_03", 2.7}, Mossy{"rock_pitted_mossy", 1.0},
+                SandL{"sand_01", 1.5}, MudL{"brown_mud_02", 1.3};
+            // temperate biomes break out in grey, mossy rock; the pale sandstone scan is for the tropics only
+            std::array<Layer, 4> L{Grass, Forest, Mossy, MudL};
+            if (Spec.Kind == Biome::Tropical) L = {Grass, SandL, Cliff, Forest};
+            if (Spec.Kind == Biome::Mire) L = {Grass, MudL, Mossy, Forest};
+            if (Spec.Kind == Biome::Dream) L = {MudL, Forest, Cliff, Mossy};
+            using GltfBits::Num;
+            std::string J = "{\n    \"materialType\": \"../Types/DarkArisenTerrain.materialtype\",\n    \"materialTypeVersion\": 1,\n    \"propertyValues\": {\n";
+            for (int K = 0; K < 4; ++K)
+            {
+                const std::string Base = std::string("../../Art/Scanned/") + L[static_cast<std::size_t>(K)].Set + "/" + L[static_cast<std::size_t>(K)].Set;
+                const std::string Group = "        \"layer" + std::to_string(K);
+                J += Group + ".arm\": \"" + Base + "_arm_2k.jpg\",\n";
+                J += Group + ".color\": \"" + Base + "_diff_2k.jpg\",\n";
+                J += Group + ".normal\": \"" + Base + "_nor_gl_2k.jpg\",\n";
+            }
+            J += "        \"macro.blendSharpness\": 3,\n";
+            J += "        \"macro.color\": \"../../Art/Textures/T_Terrain_" + Spec.Name + ".png\",\n";
+            J += "        \"macro.splat\": \"../../Art/Textures/T_TerrainSplat_" + Spec.Name + ".png\",\n";
+            J += "        \"macro.strength\": 0.8,\n";
+            J += "        \"macro.tiles\": [" + Num(L[0].Tile) + ", " + Num(L[1].Tile) + ", " + Num(L[2].Tile) + ", " + Num(L[3].Tile) + "]\n    }\n}\n";
+            Art.Material = "Assets/Materials/Terrain/M_Terrain_" + Spec.Name + ".material";
+            Output.push_back({Art.Material, J});
+        }
+
         const std::string TextureName = "T_Terrain_" + Spec.Name + ".png";
         Output.push_back({"Assets/Art/Textures/" + TextureName, EncodePng(Colour)});
         Material GroundMat;
@@ -749,6 +856,13 @@ namespace DarkArisen::Tools::Art
                 default: break;
                 }
                 Tuft(Cover, Mat(Card), {X, Y, Z - 0.04}, W, Hh, R.Range(0.0, Pi), 2);
+                if (N.D < 28.0)
+                {
+                    // a second, smaller tuft in the same cell where the player walks: a fuller sward at eye level
+                    const double X2 = X + R.Range(-0.9, 0.9), Y2 = Y + R.Range(-0.9, 0.9);
+                    const double W2 = W * R.Range(0.6, 0.9), H2 = Hh * R.Range(0.7, 1.0), Yaw2 = R.Range(0.0, Pi);
+                    if (Nearest(X2, Y2).D >= 0.9 && !InKeep(X2, Y2, 0.5)) Tuft(Cover, Mat(Card), {X2, Y2, Surface(X2, Y2) - 0.04}, W2, H2, Yaw2, 2);
+                }
             }
         }
 
@@ -781,13 +895,26 @@ namespace DarkArisen::Tools::Art
                 if (Pick->Tree && NormalAt(static_cast<int>(Fx), static_cast<int>(Fy)).Z < 0.86) continue;
                 const int Variant = static_cast<int>(R.Unit() * 3.0);
                 const std::string Key = std::string(SpeciesName(Pick->Kind)) + "_" + std::to_string(Variant);
-                auto Known = PlantModels.find(Key);
-                if (Known == PlantModels.end()) Known = PlantModels.emplace(Key, EmitPlant(Key, Pick->Kind, BuildPlant(Pick->Kind, Variant, Spec.Kind))).first;
-                Art.Plants.push_back({Known->second, X, Y, Z - 0.05, R.Range(0.0, 360.0), R.Range(0.85, 1.2)});
+                // the scanned pick depends on the biome; the kit's own models do not (their names stay Species_Variant)
+                const std::string CacheKey = Key + "@" + std::to_string(static_cast<int>(Spec.Kind));
+                auto Known = PlantModels.find(CacheKey);
+                if (Known == PlantModels.end())
+                {
+                    // scanned CC0 models where a game-ready one exists (ContentSource/ThirdParty/PolyHaven/Scanned.lock), else the kit's own
+                    const std::string Scanned = ScannedPlant(Pick->Kind, Variant, Spec.Kind);
+                    std::vector<PlantPart> Parts;
+                    if (!Scanned.empty()) Parts.push_back({Scanned, ""});
+                    else Parts = EmitPlant(Key, Pick->Kind, BuildPlant(Pick->Kind, Variant, Spec.Kind));
+                    Known = PlantModels.emplace(CacheKey, std::move(Parts)).first;
+                }
+                const double Yaw = R.Range(0.0, 360.0);
+                const double Scale = R.Range(0.85, 1.2);
+                Art.Plants.push_back({Known->second, X, Y, Z - 0.05, Yaw, Scale, Pick->Tree});
             }
         }
 
-        // ---- still water: one disc per pond, its rim buried in the bank
+        // ---- still water: one disc per pond, its rim buried in the bank (its own model: the ground takes the terrain material)
+        Mesh Water("SM_Art_Ponds_" + Spec.Name);
         for (const Pond& P : Ponds)
         {
             const double Rw = P.R * std::sqrt(1.0 - 0.15 / (PondDepth + 0.3));
@@ -800,7 +927,7 @@ namespace DarkArisen::Tools::Art
                 WV.push_back(Vertex{V3{P.X + Cos(A) * Rw, P.Y + Sin(A) * Rw, P.Level}, V3{0, 0, 1}, 0.5 + 0.5 * Cos(A), 0.5 - 0.5 * Sin(A)});
                 WI.insert(WI.end(), {0u, static_cast<std::uint32_t>(1 + K), static_cast<std::uint32_t>(1 + (K + 1) % Segments)});
             }
-            Ground.Indexed(Mat(M::PondWater), WV, WI);
+            Water.Indexed(Mat(M::PondWater), WV, WI);
         }
 
         for (const Mesh::Part& P : Cover.Parts())
@@ -815,8 +942,165 @@ namespace DarkArisen::Tools::Art
             Art.Cover.push_back(std::move(Part));
         }
 
+        if (!Ponds.empty()) Art.Ponds = Emit(Water.Name(), WriteGltf(Water, "Dark Arisen art kit (terrain)"));
         Art.Model = Emit(Ground.Name(), WriteGltf(Ground, "Dark Arisen art kit (terrain)"));
         Art.CollisionGltf = WriteCollisionGltf(Collide);
         return Art;
+    }
+}
+
+namespace DarkArisen::Tools::Art
+{
+    double Kit::WorldWoods(const double X, const double Y, const std::uint32_t Seed)
+    {
+        // the fractal clusters near 0.5: a narrow ramp gives woods with edges and open country between them
+        return SmoothStep(0.45, 0.56, Fractal(X, Y, 380.0, 4, Seed + 11u));
+    }
+
+    std::vector<Planting> Kit::WorldVegetation(const WorldTileSpec& Spec, std::map<std::string, std::vector<PlantPart>, std::less<>>& Cache)
+    {
+        std::vector<Planting> Plants;
+        const BiomeRules Rules = RulesFor(Spec.Kind);
+        const auto Up = [&Spec](const double X, const double Y)
+        {
+            const double Dx = (Spec.Height(X + 2.0, Y) - Spec.Height(X - 2.0, Y)) / 4.0, Dy = (Spec.Height(X, Y + 2.0) - Spec.Height(X, Y - 2.0)) / 4.0;
+            return 1.0 / std::sqrt(1.0 + Dx * Dx + Dy * Dy);
+        };
+        const auto Cleared = [&Spec](const double X, const double Y)
+        {
+            for (const WorldTileSpec::Clearing& C : Spec.Clear)
+                if ((X - C.X) * (X - C.X) + (Y - C.Y) * (Y - C.Y) < C.Radius * C.Radius) return true;
+            return false;
+        };
+        const auto Plant = [&](const Species Kind, Rng& R, const double X, const double Y, const double Z, const double Woods, const bool Tree)
+        {
+            const int Variant = static_cast<int>(R.Unit() * 3.0);
+            const std::string Key = std::string(SpeciesName(Kind)) + "_" + std::to_string(Variant);
+            const std::string CacheKey = Key + "@" + std::to_string(static_cast<int>(Spec.Kind));
+            auto Known = Cache.find(CacheKey);
+            if (Known == Cache.end())
+            {
+                // scanned CC0 models where a game-ready one exists, else the kit's own (materialize emits those)
+                const std::string Scanned = ScannedPlant(Kind, Variant, Spec.Kind);
+                std::vector<PlantPart> Parts;
+                if (!Scanned.empty()) Parts.push_back({Scanned, ""});
+                else Parts = PlantPartsOf(Key, Kind, BuildPlant(Kind, Variant, Spec.Kind), nullptr);
+                Known = Cache.emplace(CacheKey, std::move(Parts)).first;
+            }
+            const double Yaw = R.Range(0.0, 360.0);
+            // the scanned broadleaf are young trees of 3 to 5 m: grown to a canopy of 6 to 12 m in the world's woods
+            const bool Grown = Kind == Species::Broadleaf && !Known->second.empty() && Known->second.front().Model.find("/Scanned/") != std::string::npos;
+            const double Scale = R.Range(0.85, 1.2) * (Tree ? 0.9 + 0.25 * Woods : 1.0) * (Grown ? 1.5 + 0.7 * Woods : 1.0);
+            Plants.push_back({Known->second, X, Y, Z - 0.05, Yaw, Scale, Tree});
+        };
+        const auto Cells = [&Spec](const double Size) { return static_cast<int>(Spec.Size / Size); };
+        const auto Origin = [&Spec](const double Size, const int I, const int J)
+        {
+            return std::pair<std::int64_t, std::int64_t>{static_cast<std::int64_t>(std::floor(Spec.X0 / Size)) + I, static_cast<std::int64_t>(std::floor(Spec.Y0 / Size)) + J};
+        };
+
+        // trees on a 6 m grid (world-anchored, so the same whichever tile asks): a closed canopy in the woods, a few
+        // standing alone on open ground; palms along the shore, the biome's broadleaf or conifers inland
+        std::vector<std::pair<Species, double>> TreeKinds;
+        double Previous = 0.0;
+        for (const PlantKind& P : Rules.Plants)
+        {
+            if (P.Tree) TreeKinds.push_back({P.Kind, P.Share - Previous});
+            Previous = P.Share;
+        }
+        const double TreeCell = 6.0;
+        for (int J = 0; J < Cells(TreeCell) && !TreeKinds.empty(); ++J)
+        {
+            for (int I = 0; I < Cells(TreeCell); ++I)
+            {
+                const auto [Gx, Gy] = Origin(TreeCell, I, J);
+                Rng R(Mix(static_cast<std::uint32_t>(Gy * 50331653 + Gx * 12582917) ^ (Spec.Seed * 131u)));
+                const double Jx = R.Unit(), Jy = R.Unit();
+                const double X = (static_cast<double>(Gx) + 0.1 + 0.8 * Jx) * TreeCell, Y = (static_cast<double>(Gy) + 0.1 + 0.8 * Jy) * TreeCell;
+                const double Woods = WorldWoods(X, Y, Spec.Seed);
+                if (R.Unit() > 0.02 + 0.9 * Woods) continue;
+                const double Z = Spec.Height(X, Y);
+                const bool Swamp = Spec.Kind == Biome::Mire;
+                if (Z < (Swamp ? 0.3 : 2.5) || Z > Spec.TreeLine || Cleared(X, Y) || Up(X, Y) < 0.86) continue;
+                Species Kind = TreeKinds.front().first;
+                const bool Coastal = Spec.Kind == Biome::Tropical || Spec.Kind == Biome::Grove;
+                const double Roll = R.Unit();
+                if (Coastal) Kind = Roll < (Z < 14.0 ? 0.75 : 0.12) ? Species::Palm : Species::Broadleaf;
+                else
+                {
+                    double Total = 0.0, Acc = 0.0;
+                    for (const auto& K : TreeKinds) Total += K.second;
+                    for (const auto& K : TreeKinds)
+                    {
+                        Acc += K.second;
+                        if (Roll * Total < Acc) { Kind = K.first; break; }
+                    }
+                }
+                Plant(Kind, R, X, Y, Z, Woods, true);
+            }
+        }
+
+        // undergrowth and rocks on the biome's own grid, thicker along the edges of the woods than on open ground
+        const double CellSize = Rules.CellSize;
+        for (int J = 0; J < Cells(CellSize); ++J)
+        {
+            for (int I = 0; I < Cells(CellSize); ++I)
+            {
+                const auto [Gx, Gy] = Origin(CellSize, I, J);
+                Rng R(Mix(static_cast<std::uint32_t>(Gy * 92821 + Gx * 68917) ^ (Spec.Seed * 31u)));
+                const double Jx = R.Unit(), Jy = R.Unit();
+                const double X = (static_cast<double>(Gx) + 0.15 + 0.7 * Jx) * CellSize, Y = (static_cast<double>(Gy) + 0.15 + 0.7 * Jy) * CellSize;
+                const double Roll = R.Unit();
+                const PlantKind* Pick = nullptr;
+                for (const PlantKind& P : Rules.Plants)
+                {
+                    if (Roll < P.Share)
+                    {
+                        Pick = &P;
+                        break;
+                    }
+                }
+                if (!Pick || Pick->Tree) continue;
+                const double Woods = WorldWoods(X, Y, Spec.Seed);
+                if (R.Unit() > 0.55 + 0.45 * Woods) continue;
+                if (Cleared(X, Y)) continue;
+                const double Z = Spec.Height(X, Y);
+                if (Z < (Pick->Kind == Species::Reeds ? 0.3 : 1.2) || Up(X, Y) < 0.74) continue;
+                Plant(Pick->Kind, R, X, Y, Z, Woods, false);
+            }
+        }
+        return Plants;
+    }
+
+    std::vector<GrassPatch> Kit::WorldGrassPatches()
+    {
+        struct Card
+        {
+            M Id;
+            const char* Name;
+            int Tufts;
+            double W0, W1, H0, H1;
+        };
+        static const Card Cards[] = {{M::GrassBlades, "GrassBlades", 6, 0.6, 1.0, 0.3, 0.6}, {M::GrassDry, "GrassDry", 7, 0.6, 1.0, 0.35, 0.7},
+            {M::HeatherSprig, "HeatherSprig", 8, 0.6, 0.9, 0.28, 0.45}, {M::Reeds, "Reeds", 3, 0.7, 1.1, 0.9, 1.5}};
+        std::vector<GrassPatch> Out;
+        for (const Card& C : Cards)
+        {
+            Mesh Patch(std::string("SM_World_Grass_") + C.Name);
+            Rng R(Mix(static_cast<std::uint32_t>(C.Id) * 2654435761u + 17u));
+            for (int K = 0; K < C.Tufts; ++K)
+            {
+                // one tuft per quarter of the 2 m square, jittered, so neighbouring patches tile without clumps
+                const double X = (K % 2 == 0 ? -0.5 : 0.5) + R.Range(-0.4, 0.4), Y = ((K / 2) % 2 == 0 ? -0.5 : 0.5) + R.Range(-0.4, 0.4);
+                const double W = R.Range(C.W0, C.W1), H = R.Range(C.H0, C.H1), Yaw = R.Range(0.0, Pi);
+                Tuft(Patch, Mat(C.Id), {X, Y, -0.04}, W, H, Yaw, 2);
+            }
+            const Wind Grass{0.09, 0.55, 0.25};
+            std::string Material = FoliageMaterialJson(Mat(C.Id), Grass, 0.6, true);
+            const std::string From = "\"../Types/DarkArisenFoliage.materialtype\"", To = "\"../../Materials/Types/DarkArisenFoliage.materialtype\"";
+            Material.replace(Material.find(From), From.size(), To);
+            Out.push_back({C.Name, WriteGltf(Patch, "Dark Arisen world-build"), Material});
+        }
+        return Out;
     }
 }

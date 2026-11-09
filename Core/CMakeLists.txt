@@ -32,6 +32,7 @@ add_library(DarkArisenCore STATIC
     Source/LivingWorld.cpp
     Source/FrontEnd.cpp
     Source/CharacterMotion.cpp
+    Source/WorldStreaming.cpp
 )
 add_library(DarkArisen::Core ALIAS DarkArisenCore)
 target_include_directories(DarkArisenCore PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Include)
@@ -67,6 +68,7 @@ if(DARKARISEN_CORE_TESTS)
         Tests/FrontEndTests.cpp
         Tests/UnrealParityTests.cpp
         Tests/CharacterMotionTests.cpp
+        Tests/WorldStreamingTests.cpp
     )
     target_link_libraries(DarkArisenCoreTests PRIVATE DarkArisen::Core)
     # Parity tests read the Unreal reference sources so the two implementations cannot drift.

@@ -87,14 +87,80 @@ namespace DarkArisen::Tools::Art
     {
         std::vector<PlantPart> Parts;  // shared plant models
         double X, Y, Z, Yaw, Scale;    // degrees
+        bool Tree;                     // a tree (seen from afar) rather than undergrowth or a rock
     };
 
     struct TerrainArt
     {
-        std::string Model;           // the ground with its ground cover
+        std::string Model;           // the ground
+        std::string Material;        // its DarkArisenTerrain material (scanned layers, splat, macro colour)
+        std::string Ponds;           // still water of the tarns and pools, empty when there are none
         std::string CollisionGltf;   // walkable ground triangles
         std::vector<Planting> Plants;
         std::vector<PlantPart> Cover;  // ground cover cards, one model per card material, placed at the origin
+    };
+
+    /** One open-world tile to plant (Kit::WorldVegetation): ground from the archipelago, the island's biome. */
+    struct WorldTileSpec
+    {
+        Biome Kind = Biome::Tropical;
+        double X0 = 0, Y0 = 0, Size = 500;               // world metres, X east, Y north
+        std::function<double(double, double)> Height;    // ground height at a world point
+        struct Clearing
+        {
+            double X, Y, Radius;                         // a place (town, fort, set piece): nothing grows inside
+        };
+        std::vector<Clearing> Clear;
+        double TreeLine = 1e9;                           // no trees above this height (m)
+        std::uint32_t Seed = 1;
+    };
+
+    /** A grass patch model for the runtime's ground cover: a few crossed cards on a 2 m square, foot at z = 0. */
+    struct GrassPatch
+    {
+        std::string Card;      // GrassBlades, GrassDry, HeatherSprig, Reeds
+        std::string Gltf;      // the patch model
+        std::string Material;  // its DarkArisenFoliage material (ground-cover sway), paths relative to Assets/World/Materials
+    };
+
+    /** Building traditions of the open world's settlements (ArtKitSettlements.cpp). */
+    enum class Tradition
+    {
+        Colonial,    // Rexa: plaster town houses under clay tiles
+        Stilt,       // Ashenmoor and the Mire: raised timber houses, steep hipped roofs
+        Nordic,      // the Quiet Coast: long timber houses on stone footings under turf
+        Camp,        // camps and encampments: canvas tents
+        Fort,        // curtain walls with towers
+        Lighthouse,  // a whitewashed tower and its keeper's house
+        Entrance,    // a dungeon's way in: a cave mouth in the rock or a carved doorway with steps down
+        Civic        // a town's landmark on its square: cathedral, market hall, warehouse, mansion, watchtower
+    };
+
+    /** Variants of Tradition::Civic. */
+    enum class Landmark
+    {
+        None = -1, Cathedral = 0, MarketHall = 1, Warehouse = 2, Mansion = 3, Watchtower = 4
+    };
+
+    struct SettlementSpec
+    {
+        Tradition Kind = Tradition::Colonial;
+        double X = 0, Y = 0, Radius = 100;               // world metres
+        std::function<double(double, double)> Ground;     // the site's (levelled) ground
+        double MinGround = 1.0;                           // nothing is built lower (shore, ponds)
+        int MaxBuildings = 40;
+        double Fill = 0.8;                                // share of street plots built on
+        Landmark Centre = Landmark::None;                 // what stands on the square
+        double StreetAngle = 0.0;                         // colonial towns: the grid's axis (degrees), shared by a city's districts
+        std::uint32_t Seed = 1;
+    };
+
+    /** One building of a settlement: a shared model, its placement and a box for collision. */
+    struct Structure
+    {
+        std::string Model;                       // project-relative glTF
+        double X, Y, Z, Yaw;                     // base centre, degrees about Z
+        double HalfX, HalfY, Height;             // collision box in the model's frame
     };
 
     /** A named story box (its top is the floor the anchors mark), dressed by Kit::Authored. */
@@ -104,6 +170,14 @@ namespace DarkArisen::Tools::Art
         double SizeX = 0, SizeY = 0, SizeZ = 0;
         Biome Kind = Biome::Moor;
         unsigned Open = 0;                    // edges the route crosses (1 -X, 2 +X, 4 -Y, 8 +Y): no walls there
+    };
+
+    /** A scanned prop (Assets/Art/Scanned) placed in a set piece's frame: origin at the piece's base centre, Z up. */
+    struct PropPlacement
+    {
+        std::string Model;            // project-relative glTF
+        double X = 0, Y = 0, Z = 0;   // metres
+        double Yaw = 0;               // degrees about Z
     };
 
     class Kit
@@ -143,7 +217,22 @@ namespace DarkArisen::Tools::Art
         TerrainArt Terrain(const TerrainSpec& Spec);
         /** Architecture for a named story box by what its name says it is (ArtKitAuthored.cpp). */
         std::string Authored(const AuthoredSpec& Spec);
+        /** Scanned props for an authored story box by its style: guns on defences, stores in yards and on decks, a hearth
+         * in a camp field, a table in an interior; only along closed edges and in corners, never on the route. */
+        static std::vector<PropPlacement> AuthoredProps(const AuthoredSpec& Spec);
         static constexpr double GroundTileSize = 50.0;
+        /**
+         * Trees, shrubs, ferns and rocks of an open-world tile by its biome, clustered into woods and clearings;
+         * scanned CC0 models where a game-ready one exists, else the kit's plants (which materialize emits).
+         * Cache keeps the parts of each plant across tiles.
+         */
+        static std::vector<Planting> WorldVegetation(const WorldTileSpec& Spec, std::map<std::string, std::vector<PlantPart>, std::less<>>& Cache);
+        /** How wooded the open world is at a point, 0 (open ground) to 1 (the heart of a wood): plantings and macro colour agree. */
+        static double WorldWoods(double X, double Y, std::uint32_t Seed);
+        /** Where a settlement's buildings stand on its ground (a pure function: the same streets on every build). */
+        static std::vector<Structure> SettlementLayout(const SettlementSpec& Spec);
+        /** The ground-cover patches the runtime scatters near the player, one per card. */
+        static std::vector<GrassPatch> WorldGrassPatches();
         /** Quay wall along a harbour edge (x = 0 is the quay face, water towards -X), Length along Y. */
         std::string HarborEdge(double Length);
         /** Row of town houses 6 m deep centred on the origin, Length along X; doors face +Y (north) or -Y. */
@@ -170,5 +259,7 @@ namespace DarkArisen::Tools::Art
         std::map<std::string, std::vector<PlantPart>, std::less<>> PlantModels;
 
         std::string Emit(const std::string& Name, const std::string& Gltf);
+        /** Every building variant SettlementLayout may place (ArtKitSettlements.cpp). */
+        void BuildSettlementModels();
     };
 }

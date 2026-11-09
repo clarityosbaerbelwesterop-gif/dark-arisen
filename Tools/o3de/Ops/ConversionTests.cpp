@@ -1,3 +1,4 @@
+#include "ArtKitArchipelago.h"
 #include "ArtKitCore.h"
 #include "ArtKitHumans.h"
 #include "Gltf.h"
@@ -14,6 +15,7 @@
 #include <iostream>
 #include <iterator>
 #include <map>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -273,6 +275,80 @@ int main()
         Bad = Attack;
         Bad.Contact = 3.0;
         Check(!Humans.BuildLibraryMotion(Bad, Cycle, Problem), "a hit outside its cut fails closed");
+    }
+
+    // Open world: every materialised level has a place, land places on land, sea places at sea.
+    {
+        const auto ReadText = [](const fs::path& P)
+        {
+            std::ifstream In(P, std::ios::binary);
+            return std::string((std::istreambuf_iterator<char>(In)), std::istreambuf_iterator<char>());
+        };
+        const fs::path Root(DARKARISEN_REPO_ROOT);
+        DarkArisen::Tools::Art::ArchipelagoSpec World;
+        std::string Problem;
+        Check(DarkArisen::Tools::Art::ReadArchipelago(ReadText(Root / "ContentSource/World/Archipelago.json"), World, Problem), "archipelago reads");
+        JsonValue Places;
+        Check(JsonReader::Parse(ReadText(Root / "ContentSource/World/Places.json"), Places, Problem) && Places.Find("places"), "places read");
+        std::map<std::string, const JsonValue*> ByLevel;
+        if (Places.Find("places"))
+            for (const JsonValue& P : Places.Find("places")->Items) ByLevel[P.Find("level")->Text] = &P;
+        for (const auto& Entry : fs::directory_iterator(Root / "Engine/O3DE/DarkArisen/Levels"))
+        {
+            if (!Entry.is_directory()) continue;
+            const std::string Level = Entry.path().filename().string();
+            const auto Found = ByLevel.find(Level);
+            Check(Found != ByLevel.end(), ("level has a place in the world: " + Level).c_str());
+            if (Found == ByLevel.end()) continue;
+            const std::string Kind = Found->second->Find("kind")->Text;
+            if (Kind != "land" && Kind != "sea") continue;
+            const double Z = DarkArisen::Tools::Art::ArchipelagoHeight(World, Found->second->Find("x")->Number, Found->second->Find("y")->Number, nullptr);
+            Check(Kind == "land" ? Z > 0.5 : Z < -1.0, (Level + " lies " + (Kind == "land" ? "on land" : "at sea") + " (height " + std::to_string(Z) + " m)").c_str());
+        }
+
+        // every named location of the design and every dungeon of the reconciliation stands on land of its region
+        JsonValue Locations, Dungeons;
+        Check(JsonReader::Parse(ReadText(Root / "ContentSource/World/Locations.json"), Locations, Problem) && Locations.Find("locations"), "locations read");
+        Check(JsonReader::Parse(ReadText(Root / "ContentSource/ContentScale/DungeonReconciliation.json"), Dungeons, Problem), "dungeon reconciliation read");
+        std::map<std::string, int> DungeonSeen;
+        if (Dungeons.Find("namedDungeons") && Dungeons.Find("minorDungeons"))
+            for (const char* List : {"namedDungeons", "minorDungeons"})
+                for (const JsonValue& D : Dungeons.Find(List)->Items) DungeonSeen[D.Find("id")->Text] = 0;
+        std::vector<std::pair<double, double>> DungeonAt;
+        std::set<std::string> Ids;
+        if (Locations.Find("locations"))
+        {
+            for (const JsonValue& L : Locations.Find("locations")->Items)
+            {
+                const std::string Id = L.Find("id")->Text, Kind = L.Find("kind")->Text, Region = L.Find("region")->Text;
+                const double X = L.Find("x")->Number, Y = L.Find("y")->Number;
+                Check(Ids.insert(Id).second, ("location id is unique: " + Id).c_str());
+                int Owner = -1;
+                const double Z = DarkArisen::Tools::Art::ArchipelagoHeight(World, X, Y, &Owner);
+                Check(Z > 0.3, (Id + " stands on land (height " + std::to_string(Z) + " m)").c_str());
+                // sea dungeons (wrecks, reefs, drowned harbours) lie on any coast; the rest on their region's islands
+                const bool AnyCoast = Kind == "dungeon" && Region == "OpenSea";
+                Check(AnyCoast || (Owner >= 0 && World.Islands[static_cast<std::size_t>(Owner)].Region == Region),
+                    (Id + " lies in its region " + Region).c_str());
+                Check(!L.Find("source")->Text.empty(), (Id + " names its source").c_str());
+                if (Kind == "dungeon")
+                {
+                    const auto Seen = DungeonSeen.find(Id);
+                    Check(Seen != DungeonSeen.end(), (Id + " is a reconciled dungeon").c_str());
+                    if (Seen != DungeonSeen.end()) ++Seen->second;
+                    for (const auto& [Dx, Dy] : DungeonAt)
+                        Check((Dx - X) * (Dx - X) + (Dy - Y) * (Dy - Y) >= 200.0 * 200.0, (Id + " keeps 200 m from the next dungeon").c_str());
+                    DungeonAt.push_back({X, Y});
+                }
+            }
+        }
+        int Placed = 0;
+        for (const auto& [Id, Count] : DungeonSeen)
+        {
+            Check(Count == 1, ("dungeon placed exactly once: " + Id).c_str());
+            Placed += Count == 1 ? 1 : 0;
+        }
+        Check(Placed == 61, "all 61 dungeons (41 named, 20 minor) have a place in the world");
     }
 
     std::cout << (Failures == 0 ? "conversion tests passed\n" : "conversion tests FAILED\n");

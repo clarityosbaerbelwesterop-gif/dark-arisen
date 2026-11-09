@@ -1,0 +1,285 @@
+{
+  "schemaVersion": 1,
+  "about": "Where each materialised level sits in the open world (ContentSource/World/Archipelago.json): land places on land, sea places at sea, metres from the south-west corner. Vessel levels travel with their ship, dream levels are nowhere, menu levels are outside the world, and L_World is the world itself. Decided on the owner's delegation of 2026-11-08; checked by ConversionTests.",
+  "places": [
+    {
+      "level": "L_HarlowOpening",
+      "kind": "sea",
+      "region": "Moran",
+      "x": 700,
+      "y": 500,
+      "yaw": 0
+    },
+    {
+      "level": "L_DriftwoodBeach",
+      "kind": "land",
+      "region": "Moran",
+      "x": 2100,
+      "y": 800,
+      "yaw": 0
+    },
+    {
+      "level": "L_DriftwoodCamp",
+      "kind": "land",
+      "region": "Moran",
+      "x": 2300,
+      "y": 1150,
+      "yaw": 0
+    },
+    {
+      "level": "L_MirasCove",
+      "kind": "land",
+      "region": "Moran",
+      "x": 650,
+      "y": 2000,
+      "yaw": 0
+    },
+    {
+      "level": "L_MangroveShallows",
+      "kind": "land",
+      "region": "Moran",
+      "x": 1250,
+      "y": 2800,
+      "yaw": 0
+    },
+    {
+      "level": "L_KoaTradingPost",
+      "kind": "land",
+      "region": "Moran",
+      "x": 3500,
+      "y": 2150,
+      "yaw": 0
+    },
+    {
+      "level": "L_GalleonCove",
+      "kind": "land",
+      "region": "Moran",
+      "x": 2600,
+      "y": 3000,
+      "yaw": 0
+    },
+    {
+      "level": "L_EthansGrove",
+      "kind": "land",
+      "region": "Moran",
+      "x": 2000,
+      "y": 1900,
+      "yaw": 0
+    },
+    {
+      "level": "L_WakingCourse",
+      "kind": "land",
+      "region": "Moran",
+      "x": 2400,
+      "y": 2200,
+      "yaw": 0
+    },
+    {
+      "level": "L_OpenSea_FirstWake",
+      "kind": "sea",
+      "region": "OpenSea",
+      "x": 4800,
+      "y": 3300,
+      "yaw": 0
+    },
+    {
+      "level": "L_RexaHarbor",
+      "kind": "land",
+      "region": "Rexa",
+      "x": 5500,
+      "y": 5300,
+      "yaw": 0
+    },
+    {
+      "level": "L_RexaSafeRoutes",
+      "kind": "sea",
+      "region": "Rexa",
+      "x": 4500,
+      "y": 4500,
+      "yaw": 0
+    },
+    {
+      "level": "L_SaltAndIron_Blockade",
+      "kind": "sea",
+      "region": "Rexa",
+      "x": 4400,
+      "y": 6000,
+      "yaw": 0
+    },
+    {
+      "level": "L_BrokenCompact",
+      "kind": "land",
+      "region": "Rexa",
+      "x": 6000,
+      "y": 5000,
+      "yaw": 0
+    },
+    {
+      "level": "L_CrownCitadelApproach",
+      "kind": "land",
+      "region": "Rexa",
+      "x": 8200,
+      "y": 6900,
+      "yaw": 0
+    },
+    {
+      "level": "L_HerrerasFall",
+      "kind": "land",
+      "region": "Rexa",
+      "x": 8600,
+      "y": 7200,
+      "yaw": 0
+    },
+    {
+      "level": "L_HoldersWake",
+      "kind": "land",
+      "region": "Rexa",
+      "x": 9500,
+      "y": 3800,
+      "yaw": 0
+    },
+    {
+      "level": "L_WarCurrent",
+      "kind": "sea",
+      "region": "OpenSea",
+      "x": 11000,
+      "y": 3000,
+      "yaw": 0
+    },
+    {
+      "level": "L_NoSafeHarbor",
+      "kind": "land",
+      "region": "Highmoore",
+      "x": 4400,
+      "y": 8800,
+      "yaw": 0
+    },
+    {
+      "level": "L_HighmooreRoad",
+      "kind": "land",
+      "region": "Highmoore",
+      "x": 6300,
+      "y": 8500,
+      "yaw": 0
+    },
+    {
+      "level": "L_CrystalPassage",
+      "kind": "land",
+      "region": "Highmoore",
+      "x": 6600,
+      "y": 9700,
+      "yaw": 0
+    },
+    {
+      "level": "L_TheNorthernOath",
+      "kind": "land",
+      "region": "Highmoore",
+      "x": 6700,
+      "y": 10900,
+      "yaw": 0
+    },
+    {
+      "level": "L_FalseBearings",
+      "kind": "land",
+      "region": "Highmoore",
+      "x": 8600,
+      "y": 9800,
+      "yaw": 0
+    },
+    {
+      "level": "L_EthansMarks",
+      "kind": "sea",
+      "region": "OpenSea",
+      "x": 10000,
+      "y": 8500,
+      "yaw": 0
+    },
+    {
+      "level": "L_ThePrisonCourse",
+      "kind": "sea",
+      "region": "OpenSea",
+      "x": 2800,
+      "y": 8800,
+      "yaw": 0
+    },
+    {
+      "level": "L_Armada",
+      "kind": "sea",
+      "region": "OpenSea",
+      "x": 1200,
+      "y": 10300,
+      "yaw": 0
+    },
+    {
+      "level": "L_BreakTheChain",
+      "kind": "sea",
+      "region": "OpenSea",
+      "x": 1800,
+      "y": 10000,
+      "yaw": 0
+    },
+    {
+      "level": "L_TheWakeAfter",
+      "kind": "sea",
+      "region": "OpenSea",
+      "x": 3300,
+      "y": 6300,
+      "yaw": 0
+    },
+    {
+      "level": "L_ThroughTheNet",
+      "kind": "vessel",
+      "region": "Ship/LaLiberacion"
+    },
+    {
+      "level": "L_BrothersAlive",
+      "kind": "vessel",
+      "region": "Ship/ArmadaPrisonNavigator"
+    },
+    {
+      "level": "L_HomewardBearing",
+      "kind": "vessel",
+      "region": "Ship/LaLiberacion"
+    },
+    {
+      "level": "L_BlackDeck",
+      "kind": "vessel",
+      "region": "Ship/DravenFlagship"
+    },
+    {
+      "level": "L_DravenVoss",
+      "kind": "vessel",
+      "region": "Ship/DravenFlagship"
+    },
+    {
+      "level": "L_MemoryOfABrother",
+      "kind": "dream",
+      "region": "Dream/HarlowMemory"
+    },
+    {
+      "level": "L_DreamFight",
+      "kind": "dream",
+      "region": "Dream/HarlowMemory"
+    },
+    {
+      "level": "L_FrontEnd",
+      "kind": "menu",
+      "region": "-"
+    },
+    {
+      "level": "L_Credits",
+      "kind": "menu",
+      "region": "-"
+    },
+    {
+      "level": "DefaultLevel",
+      "kind": "menu",
+      "region": "-"
+    },
+    {
+      "level": "L_World",
+      "kind": "world",
+      "region": "-"
+    }
+  ]
+}

@@ -51,6 +51,9 @@ ly_add_target(
         PRIVATE
             AZ::AzGameFramework
             Gem::Atom_AtomBridge.Static
+            # WorldRendererComponent draws the streamed world through the mesh feature processor.
+            Gem::Atom_RPI.Public
+            Gem::Atom_Feature_Common.Public
             # PhysX::CharacterGameplayRequestBus (gravity while swimming); same pattern as O3DE's Multiplayer Gem.
             Gem::PhysX5.Static
         PUBLIC

@@ -5,8 +5,11 @@
 // Every step is deterministic and fails closed with a stable exit code:
 //   0 ok, 2 usage, 3 lock file, 4 missing prerequisite, 5 engine checkout, 6 command failed.
 
+#include "ArtKitArchipelago.h"
+#include "ArtKitDecimate.h"
 #include "AssetPipeline.h"
 #include "Hash.h"
+#include "Json.h"
 #include "Materializer.h"
 
 #include <algorithm>
@@ -487,6 +490,208 @@ namespace
     }
 
     /**
+     * Scanned CC0 art (ContentSource/ThirdParty/PolyHaven/Scanned.lock) onto this host: every file the lock
+     * names is downloaded into Assets/Art/Scanned unless a copy with the pinned SHA-256 is already there.
+     * The files are large and not committed; materials and models reference them by path.
+     */
+    int CommandFetchArt(const Options& Opts)
+    {
+        const fs::path LockPath = Opts.RepoRoot / "ContentSource" / "ThirdParty" / "PolyHaven" / "Scanned.lock";
+        const fs::path Root = Opts.RepoRoot / "Engine" / "O3DE" / "DarkArisen" / "Assets" / "Art" / "Scanned";
+        std::ifstream Stream(LockPath);
+        if (!Stream)
+        {
+            std::cerr << "error: cannot read " << LockPath << "\n";
+            return LockError;
+        }
+        const auto Digest = [](const fs::path& File)
+        {
+            std::ifstream In(File, std::ios::binary);
+            const std::string Bytes((std::istreambuf_iterator<char>(In)), std::istreambuf_iterator<char>());
+            return DarkArisen::Tools::Sha256Hex(Bytes);
+        };
+        int Fetched = 0, Present = 0;
+        std::string Line;
+        while (std::getline(Stream, Line))
+        {
+            if (Line.empty() || Line[0] == '#') continue;
+            std::istringstream Fields(Line);
+            std::string Relative, Hash, Url;
+            Fields >> Relative >> Hash >> Url;
+            const std::string Expected = Hash.rfind("sha256:", 0) == 0 ? Hash.substr(7) : std::string();
+            if (Relative.empty() || Relative.find("..") != std::string::npos || Url.rfind("https://", 0) != 0 || Expected.size() != 64 ||
+                Expected.find_first_not_of("0123456789abcdef") != std::string::npos)
+            {
+                std::cerr << "error: " << LockPath << ": malformed line: " << Line << "\n";
+                return LockError;
+            }
+            const fs::path Target = Root / fs::path(Relative);
+            if (fs::exists(Target) && Digest(Target) == Expected)
+            {
+                ++Present;
+                continue;
+            }
+            if (Opts.DryRun)
+            {
+                std::cout << "[dry-run] fetch " << Url << " -> " << Target.string() << "\n";
+                continue;
+            }
+            fs::create_directories(Target.parent_path());
+            const fs::path Partial = Target.string() + ".part";
+            if (Run("curl -fsSL -A DarkArisenArtFetch/1.0 -o " + Quote(Partial.string()) + " " + Quote(Url), Opts) != 0) return CommandFailed;
+            if (Digest(Partial) != Expected)
+            {
+                std::cerr << "error: " << Relative << " does not match its pinned sha256\n";
+                std::error_code Ignored;
+                fs::remove(Partial, Ignored);
+                return LockError;
+            }
+            fs::rename(Partial, Target);
+            ++Fetched;
+        }
+        std::cout << "scanned art: " << Fetched << " fetched, " << Present << " already present (" << Root.string() << ")\n";
+        return Ok;
+    }
+
+    /**
+     * Game-ready versions of the heavy scans (ContentSource/ThirdParty/PolyHaven/Decimate.json): each fetched
+     * scan under Assets/Art/Scanned/models/<id>/ is simplified to its triangle budget and written to
+     * Assets/Art/Scanned/game/<id>_<n>.gltf, one per variant (git-ignored, like the scans). Run after fetch-art.
+     */
+    int CommandDecimateArt(const Options& Opts)
+    {
+        const fs::path ListPath = Opts.RepoRoot / "ContentSource" / "ThirdParty" / "PolyHaven" / "Decimate.json";
+        const fs::path Root = Opts.RepoRoot / "Engine" / "O3DE" / "DarkArisen" / "Assets" / "Art" / "Scanned";
+        std::ifstream In(ListPath);
+        const std::string Text((std::istreambuf_iterator<char>(In)), std::istreambuf_iterator<char>());
+        DarkArisen::Tools::JsonValue List;
+        std::string Problem;
+        if (!In || !DarkArisen::Tools::JsonReader::Parse(Text, List, Problem) || !List.Find("models"))
+        {
+            std::cerr << "error: cannot read " << ListPath << " " << Problem << "\n";
+            return LockError;
+        }
+        fs::create_directories(Root / "game");
+        int Done = 0;
+        for (const auto& Entry : List.Find("models")->Items)
+        {
+            const std::string Id = Entry.Find("id") ? Entry.Find("id")->Text : std::string();
+            const std::string File = Entry.Find("source") ? Entry.Find("source")->Text : std::string();
+            const auto Budget = static_cast<std::size_t>(Entry.Find("triangles") ? Entry.Find("triangles")->Number : 0.0);
+            if (Id.empty() || File.empty() || Budget == 0 || Id.find('/') != std::string::npos || File.find("..") != std::string::npos)
+            {
+                std::cerr << "error: " << ListPath << ": malformed entry\n";
+                return LockError;
+            }
+            if (Opts.DryRun)
+            {
+                std::cout << "[dry-run] decimate " << Id << " to " << Budget << " triangles\n";
+                continue;
+            }
+            std::vector<std::string> Gltfs;
+            DarkArisen::Tools::Art::DecimateStats Stats;
+            if (!DarkArisen::Tools::Art::DecimateGltf(Root / "models" / Id / File, Budget, "models/" + Id + "/", Id, Gltfs, Stats, Problem))
+            {
+                std::cerr << "error: " << Id << ": " << Problem << " (run fetch-art first)\n";
+                return CommandFailed;
+            }
+            for (std::size_t K = 0; K < Gltfs.size(); ++K)
+            {
+                std::ofstream Out(Root / "game" / (Id + "_" + std::to_string(K) + ".gltf"), std::ios::binary);
+                Out << Gltfs[K];
+            }
+            std::cout << Id << ": " << Gltfs.size() << " variants, " << Stats.SourceTriangles << " -> " << Stats.Triangles << " triangles\n";
+            ++Done;
+        }
+        std::cout << "decimated " << Done << " scans into " << (Root / "game").string() << "\n";
+        return Ok;
+    }
+
+    /**
+     * The open world's geography (ContentSource/World/Archipelago.json): a 16-bit heightfield at 4 m into
+     * Assets/World/Archipelago_Height.png (build host, git-ignored) and a shaded relief map at 8 m into
+     * Docs/Images/Archipelago_Relief.png.
+     */
+    int CommandWorldMap(const Options& Opts)
+    {
+        std::ifstream In(Opts.RepoRoot / "ContentSource" / "World" / "Archipelago.json");
+        const std::string Text((std::istreambuf_iterator<char>(In)), std::istreambuf_iterator<char>());
+        DarkArisen::Tools::Art::ArchipelagoSpec Spec;
+        std::string Problem;
+        if (!In || !DarkArisen::Tools::Art::ReadArchipelago(Text, Spec, Problem))
+        {
+            std::cerr << "error: " << Problem << "\n";
+            return LockError;
+        }
+        const auto Maps = DarkArisen::Tools::Art::BuildArchipelagoMaps(Spec, 4.0, 8.0);
+        const fs::path World = Opts.RepoRoot / "Engine" / "O3DE" / "DarkArisen" / "Assets" / "World";
+        const fs::path Images = Opts.RepoRoot / "Docs" / "Images";
+        fs::create_directories(World);
+        fs::create_directories(Images);
+        std::ofstream(World / "Archipelago_Height.png", std::ios::binary) << Maps.HeightPng;
+        std::ofstream(Images / "Archipelago_Relief.png", std::ios::binary) << Maps.ReliefPng;
+        std::cout << "archipelago " << Spec.Width / 1000.0 << " x " << Spec.Height / 1000.0 << " km, " << Spec.Islands.size() << " islands, land "
+                  << Maps.LandSquareKm << " km2; heightfield " << Maps.HeightWidth << " x " << Maps.HeightHeight << " (" << Maps.MinHeight << ".."
+                  << Maps.MaxHeight << " m)\n";
+        return Ok;
+    }
+
+    /**
+     * The open world's terrain onto the build host (git-ignored, Assets/World): the coarse archipelago mesh at
+     * 32 m, 500 m detail tiles at 5 m for the streamer, world macro and splat textures at 8 m, one terrain
+     * material per biome, and WorldTiles.json listing the land tiles with their models and materials.
+     */
+    int CommandWorldBuild(const Options& Opts)
+    {
+        std::ifstream In(Opts.RepoRoot / "ContentSource" / "World" / "Archipelago.json");
+        const std::string Text((std::istreambuf_iterator<char>(In)), std::istreambuf_iterator<char>());
+        DarkArisen::Tools::Art::ArchipelagoSpec Spec;
+        std::string Problem;
+        if (!In || !DarkArisen::Tools::Art::ReadArchipelago(Text, Spec, Problem))
+        {
+            std::cerr << "error: " << Problem << "\n";
+            return LockError;
+        }
+        // the story's places are cleared of plants: land places only (sea places float, vessel and dream levels are nowhere)
+        std::vector<DarkArisen::Tools::Art::WorldPlaceMark> Marks;
+        DarkArisen::Tools::JsonValue Places;
+        std::ifstream PlacesIn(Opts.RepoRoot / "ContentSource" / "World" / "Places.json");
+        const std::string PlacesText((std::istreambuf_iterator<char>(PlacesIn)), std::istreambuf_iterator<char>());
+        if (!PlacesIn || !DarkArisen::Tools::JsonReader::Parse(PlacesText, Places, Problem) || !Places.Find("places"))
+        {
+            std::cerr << "error: ContentSource/World/Places.json: " << Problem << "\n";
+            return LockError;
+        }
+        for (const DarkArisen::Tools::JsonValue& P : Places.Find("places")->Items)
+            if (P.Find("kind") && P.Find("kind")->Text == "land") Marks.push_back({P.Find("x")->Number, P.Find("y")->Number, 220.0});
+        // the design's locations (Locations.json): settlements level their ground and get their buildings
+        std::vector<DarkArisen::Tools::Art::WorldLocation> Sites;
+        DarkArisen::Tools::JsonValue Locations;
+        std::ifstream LocationsIn(Opts.RepoRoot / "ContentSource" / "World" / "Locations.json");
+        const std::string LocationsText((std::istreambuf_iterator<char>(LocationsIn)), std::istreambuf_iterator<char>());
+        if (!LocationsIn || !DarkArisen::Tools::JsonReader::Parse(LocationsText, Locations, Problem) || !Locations.Find("locations"))
+        {
+            std::cerr << "error: ContentSource/World/Locations.json: " << Problem << "\n";
+            return LockError;
+        }
+        for (const DarkArisen::Tools::JsonValue& L : Locations.Find("locations")->Items)
+            Sites.push_back({L.Find("id")->Text, L.Find("kind")->Text, L.Find("region")->Text, L.Find("x")->Number, L.Find("y")->Number, L.Find("radius")->Number});
+        const auto World = DarkArisen::Tools::Art::BuildWorldTerrain(Spec, Marks, Sites, 500.0, 5.0, 32.0, 8.0);
+        const fs::path Root = Opts.RepoRoot / "Engine" / "O3DE" / "DarkArisen" / "Assets" / "World";
+        std::size_t Bytes = 0;
+        for (const auto& File : World.Files)
+        {
+            const fs::path Target = Root / File.Path;
+            fs::create_directories(Target.parent_path());
+            std::ofstream(Target, std::ios::binary) << File.Content;
+            Bytes += File.Content.size();
+        }
+        std::cout << "world terrain: " << World.Tiles << " land tiles, " << World.Triangles << " triangles, " << World.Plantings << " plantings, " << World.Structures << " buildings, " << World.Files.size() << " files, "
+                  << Bytes / 1000000 << " MB into " << Root.string() << "\n";
+        return Ok;
+    }
+
+    /**
      * The Atom shader path without the Asset Processor: preprocess with the engine's shader
      * include roots, AZSL -> HLSL with O3DE's azslc 1.8.22, then HLSL -> SPIR-V (Vulkan) and DXIL
      * (DX12) with DXC 1.8.2505.1, the compiler O3DE 2605.0 pins. Every .azsl under the project's
@@ -674,7 +879,7 @@ namespace
 
     void PrintUsage()
     {
-        std::cout << "usage: DarkArisenO3DE <doctor|lock|bootstrap|configure|build|test|package|import-glb|probe|shader-check|materialize>\n"
+        std::cout << "usage: DarkArisenO3DE <doctor|lock|bootstrap|configure|build|test|package|import-glb|probe|shader-check|materialize|fetch-art|decimate-art|world-map|world-build>\n"
                      "       [--repo=PATH]\n"
                      "       [--engine=PATH] [--build-dir=PATH] [--config=profile|debug|release] [--dry-run]\n"
                      "       import-glb --manifest=PATH --glb=PATH [--min-vertices=N]\n"
@@ -740,6 +945,10 @@ int main(int ArgumentCount, char** Arguments)
     if (Opts.Command == "probe") return CommandProbe(Opts, Lock);
     if (Opts.Command == "shader-check") return CommandShaderCheck(Opts);
     if (Opts.Command == "materialize") return CommandMaterialize(Opts);
+    if (Opts.Command == "fetch-art") return CommandFetchArt(Opts);
+    if (Opts.Command == "decimate-art") return CommandDecimateArt(Opts);
+    if (Opts.Command == "world-map") return CommandWorldMap(Opts);
+    if (Opts.Command == "world-build") return CommandWorldBuild(Opts);
     PrintUsage();
     return Usage;
 }

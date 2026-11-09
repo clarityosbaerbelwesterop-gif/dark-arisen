@@ -316,4 +316,83 @@ namespace DarkArisen::Tools::Art
         }
         return Generated[ModelName] = Emit(ModelName, WriteGltf(Out, "Dark Arisen art kit (authored geometry)"));
     }
+
+    std::vector<PropPlacement> Kit::AuthoredProps(const AuthoredSpec& Spec)
+    {
+        const auto Scan = [](const char* Id) { return std::string("Assets/Art/Scanned/models/") + Id + "/" + Id + "_2k.gltf"; };
+        const double Hx = Spec.SizeX / 2.0, Hy = Spec.SizeY / 2.0, Z = Spec.SizeZ;
+        std::vector<PropPlacement> Out;
+        Rng R(HashString(Spec.Name));
+        // corners whose two edges are both closed are off the route; fall back to any corner when none is
+        struct Corner
+        {
+            double X, Y;
+            unsigned Edges;
+        };
+        const std::array<Corner, 4> Corners{Corner{-Hx, -Hy, 1u | 4u}, Corner{Hx, -Hy, 2u | 4u}, Corner{Hx, Hy, 2u | 8u}, Corner{-Hx, Hy, 1u | 8u}};
+        std::vector<Corner> Quiet;
+        for (const Corner& C : Corners)
+            if ((Spec.Open & C.Edges) == 0) Quiet.push_back(C);
+        if (Quiet.empty()) Quiet.assign(Corners.begin(), Corners.end());
+        const auto Inset = [](const Corner& C, double By) { return std::array<double, 2>{C.X - (C.X > 0 ? By : -By), C.Y - (C.Y > 0 ? By : -By)}; };
+        const auto Stores = [&](const Corner& C)
+        {
+            if (Hx < 2.0 || Hy < 2.0) return;
+            const auto P = Inset(C, 1.0);
+            const double Yaw = R.Range(0.0, 360.0);
+            Out.push_back({Scan("Barrel_01"), P[0], P[1], Z, Yaw});
+            const auto Q = Inset(C, 1.7);
+            Out.push_back({Scan("Barrel_02"), Q[0], P[1], Z, Yaw + 40.0});
+            Out.push_back({Scan("wooden_crate_01"), P[0], Q[1], Z, Yaw + 90.0});
+            Out.push_back({Scan("wooden_lantern_01"), P[0], Q[1], Z + 0.35, Yaw});
+        };
+        switch (StyleOf(Spec.Name))
+        {
+        case Style::Defence:
+            for (const Edge& E : Edges(Hx, Hy, Z))
+            {
+                if (Spec.Open & E.Bit) continue;
+                const V3 D = E.B - E.A;
+                const double L = std::sqrt(D.X * D.X + D.Y * D.Y);
+                if (L < 6.0 || Hx < 2.5 || Hy < 2.5) continue;
+                const V3 U = D * (1.0 / L);
+                const V3 Outward{U.Y, -U.X, 0.0};
+                const double Yaw = std::atan2(-Outward.X, Outward.Y) * 180.0 / Pi;  // the gun's length lies along +Y
+                const int Guns = std::max(1, static_cast<int>((L - 2.0) / 7.0));
+                for (int K = 0; K < Guns; ++K)
+                {
+                    const V3 P = E.A + U * (L * (K + 0.5) / Guns) - Outward * 1.6;
+                    Out.push_back({Scan("cannon_01"), P.X, P.Y, Z, Yaw});
+                }
+            }
+            if (!Quiet.empty()) Stores(Quiet.front());
+            break;
+        case Style::Yard:
+        case Style::Deck:
+            for (std::size_t K = 0; K < Quiet.size() && K < 2; ++K) Stores(Quiet[K]);
+            break;
+        case Style::Field:
+            if (Hx >= 4.0 && Hy >= 4.0)
+            {
+                const auto P = Inset(Quiet.front(), 3.0);
+                Out.push_back({Scan("stone_fire_pit"), P[0], P[1], Z, R.Range(0.0, 360.0)});
+                Stores(Quiet.back());
+            }
+            break;
+        case Style::Interior:
+            if (Hx >= 2.0 && Hy >= 1.5)
+            {
+                const auto P = Inset(Quiet.front(), 1.2);
+                const double Yaw = std::fabs(P[0]) > std::fabs(P[1]) ? 90.0 : 0.0;
+                Out.push_back({Scan("WoodenTable_01"), P[0], P[1], Z, Yaw});
+                Out.push_back({Scan("jug_01"), P[0] + 0.2, P[1], Z + 0.55, R.Range(0.0, 360.0)});
+                Out.push_back({Scan("ceramic_pot"), P[0] - 0.3, P[1] + 0.1, Z + 0.55, R.Range(0.0, 360.0)});
+                if (Quiet.size() > 1) Stores(Quiet[1]);
+            }
+            break;
+        default:
+            break;
+        }
+        return Out;
+    }
 }

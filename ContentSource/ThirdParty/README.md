@@ -1,6 +1,6 @@
 # Third-party source data
 
-Two free datasets are the source for the people in Dark Arisen. The native art kit
+Free, openly licensed datasets are the source for the people and the surfaces of Dark Arisen. The native art kit
 (`Tools/o3de/Ops/ArtKitHumans*.cpp`) turns them into the game's cast: bodies, clothes, hair,
 textures, poses and animation clips. Nothing here was made by a generative model, and nothing
 was bought. `ThirdPartyManifest.json` records the SHA-256 hash of every file.
@@ -124,3 +124,20 @@ Added 2026-11-08 for the gameplay motion library (`ContentSource/Animations/Huma
 | 143_23 | Punching | World Punch |
 | 143_24 | Kicking | World Kick |
 | 15_06 | lean forward, reach for | reaching |
+
+## Poly Haven (`PolyHaven/Scanned.lock`)
+
+- **Source:** https://polyhaven.com. Fetched 2026-11-08 through the public API (`api.polyhaven.com/files/<asset>`), with downloads from `dl.polyhaven.org`.
+- **Licence:** CC0 1.0 Universal (https://polyhaven.com/license). No attribution is required; the credits name Poly Haven and its scan authors anyway.
+- **Files:** 15 scanned material sets at 2k: albedo, OpenGL normal, and ARM (occlusion, roughness, metal):
+
+  | Surfaces | Sets |
+  |---|---|
+  | Wood | `weathered_planks`, `brown_planks_03`, `rough_wood`, `bark_brown_02` |
+  | Building | `painted_plaster_wall`, `clay_roof_tiles_02`, `rustic_stone_wall_02`, `cobblestone_floor_08`, `rusty_metal_02` |
+  | Ground | `sand_01`, `sparse_grass`, `forrest_ground_01`, `brown_mud_02` |
+  | Rock | `rock_face_03`, `rock_pitted_mossy` |
+
+  There is also one sky: `kloofendal_48d_partly_cloudy_puresky` (4k HDRI).
+- **Not committed (about 144 MB).** `DarkArisenO3DE fetch-art` downloads every file into `Engine/O3DE/DarkArisen/Assets/Art/Scanned/` and checks it against the SHA-256 in the lock. The kit's materials reference them by path. Each tile size is the scan's real width, so the texel density matches the world.
+- **Modifications:** none.

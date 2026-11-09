@@ -12,6 +12,7 @@ set(FILES
     Include/DarkArisen/CameraBus.h
     Include/DarkArisen/NavalBus.h
     Include/DarkArisen/FrontEndBus.h
+    Include/DarkArisen/WorldBus.h
     Source/Story/CampaignSystemComponent.h
     Source/Story/CampaignSystemComponent.cpp
     Source/Story/StoryTriggerComponent.h
@@ -52,4 +53,10 @@ set(FILES
     Source/World/OceanComponent.cpp
     Source/World/WaterVolumeComponent.h
     Source/World/WaterVolumeComponent.cpp
+    Source/World/WorldStreamerComponent.h
+    Source/World/WorldStreamerComponent.cpp
+    Source/World/WorldRendererComponent.h
+    Source/World/WorldRendererComponent.cpp
+    Source/World/WorldColliderComponent.h
+    Source/World/WorldColliderComponent.cpp
 )
