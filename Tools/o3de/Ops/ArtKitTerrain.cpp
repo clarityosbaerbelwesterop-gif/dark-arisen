@@ -952,7 +952,8 @@ namespace DarkArisen::Tools::Art
 {
     double Kit::WorldWoods(const double X, const double Y, const std::uint32_t Seed)
     {
-        return SmoothStep(0.40, 0.62, Fractal(X, Y, 380.0, 4, Seed + 11u));
+        // the fractal clusters near 0.5: a narrow ramp gives woods with edges and open country between them
+        return SmoothStep(0.45, 0.56, Fractal(X, Y, 380.0, 4, Seed + 11u));
     }
 
     std::vector<Planting> Kit::WorldVegetation(const WorldTileSpec& Spec, std::map<std::string, std::vector<PlantPart>, std::less<>>& Cache)
@@ -986,7 +987,9 @@ namespace DarkArisen::Tools::Art
                 Known = Cache.emplace(CacheKey, std::move(Parts)).first;
             }
             const double Yaw = R.Range(0.0, 360.0);
-            const double Scale = R.Range(0.85, 1.2) * (Tree ? 0.9 + 0.25 * Woods : 1.0);  // taller in the heart of a wood
+            // the scanned broadleaf are young trees of 3 to 5 m: grown to a canopy of 6 to 12 m in the world's woods
+            const bool Grown = Kind == Species::Broadleaf && !Known->second.empty() && Known->second.front().Model.find("/Scanned/") != std::string::npos;
+            const double Scale = R.Range(0.85, 1.2) * (Tree ? 0.9 + 0.25 * Woods : 1.0) * (Grown ? 1.5 + 0.7 * Woods : 1.0);
             Plants.push_back({Known->second, X, Y, Z - 0.05, Yaw, Scale, Tree});
         };
         const auto Cells = [&Spec](const double Size) { return static_cast<int>(Spec.Size / Size); };
@@ -1014,7 +1017,7 @@ namespace DarkArisen::Tools::Art
                 const double Jx = R.Unit(), Jy = R.Unit();
                 const double X = (static_cast<double>(Gx) + 0.1 + 0.8 * Jx) * TreeCell, Y = (static_cast<double>(Gy) + 0.1 + 0.8 * Jy) * TreeCell;
                 const double Woods = WorldWoods(X, Y, Spec.Seed);
-                if (R.Unit() > 0.015 + 0.8 * Woods * Woods) continue;
+                if (R.Unit() > 0.02 + 0.9 * Woods) continue;
                 const double Z = Spec.Height(X, Y);
                 const bool Swamp = Spec.Kind == Biome::Mire;
                 if (Z < (Swamp ? 0.3 : 2.5) || Z > Spec.TreeLine || Cleared(X, Y) || Up(X, Y) < 0.86) continue;
@@ -1077,7 +1080,7 @@ namespace DarkArisen::Tools::Art
             int Tufts;
             double W0, W1, H0, H1;
         };
-        static const Card Cards[] = {{M::GrassBlades, "GrassBlades", 4, 0.6, 1.0, 0.3, 0.6}, {M::GrassDry, "GrassDry", 4, 0.6, 1.0, 0.35, 0.7},
+        static const Card Cards[] = {{M::GrassBlades, "GrassBlades", 6, 0.6, 1.0, 0.3, 0.6}, {M::GrassDry, "GrassDry", 5, 0.6, 1.0, 0.35, 0.7},
             {M::HeatherSprig, "HeatherSprig", 4, 0.6, 0.9, 0.28, 0.45}, {M::Reeds, "Reeds", 3, 0.7, 1.1, 0.9, 1.5}};
         std::vector<GrassPatch> Out;
         for (const Card& C : Cards)
@@ -1087,7 +1090,7 @@ namespace DarkArisen::Tools::Art
             for (int K = 0; K < C.Tufts; ++K)
             {
                 // one tuft per quarter of the 2 m square, jittered, so neighbouring patches tile without clumps
-                const double X = (K % 2 == 0 ? -0.5 : 0.5) + R.Range(-0.35, 0.35), Y = (K / 2 == 0 ? -0.5 : 0.5) + R.Range(-0.35, 0.35);
+                const double X = (K % 2 == 0 ? -0.5 : 0.5) + R.Range(-0.4, 0.4), Y = ((K / 2) % 2 == 0 ? -0.5 : 0.5) + R.Range(-0.4, 0.4);
                 const double W = R.Range(C.W0, C.W1), H = R.Range(C.H0, C.H1), Yaw = R.Range(0.0, Pi);
                 Tuft(Patch, Mat(C.Id), {X, Y, -0.04}, W, H, Yaw, 2);
             }

@@ -349,7 +349,7 @@ namespace DarkArisen::Tools::Art
                 J += G + ".arm\": \"" + Base + "_arm_2k.jpg\",\n" + G + ".color\": \"" + Base + "_diff_2k.jpg\",\n" + G + ".normal\": \"" + Base + "_nor_gl_2k.jpg\",\n";
             }
             J += "        \"macro.blendSharpness\": 3,\n        \"macro.color\": \"../T_World_Macro.png\",\n        \"macro.splat\": \"../T_World_Splat.png\",\n";
-            J += "        \"macro.strength\": 0.8,\n        \"macro.tiles\": [" + GltfBits::Num(L.Tile[0]) + ", " + GltfBits::Num(L.Tile[1]) + ", " + GltfBits::Num(L.Tile[2]) + ", " +
+            J += "        \"macro.strength\": 0.85,\n        \"macro.tiles\": [" + GltfBits::Num(L.Tile[0]) + ", " + GltfBits::Num(L.Tile[1]) + ", " + GltfBits::Num(L.Tile[2]) + ", " +
                  GltfBits::Num(L.Tile[3]) + "]\n    }\n}\n";
             Out.Files.push_back({std::string("Materials/M_World_") + L.Biome + ".material", J});
         }
@@ -479,7 +479,7 @@ namespace DarkArisen::Tools::Art
             FirstPatch = false;
         }
         // which cards grow on each biome's open ground, and how densely (patches per 2 m cell)
-        Index += "\n  ],\n  \"biomes\": {\n    \"tropical\": {\"grass\": [\"GrassBlades\"], \"density\": 0.7},\n    \"mire\": {\"grass\": [\"Reeds\", \"GrassBlades\"], \"density\": 0.6},\n"
+        Index += "\n  ],\n  \"biomes\": {\n    \"tropical\": {\"grass\": [\"GrassBlades\"], \"density\": 0.85},\n    \"mire\": {\"grass\": [\"Reeds\", \"GrassBlades\"], \"density\": 0.6},\n"
                  "    \"moor\": {\"grass\": [\"HeatherSprig\", \"GrassDry\"], \"density\": 0.75},\n    \"cold\": {\"grass\": [\"GrassDry\", \"HeatherSprig\"], \"density\": 0.5},\n"
                  "    \"fortress\": {\"grass\": [\"GrassBlades\", \"GrassDry\"], \"density\": 0.65},\n    \"volcanic\": {\"grass\": [\"GrassDry\"], \"density\": 0.12},\n"
                  "    \"maw\": {\"grass\": [\"GrassDry\"], \"density\": 0.05}\n  }\n}\n";

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "about": "Where each materialised level sits in the open world (ContentSource/World/Archipelago.json): land places on land, sea places at sea, metres from the south-west corner. Vessel levels travel with their ship, dream levels are nowhere, menu levels are outside the world. Decided on the owner's delegation of 2026-11-08; checked by ConversionTests.",
+  "about": "Where each materialised level sits in the open world (ContentSource/World/Archipelago.json): land places on land, sea places at sea, metres from the south-west corner. Vessel levels travel with their ship, dream levels are nowhere, menu levels are outside the world, and L_World is the world itself. Decided on the owner's delegation of 2026-11-08; checked by ConversionTests.",
   "places": [
     {
       "level": "L_HarlowOpening",
@@ -274,6 +274,11 @@
     {
       "level": "DefaultLevel",
       "kind": "menu",
+      "region": "-"
+    },
+    {
+      "level": "L_World",
+      "kind": "world",
       "region": "-"
     }
   ]

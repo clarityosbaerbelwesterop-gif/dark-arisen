@@ -22,6 +22,8 @@
 #include "Story/StoryTriggerComponent.h"
 #include "World/OceanComponent.h"
 #include "World/WaterVolumeComponent.h"
+#include "World/WorldRendererComponent.h"
+#include "World/WorldStreamerComponent.h"
 
 namespace DarkArisen
 {
@@ -53,6 +55,8 @@ namespace DarkArisen
                 CreditsComponent::CreateDescriptor(),
                 FrontEndSystemComponent::CreateDescriptor(),
                 MainMenuComponent::CreateDescriptor(),
+                WorldStreamerComponent::CreateDescriptor(),
+                WorldRendererComponent::CreateDescriptor(),
             });
         }
 

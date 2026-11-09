@@ -122,6 +122,17 @@ target_include_directories(DarkArisenGameplayProbe PRIVATE ${AZF} ${AZF}/Platfor
 target_link_libraries(DarkArisenGameplayProbe PRIVATE AzCore DarkArisen::Core)
 add_test(NAME DarkArisenGameplayProbe COMMAND DarkArisenGameplayProbe)
 
+# Open-world streaming: WorldStreamerComponent reading world-build's catalog and plantings through LocalFileIO.
+add_executable(DarkArisenWorldProbe
+    WorldRuntimeProbe.cpp
+    ${GEM}/Source/World/WorldStreamerComponent.cpp
+    ${AZF}/AzFramework/IO/LocalFileIO.cpp
+    ${AZF}/Platform/Common/UnixLike/AzFramework/IO/LocalFileIO_UnixLike.cpp)
+target_include_directories(DarkArisenWorldProbe PRIVATE ${AZF} ${AZF}/Platform/Linux ${AZF}/Platform/Common
+    ${GEM}/Include ${GEM}/Source)
+target_link_libraries(DarkArisenWorldProbe PRIVATE AzCore DarkArisen::Core)
+add_test(NAME DarkArisenWorldProbe COMMAND DarkArisenWorldProbe)
+
 # Materialised levels (DarkArisenO3DE materialize) loaded through O3DE's JSON serializer and played
 # from the Harlow opening to Driftwood Camp.
 add_executable(DarkArisenLevelProbe

@@ -126,8 +126,17 @@ TerrainSurface DarkArisenTerrainEvaluate(float3 worldPosition, float3 vertexNorm
     TerrainSurface surface;
     const float3 detail = c0 * blend.x + c1 * blend.y + c2 * blend.z + c3 * blend.w;
     const float3 macro = DarkArisenTerrainMaterialSrg::m_macroColor.Sample(DarkArisenTerrainMaterialSrg::m_clampSampler, uv).rgb;
-    const float detailLuma = max(dot(detail, float3(0.2126, 0.7152, 0.0722)), 1e-3);
-    surface.m_albedo = lerp(detail, macro * (detailLuma / 0.22), DarkArisenTerrainMaterialSrg::m_macroStrength * 0.5);
+    // re-tint: the macro colour sets the ground's mean, the scans keep their grain. Each layer's mean brightness
+    // is its last mip (1 x 1), so a pale scan and a dark one take the same macro colour equally.
+    const float3 lumaWeights = float3(0.2126, 0.7152, 0.0722);
+    const float4 means = float4(
+        dot(DarkArisenTerrainMaterialSrg::m_layer0Color.SampleLevel(DarkArisenTerrainMaterialSrg::m_tileSampler, float2(0.5, 0.5), 16.0).rgb, lumaWeights),
+        dot(DarkArisenTerrainMaterialSrg::m_layer1Color.SampleLevel(DarkArisenTerrainMaterialSrg::m_tileSampler, float2(0.5, 0.5), 16.0).rgb, lumaWeights),
+        dot(DarkArisenTerrainMaterialSrg::m_layer2Color.SampleLevel(DarkArisenTerrainMaterialSrg::m_tileSampler, float2(0.5, 0.5), 16.0).rgb, lumaWeights),
+        dot(DarkArisenTerrainMaterialSrg::m_layer3Color.SampleLevel(DarkArisenTerrainMaterialSrg::m_tileSampler, float2(0.5, 0.5), 16.0).rgb, lumaWeights));
+    const float detailLuma = max(dot(detail, lumaWeights), 1e-3);
+    const float detailMean = max(dot(blend, means), 0.02);
+    surface.m_albedo = lerp(detail, macro * (detailLuma / detailMean), DarkArisenTerrainMaterialSrg::m_macroStrength);
     surface.m_normal = normalize(
         DarkArisenTerrainGroundNormal(n0, vertexNormal) * blend.x + DarkArisenTerrainGroundNormal(n1, vertexNormal) * blend.y +
         n2World * blend.z + DarkArisenTerrainGroundNormal(n3, vertexNormal) * blend.w);
