@@ -278,5 +278,6 @@ namespace DarkArisen::Tools::Art
         void BuildSettlementModels();
         /** The creature bosses of docs/design/bosses (ArtKitCreatures.cpp). */
         void BuildCreatureModels();
+        void BuildWeaponModels();
     };
 }
