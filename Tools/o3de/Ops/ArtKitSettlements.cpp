@@ -42,8 +42,9 @@ namespace DarkArisen::Tools::Art
                 static const Size Civic[] = {{27.0, 50.0, 31.0},  // the cathedral's box spans its aisles, towers and dome (layout.md R-08)
                                                {18.0, 26.0, 6.0}, {14.0, 30.0, 8.0}, {22.0, 16.0, 11.0}, {7.0, 7.0, 16.0}, {9.0, 9.0, 42.0},
                                                {18.0, 16.0, 9.0}, {24.0, 18.0, 10.0},  // LM6 La Sirena Negra, LM5 the Guild (layout.md 4)
-                                               {12.0, 1.0, 4.5}, {12.0, 1.0, 4.5}, {6.0, 6.0, 8.0}, {1.3, 1.3, 5.6}};  // W1, W1 with its lamp, W3, a gate pier
-                return Civic[V % 12];
+                                               {12.0, 1.0, 4.5}, {12.0, 1.0, 4.5}, {6.0, 6.0, 8.0}, {1.3, 1.3, 5.6},  // W1, W1 with its lamp, W3, a gate pier
+                                               {11.0, 12.6, 8.0}, {34.0, 40.0, 8.0}, {44.0, 36.0, 11.0}, {20.0, 14.0, 7.0}, {16.0, 16.0, 0.9}};  // TC2, TC4 lot, LM10 lot, LM11, N2
+                return Civic[V % 17];
             }
             case Tradition::Street:
             {
@@ -1041,6 +1042,131 @@ namespace DarkArisen::Tools::Art
                     Out.Box(Lamp, {0.88, -3.52, 2.3}, {1.12, -3.28, 2.62});
                     break;
                 }
+                case 12:
+                {
+                    // TC2, the casa de portal (layout.md 4; N5): 11 x 10 x 8 behind a ground-floor arcade 2.6 deep and 3.0
+                    // clear, 0.5 m piers every 3.5 m; three balcony doors above on wrought-iron balconies
+                    const double Y0 = -S.D / 2 + 2.6;
+                    Out.Append(DressBoxes(Name + "_House", {{{-S.W / 2, Y0, 0.0}, {S.W / 2, S.D / 2, S.H}}}));
+                    Out.Box(Mat(M::Plaster), {-S.W / 2, -S.D / 2, 3.0}, {S.W / 2, Y0, S.H});
+                    Out.Box(Mat(M::Paving), {-S.W / 2, -S.D / 2, 0.0}, {S.W / 2, Y0, 0.12});
+                    Out.Box(Mat(M::TimberDark), {-S.W / 2, -S.D / 2 + 0.05, 2.85}, {S.W / 2, Y0, 3.0});
+                    for (double X = -S.W / 2 + 0.25; X <= S.W / 2 - 0.2; X += 3.5)
+                    {
+                        Out.Box(Mat(M::Stone), {X - 0.25, -S.D / 2, 0.0}, {X + 0.25, -S.D / 2 + 0.5, 3.0});
+                        Out.Box(Mat(M::StoneDark), {X - 0.32, -S.D / 2 - 0.05, 2.8}, {X + 0.32, -S.D / 2 + 0.55, 3.05});
+                    }
+                    for (const double X : {-3.5, 0.0, 3.5})
+                    {
+                        Out.Box(Mat(M::TimberDark), {X - 0.5, -S.D / 2 - 0.04, 3.6}, {X + 0.5, -S.D / 2 + 0.02, 5.8});
+                        Out.Box(Mat(M::StoneDark), {X - 0.75, -S.D / 2 - 0.7, 3.45}, {X + 0.75, -S.D / 2, 3.6});
+                        for (int Bar = 0; Bar <= 7; ++Bar)
+                            Out.Tube(Mat(M::Iron), {X - 0.7 + 0.2 * Bar, -S.D / 2 - 0.66, 3.6}, {X - 0.7 + 0.2 * Bar, -S.D / 2 - 0.66, 4.55}, 0.012, 0.012, 4);
+                        Out.Tube(Mat(M::Iron), {X - 0.72, -S.D / 2 - 0.66, 4.55}, {X + 0.72, -S.D / 2 - 0.66, 4.55}, 0.02, 0.02, 4);
+                    }
+                    break;
+                }
+                case 13:
+                {
+                    // TC4, the casa-patio villa on its walled lot (layout.md 4; N6): the house 16 x 18 x 8 at the back of a 34 x 40
+                    // lot behind a 2.8 m wall with a 3.5 m gate; a 3.2 m zaguan with its iron gate; a garden with a fountain
+                    Out.Append(DressBoxes(Name + "_House", {{{-8.0, 0.0, 0.0}, {8.0, 18.0, 8.0}}}));
+                    Out.Box(Mat(M::TimberDark), {-1.6, -0.06, 0.0}, {1.6, 0.02, 3.4});
+                    for (int Bar = 0; Bar <= 10; ++Bar) Out.Tube(Mat(M::Iron), {-1.5 + 0.3 * Bar, -0.12, 0.0}, {-1.5 + 0.3 * Bar, -0.12, 3.3}, 0.02, 0.02, 4);
+                    const double X0 = -17.0, X1 = 17.0, Y0 = -20.0, Y1 = 20.0;
+                    for (const auto& [A, B] : {std::pair<V3, V3>{{X0, Y1 - 0.3, 0.0}, {X1, Y1, 2.8}}, {{X0, Y0, 0.0}, {X0 + 0.3, Y1, 2.8}}, {{X1 - 0.3, Y0, 0.0}, {X1, Y1, 2.8}},
+                                               {{X0, Y0, 0.0}, {-1.75, Y0 + 0.3, 2.8}}, {{1.75, Y0, 0.0}, {X1, Y0 + 0.3, 2.8}}})
+                    {
+                        Out.Box(Mat(M::Plaster), {A.X, A.Y, -0.4}, B);
+                        Out.Box(Mat(M::RoofTile), {A.X - 0.06, A.Y - 0.06, 2.8}, {B.X + 0.06, B.Y + 0.06, 2.95});
+                    }
+                    for (const double X : {-1.75, 1.75}) Out.Box(Mat(M::Stone), {X - 0.4, Y0 - 0.1, -0.4}, {X + 0.4, Y0 + 0.4, 3.4});
+                    for (int Bar = 0; Bar <= 11; ++Bar) Out.Tube(Mat(M::Iron), {-1.35 + 0.245 * Bar, Y0 + 0.15, 0.0}, {-1.35 + 0.245 * Bar, Y0 + 0.15, 2.6}, 0.02, 0.02, 4);
+                    Out.Box(Mat(M::Paving), {-1.6, Y0, 0.0}, {1.6, 0.0, 0.08});
+                    Out.Tube(Mat(M::Stone), {0.0, -10.0, 0.0}, {0.0, -10.0, 0.6}, 2.2, 2.2, 20);
+                    Out.Tube(Mat(M::HarborWater), {0.0, -10.0, 0.5}, {0.0, -10.0, 0.55}, 2.0, 2.0, 20);
+                    Out.Tube(Mat(M::Stone), {0.0, -10.0, 0.5}, {0.0, -10.0, 1.6}, 0.25, 0.18, 10);
+                    break;
+                }
+                case 14:
+                {
+                    // LM10, Salazar's public estate (layout.md 4; N3): 40 x 26 x 11 of white plaster with pale gilt ironwork, its
+                    // azotea behind a 1.1 m parapet with four watch posts, on a 44 x 36 lot with a forecourt facing the square
+                    Material White = Mat(M::Plaster);
+                    White.Name = "M_Art_Salazar_WhitePlaster";
+                    White.BaseColor = {0.97, 0.96, 0.92, 1.0};
+                    Material Gilt = Mat(M::Brass);
+                    Gilt.Name = "M_Art_Salazar_Gilt";
+                    Gilt.BaseColor = {0.86, 0.78, 0.55, 1.0};
+                    const double Y0 = -8.0;  // the house behind a 10 m forecourt (26 + 15 would not fit the 36 m lot)
+                    Out.Box(Mat(M::Stone), {-20.0, Y0, -0.6}, {20.0, Y0 + 26.0, 0.8});
+                    Out.Box(White, {-20.0, Y0, 0.8}, {20.0, Y0 + 26.0, 11.0});
+                    Course(Out, Mat(M::Stone), 40.0, 26.0, 4.5, 0.3, 0.15);
+                    Out.Box(White, {-20.15, Y0 - 0.15, 11.0}, {20.15, Y0 + 26.15, 12.1});
+                    Out.Box(Mat(M::Stone), {-20.25, Y0 - 0.25, 12.1}, {20.25, Y0 + 26.25, 12.25});
+                    for (const double X : {-19.0, 19.0})
+                        for (const double Y : {Y0 + 1.0, Y0 + 25.0})
+                        {
+                            Out.Box(White, {X - 1.2, Y - 1.2, 11.0}, {X + 1.2, Y + 1.2, 14.0});
+                            Out.Box(Mat(M::RoofTile), {X - 1.4, Y - 1.4, 14.0}, {X + 1.4, Y + 1.4, 14.25});
+                        }
+                    for (double X = -17.0; X <= 17.0; X += 3.4)
+                        for (const double Z : {2.0, 6.5})
+                        {
+                            Out.Box(Mat(M::TimberDark), {X - 0.55, Y0 - 0.05, Z}, {X + 0.55, Y0 + 0.02, Z + 2.2});
+                            for (int Bar = 0; Bar < 5; ++Bar) Out.Tube(Gilt, {X - 0.4 + 0.2 * Bar, Y0 - 0.12, Z - 0.05}, {X - 0.4 + 0.2 * Bar, Y0 - 0.12, Z + 2.25}, 0.018, 0.018, 4);
+                        }
+                    Out.Box(Mat(M::TimberDark), {-1.6, Y0 - 0.08, 0.8}, {1.6, Y0 + 0.02, 4.4});
+                    Out.Box(Mat(M::Paving), {-22.0, -18.0, 0.0}, {22.0, Y0, 0.1});
+                    for (const double X : {-22.0, 21.6}) Out.Box(White, {X, -18.0, -0.4}, {X + 0.4, Y0, 2.4});
+                    for (int Bar = 0; Bar <= 40; ++Bar)
+                        if (std::fabs(-20.0 + Bar) > 2.2) Out.Tube(Gilt, {-20.0 + Bar, -18.0, 0.0}, {-20.0 + Bar, -18.0, 2.2}, 0.025, 0.012, 4);
+                    Out.Tube(Gilt, {-22.0, -18.0, 2.2}, {22.0, -18.0, 2.2}, 0.03, 0.03, 4);
+                    break;
+                }
+                case 15:
+                {
+                    // LM11, the guard barracks at the Noble gate (layout.md 4; N4): 20 x 14 x 7, plain and strong
+                    Out.Box(Mat(M::StoneDark), {-10.0, -7.0, -0.5}, {10.0, 7.0, 3.2});
+                    Out.Box(Mat(M::Plaster), {-9.95, -6.95, 3.2}, {9.95, 6.95, 7.0});
+                    Hip(Out, Mat(M::RoofTile), 20.0, 14.0, 7.0, 2.2, 0.4);
+                    for (double X = -8.0; X <= 8.0; X += 4.0)
+                    {
+                        Out.Box(Mat(M::TimberDark), {X - 0.4, -7.04, 4.2}, {X + 0.4, -6.98, 5.8});
+                        for (int Bar = 0; Bar < 4; ++Bar) Out.Tube(Mat(M::Iron), {X - 0.3 + 0.2 * Bar, -7.1, 4.15}, {X - 0.3 + 0.2 * Bar, -7.1, 5.85}, 0.015, 0.015, 4);
+                    }
+                    Out.Box(Mat(M::TimberDark), {-1.2, -7.06, 0.0}, {1.2, -6.98, 2.8});
+                    Out.Tube(Mat(M::TimberDark), {-6.0, -7.0, 7.0}, {-6.0, -7.0, 11.0}, 0.06, 0.05, 6);
+                    Out.Quad(Mat(M::HullBandRed), {-6.0, -7.0, 11.0}, {-6.0, -8.4, 11.0}, {-6.0, -8.4, 10.1}, {-6.0, -7.0, 10.1}, true);
+                    for (const double X : {4.0, 6.5}) Out.Box(Mat(M::Timber), {X - 0.9, -9.0, 0.0}, {X + 0.9, -8.6, 1.1});  // the hitching rail
+                    break;
+                }
+                case 16:
+                {
+                    // N2, the duel platform of the Duelist's Square (layout.md 5.4): 14 x 14 x 0.5 with a brass inlay, three
+                    // 0.3 m steps on its east and west sides
+                    Material Pale = Mat(M::Paving);
+                    Pale.Name = "M_Art_DuelPlatform";
+                    Pale.BaseColor = {0.92, 0.9, 0.84, 1.0};
+                    Out.Box(Pale, {-7.0, -7.0, -0.3}, {7.0, 7.0, 0.5});
+                    for (int K = 0; K < 3; ++K)
+                        for (const double Side : {-1.0, 1.0})
+                        {
+                            const double X0 = Side * (7.0 + 0.35 * K), X1 = Side * (7.0 + 0.35 * (K + 1));
+                            Out.Box(Pale, {std::min(X0, X1), -5.0, -0.3}, {std::max(X0, X1), 5.0, 0.5 - 0.17 * (K + 1)});
+                        }
+                    Material Inlay = Mat(M::Brass);
+                    Inlay.Name = "M_Art_DuelInlay";
+                    for (int K = 0; K < 24; ++K)
+                    {
+                        const double A = 2.0 * Pi * K / 24, B = 2.0 * Pi * (K + 1) / 24;
+                        Out.Box(Inlay, {std::min(5.0 * Cos(A), 5.0 * Cos(B)) - 0.06, std::min(5.0 * Sin(A), 5.0 * Sin(B)) - 0.06, 0.5},
+                                {std::max(5.0 * Cos(A), 5.0 * Cos(B)) + 0.06, std::max(5.0 * Sin(A), 5.0 * Sin(B)) + 0.06, 0.505});
+                    }
+                    for (const double A : {0.0, Pi / 2})
+                        Out.Box(Inlay, {-5.0 * std::fabs(Cos(A)) - 0.05, -5.0 * std::fabs(Sin(A)) - 0.05, 0.5}, {5.0 * std::fabs(Cos(A)) + 0.05, 5.0 * std::fabs(Sin(A)) + 0.05, 0.505});
+                    break;
+                }
                 }
                 return Out;
             }
@@ -1090,7 +1216,7 @@ namespace DarkArisen::Tools::Art
     {
         for (const Tradition Kind : {Tradition::Colonial, Tradition::Stilt, Tradition::Nordic, Tradition::Camp, Tradition::Fort, Tradition::Lighthouse, Tradition::Entrance,
                  Tradition::Civic, Tradition::Harbour, Tradition::Street, Tradition::Shanty})
-            for (int V = 0; V < (Kind == Tradition::Lighthouse ? 1 : Kind == Tradition::Civic ? 12 : Kind == Tradition::Harbour ? 5 : Kind == Tradition::Street ? 3 : Variants); ++V)
+            for (int V = 0; V < (Kind == Tradition::Lighthouse ? 1 : Kind == Tradition::Civic ? 17 : Kind == Tradition::Harbour ? 5 : Kind == Tradition::Street ? 3 : Variants); ++V)
                 Emit(ModelName(Kind, V), WriteGltf(BuildVariant(Kind, V), "Dark Arisen art kit (settlements)"));
     }
 

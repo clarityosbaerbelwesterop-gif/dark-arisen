@@ -169,13 +169,15 @@
       "source": "docs/design/region_02_rexa_city.md#2",
       "layout": {
         "groundZ": 47.0,
-        "cap": 40,
+        "cap": 15,
         "fill": 0.6,
         "waterfront": false,
         "lamps": 12,
         "wall": [108, [[196, 9], [236, 5], [108, 6]]],
-        "civic": [[10, 6144, 5527, 286], [10, 6148, 5513, 286]],
-        "source": "production/levels/rexa-city/layout.md 4.1; wall: W1 ring r=108 with gates N1 196 deg 9 m, N2 236 deg 5 m, N3 108 deg 6 m; civic: the N7 gatehouses flanking N1 (layout.md 5.4)"
+        "civic": [[10, 6144, 5527, 286], [10, 6148, 5513, 286], [14, 6187, 5588, 12], [15, 6160, 5561, 12], [16, 6197, 5539, 12],
+                  [12, 6191, 5508, 192], [12, 6203, 5510, 192], [12, 6215, 5513, 192],
+                  [13, 6286, 5611, 12], [13, 6297, 5560, 12], [13, 6308, 5509, 12], [13, 6271, 5497, 12], [13, 6235, 5487, 12], [13, 6248, 5607, 12]],
+        "source": "production/levels/rexa-city/layout.md 4.1; wall: W1 ring r=108 with gates N1 196 deg 9 m, N2 236 deg 5 m, N3 108 deg 6 m; civic: the fixed lots of layout.md 5.4 - N7 gatehouses, N3 Salazar's estate, N4 barracks, N2 duel platform, N5 portico houses T1-T3, N6 villas V1-V6; cap 15 = those and the mansion"
       }
     },
     {
