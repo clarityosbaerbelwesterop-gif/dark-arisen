@@ -822,11 +822,169 @@ namespace DarkArisen::Tools::Art
         return Out;
     }
 
+    /**
+     * The Ashen Wyrm (ashen_wyrm.md 2): thirty metres from snout to tail tip, forty across the wings unfurled; a quadrupedal
+     * serpentine dragon, nearer the Eastern dragon than the Western, her massive wings folded against her body; black
+     * obsidian scales overlaid with glowing cracks of molten gold; a long, horned, ancient head, two curved horns arching
+     * backward, eyes like twin suns in deep sockets; wings leather-black with gold veins. Facing +X, standing on z = 0.
+     */
+    Mesh BuildAshenWyrm()
+    {
+        Mesh Out("SM_Art_Creature_AshenWyrm");
+        Material Obsidian = Hide("M_Art_Wyrm_Scale", "rock_face_03", 0.06, 0.055, 0.06, 1.2, 0.35);
+        Obsidian.Metallic = 0.15;
+        Material Plate = Flesh("M_Art_Wyrm_Plate", 0.04, 0.038, 0.045, 0.16);
+        Plate.Metallic = 0.25;
+        Material Leather = Flesh("M_Art_Wyrm_Wing", 0.045, 0.036, 0.036, 0.62);
+        Leather.DoubleSided = true;
+        Material Gold = Flesh("M_Art_Wyrm_Gold", 1.0, 0.72, 0.26, 0.4);
+        Gold.Emissive = {1.0, 0.68, 0.2};
+        Gold.EmissiveStrength = 5.0;
+        Material Sun = Flesh("M_Art_Wyrm_Eye", 1.0, 0.86, 0.5, 0.1);
+        Sun.Emissive = {1.0, 0.82, 0.42};
+        Sun.EmissiveStrength = 14.0;
+        const Material Socket = Flesh("M_Art_Wyrm_Socket", 0.01, 0.008, 0.008, 0.9);
+        Rng R(0xA5E7u);
+
+        Out.Push(Xf::Scale({0.9, 0.9, 0.9}));  // the spine below runs 33 m along its curves; thirty from snout to tail tip
+        struct Knot { V3 P; double W, H; };
+        const std::vector<Knot> Spine{{{-16.5, 3.5, 0.6}, 0.06, 0.06}, {{-15.0, 4.2, 0.7}, 0.2, 0.2}, {{-13.0, 3.8, 0.8}, 0.35, 0.33},
+            {{-11.0, 2.2, 1.0}, 0.5, 0.48}, {{-9.0, 0.3, 1.3}, 0.65, 0.62}, {{-7.0, -1.2, 1.7}, 0.8, 0.78}, {{-5.0, -1.5, 2.2}, 1.0, 0.95},
+            {{-3.0, -0.9, 2.7}, 1.25, 1.15}, {{-1.0, -0.2, 3.1}, 1.5, 1.35}, {{1.0, 0.2, 3.3}, 1.6, 1.45}, {{3.0, 0.3, 3.4}, 1.65, 1.5},
+            {{5.0, 0.1, 3.5}, 1.6, 1.45}, {{7.0, -0.1, 3.8}, 1.5, 1.4}, {{8.6, 0.0, 4.4}, 1.1, 1.05}, {{10.0, 0.3, 5.3}, 0.85, 0.85},
+            {{11.4, 0.5, 6.1}, 0.75, 0.75}, {{12.6, 0.4, 6.5}, 0.74, 0.72}, {{13.4, 0.35, 6.55}, 0.8, 0.72}, {{14.3, 0.3, 6.45}, 0.58, 0.5},
+            {{15.2, 0.25, 6.3}, 0.4, 0.34}, {{15.8, 0.22, 6.22}, 0.12, 0.12}};
+        const double Last = static_cast<double>(Spine.size() - 1);
+        // a point on the body's surface: S along the spine (0 tail tip, 1 snout), A round it (0 the right flank, pi/2 the top)
+        const auto Surface = [&](const double S, const double A, const double Lift, V3* Normal)
+        {
+            const double At = Clamp(S, 0.0, 1.0) * Last;
+            const std::size_t K = std::min(static_cast<std::size_t>(At), Spine.size() - 2);
+            const double F = At - static_cast<double>(K);
+            const V3 P = Spine[K].P + (Spine[K + 1].P - Spine[K].P) * F, T = Normalize(Spine[K + 1].P - Spine[K].P);
+            const V3 Side = Normalize(Cross(T, V3{0, 0, 1})), Up = Cross(Side, T);  // Side points to the right flank (-Y facing +X)
+            const double W = Lerp(Spine[K].W, Spine[K + 1].W, F) + Lift, H = Lerp(Spine[K].H, Spine[K + 1].H, F) + Lift;
+            if (Normal) *Normal = Normalize(Side * (Cos(A) / W) + Up * (Sin(A) / H));
+            return P + Side * (W * Cos(A)) + Up * (H * Sin(A));
+        };
+        std::vector<Ring> Body;
+        for (int K = 0; K <= 120; ++K)
+        {
+            Ring Rg;
+            for (int A = 0; A < 18; ++A) Rg.push_back(Surface(K / 120.0, 2.0 * Pi * A / 18, 0.0, nullptr));
+            Body.push_back(Rg);
+        }
+        Out.Loft(Obsidian, Body, true);
+        // overlapping plates down the back and flanks, every one laid toward the tail
+        for (int Row = 0; Row < 150; ++Row)
+        {
+            const double S = 0.02 + 0.92 * Row / 149.0;
+            for (int F = 0; F < 14; ++F)
+            {
+                const double A = -0.35 + (Pi + 0.7) * (F + 0.5 * (Row % 2)) / 14;
+                V3 N;
+                const V3 P = Surface(S, A, 0.0, &N), Back = Surface(S - 0.01, A, 0.0, nullptr);
+                const double Size = 0.22 + 0.5 * std::sqrt(Spine[static_cast<std::size_t>(S * Last)].W);
+                Feather(Out, Plate, P + N * 0.015, Normalize(Back - P + N * 0.05), N, Size * 1.2, Size * 0.9);
+            }
+        }
+        // the ridge down her back, from the nape to the tail tip
+        for (int K = 0; K < 70; ++K)
+        {
+            const double S = 0.04 + 0.7 * K / 69.0;
+            V3 N;
+            const V3 Top = Surface(S, Pi / 2, 0.0, &N), Back = Surface(S - 0.012, Pi / 2, 0.0, nullptr);
+            const double Tall = 0.2 + 0.5 * std::sqrt(std::max(Spine[static_cast<std::size_t>(S * Last)].H, 0.0));
+            Out.Tube(Plate, Top - N * 0.05, Top + N * Tall + Normalize(Back - Top) * (Tall * 0.6), 0.12 * Tall + 0.03, 0.006, 6);
+        }
+        // cracks of molten gold through the scales
+        for (int K = 0; K < 64; ++K)
+        {
+            double S = R.Range(0.05, 0.9), A = R.Range(-1.2, Pi + 1.2);
+            V3 Prev = Surface(S, A, 0.12, nullptr);
+            for (int Step = 0; Step < 10; ++Step)
+            {
+                S += R.Range(-0.012, 0.012);
+                A += R.Range(-0.3, 0.3);
+                const V3 Next = Surface(S, A, 0.12, nullptr);
+                Out.Tube(Gold, Prev, Next, 0.05 - 0.003 * Step, 0.047 - 0.003 * Step, 5);
+                Prev = Next;
+            }
+        }
+
+        // the head: deep sockets with the eyes burning in them, a brow over each, the long mouth, two horns arching back
+        for (const double Sd : {-1.0, 1.0})
+        {
+            const V3 Eye{14.05, 0.3 + Sd * 0.46, 6.74};
+            Ellipsoid(Out, Socket, Eye + V3{-0.02, -Sd * 0.04, 0.0}, 0.24, 0.12, 0.15, 12);
+            Ellipsoid(Out, Sun, Eye + V3{0.0, Sd * 0.02, 0.0}, 0.13, 0.08, 0.1, 12);
+            Out.Tube(Plate, {13.6, 0.3 + Sd * 0.55, 6.95}, {14.45, 0.3 + Sd * 0.42, 6.9}, 0.12, 0.06, 8);
+            Out.Tube(Socket, {13.3, 0.3 + Sd * 0.52, 6.3}, {15.6, 0.22 + Sd * 0.16, 6.12}, 0.025, 0.02, 5);
+            const std::vector<V3> Horn{{13.2, 0.35 + Sd * 0.42, 7.05}, {12.5, 0.35 + Sd * 0.62, 7.9}, {11.3, 0.35 + Sd * 0.8, 8.25}, {10.2, 0.35 + Sd * 0.86, 7.75}, {9.6, 0.35 + Sd * 0.82, 7.2}};
+            for (std::size_t K = 0; K + 1 < Horn.size(); ++K)
+                Out.Tube(Plate, Horn[K], Horn[K + 1], Lerp(0.26, 0.02, K / 4.0), Lerp(0.26, 0.02, (K + 1) / 4.0), 10);
+            Out.Tube(Plate, {15.5, 0.22 + Sd * 0.12, 6.1}, {15.55, 0.22 + Sd * 0.12, 5.78}, 0.05, 0.005, 6);
+        }
+
+        // four legs, each ending in curved claws
+        struct Leg { V3 A, B, C, D; double R0, R1; };
+        for (const double Sd : {-1.0, 1.0})
+        {
+            const Leg Legs[] = {{{7.0, Sd * 1.25, 3.5}, {7.7, Sd * 1.95, 2.2}, {8.2, Sd * 1.85, 0.75}, {8.6, Sd * 1.85, 0.18}, 0.85, 0.5},
+                                {{-0.8, Sd * 1.35, 2.9}, {0.5, Sd * 2.05, 1.8}, {-0.6, Sd * 1.95, 0.8}, {-0.2, Sd * 1.95, 0.18}, 1.0, 0.55}};
+            for (const Leg& L : Legs)
+            {
+                Out.Tube(Obsidian, L.A, L.B, L.R0, L.R0 * 0.75, 12);
+                Out.Tube(Obsidian, L.B, L.C, L.R0 * 0.72, L.R1, 12);
+                Out.Tube(Obsidian, L.C, L.D, L.R1, L.R1 * 0.9, 10);
+                for (int F = 0; F < 4; ++F)
+                {
+                    const double A = -0.6 + 0.4 * F;
+                    const V3 Dir{Cos(A), Sin(A), 0.0}, Toe = L.D + Dir * 0.6;
+                    Out.Tube(Obsidian, L.D, Toe, 0.15, 0.11, 8);
+                    Out.Tube(Plate, Toe, Toe + Dir * 0.32 + V3{0, 0, -0.06}, 0.1, 0.05, 8);
+                    Out.Tube(Plate, Toe + Dir * 0.32 + V3{0, 0, -0.06}, Toe + Dir * 0.38 + V3{0, 0, -0.22}, 0.05, 0.005, 8);
+                }
+            }
+        }
+
+        // the wings folded along her flanks: the arm up and back, the wrist high over the shoulders, the fingers laid back
+        // along the body; leather between them with a scalloped trailing edge, gold veins through it
+        for (const double Sd : {-1.0, 1.0})
+        {
+            const V3 Shoulder{7.3, Sd * 1.25, 4.8}, Elbow{3.8, Sd * 2.05, 6.3}, Wrist{8.3, Sd * 2.25, 7.1};
+            const V3 Tips[] = {{-6.0, Sd * 2.7, 4.2}, {-3.5, Sd * 2.85, 2.7}, {-0.6, Sd * 2.75, 2.0}, {2.0, Sd * 2.5, 2.1}};
+            Out.Tube(Obsidian, Shoulder, Elbow, 0.38, 0.28, 10);
+            Out.Tube(Obsidian, Elbow, Wrist, 0.28, 0.2, 10);
+            Out.Tube(Plate, Wrist, Wrist + V3{0.4, Sd * 0.05, 0.6}, 0.14, 0.01, 8);  // the thumb claw
+            for (const V3& Tip : Tips) Out.Tube(Obsidian, Wrist, Tip, 0.16, 0.04, 8);
+            for (int K = 0; K < 4; ++K)
+            {
+                const V3 A = Tips[K], B = K < 3 ? Tips[K + 1] : Elbow;
+                const V3 Scallop = (A + B) * 0.5 + (Wrist - (A + B) * 0.5) * 0.14 + V3{0, Sd * 0.25, 0};
+                Out.Quad(Leather, Wrist + V3{0, Sd * 0.02, 0}, A + V3{0, Sd * 0.02, 0}, Scallop, B + V3{0, Sd * 0.02, 0}, true);
+                Out.Tube(Gold, Wrist + (A - Wrist) * 0.08, Wrist + (A - Wrist) * 0.95 + V3{0, Sd * 0.05, 0}, 0.035, 0.012, 5);
+                V3 Prev = Wrist + (Scallop - Wrist) * 0.1 + V3{0, Sd * 0.04, 0};
+                for (int Step = 1; Step <= 6; ++Step)
+                {
+                    const V3 Next = Wrist + (Scallop - Wrist) * (0.1 + 0.14 * Step) + V3{R.Range(-0.15, 0.15), Sd * 0.04, R.Range(-0.15, 0.15)};
+                    Out.Tube(Gold, Prev, Next, 0.03 - 0.003 * Step, 0.027 - 0.003 * Step, 5);
+                    if (Step == 3) Out.Tube(Gold, Next, Next + (B - Next) * 0.35 + V3{0, Sd * 0.04, 0}, 0.016, 0.006, 5);
+                    Prev = Next;
+                }
+            }
+            Out.Quad(Leather, Shoulder + V3{0, Sd * 0.1, 0}, Elbow, Tips[3], V3{3.0, Sd * 1.55, 3.6}, true);
+        }
+        Out.Pop();
+        return Out;
+    }
+
     void Kit::BuildCreatureModels()
     {
         Emit("SM_Art_Creature_JawOfTheMire", WriteGltf(BuildJawOfTheMire(), "Dark Arisen art kit (creatures)"));
         Emit("SM_Art_Creature_JungleWarden", WriteGltf(BuildJungleWarden(), "Dark Arisen art kit (creatures)"));
         Emit("SM_Art_Creature_CalderaTitan", WriteGltf(BuildCalderaTitan(), "Dark Arisen art kit (creatures)"));
         Emit("SM_Art_Creature_Sturmkralle", WriteGltf(BuildSturmkralle(), "Dark Arisen art kit (creatures)"));
+        Emit("SM_Art_Creature_AshenWyrm", WriteGltf(BuildAshenWyrm(), "Dark Arisen art kit (creatures)"));
     }
 }
