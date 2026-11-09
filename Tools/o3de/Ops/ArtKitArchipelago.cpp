@@ -277,6 +277,7 @@ namespace DarkArisen::Tools::Art
                     I.insert(I.end(), {A, B, C, A, C, D});
                 }
             Mesh M(Name);
+            M.SetUvSteps(1048576.0);  // world UVs: 1.3 cm over 14 km
             M.Indexed(Mat, V, I);
             Out.Triangles += I.size() / 3;
             return M;

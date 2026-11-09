@@ -17,6 +17,7 @@ namespace DarkArisen
     inline constexpr const char* OceanComponentTypeId = "{C1A5E0F2-7D34-4B9A-8E26-5F3B9D0A7C18}";
     inline constexpr const char* WorldStreamerComponentTypeId = "{7964FB3F-9B96-438A-8371-CA711B44C291}";
     inline constexpr const char* WorldRendererComponentTypeId = "{93E922B2-A546-493F-A9B6-0F313B713DA2}";
+    inline constexpr const char* WorldColliderComponentTypeId = "{9B1BB845-3FD1-452B-B22B-BD491A2F02A8}";
     inline constexpr const char* SwimmerComponentTypeId = "{3F9C2A71-5B8E-4D06-9E4A-1C7B6D2E8F35}";
     inline constexpr const char* WaterVolumeComponentTypeId = "{9A4E1D63-2C7F-4B58-8D19-6E3A5F0C2B74}";
     inline constexpr const char* OpeningDirectorComponentTypeId = "{5D2C8E17-9A40-4B6F-B3E1-7C0F2A9D4E58}";

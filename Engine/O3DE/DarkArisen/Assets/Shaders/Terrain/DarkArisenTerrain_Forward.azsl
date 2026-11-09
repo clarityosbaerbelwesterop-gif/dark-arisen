@@ -60,13 +60,13 @@ ForwardPassOutput MainPS(VertexShaderOutput IN)
         const float d = NdotH * NdotH * (a2 - 1.0) + 1.0;
         const float k = roughness * roughness * 0.5;
         const float visibility = 0.25 / ((NdotV * (1.0 - k) + k) * (NdotL * (1.0 - k) + k) + 1e-4);
-        specular = (0.04 * a2 / (3.14159265 * d * d) * visibility) * NdotL * sun.m_rgbIntensityLux * lit;
+        specular = (surface.m_specularF0 * a2 / (3.14159265 * d * d) * visibility) * NdotL * sun.m_rgbIntensityLux * lit;
     }
 
     OUT.m_diffuseColor = float4(diffuse, -1.0);
     OUT.m_specularColor = float4(specular, 1.0);
     OUT.m_albedo = float4(surface.m_albedo * surface.m_occlusion, surface.m_occlusion);
-    OUT.m_specularF0 = float4(0.04, 0.04, 0.04, surface.m_roughness);
+    OUT.m_specularF0 = float4(surface.m_specularF0.xxx, surface.m_roughness);
     OUT.m_normal = float4(EncodeNormalSignedOctahedron(surface.m_normal), EncodeUnorm2BitFlags(true, false));
     return OUT;
 }

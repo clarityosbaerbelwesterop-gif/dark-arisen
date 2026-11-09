@@ -140,9 +140,16 @@ namespace DarkArisen::Tools::Art
         const std::vector<Part>& Parts() const { return PartList; }
         const std::string& Name() const { return MeshName; }
         void Append(const Mesh& Other);
+        /**
+         * UVs are written rounded to 1/Steps (byte-identical output on every compiler). The kit's 1/1024 is two
+         * texels of a 2k map; UVs spanning the whole 14 km world (macro colour, splat) need 1/2^20.
+         */
+        void SetUvSteps(const double Steps) { UvSteps = Steps; }
+        double GetUvSteps() const { return UvSteps; }
 
     private:
         std::string MeshName;
+        double UvSteps = 1024.0;
         std::vector<Part> PartList;
         std::vector<Xf> Stack{Xf{}};
         Part& PartFor(const Material& M);

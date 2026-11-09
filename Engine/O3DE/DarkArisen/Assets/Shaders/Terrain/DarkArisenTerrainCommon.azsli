@@ -61,6 +61,7 @@ struct TerrainSurface
     float3 m_normal;    // world space
     float m_occlusion;
     float m_roughness;
+    float m_specularF0;  // dielectric reflectance at normal incidence
 };
 
 float3 DarkArisenTerrainDecodeNormal(float4 texel)
@@ -144,6 +145,8 @@ TerrainSurface DarkArisenTerrainEvaluate(float3 worldPosition, float3 vertexNorm
     surface.m_occlusion = arm.r;
     // grass, litter, sand and mud scatter light through their own clutter: no sky sheen at grazing angles (the
     // scans' roughness is measured on flat swatches). Rock keeps its own.
-    surface.m_roughness = lerp(max(arm.g, 0.78), arm.g, blend.z);
+    surface.m_roughness = lerp(max(arm.g, 0.85), arm.g, blend.z);
+    // and their clutter shadows its own highlights: half the usual dielectric reflectance, rock keeps 0.04
+    surface.m_specularF0 = lerp(0.02, 0.04, blend.z);
     return surface;
 }

@@ -769,8 +769,8 @@ namespace DarkArisen::Tools::Art
             const std::size_t UvOffset = Bin.size();
             for (const Vertex& V : P.Vertices)
             {
-                PutF(Bin, Quantize(V.U, 1024.0));
-                PutF(Bin, Quantize(V.V, 1024.0));
+                PutF(Bin, Quantize(V.U, Model.GetUvSteps()));
+                PutF(Bin, Quantize(V.V, Model.GetUvSteps()));
             }
             const int UvAcc = Accessor(View(UvOffset, Bin.size() - UvOffset, 34962), 5126, P.Vertices.size(), "VEC2", "");
             const std::size_t IdxOffset = Bin.size();

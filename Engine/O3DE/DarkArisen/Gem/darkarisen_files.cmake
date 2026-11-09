@@ -57,4 +57,6 @@ set(FILES
     Source/World/WorldStreamerComponent.cpp
     Source/World/WorldRendererComponent.h
     Source/World/WorldRendererComponent.cpp
+    Source/World/WorldColliderComponent.h
+    Source/World/WorldColliderComponent.cpp
 )

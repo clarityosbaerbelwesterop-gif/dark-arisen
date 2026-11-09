@@ -2018,7 +2018,7 @@ namespace DarkArisen::Tools
 
         /**
          * The open world: the archipelago (ContentSource/World/Archipelago.json) streamed around Jake by
-         * WorldStreamerComponent and drawn by WorldRendererComponent, the coarse 32 m mesh always resident as the
+         * WorldStreamerComponent, drawn by WorldRendererComponent and walked on through WorldColliderComponent, the coarse 32 m mesh always resident as the
          * horizon, the ocean everywhere. Its terrain, plantings and catalog come from DarkArisenO3DE world-build on
          * the build host (Assets/World, not committed). Jake starts on the shore by Rexa Harbor.
          */
@@ -2048,6 +2048,7 @@ namespace DarkArisen::Tools
             Follow.Members["Follow"] = JsonString(Jake);
             AddGame(Prefab, Streamer, WorldStreamerComponentTypeId, "WorldStreamerComponent", std::move(Follow));
             AddGame(Prefab, Streamer, WorldRendererComponentTypeId, "WorldRendererComponent");
+            AddGame(Prefab, Streamer, WorldColliderComponentTypeId, "WorldColliderComponent");
             return Prefab.Write();
         }
 
