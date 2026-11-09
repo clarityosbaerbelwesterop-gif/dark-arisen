@@ -133,7 +133,8 @@ namespace DarkArisen::Tools::Art
         Fort,        // curtain walls with towers
         Lighthouse,  // a whitewashed tower and its keeper's house
         Entrance,    // a dungeon's way in: a cave mouth in the rock or a carved doorway with steps down
-        Civic        // a town's landmark on its square: cathedral, market hall, warehouse, mansion, watchtower
+        Civic,       // a town's landmark on its square: cathedral, market hall, warehouse, mansion, watchtower
+        Harbour      // the waterfront: stone quay, timber pier, fishing boat, merchant brig, rowing boat (afloat at z = 0)
     };
 
     /** Variants of Tradition::Civic. */

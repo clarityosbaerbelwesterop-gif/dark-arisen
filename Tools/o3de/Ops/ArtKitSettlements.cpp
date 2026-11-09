@@ -31,6 +31,12 @@ namespace DarkArisen::Tools::Art
             case Tradition::Camp: return {2.4 + 0.4 * (V % 3), 3.0 + 0.6 * (V % 2), 1.8};
             case Tradition::Fort: return {16.0 + 4.0 * (V % 3), 2.6, 7.0};
             case Tradition::Entrance: return {6.0 + 1.0 * (V % 3), 5.0, 4.0 + 0.5 * (V % 2)};
+            case Tradition::Harbour:
+            {
+                // footprints along the model's Y (into the water); boats: length along Y, beam along X, deck height
+                static const Size Harbour[] = {{8.0, 26.0, 1.6}, {3.0, 30.0, 1.5}, {2.8, 10.0, 1.2}, {6.4, 24.0, 2.0}, {1.6, 4.4, 0.6}};
+                return Harbour[V % 5];
+            }
             case Tradition::Civic:
             {
                 static const Size Civic[] = {{16.0, 36.0, 14.0}, {18.0, 26.0, 6.0}, {14.0, 30.0, 8.0}, {22.0, 16.0, 11.0}, {7.0, 7.0, 16.0}};
@@ -51,6 +57,7 @@ namespace DarkArisen::Tools::Art
             case Tradition::Fort: return "Fort";
             case Tradition::Entrance: return "Entrance";
             case Tradition::Civic: return "Civic";
+            case Tradition::Harbour: return "Harbour";
             case Tradition::Lighthouse: default: return "Lighthouse";
             }
         }
@@ -64,7 +71,11 @@ namespace DarkArisen::Tools::Art
             Out.Quad(Roof, {X0, Y0, Z}, {X1, Y0, Z}, {X1, 0.0, Top}, {X0, 0.0, Top}, true);
             Out.Quad(Roof, {X1, Y1, Z}, {X0, Y1, Z}, {X0, 0.0, Top}, {X1, 0.0, Top}, true);
             for (const double X : {-W / 2, W / 2})
+            {
+                // both faces: the gable is seen from outside and, under the eaves, from below
                 Out.Fan(Gables, {{X, -D / 2, Z}, {X, D / 2, Z}, {X, 0.0, Top}}, {X < 0 ? -1.0 : 1.0, 0.0, 0.0});
+                Out.Fan(Gables, {{X, D / 2, Z}, {X, -D / 2, Z}, {X, 0.0, Top}}, {X < 0 ? 1.0 : -1.0, 0.0, 0.0});
+            }
         }
 
         /** Hipped roof: a short ridge along X, eaves all round. */
@@ -157,6 +168,53 @@ namespace DarkArisen::Tools::Art
                 // a stretch of curtain wall with a squat tower at its end
                 return DressFort(Name, {{{-S.W / 2, -S.D / 2, 0.0}, {S.W / 2, S.D / 2, S.H}}, {{S.W / 2 - 2.5, -3.5, 0.0}, {S.W / 2 + 4.5, 3.5, S.H + 3.0}}});
             }
+            case Tradition::Harbour:
+            {
+                Mesh Out(Name);
+                if (V == 0)
+                {
+                    // a stone quay running out from the shore (+Y), its top 1.6 m above the sea, bollards along its edges
+                    Out.Box(Mat(M::StoneDark), {-S.W / 2, 0.0, -4.0}, {S.W / 2, S.D, S.H - 0.2});
+                    Out.Box(Mat(M::Paving), {-S.W / 2 - 0.1, -2.0, S.H - 0.2}, {S.W / 2 + 0.1, S.D + 0.1, S.H});
+                    for (double Y = 3.0; Y < S.D; Y += 6.0)
+                        for (const double X : {-S.W / 2 + 0.5, S.W / 2 - 0.5}) Out.Tube(Mat(M::Iron), {X, Y, S.H}, {X, Y, S.H + 0.6}, 0.18, 0.15, 8);
+                }
+                else if (V == 1)
+                {
+                    // a timber pier on piles, plank deck 1.5 m above the sea
+                    for (double Y = 1.0; Y < S.D; Y += 3.0)
+                        for (const double X : {-S.W / 2 + 0.2, S.W / 2 - 0.2}) Out.Tube(Mat(M::TimberDark), {X, Y, -4.0}, {X, Y, S.H + 0.6}, 0.14, 0.12, 7);
+                    Out.Box(Mat(M::Deck), {-S.W / 2, -2.0, S.H - 0.15}, {S.W / 2, S.D, S.H});
+                }
+                else
+                {
+                    // boats: a single-masted fishing boat, a two-masted merchant brig, a rowing boat; bow to +Y
+                    ShipSpec Boat;
+                    Boat.Name = Name;
+                    Boat.Bowsprit = 0.0;
+                    Boat.Cargo = V == 3;
+                    if (V == 2)
+                    {
+                        Boat.Stern = -4.6; Boat.Bow = 5.2; Boat.HalfBeam = 1.35; Boat.Deck = 0.9; Boat.Keel = -0.8; Boat.Bulwark = 0.45; Boat.Sheer = 0.35;
+                        Boat.Masts = {0.6}; Boat.MastHeights = {7.5}; Boat.Topsides = M::HullBlack; Boat.Band = M::HullBandRed; Boat.SailsSet = false; Boat.Bowsprit = 1.8;
+                    }
+                    else if (V == 3)
+                    {
+                        Boat.Stern = -11.0; Boat.Bow = 11.5; Boat.HalfBeam = 3.1; Boat.Deck = 1.8; Boat.Keel = -2.0; Boat.Bulwark = 0.9;
+                        Boat.Masts = {-3.5, 4.0}; Boat.MastHeights = {15.0, 16.5}; Boat.SailsSet = false; Boat.Bowsprit = 6.0; Boat.Hatches = {{-1.0, 1.5}};
+                    }
+                    else
+                    {
+                        Boat.Stern = -2.1; Boat.Bow = 2.3; Boat.HalfBeam = 0.75; Boat.Deck = 0.35; Boat.Keel = -0.35; Boat.Bulwark = 0.25; Boat.Sheer = 0.15;
+                        Boat.SternHalf = 0.6;
+                    }
+                    Mesh Hull = BuildShip(Boat, nullptr);
+                    Out.Push(Xf::RotateZ(Pi / 2));  // the kit builds bow to +X
+                    Out.Append(Hull);
+                    Out.Pop();
+                }
+                return Out;
+            }
             case Tradition::Civic:
             {
                 Mesh Out(Name);
@@ -172,7 +230,9 @@ namespace DarkArisen::Tools::Art
                     Out.Append(Nave);
                     Out.Pop();
                     Out.Box(Mat(M::Plaster), {-4.0, -S.D / 2 - 7.0, 0.0}, {4.0, -S.D / 2 + 1.0, S.H + 14.0});
+                    Out.Push(Xf::Translate({0.0, -S.D / 2 - 3.0, 0.0}));  // the spire on the tower, not on the nave
                     Hip(Out, Mat(M::RoofTile), 8.0, 8.0, S.H + 14.0, 5.0, 0.3);
+                    Out.Pop();
                     Out.Tube(Mat(M::PlasterOchre), {0.0, S.D / 2, 0.0}, {0.0, S.D / 2, S.H * 0.85}, 6.5, 6.5, 16);
                     Out.Box(Mat(M::TimberDark), {-1.4, -S.D / 2 - 7.08, 0.0}, {1.4, -S.D / 2 - 6.9, 4.6});
                     for (int K = 0; K < 5; ++K)
@@ -273,8 +333,8 @@ namespace DarkArisen::Tools::Art
     void Kit::BuildSettlementModels()
     {
         for (const Tradition Kind : {Tradition::Colonial, Tradition::Stilt, Tradition::Nordic, Tradition::Camp, Tradition::Fort, Tradition::Lighthouse, Tradition::Entrance,
-                 Tradition::Civic})
-            for (int V = 0; V < (Kind == Tradition::Lighthouse ? 1 : Kind == Tradition::Civic ? 5 : Variants); ++V)
+                 Tradition::Civic, Tradition::Harbour})
+            for (int V = 0; V < (Kind == Tradition::Lighthouse ? 1 : Kind == Tradition::Civic || Kind == Tradition::Harbour ? 5 : Variants); ++V)
                 Emit(ModelName(Kind, V), WriteGltf(BuildVariant(Kind, V), "Dark Arisen art kit (settlements)"));
     }
 
@@ -285,9 +345,29 @@ namespace DarkArisen::Tools::Art
         const auto Place = [&](const Tradition Kind, const int V, const double X, const double Y, const double Yaw)
         {
             const Size S = VariantSize(Kind, V);
-            const double Z = Spec.Ground(X, Y);
+            const double Z = Kind == Tradition::Harbour ? 0.0 : Spec.Ground(X, Y);  // the waterfront floats at sea level
             const double Lift = Kind == Tradition::Stilt ? 1.7 + 2.0 : 0.0;
             Out.push_back({"Assets/Art/Models/" + ModelName(Kind, V) + ".gltf", X, Y, Z, Yaw, S.W / 2 + 0.3, S.D / 2 + 0.3, S.H + Lift + 2.0});
+        };
+        // life at the doors: a scanned barrel, crate or lantern beside a house's door (-Y in its frame). Props are kept
+        // apart and added at the end, so they never count against a settlement's buildings.
+        std::vector<Structure> Props;
+        const auto Dress = [&](const Tradition Kind, const int V, const double X, const double Y, const double Yaw)
+        {
+            static const char* const Kinds[] = {"Assets/Art/Scanned/models/Barrel_01/Barrel_01_2k.gltf", "Assets/Art/Scanned/models/Barrel_02/Barrel_02_2k.gltf",
+                "Assets/Art/Scanned/models/barrel_03/barrel_03_2k.gltf", "Assets/Art/Scanned/models/wooden_crate_01/wooden_crate_01_2k.gltf",
+                "Assets/Art/Scanned/models/wooden_lantern_01/wooden_lantern_01_2k.gltf"};
+            const Size S = VariantSize(Kind, V);
+            const int Count = static_cast<int>(R.Unit() * 3.0);
+            const double Rad = Yaw * Pi / 180.0, Ca = Cos(Rad), Sa = Sin(Rad);
+            for (int K = 0; K < Count; ++K)
+            {
+                const double Lx = (K % 2 ? 1.0 : -1.0) * R.Range(1.0, std::max(1.2, S.W / 2 - 0.4)), Ly = -S.D / 2 - R.Range(0.6, 1.4);
+                const double Px = X + Lx * Ca - Ly * Sa, Py = Y + Lx * Sa + Ly * Ca;
+                const int Pick = static_cast<int>(R.Unit() * 5.0);
+                const double Turn = R.Range(0.0, 360.0);
+                Props.push_back({Kinds[Pick], Px, Py, Spec.Ground(Px, Py), Turn, 0.4, 0.4, 1.0});
+            }
         };
         const auto Free = [&](const double X, const double Y, const double Clear)
         {
@@ -334,6 +414,47 @@ namespace DarkArisen::Tools::Art
             return Out;
         }
 
+        // the waterfront: where the site meets the sea, piers or a quay run out from the shore with boats alongside
+        if (Spec.Kind != Tradition::Camp && Spec.Kind != Tradition::Fort)
+        {
+            int Best = -1;
+            double BestShore = 1e30;
+            for (int K = 0; K < 16; ++K)
+            {
+                const double Ux = Cos(Pi * K / 8.0), Uy = Sin(Pi * K / 8.0);
+                for (double D = 10.0; D < Spec.Radius * (Spec.Kind == Tradition::Colonial ? 2.6 : 1.8); D += 10.0)
+                {
+                    if (Spec.Ground(Spec.X + Ux * D, Spec.Y + Uy * D) < -1.5)
+                    {
+                        if (D < BestShore) { BestShore = D; Best = K; }
+                        break;
+                    }
+                }
+            }
+            if (Best >= 0)
+            {
+                const double Ux = Cos(Pi * Best / 8.0), Uy = Sin(Pi * Best / 8.0);
+                double Shore = 0.0;  // the waterline along that bearing
+                for (double D = 0.0; D < BestShore; D += 2.0)
+                    if (Spec.Ground(Spec.X + Ux * D, Spec.Y + Uy * D) < 0.3) { Shore = D; break; }
+                const double Yaw = Pi * Best / 8.0 * 180.0 / Pi - 90.0;  // the model's +Y out to sea
+                const bool Town = Spec.Kind == Tradition::Colonial;
+                const int Piers = Town ? 3 : Spec.Kind == Tradition::Lighthouse ? 1 : 2;
+                for (int P = 0; P < Piers; ++P)
+                {
+                    const double Side = (P - (Piers - 1) / 2.0) * (Town ? 30.0 : 22.0);  // along the shore
+                    const double Bx = Spec.X + Ux * (Shore - 3.0) - Uy * Side, By = Spec.Y + Uy * (Shore - 3.0) + Ux * Side;
+                    const int Kind = Town ? 0 : 1;
+                    Place(Tradition::Harbour, Kind, Bx, By, Yaw);
+                    // boats moored alongside: brigs at a town's quays, fishing boats and rowing boats at a village's piers
+                    const double Along = VariantSize(Tradition::Harbour, Kind).D * 0.6, Off = VariantSize(Tradition::Harbour, Kind).W / 2 + (Town ? 4.5 : 2.2);
+                    const int Boat = Town ? (P == 1 ? 2 : 3) : (P % 2 ? 4 : 2);
+                    Place(Tradition::Harbour, Boat, Bx + Ux * Along - Uy * Off, By + Uy * Along + Ux * Off, Yaw);
+                    if (!Town) Place(Tradition::Harbour, 4, Bx + Ux * (Along * 0.5) + Uy * Off, By + Uy * (Along * 0.5) - Ux * Off, Yaw + 8.0);
+                }
+            }
+        }
+
         // the landmark on the square
         if (Spec.Centre != Landmark::None) Place(Tradition::Civic, static_cast<int>(Spec.Centre), Spec.X, Spec.Y, Spec.StreetAngle);
 
@@ -364,17 +485,24 @@ namespace DarkArisen::Tools::Art
                             const double Lu = U + Along + S.W / 2, Lw = W + Side * (Deep / 2 - S.D / 2);
                             const double X = Spec.X + Lu * Ca - Lw * Sa, Y = Spec.Y + Lu * Sa + Lw * Ca;
                             if (Spec.Ground(X, Y) >= Spec.MinGround)
+                            {
                                 Place(Tradition::Colonial, V, X, Y, Spec.StreetAngle + (Side < 0 ? 0.0 : 180.0));  // doors (-Y) on the street
+                                if (R.Unit() < 0.3) Dress(Tradition::Colonial, V, X, Y, Spec.StreetAngle + (Side < 0 ? 0.0 : 180.0));
+                            }
                             Along += S.W + 0.05;
                         }
                     }
                 }
             }
+            Out.insert(Out.end(), Props.begin(), Props.end());
             return Out;
         }
 
         // villages and camps grow, they are not drawn: houses in loose clusters, denser towards the middle, each set
         // along the hillside (long side on the contour) with a little give, a path's width from its neighbours
+        // a camp gathers round its fire (placed first, so the tents keep their distance)
+        if (Spec.Kind == Tradition::Camp)
+            Out.push_back({"Assets/Art/Scanned/models/stone_fire_pit/stone_fire_pit_2k.gltf", Spec.X, Spec.Y, Spec.Ground(Spec.X, Spec.Y), 0.0, 3.0, 3.0, 0.6});
         const double Ridge = Spec.StreetAngle;
         for (int Tries = 0; Tries < Spec.MaxBuildings * 30 && static_cast<int>(Out.size()) < Spec.MaxBuildings; ++Tries)
         {
@@ -389,8 +517,12 @@ namespace DarkArisen::Tools::Art
             const double Gx = Spec.Ground(X + 3.0, Y) - Spec.Ground(X - 3.0, Y), Gy = Spec.Ground(X, Y + 3.0) - Spec.Ground(X, Y - 3.0);
             double Along = Ridge;
             if (Gx * Gx + Gy * Gy > 0.04) Along = std::fabs(Gx) > std::fabs(Gy) ? 0.0 : 90.0;  // long side (Y in the model) along the slope's contour
-            Place(Spec.Kind, V, X, Y, Along + Jitter + (R.Unit() < 0.5 ? 180.0 : 0.0));
+            const double Yaw = Along + Jitter + (R.Unit() < 0.5 ? 180.0 : 0.0);
+            Place(Spec.Kind, V, X, Y, Yaw);
+            if (Spec.Kind != Tradition::Camp && R.Unit() < 0.6) Dress(Spec.Kind, V, X, Y, Yaw);
         }
+
+        Out.insert(Out.end(), Props.begin(), Props.end());
         return Out;
     }
 }

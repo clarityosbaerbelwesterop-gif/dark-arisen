@@ -5,6 +5,7 @@
 #include <AzCore/Component/Component.h>
 #include <AzCore/Component/EntityId.h>
 #include <AzCore/Component/TickBus.h>
+#include <AzCore/Math/Vector3.h>
 #include <AzCore/std/containers/unordered_map.h>
 #include <AzCore/std/smart_ptr/unique_ptr.h>
 
@@ -42,6 +43,7 @@ namespace DarkArisen
         const AZStd::vector<WorldStructureModel>& GetStructureModels() const override { return m_structureModels; }
         const WorldBiomeGrass* GetBiomeGrass(const AZStd::string& biome) const override;
         bool GetGroundHeight(float x, float y, float& height) const override;
+        bool IsPaved(float x, float y) const override;
         float GetTileSize() const override { return m_tileSize; }
         int GetColumns() const override { return m_columns; }
 
@@ -75,6 +77,7 @@ namespace DarkArisen
         AZStd::vector<WorldPlant> m_plants;
         AZStd::vector<WorldGrass> m_grass;
         AZStd::vector<WorldStructureModel> m_structureModels;
+        AZStd::vector<AZ::Vector3> m_paved;  // x, y, radius of each town's paving
         AZStd::unordered_map<AZStd::string, WorldBiomeGrass> m_biomes;
 
         // streaming state

@@ -195,6 +195,16 @@ namespace DarkArisen
                     [this](const WorldStructure& s) { return s.Model >= m_structureModels.size(); }),
                 tile.Structures.end());
         }
+        if (document.HasMember("paved") && document["paved"].IsArray())
+        {
+            for (const rapidjson::Value& disc : document["paved"].GetArray())
+            {
+                if (disc.IsArray() && disc.Size() == 3 && disc[0].IsNumber() && disc[1].IsNumber() && disc[2].IsNumber())
+                {
+                    m_paved.emplace_back(static_cast<float>(disc[0].GetDouble()), static_cast<float>(disc[1].GetDouble()), static_cast<float>(disc[2].GetDouble()));
+                }
+            }
+        }
         if (document.HasMember("grass") && document["grass"].IsArray())
         {
             for (const rapidjson::Value& entry : document["grass"].GetArray())
@@ -340,6 +350,7 @@ namespace DarkArisen
         m_plants.clear();
         m_grass.clear();
         m_structureModels.clear();
+        m_paved.clear();
         m_biomes.clear();
     }
 
@@ -433,6 +444,19 @@ namespace DarkArisen
     {
         const auto found = m_biomes.find(biome);
         return found == m_biomes.end() ? nullptr : &found->second;
+    }
+
+    bool WorldStreamerComponent::IsPaved(const float x, const float y) const
+    {
+        for (const AZ::Vector3& disc : m_paved)
+        {
+            const float dx = x - disc.GetX(), dy = y - disc.GetY();
+            if (dx * dx + dy * dy < disc.GetZ() * disc.GetZ())
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     bool WorldStreamerComponent::GetGroundHeight(const float x, const float y, float& height) const

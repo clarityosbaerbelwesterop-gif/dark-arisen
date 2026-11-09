@@ -283,6 +283,10 @@ namespace DarkArisen
             }
             const float x = x0 + 2.0f * static_cast<float>(k % GrassPerSide) + 2.0f * Hash01(seed + 1u);
             const float y = y0 + 2.0f * static_cast<float>(k / GrassPerSide) + 2.0f * Hash01(seed + 2u);
+            if (world->IsPaved(x, y))
+            {
+                continue;  // a town's streets and squares
+            }
             float z = 0.0f, east = 0.0f, west = 0.0f, north = 0.0f, south = 0.0f;
             if (!world->GetGroundHeight(x, y, z) || z < 1.6f || !world->GetGroundHeight(x + 1.0f, y, east) || !world->GetGroundHeight(x - 1.0f, y, west) ||
                 !world->GetGroundHeight(x, y + 1.0f, north) || !world->GetGroundHeight(x, y - 1.0f, south))
