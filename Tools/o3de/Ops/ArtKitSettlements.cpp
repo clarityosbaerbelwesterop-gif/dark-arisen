@@ -396,7 +396,7 @@ namespace DarkArisen::Tools::Art
             for (int K = 0; K < 16; ++K)
             {
                 const double Ux = Cos(Pi * K / 8.0), Uy = Sin(Pi * K / 8.0);
-                for (double D = 10.0; D < Spec.Radius * 1.8; D += 10.0)
+                for (double D = 10.0; D < Spec.Radius * (Spec.Kind == Tradition::Colonial ? 2.6 : 1.8); D += 10.0)
                 {
                     if (Spec.Ground(Spec.X + Ux * D, Spec.Y + Uy * D) < -1.5)
                     {
