@@ -104,6 +104,8 @@ namespace DarkArisen
         virtual const AZStd::vector<WorldGrass>& GetGrass() const = 0;
         virtual const AZStd::vector<WorldStructureModel>& GetStructureModels() const = 0;
         virtual const WorldBiomeGrass* GetBiomeGrass(const AZStd::string& biome) const = 0;
+        /** In a town's paving (streets and squares): no grass is scattered there. */
+        virtual bool IsPaved(float x, float y) const = 0;
         /** Ground height from the resident foliage tiles; false where none is resident (or at open sea). */
         virtual bool GetGroundHeight(float x, float y, float& height) const = 0;
         virtual float GetTileSize() const = 0;

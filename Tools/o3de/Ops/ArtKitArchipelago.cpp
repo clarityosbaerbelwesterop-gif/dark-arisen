@@ -605,6 +605,13 @@ namespace DarkArisen::Tools::Art
                      MaterialRef("Assets/World/" + Material) + "}";
             FirstPatch = false;
         }
+        // the towns' paving: no grass grows there
+        std::string Paved;
+        for (const Site& Si : Sites)
+            if (Si.Kind == Tradition::Colonial || Si.Kind == Tradition::Fort)
+                Paved += std::string(Paved.empty() ? "" : ", ") + "[" + GltfBits::Num(Si.Where->X) + ", " + GltfBits::Num(Si.Where->Y) + ", " +
+                         GltfBits::Num(Si.Where->Radius * 0.9) + "]";
+        Index += "\n  ],\n  \"paved\": [" + Paved;
         // which cards grow on each biome's open ground, and how densely (patches per 2 m cell)
         Index += "\n  ],\n  \"biomes\": {\n    \"tropical\": {\"grass\": [\"GrassBlades\"], \"density\": 0.85},\n    \"mire\": {\"grass\": [\"Reeds\", \"GrassBlades\"], \"density\": 0.6},\n"
                  "    \"moor\": {\"grass\": [\"HeatherSprig\", \"GrassDry\"], \"density\": 0.95},\n    \"cold\": {\"grass\": [\"GrassDry\", \"HeatherSprig\"], \"density\": 0.5},\n"

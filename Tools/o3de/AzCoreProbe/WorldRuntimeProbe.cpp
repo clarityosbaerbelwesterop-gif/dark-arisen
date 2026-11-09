@@ -81,7 +81,7 @@ namespace
         std::string building;
         catalog += std::string("\n  ],\n  \"structures\": [\n    {\"model\": ") +
                    Asset("{ABCDEF00-1111-2222-3333-999999999999}", 268435463u, "assets/art/models/sm_art_settlement_nordic_0.azmodel", building) +
-                   ", \"box\": [3.3, 6.0, 7.5]}\n  ],";
+                   ", \"box\": [3.3, 6.0, 7.5]}\n  ],\n  \"paved\": [[400, 300, 50]],";
         catalog += std::string("\n  \"plants\": [\n    {\"tree\": true, \"parts\": [{\"model\": ") +
                    Asset("{ABCDEF00-1111-2222-3333-444444444444}", 268435460u, "assets/art/scanned/game/island_tree_01_0.azmodel", plant) + ", \"material\": null}]},\n" +
                    "    {\"tree\": false, \"parts\": [{\"model\": " + Asset("{ABCDEF00-1111-2222-3333-555555555555}", 268435461u, "assets/art/models/x.azmodel", plant) +
@@ -141,6 +141,7 @@ int main(int argc, char** argv)
     Check(first && first->Structures.size() == 1 && std::fabs(first->Structures[0].X - 120.0f) < 1e-3f && std::fabs(first->Structures[0].Z - 12.5f) < 1e-3f &&
               std::fabs(first->Structures[0].Yaw - 90.0f) < 1e-3f,
         "catalog: a tile's buildings in metres and degrees; one naming a missing model is dropped");
+    Check(world->IsPaved(420.0f, 310.0f) && !world->IsPaved(460.0f, 300.0f), "a town's paving is known (no grass there)");
     const DarkArisen::WorldBiomeGrass* grass = world->GetBiomeGrass("tropical");
     Check(grass && grass->Grass.size() == 1 && world->GetGrass()[grass->Grass[0]].Card == "GrassBlades" && std::fabs(grass->Density - 0.7f) < 1e-4f,
         "catalog: the biome's grass cards resolve to patches");

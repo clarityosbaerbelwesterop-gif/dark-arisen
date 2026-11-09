@@ -71,7 +71,11 @@ namespace DarkArisen::Tools::Art
             Out.Quad(Roof, {X0, Y0, Z}, {X1, Y0, Z}, {X1, 0.0, Top}, {X0, 0.0, Top}, true);
             Out.Quad(Roof, {X1, Y1, Z}, {X0, Y1, Z}, {X0, 0.0, Top}, {X1, 0.0, Top}, true);
             for (const double X : {-W / 2, W / 2})
+            {
+                // both faces: the gable is seen from outside and, under the eaves, from below
                 Out.Fan(Gables, {{X, -D / 2, Z}, {X, D / 2, Z}, {X, 0.0, Top}}, {X < 0 ? -1.0 : 1.0, 0.0, 0.0});
+                Out.Fan(Gables, {{X, D / 2, Z}, {X, -D / 2, Z}, {X, 0.0, Top}}, {X < 0 ? 1.0 : -1.0, 0.0, 0.0});
+            }
         }
 
         /** Hipped roof: a short ridge along X, eaves all round. */
@@ -226,7 +230,9 @@ namespace DarkArisen::Tools::Art
                     Out.Append(Nave);
                     Out.Pop();
                     Out.Box(Mat(M::Plaster), {-4.0, -S.D / 2 - 7.0, 0.0}, {4.0, -S.D / 2 + 1.0, S.H + 14.0});
+                    Out.Push(Xf::Translate({0.0, -S.D / 2 - 3.0, 0.0}));  // the spire on the tower, not on the nave
                     Hip(Out, Mat(M::RoofTile), 8.0, 8.0, S.H + 14.0, 5.0, 0.3);
+                    Out.Pop();
                     Out.Tube(Mat(M::PlasterOchre), {0.0, S.D / 2, 0.0}, {0.0, S.D / 2, S.H * 0.85}, 6.5, 6.5, 16);
                     Out.Box(Mat(M::TimberDark), {-1.4, -S.D / 2 - 7.08, 0.0}, {1.4, -S.D / 2 - 6.9, 4.6});
                     for (int K = 0; K < 5; ++K)
