@@ -394,7 +394,11 @@ namespace DarkArisen::Tools::Art
                     {"fortress", {0.22, 0.30, 0.11}, {0.34, 0.34, 0.21}, {0.07, 0.13, 0.05}},
                     {"maw", {0.16, 0.14, 0.15}, {0.10, 0.09, 0.10}, {0.10, 0.10, 0.09}}};
                 const double Woods = Kit::WorldWoods(X, Y, Spec.Seed) * Smooth(2.5, 6.0, Z) * (1.0 - Steep);
-                const double Mottle = 0.9 + 0.2 * Fractal(X, Y, 140.0, 3, Spec.Seed + 91u);
+                // a broad mottle everywhere, and on slopes the streaks of runoff and scree (a ridged noise), so a mountain
+                // face reads from afar without a single tree on it
+                const double Ridged = 1.0 - std::fabs(Fractal(X, Y, 55.0, 3, Spec.Seed + 123u) - 0.5) * 2.0;
+                const double Slope = Smooth(0.97, 0.80, N.Z);
+                const double Mottle = (0.9 + 0.2 * Fractal(X, Y, 140.0, 3, Spec.Seed + 91u)) * (1.0 - 0.22 * Slope * (Ridged * Ridged - 0.35));
                 for (const Pal& P : Palette)
                     if (Biome == P.B)
                         for (int C = 0; C < 3; ++C) Col[C] = (P.L[C] + (P.H[C] - P.L[C]) * T) * Mottle * (1.0 - Woods) + P.Wood[C] * Woods;
