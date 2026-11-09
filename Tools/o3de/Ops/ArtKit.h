@@ -276,5 +276,7 @@ namespace DarkArisen::Tools::Art
         std::string Emit(const std::string& Name, const std::string& Gltf);
         /** Every building variant SettlementLayout may place (ArtKitSettlements.cpp). */
         void BuildSettlementModels();
+        /** The creature bosses of docs/design/bosses (ArtKitCreatures.cpp). */
+        void BuildCreatureModels();
     };
 }

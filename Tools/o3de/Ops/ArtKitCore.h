@@ -101,6 +101,8 @@ namespace DarkArisen::Tools::Art
         double AlphaCutoff = 0.5;
         bool DoubleSided = false;
         double MetresPerTile = 2.0;     // world-space UV scale used by the builders
+        std::array<double, 3> Emissive{0, 0, 0};  // sRGB glow colour; black for none (lava, embers, a heart-light)
+        double EmissiveStrength = 1.0;  // above 1 written through KHR_materials_emissive_strength
     };
 
     class Mesh
