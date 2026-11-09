@@ -469,6 +469,241 @@ namespace DarkArisen::Tools::Art::Humans
                 Add(P);
             }
 
+            // ---- The bosses of docs/design/bosses not yet cast. What the kit has no garment or gear for (tattoos, gloves, an
+            // eye of each colour, a gold tooth, cleavers, hooks, staffs, axes, shields, bows) is left out and said so here, never
+            // moved somewhere it does not belong.
+            // ---- Brother Cleaver: 61, 1.90 m, lanky from skipped meals; white thinning hair in the old monastic tonsure; a long,
+            // uneven white beard; dark brown restless eyes; swamp-tanned, weathered skin; the tattered cassock, black gone grey,
+            // patched with leather and canvas, homespun wool beneath; a leather apron for the ritual knives; slightly bent
+            // (brother_cleaver.md 2). Left out: the forearm cuts (under the sleeves), the inverted cleaver-crucifix, the Great
+            // Cleaver, the six knives and the bone censer (weapon props).
+            {
+                PersonSpec P;
+                P.Id = "brother_cleaver";
+                P.Age = 61; P.Muscle = 0.55; P.Weight = 0.12; P.Proportions = 0.85; P.Height = 1.9;
+                P.Detail = {{"head/head-fat-decr", 0.7}, {"cheek/l-cheek-volume-decr", 0.6}, {"cheek/r-cheek-volume-decr", 0.6}, {"head/head-oval", 0.3}};
+                P.Skin = Tanned; P.Weathered = 0.9; P.Wrinkles = 0.65; P.Eyes = DarkEyes;
+                P.Hair = HairWhite; P.Gray = 1.0; P.Hairdo = HairStyle::Tonsure; P.HairVolume = 0.6;
+                P.Beard = BeardStyle::Full; P.BeardLength = 1.3;
+                P.Shirt = Top(WoolBrown, Cloth::Wool, 1.95, 0.3);
+                P.Shirt.Wear = 0.95;
+                P.Coat = Coat(Rgb{0.2, 0.2, 0.2}, Cloth::Wool, 0.05, 0);
+                P.Coat.Wear = 0.95;
+                P.Tails = Tails(Rgb{0.2, 0.2, 0.2}, Cloth::Wool, 1.9, 0.1);
+                P.Legs = Trousers(WoolBrown, Cloth::Wool, 1.9);
+                P.Feet = Boots(LeatherDark, 1.3, 0.7);
+                P.Front.On = true; P.Front.Color = Leather; P.Front.Fabric = Cloth::Leather; P.Front.Top = 0.5; P.Front.Hem = 1.2;
+                P.Clip = "77_02"; P.Time = 1.0; P.Upright = 0.3;
+                Add(P);
+            }
+            // ---- Captain Corazon: 44, 1.73 m, athletic and lean; a handsome face, cheekbones, a strong jaw; deep black hair, silver at
+            // the temples, short and swept back; dark brown eyes; warm brown skin; three facial scars (across the right cheekbone,
+            // a puncture below the left eye, the upper lip); a fitted dark crimson jacket with gold piping over a white linen
+            // shirt, black trousers into knee-high boots; her father's insignia on a silver chain; sabres and a flintlock
+            // (captain_corazon.md 2). Left out: the black gloves, the second sabre, the boot dagger.
+            {
+                PersonSpec P;
+                P.Id = "corazon";
+                P.Male = 0.0; P.Age = 44; P.Muscle = 0.78; P.Weight = 0.3; P.Proportions = 0.9; P.Height = 1.73; P.BreastSize = 0.4;
+                P.African = 0.3; P.Caucasian = 0.6; P.Asian = 0.1;
+                P.Detail = {{"cheek/l-cheek-bones-incr", 0.7}, {"cheek/r-cheek-bones-incr", 0.7}, {"head/head-square", 0.3}, {"chin/chin-prominent-incr", 0.2}};
+                P.Skin = Brown; P.Weathered = 0.5; P.Wrinkles = 0.2; P.Eyes = DarkEyes;
+                P.Hair = HairBlack; P.Gray = 0.18; P.Hairdo = HairStyle::SlickedBack; P.HairVolume = 0.7;
+                P.Scars = {{V3{-0.6, -0.32, 0.02}, V3{-0.3, -0.4, 0.14}, 0.012, true}, {V3{0.32, -0.22, 0.15}, V3{0.34, -0.26, 0.15}, 0.02, true},
+                           {V3{0.05, -0.72, 0.3}, V3{0.07, -0.8, 0.3}, 0.008, true}};
+                P.Shirt = Top(White, Cloth::Linen, 1.95, 0.45);
+                P.Coat = Coat(Rgb{0.36, 0.06, 0.07}, Cloth::Wool, 0.1, 6);
+                P.Coat.Trimmed = true; P.Coat.Trim = Gold; P.Coat.ButtonColor = Gold; P.Coat.Wear = 0.15; P.Coat.Hem = 0.05;
+                P.Legs = Trousers(Black, Cloth::Wool, 1.9);
+                P.Feet = Boots(Black, 1.15, 0.25);
+                P.Belt = Belt(Black);
+                P.Necklace = true; P.Cutlass = true; P.Pistol = true;
+                P.Clip = "40_10"; P.Time = 0.6; P.Upright = 1.0;
+                Add(P);
+            }
+            // ---- Halvard Grimm: 78, 1.84 m, once powerful, now thin; long, unkempt white hair past the shoulders; a long, uneven white
+            // beard; weathered, salt-etched face; the fifty-year-old imperial admiral's uniform mended a hundred times, gold trim
+            // tarnished black, brass buttons green with verdigris; an officer's saber, two pistols in his belt; he stands straight
+            // (halvard_grimm.md 2). Left out: the cataract-clouded eye (the kit gives both eyes one colour; the bright blue one
+            // is kept).
+            {
+                PersonSpec P;
+                P.Id = "halvard_grimm";
+                P.Age = 78; P.Muscle = 0.35; P.Weight = 0.15; P.Proportions = 0.85; P.Height = 1.84;
+                P.Detail = {{"head/head-fat-decr", 0.6}, {"cheek/l-cheek-volume-decr", 0.5}, {"cheek/r-cheek-volume-decr", 0.5}};
+                P.Skin = Fair; P.Weathered = 0.95; P.Wrinkles = 0.85; P.Ruddy = 0.2; P.Eyes = PaleBlue;
+                P.Hair = HairWhite; P.Gray = 1.0; P.Hairdo = HairStyle::LongLoose; P.HairLength = 4.0; P.HairVolume = 1.2;
+                P.Beard = BeardStyle::Full; P.BeardLength = 1.4;
+                P.Shirt = Top(LinenDirty, Cloth::Linen, 1.95, 0.45);
+                P.Shirt.Wear = 0.9;
+                P.Coat = Coat(Navy, Cloth::Wool, 0.3, 8);
+                P.Coat.Trimmed = true; P.Coat.Trim = Rgb{0.13, 0.11, 0.07}; P.Coat.ButtonColor = Rgb{0.3, 0.44, 0.36}; P.Coat.Wear = 0.95;
+                P.Tails = Tails(Navy, Cloth::Wool, 0.95, 0.4);
+                P.Tails.Trimmed = true; P.Tails.Trim = Rgb{0.13, 0.11, 0.07};
+                P.Legs = Trousers(Rgb{0.14, 0.16, 0.26}, Cloth::Wool, 1.9);
+                P.Legs.Wear = 0.9;
+                P.Feet = Boots(Black, 1.15, 0.5);
+                P.Belt = Belt(LeatherDark);
+                P.Cutlass = true; P.Pistol = true;
+                P.Clip = "40_10"; P.Time = 0.8; P.Upright = 1.0;
+                Add(P);
+            }
+            // ---- High Priest Silvano: 58 and looking 40, 1.82 m, deceptively slender; long silver-grey hair, unbound, past the
+            // shoulders; a full white beard trimmed precisely; pale green eyes, bright; dark olive skin; a simple robe of grey-blue
+            // linen open at the chest, crimson silk at the waist, bare feet; a small iron medallion on his neck
+            // (high_priest_silvano.md 2). Left out: the ritual tattoos over torso, arms and neck (the kit has no skin
+            // decals yet) and the Tide-Staff (weapon prop).
+            {
+                PersonSpec P;
+                P.Id = "silvano";
+                P.Age = 45; P.Muscle = 0.5; P.Weight = 0.1; P.Proportions = 0.95; P.Height = 1.82;
+                P.African = 0.2; P.Caucasian = 0.7; P.Asian = 0.1;
+                P.Detail = {{"head/head-oval", 0.5}, {"cheek/l-cheek-bones-incr", 0.4}, {"cheek/r-cheek-bones-incr", 0.4}};
+                P.Skin = Rgb{0.6, 0.44, 0.31}; P.Weathered = 0.55; P.Wrinkles = 0.3; P.Eyes = Rgb{0.46, 0.72, 0.48};
+                P.Hair = HairIron; P.Gray = 0.85; P.Hairdo = HairStyle::LongLoose; P.HairLength = 4.0;
+                P.Beard = BeardStyle::Full; P.BeardLength = 0.5;
+                P.Coat = Coat(Rgb{0.42, 0.48, 0.56}, Cloth::Linen, 0.9, 0);
+                P.Coat.Wear = 0.2;
+                P.Tails = Tails(Rgb{0.42, 0.48, 0.56}, Cloth::Linen, 2.0, 0.3);
+                P.Legs = Trousers(Rgb{0.42, 0.48, 0.56}, Cloth::Linen, 1.9);
+                P.Sash = Sash(Crimson, true);
+                P.Necklace = true;
+                P.Clip = "77_02"; P.Time = 1.0; P.Upright = 0.9;
+                Add(P);
+            }
+            // ---- The Red Lieutenant, Viktor Hendricksen ("Kota Api"): 47, 1.82 m, solid military build; reddish-blond hair going
+            // grey, imperial regulation cut; a close-trimmed full beard, reddish with grey; ice-blue eyes, lined; a recent burn
+            // scar across the right cheekbone; the heavy red wool coat with gold rank, iron-grey trousers, black boots; the
+            // dragon-bone saber and two flare pistols at the belt (red_lieutenant_kota_api.md 2). Left out: the Kolsa medal,
+            // the shoulder insignia, the brass ignition device.
+            {
+                PersonSpec P;
+                P.Id = "red_lieutenant";
+                P.Age = 47; P.Muscle = 0.75; P.Weight = 0.5; P.Proportions = 0.9; P.Height = 1.82;
+                P.Detail = {{"head/head-square", 0.4}, {"chin/chin-prominent-incr", 0.2}};
+                P.Skin = Fair; P.Weathered = 0.7; P.Wrinkles = 0.35; P.Ruddy = 0.25; P.Eyes = IceBlue;
+                P.Hair = Rgb{0.5, 0.32, 0.18}; P.Gray = 0.35; P.Hairdo = HairStyle::Cropped;
+                P.Beard = BeardStyle::Full; P.BeardLength = 0.15;
+                P.Scars = {{V3{-0.62, -0.28, 0.0}, V3{-0.24, -0.46, 0.15}, 0.07, true}};
+                P.Shirt = Top(White, Cloth::Linen, 1.95, 0.35);
+                P.Coat = Coat(Rgb{0.56, 0.1, 0.08}, Cloth::Wool, 0.15, 8);
+                P.Coat.Trimmed = true; P.Coat.Trim = Gold; P.Coat.ButtonColor = Gold; P.Coat.Wear = 0.45;
+                P.Tails = Tails(Rgb{0.56, 0.1, 0.08}, Cloth::Wool, 0.95, 0.35);
+                P.Legs = Trousers(Rgb{0.32, 0.33, 0.34}, Cloth::Wool, 1.9);
+                P.Feet = Boots(Black, 1.15, 0.25);
+                P.Belt = Belt(Black);
+                P.Cutlass = true; P.Pistol = true;
+                P.Clip = "40_10"; P.Time = 0.4; P.Upright = 1.0;
+                Add(P);
+            }
+            // ---- The Scarred Twins, 29, 1.75 m, athletic; deep black hair with copper undertones in tight tactical braids; warm brown
+            // skin; dark brown eyes; strong bones, angular jaws, high cheekbones; dark grey leather-and-steel combat armour
+            // (the_scarred_twins.md 2). Kira: the scar across her right eyebrow, completely black armour, a shortsword. Mira: the
+            // same armour under a long coat, pouches; her collarbone-to-hip scar lies under the armour. Left out: Kira's second
+            // shortsword and grappling gauntlet, Mira's bow and daggers.
+            for (const bool Elder : {true, false})
+            {
+                PersonSpec P;
+                P.Id = Elder ? "kira_scarred" : "mira_scarred";
+                P.Male = 0.0; P.Age = 29; P.Muscle = 0.8; P.Weight = 0.3; P.Proportions = 0.95; P.Height = 1.75; P.BreastSize = 0.35;
+                P.African = 0.55; P.Caucasian = 0.45; P.Asian = 0.0;
+                P.Detail = {{"cheek/l-cheek-bones-incr", 0.7}, {"cheek/r-cheek-bones-incr", 0.7}, {"head/head-diamond", 0.3}, {"chin/chin-prominent-incr", 0.2}};
+                P.Skin = Brown; P.Weathered = 0.4; P.Eyes = DarkEyes;
+                P.Hair = Rgb{0.08, 0.05, 0.035}; P.Hairdo = HairStyle::Braid; P.HairLength = 2.0;
+                if (Elder) P.Scars = {{V3{-0.44, 0.08, 0.1}, V3{-0.24, 0.44, 0.12}, 0.025, true}};
+                P.Shirt = Top(Rgb{0.15, 0.15, 0.16}, Cloth::Leather, 1.95, 0.2);
+                P.Vest = Vest(Elder ? Rgb{0.06, 0.06, 0.065} : Rgb{0.16, 0.16, 0.17}, Cloth::Leather, 0);
+                P.Vest.Thick = 0.16; P.Vest.Roughness = 0.55;
+                P.Legs = Trousers(Rgb{0.12, 0.12, 0.13}, Cloth::Leather, 1.9);
+                P.Feet = Boots(Black, 1.15, 0.4);
+                P.Belt = Belt(Black);
+                if (Elder) P.Cutlass = true;
+                else
+                {
+                    P.Coat = Coat(Rgb{0.18, 0.18, 0.19}, Cloth::Leather, 0.35, 0);
+                    P.Tails = Tails(Rgb{0.18, 0.18, 0.19}, Cloth::Leather, 1.6, 0.5);
+                    P.Satchel = true;
+                }
+                P.Clip = "69_69"; P.Time = Elder ? 4.2 : 3.8; P.Upright = 0.5;
+                Add(P);
+            }
+            // ---- The Twin Hooks, Castor and Pollux, 33, 1.76 m, lean and whip-like; long black hair with copper undertones in a
+            // single braid; warm brown skin; dark brown eyes; barefoot; Castor in a dark crimson leather vest open at the chest
+            // with the jagged boar scar on his right cheek, Pollux the same in dark navy with the matching scar on his left
+            // (the_twin_hooks.md 2). Left out: the Fjordlund forearm tattoos and the boarding hooks.
+            for (const bool Castor : {true, false})
+            {
+                PersonSpec P;
+                P.Id = Castor ? "castor" : "pollux";
+                P.Age = 33; P.Muscle = 0.68; P.Weight = 0.2; P.Proportions = 0.9; P.Height = 1.76;
+                P.African = 0.4; P.Caucasian = 0.6; P.Asian = 0.0;
+                P.Detail = {{"head/head-oval", 0.3}, {"cheek/l-cheek-bones-incr", 0.4}, {"cheek/r-cheek-bones-incr", 0.4}};
+                P.Skin = Brown; P.Weathered = 0.6; P.Eyes = DarkEyes;
+                P.Hair = Rgb{0.08, 0.05, 0.035}; P.Hairdo = HairStyle::Braid; P.HairLength = 4.0;
+                const double Side = Castor ? -1.0 : 1.0;  // the face frame's +x is the left cheek
+                P.Scars = {{V3{Side * 0.64, -0.34, 0.0}, V3{Side * 0.42, -0.48, 0.1}, 0.03, true}, {V3{Side * 0.42, -0.48, 0.1}, V3{Side * 0.28, -0.6, 0.16}, 0.025, true}};
+                P.Vest = Vest(Castor ? Rgb{0.34, 0.06, 0.06} : Rgb{0.08, 0.1, 0.2}, Cloth::Leather, 0);
+                P.Vest.Open = 0.7; P.Vest.Roughness = 0.6;
+                P.Legs = Trousers(Black, Cloth::Wool, 1.9);
+                P.Belt = Belt(LeatherDark);
+                P.Clip = "69_69"; P.Time = Castor ? 4.0 : 4.2; P.Upright = 0.5;
+                Add(P);
+            }
+            // ---- Ulfar Stormhand: 52, 1.96 m, broad and thick, softening at the middle; long grey-blond hair braided with iron
+            // rings; a massive untrimmed beard; a web of old scars over the left cheek and jaw; pale blue eyes; a heavy
+            // fur-trimmed cloak in dark crimson, an iron-studded leather chest piece, fur-lined boots, no helmet
+            // (ulfar_stormhand.md 2). Left out: the gold front tooth, the bones and totems in the beard, the iron rings in the
+            // braids, the tally tattoos, Brytari the axe and the round shield.
+            {
+                PersonSpec P;
+                P.Id = "ulfar";
+                P.Age = 52; P.Muscle = 0.9; P.Weight = 0.78; P.Proportions = 0.8; P.Height = 1.96;
+                P.Detail = {{"head/head-square", 0.5}, {"chin/chin-prominent-incr", 0.3}};
+                P.Skin = Fair; P.Weathered = 0.85; P.Wrinkles = 0.4; P.Ruddy = 0.45; P.Eyes = PaleBlue;
+                P.Hair = Rgb{0.6, 0.53, 0.4}; P.Gray = 0.4; P.Hairdo = HairStyle::Braid; P.HairLength = 5.0;
+                P.Beard = BeardStyle::Full; P.BeardLength = 1.4;
+                P.Scars = {{V3{0.42, -0.36, 0.05}, V3{0.7, -0.74, -0.1}, 0.03, true}, {V3{0.38, -0.7, 0.1}, V3{0.62, -1.05, -0.05}, 0.03, true},
+                           {V3{0.56, -0.3, 0.0}, V3{0.5, -0.92, -0.04}, 0.025, true}};
+                P.Shirt = Top(WoolBrown, Cloth::Wool, 1.9, 0.4);
+                P.Vest = Vest(LeatherDark, Cloth::Leather, 12);
+                P.Vest.ButtonColor = Rgb{0.32, 0.32, 0.34}; P.Vest.Thick = 0.16;
+                P.Coat = Coat(Rgb{0.38, 0.07, 0.07}, Cloth::Wool, 0.7, 0);
+                P.Coat.Trimmed = true; P.Coat.Trim = Rgb{0.46, 0.37, 0.27}; P.Coat.Wear = 0.6;
+                P.Tails = Tails(Rgb{0.38, 0.07, 0.07}, Cloth::Wool, 1.7, 0.6);
+                P.Tails.Trimmed = true; P.Tails.Trim = Rgb{0.46, 0.37, 0.27};
+                P.Legs = Trousers(WoolBrown, Cloth::Wool, 1.9);
+                P.Feet = Boots(Rgb{0.3, 0.22, 0.15}, 1.25, 0.8);
+                P.Belt = Belt(LeatherDark);
+                P.Clip = "77_02"; P.Time = 1.0; P.Upright = 0.7;
+                Add(P);
+            }
+            // ---- Admiral Fitzmueller: 58, 1.76 m, solid; grey-white hair trimmed short, receding; a close-trimmed grey beard; pale grey
+            // eyes; weathered; a deep scar across the left eyebrow; the Crimson Armada admiral's coat, deep red with gold trim,
+            // a practical naval uniform beneath; service saber and flintlock (admiral_fitzmueller.md 2.1). Left out: the
+            // epaulets and the pocket watch on its chain.
+            {
+                PersonSpec P;
+                P.Id = "fitzmueller";
+                P.Age = 58; P.Muscle = 0.55; P.Weight = 0.55; P.Proportions = 0.85; P.Height = 1.76;
+                P.Detail = {{"head/head-square", 0.3}};
+                P.Skin = Fair; P.Weathered = 0.75; P.Wrinkles = 0.45; P.Ruddy = 0.2; P.Eyes = Rgb{0.58, 0.62, 0.64};
+                P.Hair = HairIron; P.Gray = 0.85; P.Hairdo = HairStyle::Cropped; P.HairVolume = 0.7;
+                P.Beard = BeardStyle::Full; P.BeardLength = 0.15;
+                P.Scars = {{V3{0.22, 0.08, 0.12}, V3{0.42, 0.42, 0.1}, 0.03, true}};
+                P.Shirt = Top(White, Cloth::Linen, 1.95, 0.35);
+                P.Vest = Vest(Rgb{0.12, 0.14, 0.22}, Cloth::Wool, 6);
+                P.Coat = Coat(Rgb{0.45, 0.06, 0.06}, Cloth::Wool, 0.3, 8);
+                P.Coat.Trimmed = true; P.Coat.Trim = Gold; P.Coat.ButtonColor = Gold; P.Coat.Wear = 0.4;
+                P.Tails = Tails(Rgb{0.45, 0.06, 0.06}, Cloth::Wool, 0.95, 0.4);
+                P.Tails.Trimmed = true; P.Tails.Trim = Gold;
+                P.Legs = Trousers(Rgb{0.12, 0.14, 0.22}, Cloth::Wool, 1.9);
+                P.Feet = Boots(Black, 1.1, 0.25);
+                P.Belt = Belt(Black);
+                P.Cutlass = true; P.Pistol = true;
+                P.Clip = "40_10"; P.Time = 0.6; P.Upright = 0.95;
+                Add(P);
+            }
+
             // ---- The Nine Who Hold (`colonial war bosses.md` 4-12; Docs/M7_TIER1_BOSS_REGISTER.md). The document gives each
             // commander's age, rank, colony and arms; faces, hair and colours beyond that are neutral choices of the art kit
             // (Imperial officers in navy and gold like Herrera, Albion officers in red with white like its soldiers), marked

@@ -1760,6 +1760,12 @@ namespace DarkArisen::Tools::Art
                 if (Hash3(static_cast<int>(I), 17, 3, Seed + (Beard ? 5u : 1u)) > Density) continue;
                 const V3 Normal = B.Normals[I];
                 V3 Flow = Beard ? V3{0.0, -1.0, 0.25} : Combed ? V3{0.0, -0.35, -1.0} : Normalize(A.P - Crown);
+                if (!Beard && S.Hairdo == HairStyle::LongLoose)
+                {
+                    // long loose hair parts from the crown to the sides and falls behind the ears and down the back, never over the face
+                    const V3 Out = A.P - Crown;
+                    Flow = Normalize(V3{Out.X * 1.4, Out.Y, std::min(Out.Z, 0.0) - 0.6});
+                }
                 const double Jx = Hash3(static_cast<int>(I), 1, 9, Seed) - 0.5, Jy = Hash3(static_cast<int>(I), 2, 9, Seed) - 0.5, Jz = Hash3(static_cast<int>(I), 3, 9, Seed) - 0.5;
                 Flow = Flow + V3{Jx, Jy * 0.5, Jz} * Scatter;
                 Flow = Flow - Normal * Dot(Flow, Normal);
