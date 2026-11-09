@@ -693,6 +693,9 @@ namespace
                 }
                 if (const auto* V = Plan->Find("lamps")) P.LampSpacing = V->Number;
                 if (const auto* V = Plan->Find("benches")) P.Benches = static_cast<int>(V->Number);
+                if (const auto* V = Plan->Find("civic"))
+                    for (const auto& B : V->Items)
+                        if (B.Items.size() == 4) P.Civic.emplace_back(static_cast<int>(B.Items[0].Number), B.Items[1].Number, B.Items[2].Number, B.Items[3].Number);
                 if (const auto* V = Plan->Find("stalls"); V && V->Items.size() == 3)
                 {
                     P.StallRadius = V->Items[0].Number; P.StallPitch = V->Items[1].Number; P.StallMax = static_cast<int>(V->Items[2].Number);

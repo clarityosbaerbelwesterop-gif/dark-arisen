@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <string>
+#include <tuple>
 #include <vector>
 
 /** The open world's geography: ContentSource/World/Archipelago.json to a heightfield and a relief map. */
@@ -84,6 +85,7 @@ namespace DarkArisen::Tools::Art
             double StallRadius = 0, StallPitch = 5;                // market stalls round the square
             int StallMax = 0;
             int Benches = 0;
+            std::vector<std::tuple<int, double, double, double>> Civic;  // variant, world x, y, yaw
         } Plan;
     };
 
