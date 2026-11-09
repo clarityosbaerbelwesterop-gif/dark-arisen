@@ -136,7 +136,8 @@ namespace DarkArisen::Tools::Art
         Entrance,    // a dungeon's way in: a cave mouth in the rock or a carved doorway with steps down
         Civic,       // a town's landmark on its square: cathedral, market hall, warehouse, mansion, watchtower
         Harbour,     // the waterfront: stone quay, timber pier, fishing boat, merchant brig, rowing boat (afloat at z = 0)
-        Street       // street furniture: gas lamp, market stall, bench
+        Street,      // street furniture: gas lamp, market stall, bench
+        Shanty       // Rexa's slums: salvaged ship timber, sailcloth awnings, plank-and-tar roofs (layout.md TC6)
     };
 
     /** Variants of Tradition::Civic. */

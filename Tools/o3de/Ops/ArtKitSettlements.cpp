@@ -49,6 +49,12 @@ namespace DarkArisen::Tools::Art
                 static const Size Street[] = {{0.7, 0.7, 4.2}, {3.0, 3.0, 3.0}, {1.8, 0.6, 0.9}};  // gas lamp, market stall, bench
                 return Street[V % 3];
             }
+            case Tradition::Shanty:
+            {
+                // TC6 SH0-SH5 (layout.md 4): shanties, two of them two-storey with a 0.6 m jetty, and the long tenement
+                static const Size Shanty[] = {{3.5, 4.5, 2.6}, {4.0, 5.0, 2.8}, {5.0, 6.0, 5.4}, {4.5, 7.0, 5.8}, {6.0, 8.0, 3.2}, {8.0, 22.0, 6.5}};
+                return Shanty[V % 6];
+            }
             case Tradition::Lighthouse: default: return {5.0, 5.0, 18.0};
             }
         }
@@ -66,6 +72,7 @@ namespace DarkArisen::Tools::Art
             case Tradition::Civic: return "Civic";
             case Tradition::Harbour: return "Harbour";
             case Tradition::Street: return "Street";
+            case Tradition::Shanty: return "Shanty";
             case Tradition::Lighthouse: default: return "Lighthouse";
             }
         }
@@ -214,6 +221,95 @@ namespace DarkArisen::Tools::Art
                     Out.Box(Frame, {X - 0.45, Y - 0.03, Z0 + 1.0}, {X + 0.45, Y + 0.03, Z0 + std::min(2.1, H - 0.3)});
                     Out.Box(Mat(M::Glass), {X - 0.35, Y - 0.04, Z0 + 1.1}, {X + 0.35, Y + 0.04, Z0 + std::min(2.0, H - 0.4)});
                 }
+            }
+        }
+
+        /**
+         * One salvaged-timber shanty storey (TC6): walls of odd boards (driftwood, ship's planking still painted, dark
+         * timber) nailed over a frame, patched; a doorway with a sailcloth curtain on -Y, a shuttered hole for a window.
+         */
+        void ShantyStorey(Mesh& Out, Rng& R, const double X0, const double X1, const double Y0, const double Y1, const double Z0, const double Z1, const bool Door)
+        {
+            const M Boards[] = {M::Driftwood, M::TimberDark, M::Hull, M::Deck, M::HullBand, M::DeckWorn};
+            const struct { V3 A, B, N; } Walls[4] = {{{X0, Y0, 0}, {X1, Y0, 0}, {0, -1, 0}}, {{X1, Y0, 0}, {X1, Y1, 0}, {1, 0, 0}}, {{X1, Y1, 0}, {X0, Y1, 0}, {0, 1, 0}}, {{X0, Y1, 0}, {X0, Y0, 0}, {-1, 0, 0}}};
+            for (int F = 0; F < 4; ++F)
+            {
+                const V3 Along = Normalize(Walls[F].B - Walls[F].A);
+                const double Len = Length(Walls[F].B - Walls[F].A);
+                double At = 0.0;
+                while (At < Len - 0.01)
+                {
+                    const double Wd = std::min(R.Range(0.22, 0.42), Len - At);
+                    const double Mid = At + Wd / 2;
+                    const bool Gap = Door && F == 0 && std::fabs(Mid - Len / 2) < 0.5;
+                    const V3 P = Walls[F].A + Along * Mid;
+                    const double Top = Z1 - R.Range(0.0, 0.08);
+                    if (!Gap)
+                        OrientedBox(Out, Mat(Boards[R.Next() % 6]), {P.X, P.Y, (Z0 + Top) / 2}, Along.X, Along.Y, {Wd / 2 - 0.01, 0.025, (Top - Z0) / 2});
+                    else if (Z1 - Z0 > 2.2)
+                        OrientedBox(Out, Mat(Boards[R.Next() % 6]), {P.X, P.Y, (Z0 + 2.0 + Top) / 2}, Along.X, Along.Y, {Wd / 2 - 0.01, 0.025, (Top - Z0 - 2.0) / 2});
+                    At += Wd;
+                }
+                // a patch board across the planks, and on the long walls a shuttered window hole
+                const V3 Patch = Walls[F].A + Along * (Len * R.Range(0.2, 0.8)) + Walls[F].N * 0.04;
+                OrientedBox(Out, Mat(Boards[R.Next() % 6]), {Patch.X, Patch.Y, Z0 + R.Range(0.6, std::max(0.7, Z1 - Z0 - 0.6))}, Along.X, Along.Y, {R.Range(0.4, 0.8), 0.02, 0.1});
+                if (Len > 4.0 && F % 2 == 1)
+                {
+                    const V3 W = Walls[F].A + Along * (Len * 0.5) + Walls[F].N * 0.04;
+                    OrientedBox(Out, Mat(M::HullBelow), {W.X, W.Y, Z0 + 1.55}, Along.X, Along.Y, {0.35, 0.02, 0.3});
+                    const V3 Sh = W + Along * 0.62 + Walls[F].N * 0.03;
+                    OrientedBox(Out, Mat(M::TimberDark), {Sh.X, Sh.Y, Z0 + 1.55}, Along.X, Along.Y, {0.26, 0.02, 0.32});
+                }
+            }
+            for (const V3& C : {V3{X0, Y0, 0}, V3{X1, Y0, 0}, V3{X1, Y1, 0}, V3{X0, Y1, 0}}) Out.Box(Mat(M::TimberDark), {C.X - 0.07, C.Y - 0.07, Z0}, {C.X + 0.07, C.Y + 0.07, Z1});
+            if (Door)
+            {
+                const double Xm = (X0 + X1) / 2;
+                Out.Box(Mat(M::HullBelow), {Xm - 0.5, Y0 + 0.02, Z0}, {Xm + 0.5, Y0 + 0.06, Z0 + 2.0});
+                Out.Quad(Mat(M::Canvas), {Xm - 0.55, Y0 - 0.06, Z0 + 0.15}, {Xm + 0.1, Y0 - 0.08, Z0 + 0.1}, {Xm + 0.1, Y0 - 0.06, Z0 + 2.0}, {Xm - 0.55, Y0 - 0.06, Z0 + 2.0}, true);
+            }
+        }
+
+        /**
+         * A shed roof of tarred planks from the top of the walls (Z) rising Fall to the front, sailcloth patches on it; the
+         * front raised on a fascia board and the sides closed with boards, so no gap shows under it.
+         */
+        void ShantyRoof(Mesh& Out, Rng& R, const double X0, const double X1, const double Y0, const double Y1, const double Z, const double Fall)
+        {
+            Out.Box(Mat(M::TimberDark), {X0, Y0 - 0.03, Z - 0.05}, {X1, Y0 + 0.03, Z + Fall});
+            Out.Fan(Mat(M::Driftwood), {{X0, Y0, Z}, {X0, Y1, Z}, {X0, Y0, Z + Fall}}, {-1, 0, 0});
+            Out.Fan(Mat(M::Driftwood), {{X1, Y1, Z}, {X1, Y0, Z}, {X1, Y0, Z + Fall}}, {1, 0, 0});
+            const double O = 0.3;
+            const double Top = Z + Fall + Fall * O / (Y1 - Y0);
+            const double Low = Z - Fall * O / (Y1 - Y0);
+            for (double X = X0 - O; X < X1 + O - 0.01; X += 0.27)
+            {
+                const double Xe = std::min(X + 0.31, X1 + O), Lift = R.Range(0.0, 0.03);
+                Out.Quad(Mat(M::HullBlack), {X, Y0 - O, Top + Lift}, {Xe, Y0 - O, Top + Lift}, {Xe, Y1 + O, Low + Lift}, {X, Y1 + O, Low + Lift}, true);
+            }
+            for (int K = 0; K < 2; ++K)
+            {
+                const double Px = R.Range(X0, X1 - 1.2), Py = R.Range(Y0, Y1 - 1.4), Slope = Fall / (Y1 - Y0);
+                const double Zp = Z + Fall - Slope * (Py - Y0) + 0.06;
+                Out.Quad(Mat(M::Canvas), {Px, Py, Zp}, {Px + 1.2, Py, Zp}, {Px + 1.2, Py + 1.4, Zp - Slope * 1.4}, {Px, Py + 1.4, Zp - Slope * 1.4}, true);
+            }
+        }
+
+        /** A laundry line from Start to End sagging between, with washing pegged out. */
+        void Laundry(Mesh& Out, Rng& R, const V3& Start, const V3& End)
+        {
+            const V3 Mid = (Start + End) * 0.5 - V3{0, 0, 0.25};
+            Out.Tube(Mat(M::Rope), Start, Mid, 0.008, 0.008, 4, false);
+            Out.Tube(Mat(M::Rope), Mid, End, 0.008, 0.008, 4, false);
+            const M Cloth[] = {M::Linen, M::WoolBlue, M::Canvas, M::Ochre, M::DressGreen, M::Sash};
+            const int Count = static_cast<int>(Length(End - Start) / 0.9);
+            for (int K = 1; K < Count; ++K)
+            {
+                const double T = static_cast<double>(K) / Count, Sag = 0.25 * (1.0 - (2 * T - 1) * (2 * T - 1));
+                const V3 P = Start + (End - Start) * T - V3{0, 0, Sag};
+                const V3 Along = Normalize(End - Start) * R.Range(0.2, 0.32);
+                const double Drop = R.Range(0.4, 0.8);
+                Out.Quad(Mat(Cloth[R.Next() % 6]), P - Along, P + Along, P + Along - V3{0, 0, Drop}, P - Along - V3{0, 0, Drop * R.Range(0.85, 1.0)}, true);
             }
         }
 
@@ -414,6 +510,65 @@ namespace DarkArisen::Tools::Art
                     for (const double X : {-0.75, 0.75}) Out.Box(Mat(M::Stone), {X - 0.1, -0.22, 0.0}, {X + 0.1, 0.22, 0.42});
                     Out.Box(Mat(M::Timber), {-0.9, -0.25, 0.42}, {0.9, 0.25, 0.48});
                     Out.Box(Mat(M::Timber), {-0.9, 0.2, 0.55}, {0.9, 0.26, 0.85});
+                }
+                return Out;
+            }
+            case Tradition::Shanty:
+            {
+                // TC6 (layout.md 4): salvaged ship timber, sailcloth awnings, plank-and-tar roofs, laundry lines; SH2 and SH3
+                // two storeys with a 0.6 m jetty over the street, SH5 the long tenement with a gallery and an outside stair
+                Mesh Out(Name);
+                Rng R(HashString(Name));
+                const double X0 = -S.W / 2, X1 = S.W / 2, Y0 = -S.D / 2, Y1 = S.D / 2;
+                Out.Box(Mat(M::StoneDark), {X0 - 0.05, Y0 - 0.05, -0.4}, {X1 + 0.05, Y1 + 0.05, 0.15});
+                if (V == 5)
+                {
+                    // the tenement: two storeys of rooms, five doors below, a gallery along the front above, a stair up
+                    ShantyStorey(Out, R, X0, X1, Y0, Y1, 0.15, 3.1, false);
+                    ShantyStorey(Out, R, X0, X1, Y0, Y1, 3.1, S.H - 0.4, false);
+                    for (int K = 0; K < 5; ++K)
+                    {
+                        const double Yd = Y0 + S.D * (K + 0.5) / 5;
+                        for (const double Z : {0.15, 3.25})
+                        {
+                            Out.Box(Mat(M::HullBelow), {X0 - 0.06, Yd - 0.45, Z}, {X0 - 0.02, Yd + 0.45, Z + 1.95});
+                            Out.Quad(Mat(M::Canvas), {X0 - 0.08, Yd - 0.5, Z + 0.1}, {X0 - 0.08, Yd + 0.1, Z + 0.05}, {X0 - 0.08, Yd + 0.1, Z + 1.95}, {X0 - 0.08, Yd - 0.5, Z + 1.95}, true);
+                        }
+                    }
+                    Out.Box(Mat(M::Deck), {X0 - 1.3, Y0, 3.0}, {X0, Y1, 3.12});
+                    for (double Y = Y0 + 0.2; Y < Y1; Y += 2.2) Out.Tube(Mat(M::Driftwood), {X0 - 1.2, Y, 0.0}, {X0 - 1.2, Y, 4.1}, 0.07, 0.06, 6);
+                    Out.Tube(Mat(M::TimberDark), {X0 - 1.25, Y0, 4.1}, {X0 - 1.25, Y1, 4.1}, 0.04, 0.04, 4);
+                    for (int K = 0; K < 10; ++K)
+                    {
+                        const double T = K / 10.0;
+                        Out.Box(Mat(M::Deck), {X0 - 1.25, Y1 + 2.8 * (1.0 - T) - 0.15, 3.0 * T}, {X0 - 0.05, Y1 + 2.8 * (1.0 - T) + 0.15, 3.0 * T + 0.08});
+                    }
+                    ShantyRoof(Out, R, X0, X1, Y0, Y1, S.H - 0.4, 0.9);
+                    for (int K = 0; K < 3; ++K)
+                    {
+                        const double Y = Y0 + 3.0 + 7.0 * K;
+                        Laundry(Out, R, {X0 - 1.25, Y, 4.0}, {X0 - 1.25, Y + 5.5, 4.0});
+                    }
+                }
+                else
+                {
+                    const bool Upper = S.H > 4.0;
+                    const double Ground = Upper ? 2.7 : S.H - 0.35;
+                    ShantyStorey(Out, R, X0, X1, Y0, Y1, 0.15, Ground, true);
+                    if (Upper)
+                    {
+                        // the jetty: the upper storey hangs 0.6 m out over the street on brackets
+                        Out.Box(Mat(M::Deck), {X0, Y0 - 0.6, Ground - 0.12}, {X1, Y1, Ground});
+                        for (const double X : {X0 + 0.2, X1 - 0.2}) Out.Tube(Mat(M::TimberDark), {X, Y0, Ground - 0.7}, {X, Y0 - 0.55, Ground - 0.12}, 0.05, 0.05, 4);
+                        ShantyStorey(Out, R, X0, X1, Y0 - 0.6, Y1, Ground, S.H - 0.4, false);
+                    }
+                    ShantyRoof(Out, R, X0, X1, Upper ? Y0 - 0.6 : Y0, Y1, S.H - 0.4, 0.6);
+                    // the sailcloth awning over the door on two poles
+                    const double Xa = 1.4;
+                    for (const double X : {-Xa, Xa}) Out.Tube(Mat(M::Driftwood), {X, Y0 - 1.5, 0.0}, {X, Y0 - 1.5, 2.0}, 0.04, 0.035, 5);
+                    Out.Quad(Mat(M::Canvas), {-Xa - 0.1, Y0 - 1.55, 2.0}, {Xa + 0.1, Y0 - 1.55, 2.0}, {Xa + 0.1, Y0 - 0.02, 2.35}, {-Xa - 0.1, Y0 - 0.02, 2.35}, true);
+                    if (V % 2 == 0) Laundry(Out, R, {X1, Y0 + 0.4, 2.2}, {X1 + 3.2, Y0 - 1.4, 2.1});
+                    if (V == 4) Barrel(Out, {X0 - 0.5, Y0 - 0.6, 0.0}, 0.9, 0.3);
                 }
                 return Out;
             }
@@ -861,7 +1016,7 @@ namespace DarkArisen::Tools::Art
     void Kit::BuildSettlementModels()
     {
         for (const Tradition Kind : {Tradition::Colonial, Tradition::Stilt, Tradition::Nordic, Tradition::Camp, Tradition::Fort, Tradition::Lighthouse, Tradition::Entrance,
-                 Tradition::Civic, Tradition::Harbour, Tradition::Street})
+                 Tradition::Civic, Tradition::Harbour, Tradition::Street, Tradition::Shanty})
             for (int V = 0; V < (Kind == Tradition::Lighthouse ? 1 : Kind == Tradition::Civic ? 8 : Kind == Tradition::Harbour ? 5 : Kind == Tradition::Street ? 3 : Variants); ++V)
                 Emit(ModelName(Kind, V), WriteGltf(BuildVariant(Kind, V), "Dark Arisen art kit (settlements)"));
     }

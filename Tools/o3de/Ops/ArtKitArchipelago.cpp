@@ -595,6 +595,7 @@ namespace DarkArisen::Tools::Art
             Settle.Waterfront = Plan.Waterfront;
             Settle.Cluster = Plan.Cluster;
             if (Plan.Tradition == "Stilt") Settle.Houses = Tradition::Stilt;
+            if (Plan.Tradition == "Shanty") Settle.Houses = Tradition::Shanty;
             if (Plan.HasLandmark) { Settle.LandmarkU = Plan.LandmarkU; Settle.LandmarkW = Plan.LandmarkW; Settle.LandmarkYaw = Plan.LandmarkYaw; }
             if (Plan.HasPlaza) { Settle.PlazaU = Plan.PlazaU; Settle.PlazaW = Plan.PlazaW; Settle.PlazaRadius = Plan.PlazaRadius; }
             Settle.LampSpacing = Plan.LampSpacing;
