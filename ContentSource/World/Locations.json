@@ -89,8 +89,15 @@
       "kind": "district",
       "x": 5440,
       "y": 5260,
-      "radius": 200,
-      "source": "docs/design/region_02_rexa_city.md#2"
+      "radius": 170,
+      "source": "docs/design/region_02_rexa_city.md#2",
+      "layout": {
+        "groundZ": 1.6,
+        "cap": 280,
+        "fill": 0.92,
+        "waterfront": true,
+        "source": "production/levels/rexa-city/layout.md 4.1"
+      }
     },
     {
       "id": "loc.rexa.city.market",
@@ -99,8 +106,20 @@
       "kind": "district",
       "x": 5900,
       "y": 5450,
-      "radius": 200,
-      "source": "docs/design/region_02_rexa_city.md#2"
+      "radius": 110,
+      "source": "docs/design/region_02_rexa_city.md#2",
+      "layout": {
+        "groundZ": 30.0,
+        "cap": 100,
+        "fill": 0.92,
+        "waterfront": false,
+        "plaza": [
+          0,
+          0,
+          34
+        ],
+        "source": "production/levels/rexa-city/layout.md 4.1"
+      }
     },
     {
       "id": "loc.rexa.city.cathedral",
@@ -109,8 +128,25 @@
       "kind": "district",
       "x": 6050,
       "y": 5250,
-      "radius": 200,
-      "source": "docs/design/region_02_rexa_city.md#2"
+      "radius": 105,
+      "source": "docs/design/region_02_rexa_city.md#2",
+      "layout": {
+        "groundZ": 58.0,
+        "cap": 90,
+        "fill": 0.8,
+        "waterfront": false,
+        "landmark": [
+          30,
+          0,
+          282
+        ],
+        "plaza": [
+          -30,
+          0,
+          36
+        ],
+        "source": "production/levels/rexa-city/layout.md 4.1"
+      }
     },
     {
       "id": "loc.rexa.city.noble",
@@ -119,8 +155,15 @@
       "kind": "district",
       "x": 6250,
       "y": 5550,
-      "radius": 200,
-      "source": "docs/design/region_02_rexa_city.md#2"
+      "radius": 120,
+      "source": "docs/design/region_02_rexa_city.md#2",
+      "layout": {
+        "groundZ": 47.0,
+        "cap": 40,
+        "fill": 0.6,
+        "waterfront": false,
+        "source": "production/levels/rexa-city/layout.md 4.1"
+      }
     },
     {
       "id": "loc.rexa.city.slums",
@@ -129,8 +172,17 @@
       "kind": "district",
       "x": 5800,
       "y": 5000,
-      "radius": 200,
-      "source": "docs/design/region_02_rexa_city.md#2"
+      "radius": 140,
+      "source": "docs/design/region_02_rexa_city.md#2",
+      "layout": {
+        "groundZ": 54.0,
+        "cap": 450,
+        "fill": 0.75,
+        "waterfront": false,
+        "layout": "cluster",
+        "tradition": "Stilt",
+        "source": "production/levels/rexa-city/layout.md 4.1"
+      }
     },
     {
       "id": "loc.rexa.city.cliffside",
@@ -139,8 +191,16 @@
       "kind": "district",
       "x": 6150,
       "y": 5850,
-      "radius": 200,
-      "source": "docs/design/region_02_rexa_city.md#2"
+      "radius": 120,
+      "source": "docs/design/region_02_rexa_city.md#2",
+      "layout": {
+        "groundZ": 34.0,
+        "cap": 36,
+        "fill": 0.5,
+        "waterfront": false,
+        "layout": "cluster",
+        "source": "production/levels/rexa-city/layout.md 4.1"
+      }
     },
     {
       "id": "loc.mire.drowned_plantation_zone",

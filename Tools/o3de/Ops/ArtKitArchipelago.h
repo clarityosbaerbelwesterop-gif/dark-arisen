@@ -66,6 +66,21 @@ namespace DarkArisen::Tools::Art
     {
         std::string Id, Kind, Region;
         double X = 0, Y = 0, Radius = 0;
+        /** Optional "layout" block of Locations.json (a level design's generator parameters, e.g. layout.md 4.1). */
+        struct Layout
+        {
+            bool HasGround = false;
+            double GroundZ = 0;        // the levelled ground's height instead of the natural one
+            int Cap = 0;               // buildings at most (0: the kind's default)
+            double Fill = -1;          // share of plots built on (negative: the kind's default)
+            int Waterfront = -1;       // -1: wherever the sea is near; 0: never; 1: always
+            bool Cluster = false;      // organic clusters along the contour instead of a street grid
+            std::string Tradition;     // building tradition instead of the kind's (e.g. "Stilt")
+            bool HasLandmark = false;
+            double LandmarkU = 0, LandmarkW = 0, LandmarkYaw = 0;  // landmark offset in the street grid's frame and its yaw
+            bool HasPlaza = false;
+            double PlazaU = 0, PlazaW = 0, PlazaRadius = 0;        // the square kept clear
+        } Plan;
     };
 
     /**

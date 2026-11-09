@@ -2039,8 +2039,10 @@ namespace DarkArisen::Tools
                 Work.Error("ContentSource/World/Archipelago.json: " + Problem);
                 return Prefab.Write();
             }
-            constexpr double StartX = 5650.0, StartY = 5320.0;  // the shore east of Rexa Harbor (Places.json 5500, 5300)
-            const double Ground = Art::ArchipelagoHeight(World, StartX, StartY, nullptr);
+            // Jake arrives at La Esperanza's berth on the Harbor quay (region_02_rexa_city.md 2.1; layout.md R-12), whose
+            // terrace is levelled to 1.6 m (R-01): he stands on whichever is higher, the quay or the natural ground
+            constexpr double StartX = 5262.0, StartY = 5258.0, QuayGround = 1.6;
+            const double Ground = std::max(Art::ArchipelagoHeight(World, StartX, StartY, nullptr), QuayGround);
             const std::string Jake = AddJake(Work, Prefab, {StartX, StartY, std::floor(Ground * 100.0 + 0.5) / 100.0 + 0.5});
 
             const std::string Streamer = Prefab.AddEntity("World Streamer", {});

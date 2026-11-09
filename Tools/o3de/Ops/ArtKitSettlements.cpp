@@ -39,7 +39,8 @@ namespace DarkArisen::Tools::Art
             }
             case Tradition::Civic:
             {
-                static const Size Civic[] = {{26.0, 50.0, 16.0}, {18.0, 26.0, 6.0}, {14.0, 30.0, 8.0}, {22.0, 16.0, 11.0}, {7.0, 7.0, 16.0}};
+                static const Size Civic[] = {{27.0, 50.0, 31.0},  // the cathedral's box spans its aisles, towers and dome (layout.md R-08)
+                                               {18.0, 26.0, 6.0}, {14.0, 30.0, 8.0}, {22.0, 16.0, 11.0}, {7.0, 7.0, 16.0}};
                 return Civic[V % 5];
             }
             case Tradition::Lighthouse: default: return {5.0, 5.0, 18.0};
@@ -594,7 +595,8 @@ namespace DarkArisen::Tools::Art
         }
 
         // the waterfront: where the site meets the sea, piers or a quay run out from the shore with boats alongside
-        if (Spec.Kind != Tradition::Camp && Spec.Kind != Tradition::Fort)
+        // (a level design can switch it off, e.g. Rexa's districts above the harbour: layout.md R-05)
+        if (Spec.Kind != Tradition::Camp && Spec.Kind != Tradition::Fort && Spec.Waterfront != 0)
         {
             int Best = -1;
             double BestShore = 1e30;
@@ -634,42 +636,71 @@ namespace DarkArisen::Tools::Art
             }
         }
 
-        // the landmark on the square
-        if (Spec.Centre != Landmark::None) Place(Tradition::Civic, static_cast<int>(Spec.Centre), Spec.X, Spec.Y, Spec.StreetAngle);
+        // the landmark on the square, or where the level design puts it, facing the way it says (layout.md R-03)
+        const double Ca = Cos(Spec.StreetAngle * Pi / 180.0), Sa = Sin(Spec.StreetAngle * Pi / 180.0);
+        const auto GridToWorld = [&](const double U, const double W) { return std::pair<double, double>{Spec.X + U * Ca - W * Sa, Spec.Y + U * Sa + W * Ca}; };
+        if (Spec.Centre != Landmark::None)
+        {
+            const auto [Lx, Ly] = GridToWorld(Spec.LandmarkU, Spec.LandmarkW);
+            Place(Tradition::Civic, static_cast<int>(Spec.Centre), Lx, Ly, Spec.LandmarkYaw > -1e8 ? Spec.LandmarkYaw : Spec.StreetAngle);
+        }
+        // what a house may not stand on: the landmarks and quays placed so far, each as the circle round its box
+        const std::vector<Structure> Reserved = Out;
+        const auto Clear = [&](const double X, const double Y, const double Reach)
+        {
+            for (const Structure& S : Reserved)
+            {
+                const double Keep = std::sqrt(S.HalfX * S.HalfX + S.HalfY * S.HalfY) + Reach;
+                if ((S.X - X) * (S.X - X) + (S.Y - Y) * (S.Y - Y) < Keep * Keep) return false;
+            }
+            return true;
+        };
+        const Tradition Houses = Spec.Kind == Tradition::Colonial ? Spec.Houses : Spec.Kind;
 
-        if (Spec.Kind == Tradition::Colonial)
+        if (Spec.Kind == Tradition::Colonial && !Spec.Cluster)
         {
             // a colonial grid: blocks of 40 x 26 m between 7 m streets on the city's axis, each block lined on its long
-            // sides with terraced houses wall to wall, doors on the street; the square at the middle stays open
+            // sides with terraced houses wall to wall, doors on the street; the square stays open. Blocks fill from the
+            // centre outwards (layout.md R-02), so a district's cap leaves its edge thin, never one side empty.
             const double Block = 40.0, Deep = 26.0, Street = 7.0;
-            const double Ca = Cos(Spec.StreetAngle * Pi / 180.0), Sa = Sin(Spec.StreetAngle * Pi / 180.0);
             const double Square = Spec.Radius * 0.22;
             const int Reach = static_cast<int>(Spec.Radius / (Deep + Street)) + 1;
-            for (int J = -Reach; J <= Reach && static_cast<int>(Out.size()) < Spec.MaxBuildings; ++J)
-            {
-                for (int I = -Reach; I <= Reach && static_cast<int>(Out.size()) < Spec.MaxBuildings; ++I)
+            struct Plot { double Key; int I, J; };
+            std::vector<Plot> Plots;
+            for (int J = -Reach; J <= Reach; ++J)
+                for (int I = -Reach; I <= Reach; ++I)
                 {
                     // block centre in the grid's frame (u along the street axis), offset half a block so the square is a crossing
                     const double U = (I + 0.5) * (Block + Street), W = (J + 0.5) * (Deep + Street);
-                    if (U * U + W * W > Spec.Radius * 0.9 * Spec.Radius * 0.9 || U * U + W * W < Square * Square) continue;
-                    if (R.Unit() > Spec.Fill) continue;  // a garden, a yard, a ruin
-                    for (const double Side : {-1.0, 1.0})
+                    if (U * U + W * W > Spec.Radius * 0.9 * Spec.Radius * 0.9) continue;
+                    if (Spec.PlazaRadius < 0.0 && U * U + W * W < Square * Square) continue;
+                    Plots.push_back({U * U + W * W, I, J});
+                }
+            std::sort(Plots.begin(), Plots.end(), [](const Plot& A, const Plot& B) { return A.Key != B.Key ? A.Key < B.Key : A.J != B.J ? A.J < B.J : A.I < B.I; });
+            for (const Plot& P : Plots)
+            {
+                if (static_cast<int>(Out.size()) >= Spec.MaxBuildings) break;
+                const double U = (P.I + 0.5) * (Block + Street), W = (P.J + 0.5) * (Deep + Street);
+                if (R.Unit() > Spec.Fill) continue;  // a garden, a yard, a ruin
+                for (const double Side : {-1.0, 1.0})
+                {
+                    double Along = -Block / 2;
+                    while (Along < Block / 2 - 5.0 && static_cast<int>(Out.size()) < Spec.MaxBuildings)
                     {
-                        double Along = -Block / 2;
-                        while (Along < Block / 2 - 5.0)
+                        const int V = static_cast<int>(R.Unit() * Variants);
+                        const Size S = VariantSize(Houses, V);
+                        if (Along + S.W > Block / 2) break;
+                        const double Lu = U + Along + S.W / 2, Lw = W + Side * (Deep / 2 - S.D / 2);
+                        const auto [X, Y] = GridToWorld(Lu, Lw);
+                        const double Half = std::sqrt(S.W * S.W + S.D * S.D) / 2;
+                        const bool OffPlaza = Spec.PlazaRadius < 0.0 ||
+                            (Lu - Spec.PlazaU) * (Lu - Spec.PlazaU) + (Lw - Spec.PlazaW) * (Lw - Spec.PlazaW) > (Spec.PlazaRadius + Half) * (Spec.PlazaRadius + Half);
+                        if (Spec.Ground(X, Y) >= Spec.MinGround && OffPlaza && Clear(X, Y, Half + 3.0))
                         {
-                            const int V = static_cast<int>(R.Unit() * Variants);
-                            const Size S = VariantSize(Tradition::Colonial, V);
-                            if (Along + S.W > Block / 2) break;
-                            const double Lu = U + Along + S.W / 2, Lw = W + Side * (Deep / 2 - S.D / 2);
-                            const double X = Spec.X + Lu * Ca - Lw * Sa, Y = Spec.Y + Lu * Sa + Lw * Ca;
-                            if (Spec.Ground(X, Y) >= Spec.MinGround)
-                            {
-                                Place(Tradition::Colonial, V, X, Y, Spec.StreetAngle + (Side < 0 ? 0.0 : 180.0));  // doors (-Y) on the street
-                                if (R.Unit() < 0.3) Dress(Tradition::Colonial, V, X, Y, Spec.StreetAngle + (Side < 0 ? 0.0 : 180.0));
-                            }
-                            Along += S.W + 0.05;
+                            Place(Houses, V, X, Y, Spec.StreetAngle + (Side < 0 ? 0.0 : 180.0));  // doors (-Y) on the street
+                            if (R.Unit() < 0.3) Dress(Houses, V, X, Y, Spec.StreetAngle + (Side < 0 ? 0.0 : 180.0));
                         }
+                        Along += S.W + 0.05;
                     }
                 }
             }
@@ -689,16 +720,21 @@ namespace DarkArisen::Tools::Art
             const double Rr = Spec.Radius * 0.9 * std::sqrt(R.Unit()) * (0.35 + 0.65 * R.Unit());
             const double X = Spec.X + Rr * Cos(A), Y = Spec.Y + Rr * Sin(A);
             const int V = static_cast<int>(R.Unit() * Variants);
-            const Size S = VariantSize(Spec.Kind, V);
+            const Size S = VariantSize(Houses, V);
             const double Jitter = R.Range(-14.0, 14.0);
             if (R.Unit() > Spec.Fill || !Free(X, Y, std::max(S.W, S.D) / 2 + (Spec.Kind == Tradition::Camp ? 2.0 : 4.0))) continue;
+            if (Spec.PlazaRadius >= 0.0)
+            {
+                const auto [Px, Py] = GridToWorld(Spec.PlazaU, Spec.PlazaW);
+                if ((X - Px) * (X - Px) + (Y - Py) * (Y - Py) < (Spec.PlazaRadius + std::max(S.W, S.D)) * (Spec.PlazaRadius + std::max(S.W, S.D))) continue;
+            }
             // the contour: across the downhill direction (from the ground either side), else the village's own axis
             const double Gx = Spec.Ground(X + 3.0, Y) - Spec.Ground(X - 3.0, Y), Gy = Spec.Ground(X, Y + 3.0) - Spec.Ground(X, Y - 3.0);
             double Along = Ridge;
             if (Gx * Gx + Gy * Gy > 0.04) Along = std::fabs(Gx) > std::fabs(Gy) ? 0.0 : 90.0;  // long side (Y in the model) along the slope's contour
             const double Yaw = Along + Jitter + (R.Unit() < 0.5 ? 180.0 : 0.0);
-            Place(Spec.Kind, V, X, Y, Yaw);
-            if (Spec.Kind != Tradition::Camp && R.Unit() < 0.6) Dress(Spec.Kind, V, X, Y, Yaw);
+            Place(Houses, V, X, Y, Yaw);
+            if (Spec.Kind != Tradition::Camp && R.Unit() < 0.6) Dress(Houses, V, X, Y, Yaw);
         }
 
         Out.insert(Out.end(), Props.begin(), Props.end());

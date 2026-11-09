@@ -154,6 +154,12 @@ namespace DarkArisen::Tools::Art
         Landmark Centre = Landmark::None;                 // what stands on the square
         double StreetAngle = 0.0;                         // colonial towns: the grid's axis (degrees), shared by a city's districts
         std::uint32_t Seed = 1;
+        int Waterfront = -1;                              // -1: where the sea is near; 0: never; 1: always
+        bool Cluster = false;                             // colonial: organic clusters instead of the grid
+        Tradition Houses = Tradition::Colonial;           // colonial: the houses' tradition (a district of timber shanties)
+        double LandmarkU = 0, LandmarkW = 0;              // the landmark's offset in the grid's frame (u along the streets)
+        double LandmarkYaw = -1e9;                        // its yaw (degrees); -1e9: the street angle
+        double PlazaU = 0, PlazaW = 0, PlazaRadius = -1;  // the square kept clear; a negative radius: 0.22 of the radius at the centre
     };
 
     /** One building of a settlement: a shared model, its placement and a box for collision. */

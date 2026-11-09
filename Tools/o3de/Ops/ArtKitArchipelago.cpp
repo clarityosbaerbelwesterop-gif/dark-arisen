@@ -270,7 +270,8 @@ namespace DarkArisen::Tools::Art
             else if (L.Kind == "lighthouse") Kind = Tradition::Lighthouse;
             else if (L.Kind == "dungeon") Kind = Tradition::Entrance;
             else continue;
-            Sites.push_back({&L, std::max(ArchipelagoHeight(Spec, L.X, L.Y, nullptr), 1.5), Kind});
+            // a level design may set the terrace height (layout.md R-01); otherwise the natural ground, above the tide
+            Sites.push_back({&L, L.Plan.HasGround ? L.Plan.GroundZ : std::max(ArchipelagoHeight(Spec, L.X, L.Y, nullptr), 1.5), Kind});
         }
         const auto Height = [&Spec, &Sites](double X, double Y)
         {
@@ -491,6 +492,15 @@ namespace DarkArisen::Tools::Art
             const bool Sparse = Si.Where->Kind == "zone" || Si.Kind == Tradition::Camp;
             Settle.MaxBuildings = Si.Kind == Tradition::Colonial ? 160 : Sparse ? 14 : 40;
             Settle.Fill = Si.Kind == Tradition::Colonial ? 0.92 : Sparse ? 0.35 : 0.75;
+            // the level design's own parameters, where it has them (Locations.json "layout")
+            const WorldLocation::Layout& Plan = Si.Where->Plan;
+            if (Plan.Cap > 0) Settle.MaxBuildings = Plan.Cap;
+            if (Plan.Fill >= 0.0) Settle.Fill = Plan.Fill;
+            Settle.Waterfront = Plan.Waterfront;
+            Settle.Cluster = Plan.Cluster;
+            if (Plan.Tradition == "Stilt") Settle.Houses = Tradition::Stilt;
+            if (Plan.HasLandmark) { Settle.LandmarkU = Plan.LandmarkU; Settle.LandmarkW = Plan.LandmarkW; Settle.LandmarkYaw = Plan.LandmarkYaw; }
+            if (Plan.HasPlaza) { Settle.PlazaU = Plan.PlazaU; Settle.PlazaW = Plan.PlazaW; Settle.PlazaRadius = Plan.PlazaRadius; }
             Settle.Seed = 0;
             for (const char C : Si.Where->Id) Settle.Seed = Settle.Seed * 31u + static_cast<std::uint8_t>(C);
             // a town's landmark on its square (Rexa's districts by their documents, Ashenmoor's Kota Api, Jernholm's old fort)
