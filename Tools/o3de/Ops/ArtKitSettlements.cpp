@@ -41,13 +41,22 @@ namespace DarkArisen::Tools::Art
             {
                 static const Size Civic[] = {{27.0, 50.0, 31.0},  // the cathedral's box spans its aisles, towers and dome (layout.md R-08)
                                                {18.0, 26.0, 6.0}, {14.0, 30.0, 8.0}, {22.0, 16.0, 11.0}, {7.0, 7.0, 16.0}, {9.0, 9.0, 42.0},
-                                               {18.0, 16.0, 9.0}, {24.0, 18.0, 10.0}};  // LM6 La Sirena Negra, LM5 the Guild (layout.md 4)
-                return Civic[V % 8];
+                                               {18.0, 16.0, 9.0}, {24.0, 18.0, 10.0},  // LM6 La Sirena Negra, LM5 the Guild (layout.md 4)
+                                               {12.0, 1.0, 4.5}, {12.0, 1.0, 4.5}, {6.0, 6.0, 8.0}, {1.3, 1.3, 5.6},  // W1, W1 with its lamp, W3, a gate pier
+                                               {11.0, 12.6, 8.0}, {34.0, 40.0, 8.0}, {44.0, 36.0, 11.0}, {20.0, 14.0, 7.0}, {16.0, 16.0, 0.9},  // TC2, TC4 lot, LM10 lot, LM11, N2
+                                               {8.0, 2.5, 6.5}, {4.6, 0.8, 1.7}};  // W2 the seam arch, a stair's low gate (layout.md 3.3)
+                return Civic[V % 19];
             }
             case Tradition::Street:
             {
                 static const Size Street[] = {{0.7, 0.7, 4.2}, {3.0, 3.0, 3.0}, {1.8, 0.6, 0.9}};  // gas lamp, market stall, bench
                 return Street[V % 3];
+            }
+            case Tradition::Shanty:
+            {
+                // TC6 SH0-SH5 (layout.md 4): shanties, two of them two-storey with a 0.6 m jetty, and the long tenement
+                static const Size Shanty[] = {{3.5, 4.5, 2.6}, {4.0, 5.0, 2.8}, {5.0, 6.0, 5.4}, {4.5, 7.0, 5.8}, {6.0, 8.0, 3.2}, {8.0, 22.0, 6.5}};
+                return Shanty[V % 6];
             }
             case Tradition::Lighthouse: default: return {5.0, 5.0, 18.0};
             }
@@ -66,6 +75,7 @@ namespace DarkArisen::Tools::Art
             case Tradition::Civic: return "Civic";
             case Tradition::Harbour: return "Harbour";
             case Tradition::Street: return "Street";
+            case Tradition::Shanty: return "Shanty";
             case Tradition::Lighthouse: default: return "Lighthouse";
             }
         }
@@ -214,6 +224,95 @@ namespace DarkArisen::Tools::Art
                     Out.Box(Frame, {X - 0.45, Y - 0.03, Z0 + 1.0}, {X + 0.45, Y + 0.03, Z0 + std::min(2.1, H - 0.3)});
                     Out.Box(Mat(M::Glass), {X - 0.35, Y - 0.04, Z0 + 1.1}, {X + 0.35, Y + 0.04, Z0 + std::min(2.0, H - 0.4)});
                 }
+            }
+        }
+
+        /**
+         * One salvaged-timber shanty storey (TC6): walls of odd boards (driftwood, ship's planking still painted, dark
+         * timber) nailed over a frame, patched; a doorway with a sailcloth curtain on -Y, a shuttered hole for a window.
+         */
+        void ShantyStorey(Mesh& Out, Rng& R, const double X0, const double X1, const double Y0, const double Y1, const double Z0, const double Z1, const bool Door)
+        {
+            const M Boards[] = {M::Driftwood, M::TimberDark, M::Hull, M::Deck, M::HullBand, M::DeckWorn};
+            const struct { V3 A, B, N; } Walls[4] = {{{X0, Y0, 0}, {X1, Y0, 0}, {0, -1, 0}}, {{X1, Y0, 0}, {X1, Y1, 0}, {1, 0, 0}}, {{X1, Y1, 0}, {X0, Y1, 0}, {0, 1, 0}}, {{X0, Y1, 0}, {X0, Y0, 0}, {-1, 0, 0}}};
+            for (int F = 0; F < 4; ++F)
+            {
+                const V3 Along = Normalize(Walls[F].B - Walls[F].A);
+                const double Len = Length(Walls[F].B - Walls[F].A);
+                double At = 0.0;
+                while (At < Len - 0.01)
+                {
+                    const double Wd = std::min(R.Range(0.22, 0.42), Len - At);
+                    const double Mid = At + Wd / 2;
+                    const bool Gap = Door && F == 0 && std::fabs(Mid - Len / 2) < 0.5;
+                    const V3 P = Walls[F].A + Along * Mid;
+                    const double Top = Z1 - R.Range(0.0, 0.08);
+                    if (!Gap)
+                        OrientedBox(Out, Mat(Boards[R.Next() % 6]), {P.X, P.Y, (Z0 + Top) / 2}, Along.X, Along.Y, {Wd / 2 - 0.01, 0.025, (Top - Z0) / 2});
+                    else if (Z1 - Z0 > 2.2)
+                        OrientedBox(Out, Mat(Boards[R.Next() % 6]), {P.X, P.Y, (Z0 + 2.0 + Top) / 2}, Along.X, Along.Y, {Wd / 2 - 0.01, 0.025, (Top - Z0 - 2.0) / 2});
+                    At += Wd;
+                }
+                // a patch board across the planks, and on the long walls a shuttered window hole
+                const V3 Patch = Walls[F].A + Along * (Len * R.Range(0.2, 0.8)) + Walls[F].N * 0.04;
+                OrientedBox(Out, Mat(Boards[R.Next() % 6]), {Patch.X, Patch.Y, Z0 + R.Range(0.6, std::max(0.7, Z1 - Z0 - 0.6))}, Along.X, Along.Y, {R.Range(0.4, 0.8), 0.02, 0.1});
+                if (Len > 4.0 && F % 2 == 1)
+                {
+                    const V3 W = Walls[F].A + Along * (Len * 0.5) + Walls[F].N * 0.04;
+                    OrientedBox(Out, Mat(M::HullBelow), {W.X, W.Y, Z0 + 1.55}, Along.X, Along.Y, {0.35, 0.02, 0.3});
+                    const V3 Sh = W + Along * 0.62 + Walls[F].N * 0.03;
+                    OrientedBox(Out, Mat(M::TimberDark), {Sh.X, Sh.Y, Z0 + 1.55}, Along.X, Along.Y, {0.26, 0.02, 0.32});
+                }
+            }
+            for (const V3& C : {V3{X0, Y0, 0}, V3{X1, Y0, 0}, V3{X1, Y1, 0}, V3{X0, Y1, 0}}) Out.Box(Mat(M::TimberDark), {C.X - 0.07, C.Y - 0.07, Z0}, {C.X + 0.07, C.Y + 0.07, Z1});
+            if (Door)
+            {
+                const double Xm = (X0 + X1) / 2;
+                Out.Box(Mat(M::HullBelow), {Xm - 0.5, Y0 + 0.02, Z0}, {Xm + 0.5, Y0 + 0.06, Z0 + 2.0});
+                Out.Quad(Mat(M::Canvas), {Xm - 0.55, Y0 - 0.06, Z0 + 0.15}, {Xm + 0.1, Y0 - 0.08, Z0 + 0.1}, {Xm + 0.1, Y0 - 0.06, Z0 + 2.0}, {Xm - 0.55, Y0 - 0.06, Z0 + 2.0}, true);
+            }
+        }
+
+        /**
+         * A shed roof of tarred planks from the top of the walls (Z) rising Fall to the front, sailcloth patches on it; the
+         * front raised on a fascia board and the sides closed with boards, so no gap shows under it.
+         */
+        void ShantyRoof(Mesh& Out, Rng& R, const double X0, const double X1, const double Y0, const double Y1, const double Z, const double Fall)
+        {
+            Out.Box(Mat(M::TimberDark), {X0, Y0 - 0.03, Z - 0.05}, {X1, Y0 + 0.03, Z + Fall});
+            Out.Fan(Mat(M::Driftwood), {{X0, Y0, Z}, {X0, Y1, Z}, {X0, Y0, Z + Fall}}, {-1, 0, 0});
+            Out.Fan(Mat(M::Driftwood), {{X1, Y1, Z}, {X1, Y0, Z}, {X1, Y0, Z + Fall}}, {1, 0, 0});
+            const double O = 0.3;
+            const double Top = Z + Fall + Fall * O / (Y1 - Y0);
+            const double Low = Z - Fall * O / (Y1 - Y0);
+            for (double X = X0 - O; X < X1 + O - 0.01; X += 0.27)
+            {
+                const double Xe = std::min(X + 0.31, X1 + O), Lift = R.Range(0.0, 0.03);
+                Out.Quad(Mat(M::HullBlack), {X, Y0 - O, Top + Lift}, {Xe, Y0 - O, Top + Lift}, {Xe, Y1 + O, Low + Lift}, {X, Y1 + O, Low + Lift}, true);
+            }
+            for (int K = 0; K < 2; ++K)
+            {
+                const double Px = R.Range(X0, X1 - 1.2), Py = R.Range(Y0, Y1 - 1.4), Slope = Fall / (Y1 - Y0);
+                const double Zp = Z + Fall - Slope * (Py - Y0) + 0.06;
+                Out.Quad(Mat(M::Canvas), {Px, Py, Zp}, {Px + 1.2, Py, Zp}, {Px + 1.2, Py + 1.4, Zp - Slope * 1.4}, {Px, Py + 1.4, Zp - Slope * 1.4}, true);
+            }
+        }
+
+        /** A laundry line from Start to End sagging between, with washing pegged out. */
+        void Laundry(Mesh& Out, Rng& R, const V3& Start, const V3& End)
+        {
+            const V3 Mid = (Start + End) * 0.5 - V3{0, 0, 0.25};
+            Out.Tube(Mat(M::Rope), Start, Mid, 0.008, 0.008, 4, false);
+            Out.Tube(Mat(M::Rope), Mid, End, 0.008, 0.008, 4, false);
+            const M Cloth[] = {M::Linen, M::WoolBlue, M::Canvas, M::Ochre, M::DressGreen, M::Sash};
+            const int Count = static_cast<int>(Length(End - Start) / 0.9);
+            for (int K = 1; K < Count; ++K)
+            {
+                const double T = static_cast<double>(K) / Count, Sag = 0.25 * (1.0 - (2 * T - 1) * (2 * T - 1));
+                const V3 P = Start + (End - Start) * T - V3{0, 0, Sag};
+                const V3 Along = Normalize(End - Start) * R.Range(0.2, 0.32);
+                const double Drop = R.Range(0.4, 0.8);
+                Out.Quad(Mat(Cloth[R.Next() % 6]), P - Along, P + Along, P + Along - V3{0, 0, Drop}, P - Along - V3{0, 0, Drop * R.Range(0.85, 1.0)}, true);
             }
         }
 
@@ -414,6 +513,65 @@ namespace DarkArisen::Tools::Art
                     for (const double X : {-0.75, 0.75}) Out.Box(Mat(M::Stone), {X - 0.1, -0.22, 0.0}, {X + 0.1, 0.22, 0.42});
                     Out.Box(Mat(M::Timber), {-0.9, -0.25, 0.42}, {0.9, 0.25, 0.48});
                     Out.Box(Mat(M::Timber), {-0.9, 0.2, 0.55}, {0.9, 0.26, 0.85});
+                }
+                return Out;
+            }
+            case Tradition::Shanty:
+            {
+                // TC6 (layout.md 4): salvaged ship timber, sailcloth awnings, plank-and-tar roofs, laundry lines; SH2 and SH3
+                // two storeys with a 0.6 m jetty over the street, SH5 the long tenement with a gallery and an outside stair
+                Mesh Out(Name);
+                Rng R(HashString(Name));
+                const double X0 = -S.W / 2, X1 = S.W / 2, Y0 = -S.D / 2, Y1 = S.D / 2;
+                Out.Box(Mat(M::StoneDark), {X0 - 0.05, Y0 - 0.05, -0.4}, {X1 + 0.05, Y1 + 0.05, 0.15});
+                if (V == 5)
+                {
+                    // the tenement: two storeys of rooms, five doors below, a gallery along the front above, a stair up
+                    ShantyStorey(Out, R, X0, X1, Y0, Y1, 0.15, 3.1, false);
+                    ShantyStorey(Out, R, X0, X1, Y0, Y1, 3.1, S.H - 0.4, false);
+                    for (int K = 0; K < 5; ++K)
+                    {
+                        const double Yd = Y0 + S.D * (K + 0.5) / 5;
+                        for (const double Z : {0.15, 3.25})
+                        {
+                            Out.Box(Mat(M::HullBelow), {X0 - 0.06, Yd - 0.45, Z}, {X0 - 0.02, Yd + 0.45, Z + 1.95});
+                            Out.Quad(Mat(M::Canvas), {X0 - 0.08, Yd - 0.5, Z + 0.1}, {X0 - 0.08, Yd + 0.1, Z + 0.05}, {X0 - 0.08, Yd + 0.1, Z + 1.95}, {X0 - 0.08, Yd - 0.5, Z + 1.95}, true);
+                        }
+                    }
+                    Out.Box(Mat(M::Deck), {X0 - 1.3, Y0, 3.0}, {X0, Y1, 3.12});
+                    for (double Y = Y0 + 0.2; Y < Y1; Y += 2.2) Out.Tube(Mat(M::Driftwood), {X0 - 1.2, Y, 0.0}, {X0 - 1.2, Y, 4.1}, 0.07, 0.06, 6);
+                    Out.Tube(Mat(M::TimberDark), {X0 - 1.25, Y0, 4.1}, {X0 - 1.25, Y1, 4.1}, 0.04, 0.04, 4);
+                    for (int K = 0; K < 10; ++K)
+                    {
+                        const double T = K / 10.0;
+                        Out.Box(Mat(M::Deck), {X0 - 1.25, Y1 + 2.8 * (1.0 - T) - 0.15, 3.0 * T}, {X0 - 0.05, Y1 + 2.8 * (1.0 - T) + 0.15, 3.0 * T + 0.08});
+                    }
+                    ShantyRoof(Out, R, X0, X1, Y0, Y1, S.H - 0.4, 0.9);
+                    for (int K = 0; K < 3; ++K)
+                    {
+                        const double Y = Y0 + 3.0 + 7.0 * K;
+                        Laundry(Out, R, {X0 - 1.25, Y, 4.0}, {X0 - 1.25, Y + 5.5, 4.0});
+                    }
+                }
+                else
+                {
+                    const bool Upper = S.H > 4.0;
+                    const double Ground = Upper ? 2.7 : S.H - 0.35;
+                    ShantyStorey(Out, R, X0, X1, Y0, Y1, 0.15, Ground, true);
+                    if (Upper)
+                    {
+                        // the jetty: the upper storey hangs 0.6 m out over the street on brackets
+                        Out.Box(Mat(M::Deck), {X0, Y0 - 0.6, Ground - 0.12}, {X1, Y1, Ground});
+                        for (const double X : {X0 + 0.2, X1 - 0.2}) Out.Tube(Mat(M::TimberDark), {X, Y0, Ground - 0.7}, {X, Y0 - 0.55, Ground - 0.12}, 0.05, 0.05, 4);
+                        ShantyStorey(Out, R, X0, X1, Y0 - 0.6, Y1, Ground, S.H - 0.4, false);
+                    }
+                    ShantyRoof(Out, R, X0, X1, Upper ? Y0 - 0.6 : Y0, Y1, S.H - 0.4, 0.6);
+                    // the sailcloth awning over the door on two poles
+                    const double Xa = 1.4;
+                    for (const double X : {-Xa, Xa}) Out.Tube(Mat(M::Driftwood), {X, Y0 - 1.5, 0.0}, {X, Y0 - 1.5, 2.0}, 0.04, 0.035, 5);
+                    Out.Quad(Mat(M::Canvas), {-Xa - 0.1, Y0 - 1.55, 2.0}, {Xa + 0.1, Y0 - 1.55, 2.0}, {Xa + 0.1, Y0 - 0.02, 2.35}, {-Xa - 0.1, Y0 - 0.02, 2.35}, true);
+                    if (V % 2 == 0) Laundry(Out, R, {X1, Y0 + 0.4, 2.2}, {X1 + 3.2, Y0 - 1.4, 2.1});
+                    if (V == 4) Barrel(Out, {X0 - 0.5, Y0 - 0.6, 0.0}, 0.9, 0.3);
                 }
                 return Out;
             }
@@ -813,6 +971,256 @@ namespace DarkArisen::Tools::Art
                     }
                     break;
                 }
+                case 8:
+                case 9:
+                case 11:
+                {
+                    // W1, the Muro noble (layout.md 4): 12 x 1.0 x 4.5 of pale plaster on a stone footing, tile coping and
+                    // iron spikes, a 0.6 m pilaster at its +X end; every fourth carries a finial lamp. A gate pier (11)
+                    // stands at each side of a gap.
+                    Material Pale = Mat(M::Plaster);
+                    Pale.Name = "M_Art_NobleWall_Plaster";
+                    Pale.BaseColor = {0.94, 0.91, 0.84, 1.0};
+                    Material Lamp = Mat(M::Glass);
+                    Lamp.Name = "M_Art_NobleWall_Lamp";
+                    Lamp.BaseColor = {1.0, 0.82, 0.5, 1.0};
+                    Lamp.Emissive = {1.0, 0.74, 0.4};
+                    Lamp.EmissiveStrength = 3.0;
+                    const auto Finial = [&](const double X, const double Z)
+                    {
+                        Out.Tube(Mat(M::Iron), {X, 0.0, Z}, {X, 0.0, Z + 0.7}, 0.04, 0.03, 6);
+                        Out.Box(Lamp, {X - 0.16, -0.16, Z + 0.7}, {X + 0.16, 0.16, Z + 1.15});
+                        Out.Box(Mat(M::Iron), {X - 0.2, -0.2, Z + 1.15}, {X + 0.2, 0.2, Z + 1.22});
+                        Out.Tube(Mat(M::Iron), {X, 0.0, Z + 1.22}, {X, 0.0, Z + 1.5}, 0.05, 0.005, 6);
+                    };
+                    if (V == 11)
+                    {
+                        Out.Box(Mat(M::Stone), {-0.65, -0.65, -0.8}, {0.65, 0.65, 0.6});
+                        Out.Box(Pale, {-0.55, -0.55, 0.6}, {0.55, 0.55, 4.9});
+                        Out.Box(Mat(M::Stone), {-0.68, -0.68, 4.9}, {0.68, 0.68, 5.15});
+                        Dome(Out, Mat(M::Stone), 0.0, 0.0, 5.15, 0.4, 0.35, 10);
+                        Finial(0.0, 5.45);
+                        break;
+                    }
+                    Out.Box(Mat(M::Stone), {-6.0, -0.55, -0.8}, {6.0, 0.55, 0.5});
+                    Out.Box(Pale, {-6.0, -0.5, 0.5}, {6.0, 0.5, 4.3});
+                    Out.Box(Mat(M::RoofTile), {-6.0, -0.62, 4.3}, {6.0, 0.62, 4.42});
+                    Out.Quad(Mat(M::RoofTile), {-6.0, -0.62, 4.42}, {6.0, -0.62, 4.42}, {6.0, 0.0, 4.55}, {-6.0, 0.0, 4.55}, true);
+                    Out.Quad(Mat(M::RoofTile), {6.0, 0.62, 4.42}, {-6.0, 0.62, 4.42}, {-6.0, 0.0, 4.55}, {6.0, 0.0, 4.55}, true);
+                    for (double X = -5.85; X < 5.6; X += 0.3) Out.Tube(Mat(M::Iron), {X, 0.0, 4.55}, {X, 0.0, 4.85}, 0.012, 0.002, 4);
+                    Out.Box(Pale, {5.7, -0.65, -0.2}, {6.3, 0.65, 4.8});
+                    Out.Box(Mat(M::Stone), {5.65, -0.7, 4.8}, {6.35, 0.7, 4.98});
+                    if (V == 9) Finial(6.0, 4.98);
+                    // the mould line of the salt air at the foot
+                    Material Mould = Mat(M::StoneDark);
+                    Mould.Name = "M_Art_NobleWall_Mould";
+                    Mould.BaseColor = {0.42, 0.42, 0.36, 1.0};
+                    for (const double Y : {-0.505, 0.505}) Out.Box(Mould, {-6.0, Y - 0.004, 0.5}, {6.0, Y + 0.004, 0.75});
+                    break;
+                }
+                case 10:
+                {
+                    // W3, a gatehouse (layout.md 4, 5.4 N7): 6 x 6 x 8 of plaster on a stone storey, a hipped tile roof, a
+                    // door and barred windows, a lamp; the guards' post at the Noble gates
+                    Out.Box(Mat(M::Stone), {-3.0, -3.0, -0.6}, {3.0, 3.0, 3.0});
+                    Out.Box(Mat(M::Plaster), {-2.95, -2.95, 3.0}, {2.95, 2.95, 6.8});
+                    Course(Out, Mat(M::Stone), 6.0, 6.0, 2.9, 0.25, 0.1);
+                    Hip(Out, Mat(M::RoofTile), 5.9, 5.9, 6.8, 1.9, 0.45);
+                    Out.Box(Mat(M::TimberDark), {-0.6, -3.06, 0.0}, {0.6, -2.98, 2.3});
+                    for (const double X : {-1.6, 1.6})
+                    {
+                        Out.Box(Mat(M::TimberDark), {X - 0.4, -3.04, 4.2}, {X + 0.4, -2.98, 5.6});
+                        for (int Bar = 0; Bar < 4; ++Bar) Out.Tube(Mat(M::Iron), {X - 0.3 + 0.2 * Bar, -3.1, 4.15}, {X - 0.3 + 0.2 * Bar, -3.1, 5.65}, 0.015, 0.015, 4);
+                    }
+                    for (const double Y : {-1.5, 1.5})
+                        for (const double X : {-3.04, 3.04}) Out.Box(Mat(M::TimberDark), {X - 0.04, Y - 0.15, 1.4}, {X + 0.04, Y + 0.15, 2.2});
+                    Material Lamp = Mat(M::Glass);
+                    Lamp.Name = "M_Art_NobleWall_Lamp";
+                    Lamp.BaseColor = {1.0, 0.82, 0.5, 1.0};
+                    Lamp.Emissive = {1.0, 0.74, 0.4};
+                    Lamp.EmissiveStrength = 3.0;
+                    Out.Tube(Mat(M::Iron), {1.0, -3.0, 2.7}, {1.0, -3.4, 2.7}, 0.02, 0.02, 4);
+                    Out.Box(Lamp, {0.88, -3.52, 2.3}, {1.12, -3.28, 2.62});
+                    break;
+                }
+                case 12:
+                {
+                    // TC2, the casa de portal (layout.md 4; N5): 11 x 10 x 8 behind a ground-floor arcade 2.6 deep and 3.0
+                    // clear, 0.5 m piers every 3.5 m; three balcony doors above on wrought-iron balconies
+                    const double Y0 = -S.D / 2 + 2.6;
+                    Out.Append(DressBoxes(Name + "_House", {{{-S.W / 2, Y0, 0.0}, {S.W / 2, S.D / 2, S.H}}}));
+                    Out.Box(Mat(M::Plaster), {-S.W / 2, -S.D / 2, 3.0}, {S.W / 2, Y0, S.H});
+                    Out.Box(Mat(M::Paving), {-S.W / 2, -S.D / 2, 0.0}, {S.W / 2, Y0, 0.12});
+                    Out.Box(Mat(M::TimberDark), {-S.W / 2, -S.D / 2 + 0.05, 2.85}, {S.W / 2, Y0, 3.0});
+                    for (double X = -S.W / 2 + 0.25; X <= S.W / 2 - 0.2; X += 3.5)
+                    {
+                        Out.Box(Mat(M::Stone), {X - 0.25, -S.D / 2, 0.0}, {X + 0.25, -S.D / 2 + 0.5, 3.0});
+                        Out.Box(Mat(M::StoneDark), {X - 0.32, -S.D / 2 - 0.05, 2.8}, {X + 0.32, -S.D / 2 + 0.55, 3.05});
+                    }
+                    for (const double X : {-3.5, 0.0, 3.5})
+                    {
+                        Out.Box(Mat(M::TimberDark), {X - 0.5, -S.D / 2 - 0.04, 3.6}, {X + 0.5, -S.D / 2 + 0.02, 5.8});
+                        Out.Box(Mat(M::StoneDark), {X - 0.75, -S.D / 2 - 0.7, 3.45}, {X + 0.75, -S.D / 2, 3.6});
+                        for (int Bar = 0; Bar <= 7; ++Bar)
+                            Out.Tube(Mat(M::Iron), {X - 0.7 + 0.2 * Bar, -S.D / 2 - 0.66, 3.6}, {X - 0.7 + 0.2 * Bar, -S.D / 2 - 0.66, 4.55}, 0.012, 0.012, 4);
+                        Out.Tube(Mat(M::Iron), {X - 0.72, -S.D / 2 - 0.66, 4.55}, {X + 0.72, -S.D / 2 - 0.66, 4.55}, 0.02, 0.02, 4);
+                    }
+                    break;
+                }
+                case 13:
+                {
+                    // TC4, the casa-patio villa on its walled lot (layout.md 4; N6): the house 16 x 18 x 8 at the back of a 34 x 40
+                    // lot behind a 2.8 m wall with a 3.5 m gate; a 3.2 m zaguan with its iron gate; a garden with a fountain
+                    Out.Append(DressBoxes(Name + "_House", {{{-8.0, 0.0, 0.0}, {8.0, 18.0, 8.0}}}));
+                    Out.Box(Mat(M::TimberDark), {-1.6, -0.06, 0.0}, {1.6, 0.02, 3.4});
+                    for (int Bar = 0; Bar <= 10; ++Bar) Out.Tube(Mat(M::Iron), {-1.5 + 0.3 * Bar, -0.12, 0.0}, {-1.5 + 0.3 * Bar, -0.12, 3.3}, 0.02, 0.02, 4);
+                    const double X0 = -17.0, X1 = 17.0, Y0 = -20.0, Y1 = 20.0;
+                    for (const auto& [A, B] : {std::pair<V3, V3>{{X0, Y1 - 0.3, 0.0}, {X1, Y1, 2.8}}, {{X0, Y0, 0.0}, {X0 + 0.3, Y1, 2.8}}, {{X1 - 0.3, Y0, 0.0}, {X1, Y1, 2.8}},
+                                               {{X0, Y0, 0.0}, {-1.75, Y0 + 0.3, 2.8}}, {{1.75, Y0, 0.0}, {X1, Y0 + 0.3, 2.8}}})
+                    {
+                        Out.Box(Mat(M::Plaster), {A.X, A.Y, -0.4}, B);
+                        Out.Box(Mat(M::RoofTile), {A.X - 0.06, A.Y - 0.06, 2.8}, {B.X + 0.06, B.Y + 0.06, 2.95});
+                    }
+                    for (const double X : {-1.75, 1.75}) Out.Box(Mat(M::Stone), {X - 0.4, Y0 - 0.1, -0.4}, {X + 0.4, Y0 + 0.4, 3.4});
+                    for (int Bar = 0; Bar <= 11; ++Bar) Out.Tube(Mat(M::Iron), {-1.35 + 0.245 * Bar, Y0 + 0.15, 0.0}, {-1.35 + 0.245 * Bar, Y0 + 0.15, 2.6}, 0.02, 0.02, 4);
+                    Out.Box(Mat(M::Paving), {-1.6, Y0, 0.0}, {1.6, 0.0, 0.08});
+                    Out.Tube(Mat(M::Stone), {0.0, -10.0, 0.0}, {0.0, -10.0, 0.6}, 2.2, 2.2, 20);
+                    Out.Tube(Mat(M::HarborWater), {0.0, -10.0, 0.5}, {0.0, -10.0, 0.55}, 2.0, 2.0, 20);
+                    Out.Tube(Mat(M::Stone), {0.0, -10.0, 0.5}, {0.0, -10.0, 1.6}, 0.25, 0.18, 10);
+                    break;
+                }
+                case 14:
+                {
+                    // LM10, Salazar's public estate (layout.md 4; N3): 40 x 26 x 11 of white plaster with pale gilt ironwork, its
+                    // azotea behind a 1.1 m parapet with four watch posts, on a 44 x 36 lot with a forecourt facing the square
+                    Material White = Mat(M::Plaster);
+                    White.Name = "M_Art_Salazar_WhitePlaster";
+                    White.BaseColor = {0.97, 0.96, 0.92, 1.0};
+                    Material Gilt = Mat(M::Brass);
+                    Gilt.Name = "M_Art_Salazar_Gilt";
+                    Gilt.BaseColor = {0.86, 0.78, 0.55, 1.0};
+                    const double Y0 = -8.0;  // the house behind a 10 m forecourt (26 + 15 would not fit the 36 m lot)
+                    Out.Box(Mat(M::Stone), {-20.0, Y0, -0.6}, {20.0, Y0 + 26.0, 0.8});
+                    Out.Box(White, {-20.0, Y0, 0.8}, {20.0, Y0 + 26.0, 11.0});
+                    Course(Out, Mat(M::Stone), 40.0, 26.0, 4.5, 0.3, 0.15);
+                    Out.Box(White, {-20.15, Y0 - 0.15, 11.0}, {20.15, Y0 + 26.15, 12.1});
+                    Out.Box(Mat(M::Stone), {-20.25, Y0 - 0.25, 12.1}, {20.25, Y0 + 26.25, 12.25});
+                    for (const double X : {-19.0, 19.0})
+                        for (const double Y : {Y0 + 1.0, Y0 + 25.0})
+                        {
+                            Out.Box(White, {X - 1.2, Y - 1.2, 11.0}, {X + 1.2, Y + 1.2, 14.0});
+                            Out.Box(Mat(M::RoofTile), {X - 1.4, Y - 1.4, 14.0}, {X + 1.4, Y + 1.4, 14.25});
+                        }
+                    for (double X = -17.0; X <= 17.0; X += 3.4)
+                        for (const double Z : {2.0, 6.5})
+                        {
+                            Out.Box(Mat(M::TimberDark), {X - 0.55, Y0 - 0.05, Z}, {X + 0.55, Y0 + 0.02, Z + 2.2});
+                            for (int Bar = 0; Bar < 5; ++Bar) Out.Tube(Gilt, {X - 0.4 + 0.2 * Bar, Y0 - 0.12, Z - 0.05}, {X - 0.4 + 0.2 * Bar, Y0 - 0.12, Z + 2.25}, 0.018, 0.018, 4);
+                        }
+                    Out.Box(Mat(M::TimberDark), {-1.6, Y0 - 0.08, 0.8}, {1.6, Y0 + 0.02, 4.4});
+                    Out.Box(Mat(M::Paving), {-22.0, -18.0, 0.0}, {22.0, Y0, 0.1});
+                    for (const double X : {-22.0, 21.6}) Out.Box(White, {X, -18.0, -0.4}, {X + 0.4, Y0, 2.4});
+                    for (int Bar = 0; Bar <= 40; ++Bar)
+                        if (std::fabs(-20.0 + Bar) > 2.2) Out.Tube(Gilt, {-20.0 + Bar, -18.0, 0.0}, {-20.0 + Bar, -18.0, 2.2}, 0.025, 0.012, 4);
+                    Out.Tube(Gilt, {-22.0, -18.0, 2.2}, {22.0, -18.0, 2.2}, 0.03, 0.03, 4);
+                    break;
+                }
+                case 15:
+                {
+                    // LM11, the guard barracks at the Noble gate (layout.md 4; N4): 20 x 14 x 7, plain and strong
+                    Out.Box(Mat(M::StoneDark), {-10.0, -7.0, -0.5}, {10.0, 7.0, 3.2});
+                    Out.Box(Mat(M::Plaster), {-9.95, -6.95, 3.2}, {9.95, 6.95, 7.0});
+                    Hip(Out, Mat(M::RoofTile), 20.0, 14.0, 7.0, 2.2, 0.4);
+                    for (double X = -8.0; X <= 8.0; X += 4.0)
+                    {
+                        Out.Box(Mat(M::TimberDark), {X - 0.4, -7.04, 4.2}, {X + 0.4, -6.98, 5.8});
+                        for (int Bar = 0; Bar < 4; ++Bar) Out.Tube(Mat(M::Iron), {X - 0.3 + 0.2 * Bar, -7.1, 4.15}, {X - 0.3 + 0.2 * Bar, -7.1, 5.85}, 0.015, 0.015, 4);
+                    }
+                    Out.Box(Mat(M::TimberDark), {-1.2, -7.06, 0.0}, {1.2, -6.98, 2.8});
+                    Out.Tube(Mat(M::TimberDark), {-6.0, -7.0, 7.0}, {-6.0, -7.0, 11.0}, 0.06, 0.05, 6);
+                    Out.Quad(Mat(M::HullBandRed), {-6.0, -7.0, 11.0}, {-6.0, -8.4, 11.0}, {-6.0, -8.4, 10.1}, {-6.0, -7.0, 10.1}, true);
+                    for (const double X : {4.0, 6.5}) Out.Box(Mat(M::Timber), {X - 0.9, -9.0, 0.0}, {X + 0.9, -8.6, 1.1});  // the hitching rail
+                    break;
+                }
+                case 16:
+                {
+                    // N2, the duel platform of the Duelist's Square (layout.md 5.4): 14 x 14 x 0.5 with a brass inlay, three
+                    // 0.3 m steps on its east and west sides
+                    Material Pale = Mat(M::Paving);
+                    Pale.Name = "M_Art_DuelPlatform";
+                    Pale.BaseColor = {0.92, 0.9, 0.84, 1.0};
+                    Out.Box(Pale, {-7.0, -7.0, -0.3}, {7.0, 7.0, 0.5});
+                    for (int K = 0; K < 3; ++K)
+                        for (const double Side : {-1.0, 1.0})
+                        {
+                            const double X0 = Side * (7.0 + 0.35 * K), X1 = Side * (7.0 + 0.35 * (K + 1));
+                            Out.Box(Pale, {std::min(X0, X1), -5.0, -0.3}, {std::max(X0, X1), 5.0, 0.5 - 0.17 * (K + 1)});
+                        }
+                    Material Inlay = Mat(M::Brass);
+                    Inlay.Name = "M_Art_DuelInlay";
+                    for (int K = 0; K < 24; ++K)
+                    {
+                        const double A = 2.0 * Pi * K / 24, B = 2.0 * Pi * (K + 1) / 24;
+                        Out.Box(Inlay, {std::min(5.0 * Cos(A), 5.0 * Cos(B)) - 0.06, std::min(5.0 * Sin(A), 5.0 * Sin(B)) - 0.06, 0.5},
+                                {std::max(5.0 * Cos(A), 5.0 * Cos(B)) + 0.06, std::max(5.0 * Sin(A), 5.0 * Sin(B)) + 0.06, 0.505});
+                    }
+                    for (const double A : {0.0, Pi / 2})
+                        Out.Box(Inlay, {-5.0 * std::fabs(Cos(A)) - 0.05, -5.0 * std::fabs(Sin(A)) - 0.05, 0.5}, {5.0 * std::fabs(Cos(A)) + 0.05, 5.0 * std::fabs(Sin(A)) + 0.05, 0.505});
+                    break;
+                }
+                case 17:
+                {
+                    // W2, a seam arch (layout.md 3.3): 8 x 2.5 x 6.5, an opening 5.5 x 4.5 under a segmental arch, two grille
+                    // leaves folded back against the piers (they close for a 5-star lockdown), a painted name board on the lintel
+                    // (the lettering is the district's, left to the sign pass), a 3 x 3 x 3.5 guard post beside it and a
+                    // fingerpost 5 m outside (+Y, along the road away from the district)
+                    Out.Box(Mat(M::Stone), {-4.0, -1.25, -0.6}, {-2.75, 1.25, 6.5});
+                    Out.Box(Mat(M::Stone), {2.75, -1.25, -0.6}, {4.0, 1.25, 6.5});
+                    Out.Box(Mat(M::Plaster), {-2.75, -1.25, 5.2}, {2.75, 1.25, 6.5});
+                    for (int K = 0; K < 8; ++K)
+                    {
+                        const double A0 = Pi * K / 8, A1 = Pi * (K + 1) / 8;
+                        for (const double Y : {-1.15, 1.15})
+                            Out.Tube(Mat(M::Stone), {2.75 * Cos(A0), Y, 4.5 + 0.7 * Sin(A0)}, {2.75 * Cos(A1), Y, 4.5 + 0.7 * Sin(A1)}, 0.14, 0.14, 6);
+                        OrientedBox(Out, Mat(M::Plaster), {2.75 * (Cos(A0) + Cos(A1)) / 2, 0.0, 4.5 + 0.7 * (Sin(A0) + Sin(A1)) / 2 + 0.4}, 1.0, 0.0, {0.18, 1.2, 0.42});
+                    }
+                    Out.Box(Mat(M::StoneDark), {-4.15, -1.4, 6.5}, {4.15, 1.4, 6.8});
+                    for (const double Y : {-1.27, 1.27}) Out.Box(Mat(M::TimberDark), {-2.4, Y - 0.03, 5.45}, {2.4, Y + 0.03, 6.35});
+                    for (const double Side : {-1.0, 1.0})
+                        for (int Bar = 0; Bar <= 7; ++Bar)
+                        {
+                            const double Y = -1.1 + 0.3 * Bar;
+                            Out.Tube(Mat(M::Iron), {Side * 2.6, Y, 0.0}, {Side * 2.6, Y, 4.3}, 0.02, 0.02, 4);
+                            if (Bar == 0) for (const double Z : {0.3, 2.2, 4.2}) Out.Tube(Mat(M::Iron), {Side * 2.6, -1.1, Z}, {Side * 2.6, 1.0, Z}, 0.025, 0.025, 4);
+                        }
+                    // the guard post beside the east pier
+                    Out.Box(Mat(M::Stone), {4.3, -1.5, -0.5}, {7.3, 1.5, 3.5});
+                    Out.Push(Xf::Translate({5.8, 0.0, 0.0}));
+                    Hip(Out, Mat(M::RoofTile), 3.0, 3.0, 3.5, 1.0, 0.25);
+                    Out.Pop();
+                    Out.Box(Mat(M::TimberDark), {5.3, 1.46, 0.0}, {6.3, 1.54, 2.1});
+                    // the fingerpost outside
+                    Out.Tube(Mat(M::TimberDark), {-5.2, 5.0, 0.0}, {-5.2, 5.0, 3.0}, 0.06, 0.05, 6);
+                    for (const double Dir : {-1.0, 1.0}) Out.Box(Mat(M::Timber), {-5.2 + (Dir < 0 ? -0.9 : 0.0), 4.97, 2.45 + (Dir < 0 ? 0.0 : 0.3)}, {-5.2 + (Dir < 0 ? 0.0 : 0.9), 5.03, 2.65 + (Dir < 0 ? 0.0 : 0.3)});
+                    break;
+                }
+                case 18:
+                {
+                    // a stair's low gate (layout.md 3.3): a 3 m grille between two stone posts at the foot of the stair, open
+                    for (const double X : {-1.9, 1.9})
+                    {
+                        Out.Box(Mat(M::Stone), {X - 0.35, -0.35, -0.4}, {X + 0.35, 0.35, 1.6});
+                        Out.Box(Mat(M::StoneDark), {X - 0.42, -0.42, 1.6}, {X + 0.42, 0.42, 1.72});
+                    }
+                    for (const double Side : {-1.0, 1.0})
+                        for (int Bar = 0; Bar <= 6; ++Bar)
+                        {
+                            const double Y = 0.1 + 0.22 * Bar;
+                            Out.Tube(Mat(M::Iron), {Side * 1.5, Y, 0.05}, {Side * 1.5, Y, 1.4}, 0.016, 0.016, 4);
+                            if (Bar == 0) for (const double Z : {0.15, 1.35}) Out.Tube(Mat(M::Iron), {Side * 1.5, 0.1, Z}, {Side * 1.5, 1.45, Z}, 0.02, 0.02, 4);
+                        }
+                    break;
+                }
                 }
                 return Out;
             }
@@ -861,8 +1269,8 @@ namespace DarkArisen::Tools::Art
     void Kit::BuildSettlementModels()
     {
         for (const Tradition Kind : {Tradition::Colonial, Tradition::Stilt, Tradition::Nordic, Tradition::Camp, Tradition::Fort, Tradition::Lighthouse, Tradition::Entrance,
-                 Tradition::Civic, Tradition::Harbour, Tradition::Street})
-            for (int V = 0; V < (Kind == Tradition::Lighthouse ? 1 : Kind == Tradition::Civic ? 8 : Kind == Tradition::Harbour ? 5 : Kind == Tradition::Street ? 3 : Variants); ++V)
+                 Tradition::Civic, Tradition::Harbour, Tradition::Street, Tradition::Shanty})
+            for (int V = 0; V < (Kind == Tradition::Lighthouse ? 1 : Kind == Tradition::Civic ? 19 : Kind == Tradition::Harbour ? 5 : Kind == Tradition::Street ? 3 : Variants); ++V)
                 Emit(ModelName(Kind, V), WriteGltf(BuildVariant(Kind, V), "Dark Arisen art kit (settlements)"));
     }
 
@@ -1000,6 +1408,39 @@ namespace DarkArisen::Tools::Art
         }
         // the level design's own buildings at their world positions (layout.md: the tavern B1, the Guild H2)
         for (const auto& [V, X, Y, Yaw] : Spec.Civic) Place(Tradition::Civic, V, X, Y, Yaw);
+        // a walled district's ring (layout.md 5.4: W1 every 12.6 m round the centre, every fourth with its finial lamp, gaps
+        // for the gates with a pier on each side)
+        const std::size_t BeforeWall = Out.size();
+        if (Spec.WallRadius > 0.0)
+        {
+            const double Step = 12.6;
+            const int Segments = std::max(8, static_cast<int>(2.0 * Pi * Spec.WallRadius / Step + 0.5));
+            const auto InGate = [&](const double A, const double Reach)
+            {
+                for (const auto& [Bearing, Gap] : Spec.WallGates)
+                {
+                    double D = A - Bearing * Pi / 180.0;
+                    while (D > Pi) D -= 2.0 * Pi;
+                    while (D < -Pi) D += 2.0 * Pi;
+                    if (std::fabs(D) * Spec.WallRadius < Gap / 2.0 + Reach) return true;
+                }
+                return false;
+            };
+            for (int K = 0; K < Segments; ++K)
+            {
+                const double A = 2.0 * Pi * (K + 0.5) / Segments;
+                if (InGate(A, 6.3)) continue;
+                Place(Tradition::Civic, K % 4 == 0 ? 9 : 8, Spec.X + Spec.WallRadius * Cos(A), Spec.Y + Spec.WallRadius * Sin(A), A * 180.0 / Pi + 90.0);
+            }
+            for (const auto& [Bearing, Gap] : Spec.WallGates)
+                for (const double Side : {-1.0, 1.0})
+                {
+                    const double A = Bearing * Pi / 180.0 + Side * (Gap / 2.0 + 0.65) / Spec.WallRadius;
+                    Place(Tradition::Civic, 11, Spec.X + Spec.WallRadius * Cos(A), Spec.Y + Spec.WallRadius * Sin(A), A * 180.0 / Pi + 90.0);
+                }
+        }
+        // the wall's pieces do not count against the district's buildings
+        const int MaxBuildings = Spec.MaxBuildings + static_cast<int>(Out.size() - BeforeWall);
         // what a house may not stand on: the landmarks and quays placed so far, each as the circle round its box
         const std::vector<Structure> Reserved = Out;
         const auto Clear = [&](const double X, const double Y, const double Reach)
@@ -1059,13 +1500,13 @@ namespace DarkArisen::Tools::Art
             std::sort(Plots.begin(), Plots.end(), [](const Plot& A, const Plot& B) { return A.Key != B.Key ? A.Key < B.Key : A.J != B.J ? A.J < B.J : A.I < B.I; });
             for (const Plot& P : Plots)
             {
-                if (static_cast<int>(Out.size()) >= Spec.MaxBuildings) break;
+                if (static_cast<int>(Out.size()) >= MaxBuildings) break;
                 const double U = (P.I + 0.5) * (Block + Street), W = (P.J + 0.5) * (Deep + Street);
                 if (R.Unit() > Spec.Fill) continue;  // a garden, a yard, a ruin
                 for (const double Side : {-1.0, 1.0})
                 {
                     double Along = -Block / 2;
-                    while (Along < Block / 2 - 5.0 && static_cast<int>(Out.size()) < Spec.MaxBuildings)
+                    while (Along < Block / 2 - 5.0 && static_cast<int>(Out.size()) < MaxBuildings)
                     {
                         const int V = static_cast<int>(R.Unit() * Variants);
                         const Size S = VariantSize(Houses, V);
@@ -1106,7 +1547,7 @@ namespace DarkArisen::Tools::Art
         if (Spec.Kind == Tradition::Camp)
             Out.push_back({"Assets/Art/Scanned/models/stone_fire_pit/stone_fire_pit_2k.gltf", Spec.X, Spec.Y, Spec.Ground(Spec.X, Spec.Y), 0.0, 3.0, 3.0, 0.6});
         const double Ridge = Spec.StreetAngle;
-        for (int Tries = 0; Tries < Spec.MaxBuildings * 30 && static_cast<int>(Out.size()) < Spec.MaxBuildings; ++Tries)
+        for (int Tries = 0; Tries < Spec.MaxBuildings * 30 && static_cast<int>(Out.size()) < MaxBuildings; ++Tries)
         {
             const double A = R.Range(0.0, 2.0 * Pi);
             const double Rr = Spec.Radius * 0.9 * std::sqrt(R.Unit()) * (0.35 + 0.65 * R.Unit());

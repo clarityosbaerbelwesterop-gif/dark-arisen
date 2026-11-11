@@ -136,7 +136,8 @@ namespace DarkArisen::Tools::Art
         Entrance,    // a dungeon's way in: a cave mouth in the rock or a carved doorway with steps down
         Civic,       // a town's landmark on its square: cathedral, market hall, warehouse, mansion, watchtower
         Harbour,     // the waterfront: stone quay, timber pier, fishing boat, merchant brig, rowing boat (afloat at z = 0)
-        Street       // street furniture: gas lamp, market stall, bench
+        Street,      // street furniture: gas lamp, market stall, bench
+        Shanty       // Rexa's slums: salvaged ship timber, sailcloth awnings, plank-and-tar roofs (layout.md TC6)
     };
 
     /** Variants of Tradition::Civic. */
@@ -167,6 +168,8 @@ namespace DarkArisen::Tools::Art
         int StallMax = 0;
         int Benches = 0;                                  // benches round the square's edge
         std::vector<std::tuple<int, double, double, double>> Civic;  // the level design's civic buildings: variant, world x, y, yaw
+        double WallRadius = 0.0;                          // a walled district's ring (0 for none)
+        std::vector<std::pair<double, double>> WallGates;  // its gates: bearing (degrees from +x), gap (m)
         std::function<bool(double, double, double)> KeepOff;  // true where a road runs within the reach of (x, y)
     };
 

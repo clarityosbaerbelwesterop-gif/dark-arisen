@@ -595,6 +595,7 @@ namespace DarkArisen::Tools::Art
             Settle.Waterfront = Plan.Waterfront;
             Settle.Cluster = Plan.Cluster;
             if (Plan.Tradition == "Stilt") Settle.Houses = Tradition::Stilt;
+            if (Plan.Tradition == "Shanty") Settle.Houses = Tradition::Shanty;
             if (Plan.HasLandmark) { Settle.LandmarkU = Plan.LandmarkU; Settle.LandmarkW = Plan.LandmarkW; Settle.LandmarkYaw = Plan.LandmarkYaw; }
             if (Plan.HasPlaza) { Settle.PlazaU = Plan.PlazaU; Settle.PlazaW = Plan.PlazaW; Settle.PlazaRadius = Plan.PlazaRadius; }
             Settle.LampSpacing = Plan.LampSpacing;
@@ -603,6 +604,8 @@ namespace DarkArisen::Tools::Art
             Settle.StallMax = Plan.StallMax;
             Settle.Benches = Plan.Benches;
             Settle.Civic = Plan.Civic;
+            Settle.WallRadius = Plan.WallRadius;
+            Settle.WallGates = Plan.WallGates;
             Settle.KeepOff = [&Roads, &RoadBoxes](const double X, const double Y, const double Reach)
             {
                 for (std::size_t K = 0; K < Roads.size(); ++K)
@@ -689,6 +692,32 @@ namespace DarkArisen::Tools::Art
                 for (std::size_t At = Gltf.find(From); At != std::string::npos; At = Gltf.find(From, At + To.size())) Gltf.replace(At, From.size(), To);
                 Out.Files.push_back({"Stairs/" + Name + ".gltf", Gltf});
                 AddStructure({"Assets/World/Stairs/" + Name + ".gltf", A.X, A.Y, A.Z, 0.0, 0.5, 0.5, 0.1});
+            }
+            // the seam arches at the edge ends (layout.md 3.3): a W2 arch where a road leaves a district, except at the Noble
+            // Quarter's own gates; on a stair the arch stands at the top and a low grille gate at the bottom
+            if (Road.Points.size() >= 2)
+            {
+                const auto IsNobleGate = [](const double X, const double Y)
+                {
+                    static const double Gates[3][2] = {{6146.0, 5520.0}, {6190.0, 5460.0}, {6216.0, 5652.0}};
+                    for (const auto& G : Gates)
+                        if ((X - G[0]) * (X - G[0]) + (Y - G[1]) * (Y - G[1]) < 15.0 * 15.0) return true;
+                    return false;
+                };
+                const std::size_t N = Road.Points.size();
+                for (const bool First : {true, false})
+                {
+                    const WorldRoad::Point& P = First ? Road.Points[0] : Road.Points[N - 1];
+                    const WorldRoad::Point& Q = First ? Road.Points[1] : Road.Points[N - 2];
+                    if (IsNobleGate(P.X, P.Y)) continue;
+                    const double Len = std::sqrt((Q.X - P.X) * (Q.X - P.X) + (Q.Y - P.Y) * (Q.Y - P.Y));
+                    if (Len < 1e-6) continue;
+                    const double Ux = (Q.X - P.X) / Len, Uy = (Q.Y - P.Y) / Len;
+                    const bool Top = P.Z >= (First ? Road.Points[N - 1].Z : Road.Points[0].Z);
+                    const int Variant = Stairs && !Top ? 18 : 17;
+                    const double X = P.X + Ux * 2.0, Y = P.Y + Uy * 2.0;  // just outside the district's edge, on the road
+                    AddStructure(Kit::SettlementPiece(Tradition::Civic, Variant, X, Y, Stairs ? P.Z : Height(X, Y), Atan2(Uy, Ux) * 180.0 / Pi - 90.0));
+                }
             }
             double Walked = 0.0, NextLamp = 10.0, NextHouse = R.Range(20.0, 40.0);
             int LampSide = 1, HouseSide = 1;

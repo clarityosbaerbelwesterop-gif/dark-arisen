@@ -86,6 +86,8 @@ namespace DarkArisen::Tools::Art
             int StallMax = 0;
             int Benches = 0;
             std::vector<std::tuple<int, double, double, double>> Civic;  // variant, world x, y, yaw
+            double WallRadius = 0.0;
+            std::vector<std::pair<double, double>> WallGates;
         } Plan;
     };
 
