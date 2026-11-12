@@ -15,7 +15,7 @@ material enters only through the CC0 import pipeline (`import-glb`).
 
 **The bosses are the exception (owner's decision, 2026-11-11).** The ArtKit's boss models were rejected as not
 triple-A ("look at Elden Ring ... make them in Blender"). Bosses are therefore sculpted, detailed and baked in Blender
-by the forge scripts in section 6, and their GLBs are committed under `Assets/Art/Creatures/`. Nothing is edited by
+by the forge scripts in section 6, and their glTF files are committed under `Assets/Art/Creatures/`. Nothing is edited by
 hand: every boss is rebuilt by running its script, which is written from the boss's design document.
 
 The scripts below are development tooling for the assistant. They live outside `Source/` and `Tools/`
@@ -122,7 +122,7 @@ missing, the verdict is `NOT ASSESSED`.
 | Paint | Colour and roughness as point attributes on the high-poly, from the same masks |
 | Retopo | The fused skin decimated to the game mesh (60-90 k triangles), unwrapped |
 | Bake | Normal, ambient occlusion, colour and roughness from the high-poly to the game mesh (4K) |
-| Export | One GLB: `Engine/O3DE/DarkArisen/Assets/Art/Creatures/SM_Boss_<Name>.glb` |
+| Export | `Engine/O3DE/DarkArisen/Assets/Art/Creatures/SM_Boss_<Name>/SM_Boss_<Name>.gltf` with its `.bin` and JPEG maps (not a `.glb`: the repository sends `*.glb` to Git LFS, which this environment cannot reach) |
 | Present | Arena shots of the game mesh into `Docs/Images/Creatures/` |
 
 Run a boss: `<python with bpy> .claude/skills/blender/scripts/forge/<boss>.py -- [--quick] [--out DIR] [--shots DIR]`.
@@ -131,6 +131,6 @@ Run a boss: `<python with bpy> .claude/skills/blender/scripts/forge/<boss>.py --
   render still runs, prints `NOT DENOISED` and raises the samples; do not present such a render as final.
 - `--quick` is a coarse pass to check forms and lighting (about two minutes). A quick render is never the evidence.
 - The verdict vocabulary of section 4 applies. What a still cannot show (rig, motion, fight effects) is NOT ASSESSED.
-- The forge output is not byte-identical across Blender versions, so the GLB is committed and `materialize --check`
+- The forge output is not byte-identical across Blender versions, so the glTF is committed and `materialize --check`
   does not cover it. Rebuild a boss only on purpose, and say which Blender built it in the commit.
 

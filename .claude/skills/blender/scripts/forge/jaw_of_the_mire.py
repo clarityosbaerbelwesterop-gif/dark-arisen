@@ -380,8 +380,8 @@ extra.append(F.assign(F.join('vines', vines), vine_m))
 extra.append(F.assign(F.join('leaves', leaves), leaf_m))
 
 boss = F.join('SM_Boss_JawOfTheMire', [low] + extra)
-size = F.export_glb(os.path.join(OPT['out'], 'SM_Boss_JawOfTheMire.glb'), [boss])
-print('FORGE glb bytes', size, 'tris', sum(len(q.vertices) - 2 for q in boss.data.polygons))
+size = F.export_gltf(OPT['out'], 'SM_Boss_JawOfTheMire', [boss])
+print('FORGE gltf bytes', size, 'tris', sum(len(q.vertices) - 2 for q in boss.data.polygons))
 
 # ------------------------------------------------------------------ present (redo alone with present.py)
 

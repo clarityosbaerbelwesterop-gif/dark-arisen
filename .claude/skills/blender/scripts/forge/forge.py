@@ -40,7 +40,8 @@ def link(ob):
 
 
 def activate(ob, others=()):
-    for o in bpy.context.view_layer.objects:
+    bpy.context.view_layer.update()  # an object removed since the last update leaves a hole in the layer's list
+    for o in bpy.context.scene.objects:
         o.select_set(False)
     for o in others:
         o.select_set(True)
@@ -516,15 +517,19 @@ def bake_part(low, material, paint, size=1024, levels=2, extrusion=0.012, tmp=No
     return assign(low, game_material(material, *maps[:3], emit=maps[3] if len(maps) > 3 else None, emit_strength=emit_strength, two_sided=two_sided))
 
 
-def export_glb(path, objs):
-    os.makedirs(os.path.dirname(path), exist_ok=True)
+def export_gltf(out_dir, name, objs):
+    """<out_dir>/<name>/<name>.gltf with its .bin and JPEG maps beside it. Not a .glb: the repository sends *.glb to Git
+    LFS, and plain files keep the boss in ordinary history like the rest of the art."""
+    folder = os.path.join(out_dir, name)
+    os.makedirs(folder, exist_ok=True)
     for o in objs:
         t = o.modifiers.new('tri', 'TRIANGULATE')
         apply_modifier(o, t)
     activate(objs[0], objs[1:])
-    bpy.ops.export_scene.gltf(filepath=path, export_format='GLB', use_selection=True, export_image_format='JPEG', export_jpeg_quality=90,
+    path = os.path.join(folder, name + '.gltf')
+    bpy.ops.export_scene.gltf(filepath=path, export_format='GLTF_SEPARATE', use_selection=True, export_image_format='JPEG', export_jpeg_quality=90,
                               export_yup=True, export_apply=True, export_tangents=True, export_materials='EXPORT')
-    return os.path.getsize(path)
+    return sum(os.path.getsize(os.path.join(folder, f)) for f in os.listdir(folder))
 
 
 # ------------------------------------------------------------------ presentation

@@ -140,21 +140,21 @@ h += (F.fbm(p * 16, 3) - 0.5) * 0.008
 crack = crack_a * (1 - fine) + crack_b * fine
 F.push(high, h)
 # where the inner fire seeps through: along the cracks, in veins that wander, strongest under the belly and at the throat
-vein = F.smoothstep(0.52, 0.64, F.fbm(p * 0.45 + 11.0, 4))
-fire = np.clip(crack * np.clip(vein + under * 0.55, 0, 1), 0, 1)
+vein = F.smoothstep(0.56, 0.68, F.fbm(p * 0.45 + 11.0, 4))
+fire = np.clip(crack ** 2 * np.clip(vein + under * 0.3, 0, 1), 0, 1)
 black = np.array([0.012, 0.012, 0.016])
 col = np.tile(black, (len(p), 1)) * (0.6 + 0.9 * id_a)[:, None]
 col = F.mix(col, np.array([0.035, 0.028, 0.04]), F.smoothstep(0.5, 0.8, F.fbm(p * 2.5, 3)) * 0.5)      # a violet sheen in the glass
 col = F.mix(col, np.array([0.05, 0.045, 0.04]), under * 0.5)
 col *= (1 - 0.6 * crack)[:, None]
-col = F.mix(col, np.array([1.0, 0.55, 0.1]), fire)
+col = F.mix(col, np.array([0.9, 0.4, 0.06]), fire)
 ember = F.smoothstep(0.0, 0.5, dome_a) * 0                                                                   # (plates themselves stay cold)
 F.set_attr(high, 'Col', col)
 F.set_attr(high, 'Rough', np.repeat(np.clip(0.16 + 0.5 * crack + 0.25 * fine + 0.1 * (F.fbm(p * 9, 2) - 0.5), 0.06, 1)[:, None], 3, 1))
 F.set_attr(high, 'Emit', np.outer(fire ** 1.5, np.array([1.0, 0.5, 0.09])))
 
 maps = F.bake_maps(high, low, 1024 if QUICK else 4096, 0.1, 8 if QUICK else 32, OPT['tmp'])
-F.assign(low, F.game_material('M_Boss_Wyrm_Scales', *maps[:3], emit=maps[3], emit_strength=14.0))
+F.assign(low, F.game_material('M_Boss_Wyrm_Scales', *maps[:3], emit=maps[3], emit_strength=3.0))
 bpy.data.objects.remove(high)
 
 # ------------------------------------------------------------------ horns, teeth, claws, eyes
@@ -189,7 +189,7 @@ for s in (-1, 1):
     horns.append(F.tube('horn', sp2, [0.15 * (1 - k / (len(sp2) - 1)) ** 0.8 + 0.01 for k in range(len(sp2))], 12))
     hb.append(b2)
     ht.append(pts2[-1])
-extra.append(F.bake_part(F.join('horns', horns), 'M_Boss_Wyrm_Horn', paint_horn(hb, ht), 512 if QUICK else 2048, 2, 0.03, OPT['tmp'], emit_strength=8.0))
+extra.append(F.bake_part(F.join('horns', horns), 'M_Boss_Wyrm_Horn', paint_horn(hb, ht), 512 if QUICK else 2048, 2, 0.03, OPT['tmp'], emit_strength=2.0))
 
 teeth, tb, tt = [], [], []
 for s in (-1, 1):
@@ -221,7 +221,7 @@ extra.append(F.bake_part(F.join('teeth', teeth), 'M_Boss_Wyrm_Teeth', paint_teet
 
 claw_m = F.flat_material('M_Boss_Wyrm_Claw', (0.01, 0.01, 0.012), 0.08)
 extra.append(F.assign(F.join('claws', [F.cone('claw', b, b + d * 0.5 - Z * 0.14, 0.09, 8, 0.1, (0, 0, 1)) for b, d in FEET]), claw_m))
-sun_m = F.flat_material('M_Boss_Wyrm_Eye', (1.0, 0.75, 0.3), 0.1, emit=(1.0, 0.72, 0.25), strength=40.0)
+sun_m = F.flat_material('M_Boss_Wyrm_Eye', (1.0, 0.75, 0.3), 0.1, emit=(1.0, 0.72, 0.25), strength=12.0)
 extra.append(F.assign(F.join('eyes', [F.blob('eye', skull_p(0.98, s * 0.5, 0.36), (0.16, 0.09, 0.1)) for s in (-1, 1)]), sun_m))
 
 # ------------------------------------------------------------------ the folded wings: fingers laid back along her flanks, leather between
@@ -267,18 +267,18 @@ extra.append(F.assign(F.join('wing_bones', bones), bone_m))
 def paint_membrane(q, nq):
     fold = F.fbm(q * np.array([0.9, 0.9, 3.5]), 4)
     wrinkle = F.fbm(q * 7.0, 3)
-    veins = F.smoothstep(0.035, 0.0, np.abs(F.fbm(q * 0.55 + 3.0, 3) - 0.5))            # gold veins branching through the leather
-    veins = np.maximum(veins, F.smoothstep(0.02, 0.0, np.abs(F.fbm(q * 1.4 + 9.0, 3) - 0.5)) * 0.6)
+    veins = F.smoothstep(0.012, 0.0, np.abs(F.fbm(q * 0.55 + 3.0, 3) - 0.5))            # gold veins branching through the leather
+    veins = np.maximum(veins, F.smoothstep(0.008, 0.0, np.abs(F.fbm(q * 1.4 + 9.0, 3) - 0.5)) * 0.6)
     c = np.tile(np.array([0.016, 0.013, 0.013]), (len(q), 1)) * (0.6 + 0.9 * wrinkle)[:, None]
     c = F.mix(c, np.array([0.9, 0.5, 0.1]), veins * 0.9)
     return (fold - 0.5) * 0.12 + (wrinkle - 0.5) * 0.02, c, 0.55 + 0.2 * wrinkle - 0.2 * veins, np.outer(veins, np.array([1.0, 0.5, 0.09]))
 
 
-extra.append(F.bake_part(F.join('wings', sheets), 'M_Boss_Wyrm_Wing', paint_membrane, 512 if QUICK else 2048, 3, 0.2, OPT['tmp'], emit_strength=5.0, two_sided=True))
+extra.append(F.bake_part(F.join('wings', sheets), 'M_Boss_Wyrm_Wing', paint_membrane, 512 if QUICK else 2048, 3, 0.2, OPT['tmp'], emit_strength=1.2, two_sided=True))
 
 boss = F.join('SM_Boss_AshenWyrm', [low] + extra)
-size = F.export_glb(os.path.join(OPT['out'], 'SM_Boss_AshenWyrm.glb'), [boss])
-print('FORGE glb bytes', size, 'tris', sum(len(q.vertices) - 2 for q in boss.data.polygons))
+size = F.export_gltf(OPT['out'], 'SM_Boss_AshenWyrm', [boss])
+print('FORGE gltf bytes', size, 'tris', sum(len(q.vertices) - 2 for q in boss.data.polygons))
 
 # ------------------------------------------------------------------ present (redo alone with present.py)
 
