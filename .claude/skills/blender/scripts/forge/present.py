@@ -26,6 +26,14 @@ PRESETS = {
                 ('face', 'AREA', (19, -9, 5), (12, -0.4, 5.5), 1800, (0.7, 0.8, 1.0), 6.0)],
         shots=[('', (23.0, -13.0, 2.2), (6.5, 0.0, 4.2), 30), ('_Head', (17.5, -4.6, 4.6), (12.0, -0.4, 5.6), 50), ('_Side', (0.0, -30.0, 6.0), (0.0, 0.0, 3.0), 28)],
         exposure=0.3, file='Ashen_Wyrm'),
+    # the Inner Sanctum (jungle_warden.md 3): cracked polished stone, vine-hung pillars, shafts of gold through the broken roof
+    'JungleWarden': dict(
+        stage=dict(ground='rock', fog=0.02, hdri_strength=0.03, tint=(0.6, 0.62, 0.45), relief=0.06, columns=(9, 9.5, 0.7, 11.0)),
+        lights=[('shaft', 'SPOT', (-5, 7, 22), (0.5, -0.5, 1.5), 90000, (1.0, 0.86, 0.55), 16),
+                ('shaft2', 'SPOT', (6, -9, 24), (4, -4, 0), 40000, (1.0, 0.86, 0.55), 9),
+                ('fill', 'AREA', (7, -4, 3), (0, 0, 2.5), 260, (0.55, 0.75, 0.7), 6.0)],
+        shots=[('', (6.8, -3.4, 1.5), (0.1, 0.1, 2.5), 32), ('_Mask', (2.6, -0.9, 4.0), (0.5, 0.0, 3.85), 50), ('_Back', (-6.0, 4.0, 2.6), (0, 0, 2.4), 35)],
+        exposure=0.4, file='Jungle_Warden'),
 }
 
 

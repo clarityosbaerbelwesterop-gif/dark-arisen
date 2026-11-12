@@ -74,10 +74,20 @@ def mand_p(s, side=0.0, up=0.0):
 parts.append(F.body('skull', [dict(c=skull_p(s), w=w, hu=hu, hd=hd, pd=5.0, right=HL, up=HU) for s, w, hu, hd in SKULL]))
 parts.append(F.body('mandible', [dict(c=mand_p(s), w=w, hu=hu, hd=hd, pu=5.0, right=HL, up=MU) for s, w, hu, hd in MAND]))
 parts.append(F.blob('snout', skull_p(2.85, 0, 0.2), (0.3, 0.3, 0.14)))
+for k in range(7):                                                                     # the ridge of the nose, plate behind plate
+    parts.append(F.blob('nasal', skull_p(1.25 + 0.22 * k, 0, 0.36 - 0.02 * k), (0.16, 0.1 - 0.005 * k, 0.07), rot=(0, -0.25, 0), seg=12))
+for k in range(3):                                                                     # spines under the chin
+    b = mand_p(0.9 + 0.5 * k, 0, -0.2)
+    parts.append(F.cone('chin', b, b - MU * (0.34 - 0.06 * k) - HF * 0.2, 0.08, 8))
 for s in (-1, 1):
     parts.append(F.blob('brow', skull_p(0.95, s * 0.5, 0.52), (0.5, 0.2, 0.13)))       # the deep sockets are made by what overhangs them
     parts.append(F.blob('cheek', skull_p(0.8, s * 0.6, 0.12), (0.45, 0.16, 0.2)))
     parts.append(F.blob('jowl', skull_p(0.1, s * 0.6, -0.1), (0.5, 0.22, 0.4)))
+    for k in range(3):                                                                 # horned brows over the sockets
+        b = skull_p(0.75 + 0.2 * k, s * (0.52 - 0.03 * k), 0.6 - 0.03 * k)
+        parts.append(F.cone('browhorn', b, b + (-HF * 0.5 + HU * 0.32 + HL * s * 0.18) * (1.0 - 0.2 * k), 0.09, 8))
+    parts.append(F.cone('cheekhorn', skull_p(0.55, s * 0.68, 0.08), skull_p(0.55, s * 0.68, 0.08) + (-HF * 1.0 + HL * s * 0.5 - HU * 0.1), 0.14, 10))
+    parts.append(F.blob('nostril', skull_p(2.86, s * 0.15, 0.3), (0.13, 0.09, 0.07)))
     for k in range(4):                                                                 # a fringe of spines along the jaw's hinge
         b = skull_p(0.0 + 0.22 * k, s * 0.66, 0.15 - 0.1 * k)
         parts.append(F.cone('spine', b, b + (-HF * 0.9 + HL * s * 0.45 + HU * (0.25 - 0.1 * k)) * (0.9 - 0.12 * k), 0.12, 10))
@@ -140,8 +150,11 @@ h += (F.fbm(p * 16, 3) - 0.5) * 0.008
 crack = crack_a * (1 - fine) + crack_b * fine
 F.push(high, h)
 # where the inner fire seeps through: along the cracks, in veins that wander, strongest under the belly and at the throat
-vein = F.smoothstep(0.56, 0.68, F.fbm(p * 0.45 + 11.0, 4))
-fire = np.clip(crack ** 2 * np.clip(vein + under * 0.3, 0, 1), 0, 1)
+vein = F.smoothstep(0.6, 0.72, F.fbm(p * 0.45 + 11.0, 4))
+fire = np.clip(crack ** 2 * np.clip(vein + under * 0.2, 0, 1), 0, 1)
+for s in (-1, 1):                                                                      # the nostrils: black pits with a breath of fire in them
+    pit = F.smoothstep(0.075, 0.03, np.linalg.norm(p - np.array(skull_p(2.93, s * 0.15, 0.3)), axis=1))
+    fire = np.maximum(fire, pit * 0.35)
 black = np.array([0.012, 0.012, 0.016])
 col = np.tile(black, (len(p), 1)) * (0.6 + 0.9 * id_a)[:, None]
 col = F.mix(col, np.array([0.035, 0.028, 0.04]), F.smoothstep(0.5, 0.8, F.fbm(p * 2.5, 3)) * 0.5)      # a violet sheen in the glass
@@ -169,7 +182,7 @@ def paint_horn(bases, tips):
         grain = F.fbm(q * np.array([9.0, 9.0, 30.0]), 3)
         c = F.mix(np.tile(np.array([0.02, 0.018, 0.02]), (len(q), 1)), np.array([0.1, 0.085, 0.07]), F.smoothstep(0.3, 1.0, t) * 0.8)
         c *= (0.6 + 0.8 * grain)[:, None]
-        glow = F.smoothstep(0.25, 0.0, t) * F.smoothstep(0.55, 0.7, rings)                                   # fire in the roots
+        glow = F.smoothstep(0.1, 0.0, t) * F.smoothstep(0.6, 0.75, rings) * 0.6                             # fire in the roots
         c = F.mix(c, np.array([1.0, 0.5, 0.1]), glow)
         return (rings - 0.5) * 0.02 * (1 - t) + (grain - 0.5) * 0.006, c, 0.3 + 0.3 * grain, np.outer(glow, np.array([1.0, 0.45, 0.08]))
     return paint
@@ -189,7 +202,7 @@ for s in (-1, 1):
     horns.append(F.tube('horn', sp2, [0.15 * (1 - k / (len(sp2) - 1)) ** 0.8 + 0.01 for k in range(len(sp2))], 12))
     hb.append(b2)
     ht.append(pts2[-1])
-extra.append(F.bake_part(F.join('horns', horns), 'M_Boss_Wyrm_Horn', paint_horn(hb, ht), 512 if QUICK else 2048, 2, 0.03, OPT['tmp'], emit_strength=2.0))
+extra.append(F.bake_part(F.join('horns', horns), 'M_Boss_Wyrm_Horn', paint_horn(hb, ht), 512 if QUICK else 2048, 2, 0.03, OPT['tmp'], emit_strength=1.0))
 
 teeth, tb, tt = [], [], []
 for s in (-1, 1):
@@ -211,18 +224,37 @@ for s in (-1, 1):
 def paint_teeth(q, nq):
     t = F.along_axes(q, tb, tt)
     ridge = F.fbm(q * np.array([50.0, 50.0, 50.0]), 3)
-    c = F.mix(np.tile(np.array([0.05, 0.03, 0.02]), (len(q), 1)), np.array([0.3, 0.26, 0.2]), F.smoothstep(0.0, 0.5, t))
-    c = F.mix(c, np.array([0.5, 0.47, 0.4]), F.smoothstep(0.6, 1.0, t) * 0.7)
-    c *= (0.75 + 0.5 * ridge)[:, None]
-    return (ridge - 0.5) * 0.004, c, 0.35 - 0.15 * t
+    c = F.mix(np.tile(np.array([0.025, 0.015, 0.01]), (len(q), 1)), np.array([0.2, 0.15, 0.08]), F.smoothstep(0.0, 0.5, t))
+    c = F.mix(c, np.array([0.36, 0.3, 0.2]), F.smoothstep(0.6, 1.0, t) * 0.7)
+    c *= (0.6 + 0.7 * ridge)[:, None] * (0.7 + 0.5 * F.fbm(q * 7.0, 3))[:, None]
+    return (ridge - 0.5) * 0.006, c, 0.55 - 0.2 * t
 
 
 extra.append(F.bake_part(F.join('teeth', teeth), 'M_Boss_Wyrm_Teeth', paint_teeth, 512 if QUICK else 1024, 2, 0.012, OPT['tmp']))
 
 claw_m = F.flat_material('M_Boss_Wyrm_Claw', (0.01, 0.01, 0.012), 0.08)
 extra.append(F.assign(F.join('claws', [F.cone('claw', b, b + d * 0.5 - Z * 0.14, 0.09, 8, 0.1, (0, 0, 1)) for b, d in FEET]), claw_m))
-sun_m = F.flat_material('M_Boss_Wyrm_Eye', (1.0, 0.75, 0.3), 0.1, emit=(1.0, 0.72, 0.25), strength=12.0)
-extra.append(F.assign(F.join('eyes', [F.blob('eye', skull_p(0.98, s * 0.5, 0.36), (0.16, 0.09, 0.1)) for s in (-1, 1)]), sun_m))
+EYES = [np.array(skull_p(0.98, s * 0.47, 0.36)) for s in (-1, 1)]
+
+
+def paint_eyes(q, nq):
+    """Twin suns: a corona of gold round a slit of night."""
+    d = np.minimum(np.linalg.norm(q - EYES[0], axis=1), np.linalg.norm(q - EYES[1], axis=1))
+    near = np.where((np.linalg.norm(q - EYES[0], axis=1) < np.linalg.norm(q - EYES[1], axis=1))[:, None], q - EYES[0], q - EYES[1])
+    along = near @ np.array(HF)
+    upw = near @ np.array(HU)
+    r = np.sqrt(along ** 2 + upw ** 2) / 0.1
+    ang = np.arctan2(upw, along)
+    flare = F.fbm(np.stack([np.cos(ang) * 5, np.sin(ang) * 5, r * 3], 1), 4)
+    c = F.mix(np.tile(np.array([1.0, 0.8, 0.35]), (len(q), 1)), np.array([0.9, 0.35, 0.04]), F.smoothstep(0.3, 1.0, r))
+    c *= (0.6 + 0.8 * flare)[:, None]
+    slit = F.smoothstep(0.16, 0.08, np.abs(along) / 0.1 / np.maximum(1 - (upw / 0.085) ** 2, 0.03) ** 0.5)
+    c = F.mix(c, np.array([0.0, 0.0, 0.0]), slit)
+    return None, c, np.full(len(q), 0.08), c * (1 - slit)[:, None]
+
+
+eyes = F.join('eyes', [F.blob('eye', tuple(e), (0.13, 0.075, 0.09), seg=20) for e in EYES])
+extra.append(F.bake_part(eyes, 'M_Boss_Wyrm_Eye', paint_eyes, 256 if QUICK else 512, 3, 0.006, OPT['tmp'], emit_strength=9.0))
 
 # ------------------------------------------------------------------ the folded wings: fingers laid back along her flanks, leather between
 

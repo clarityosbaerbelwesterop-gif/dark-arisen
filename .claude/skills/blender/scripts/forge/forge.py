@@ -212,6 +212,49 @@ def along_axes(q, bases, tips):
     return frac
 
 
+def bundle(name, path, count, spread0, spread1, r0, r1, twist, seed=1, per=6):
+    """Twisted strands round a path: roots grown into a limb. Returns the strands as tubes."""
+    rnd = np.random.default_rng(seed)
+    path = spline(path, per) if len(path) > 2 else [Vector(path[0]).lerp(Vector(path[1]), k / per) for k in range(per + 1)]
+    fr, _ = frames(path)
+    out = []
+    for s in range(count):
+        phase = 2 * math.pi * s / count + rnd.uniform(-0.3, 0.3)
+        thick = rnd.uniform(0.8, 1.2)
+        pts, radii = [], []
+        for k, p in enumerate(path):
+            t = k / (len(path) - 1)
+            f, left, up, _ = fr[k]
+            a = phase + twist * 2 * math.pi * t
+            sp = spread0 + (spread1 - spread0) * t
+            wob = 1 + 0.25 * math.sin(t * 9 + s * 2.1)
+            pts.append(p + (left * math.cos(a) + up * math.sin(a)) * sp * wob)
+            radii.append((r0 + (r1 - r0) * t) * thick * (1 + 0.15 * math.sin(t * 13 + s)))
+        out.append(tube(name, pts, radii, 10))
+    return out
+
+
+def slab(name, c, half, rot=(0, 0, 0)):
+    """A stone block or plate: a box of half sizes, turned by XYZ Euler angles. Returns (object, world-to-local matrix, half)."""
+    bm = bmesh.new()
+    bmesh.ops.create_cube(bm, size=2.0)
+    bmesh.ops.subdivide_edges(bm, edges=bm.edges, cuts=3, use_grid_fill=True)
+    me = bpy.data.meshes.new(name)
+    bm.to_mesh(me)
+    bm.free()
+    ob = link(bpy.data.objects.new(name, me))
+    m = Matrix.Translation(Vector(c)) @ Matrix.Rotation(rot[2], 4, 'Z') @ Matrix.Rotation(rot[1], 4, 'Y') @ Matrix.Rotation(rot[0], 4, 'X')
+    me.transform(m @ Matrix.Diagonal((half[0], half[1], half[2], 1.0)))
+    return ob, np.array(m.inverted()), np.array(half)
+
+
+def box_mask(p, inv, half, feather=0.04):
+    """1 inside the slab given by slab()'s matrix and half sizes, falling to 0 over feather metres outside it."""
+    q = p @ inv[:3, :3].T + inv[:3, 3]
+    d = np.max(np.abs(q) - half, axis=1)
+    return smoothstep(feather, 0.0, d)
+
+
 def fuse(name, objs, voxel, smooth=6):
     """One skin from overlapping closed forms: voxel remesh, then relax."""
     ob = join(name, list(objs))
@@ -534,7 +577,7 @@ def export_gltf(out_dir, name, objs):
 
 # ------------------------------------------------------------------ presentation
 
-def stage(ground='mud', fog=0.035, hdri_strength=0.12, tint=(0.55, 0.62, 0.6), relief=0.5):
+def stage(ground='mud', fog=0.035, hdri_strength=0.12, tint=(0.55, 0.62, 0.6), relief=0.5, columns=None):
     """An arena to judge the creature in: wet ground, mist, a dim sky."""
     sc = bpy.context.scene
     w = bpy.data.worlds.new('stage')
@@ -593,6 +636,34 @@ def stage(ground='mud', fog=0.035, hdri_strength=0.12, tint=(0.55, 0.62, 0.6), r
         wm = flat_material('stage_water', (0.012, 0.016, 0.012), 0.04)
         wm.node_tree.nodes['Principled BSDF'].inputs['Transmission Weight'].default_value = 0.0
         wtr.data.materials.append(wm)
+    if columns:
+        count, ring_r, col_r, col_h = columns
+        cm = bpy.data.materials.new('stage_column')
+        cm.use_nodes = True
+        cb = cm.node_tree.nodes['Principled BSDF']
+        cb.inputs['Roughness'].default_value = 0.8
+        scan_c = os.path.join(ASSETS, 'Art', 'Scanned', 'rustic_stone_wall_02', 'rustic_stone_wall_02_diff_2k.jpg')
+        if os.path.exists(scan_c):
+            nt4 = cm.node_tree
+            tc4 = nt4.nodes.new('ShaderNodeTexCoord')
+            mp4 = nt4.nodes.new('ShaderNodeMapping'); mp4.inputs['Scale'].default_value = (0.35, 0.35, 0.35)
+            tb4 = nt4.nodes.new('ShaderNodeTexImage'); tb4.image = bpy.data.images.load(scan_c); tb4.projection = 'BOX'; tb4.projection_blend = 0.3
+            nt4.links.new(tc4.outputs['Object'], mp4.inputs['Vector'])
+            nt4.links.new(mp4.outputs['Vector'], tb4.inputs['Vector'])
+            nt4.links.new(tb4.outputs['Color'], cb.inputs['Base Color'])
+        for k in range(count):
+            a = 2 * math.pi * (k + 0.5) / count
+            broken = col_h * (0.45 + 0.55 * ((k * 7) % 5) / 4.0)
+            bpy.ops.mesh.primitive_cylinder_add(vertices=20, radius=col_r, depth=broken, location=(ring_r * math.cos(a), ring_r * math.sin(a), broken / 2 - 0.2))
+            c = bpy.context.object
+            c.name = 'stage_column'
+            c.data.materials.append(cm)
+            bpy.ops.mesh.primitive_cube_add(size=1, location=(ring_r * math.cos(a), ring_r * math.sin(a), 0.25))
+            pl = bpy.context.object
+            pl.name = 'stage_plinth'
+            pl.scale = (col_r * 2.6, col_r * 2.6, 0.5)
+            pl.rotation_euler = (0, 0, a)
+            pl.data.materials.append(cm)
     if fog > 0:
         bpy.ops.mesh.primitive_cube_add(size=1, location=(0, 0, 14))
         f = bpy.context.object
