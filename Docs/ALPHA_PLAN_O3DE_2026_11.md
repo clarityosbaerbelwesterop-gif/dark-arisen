@@ -80,3 +80,17 @@ Mission levels become **places in the world**. The 34 missions keep their contra
   - The Claude Code Game Studios skills and agents are installed by the environment's setup script.
   - The `blender` skill (`.claude/skills/blender`) gives every milestone its visual checks.
   - Level work goes through `/team-level`, for example `production/levels/rexa-city/layout.md`.
+
+## Decided 2026-11-11 (the owner): the bosses are made in Blender
+
+The owner rejected the ArtKit's boss models: "kein Triple-A-Standard, schau dir Elden Ring an ... macht es in Blender,
+damit es gut aussieht".
+
+- **Bosses are sculpted and baked in Blender** by the forge scripts (`.claude/skills/blender/SKILL.md`, section 6):
+  block-out from the boss document, voxel fusion, numpy sculpting, a high-to-low bake (normal, occlusion, colour,
+  roughness) and a GLB under `Assets/Art/Creatures/`. Each boss is judged in an arena shot, not on an empty sky.
+- **The ArtKit's `SM_Art_Creature_*` models are superseded** boss by boss as each forge version lands.
+- **Scope of the exception.** World, settlements, cast and props stay in the C++ ArtKit. The human bosses follow after
+  the creatures, with the same pipeline over the MakeHuman base.
+- **Evidence.** The forge output is not byte-identical across Blender versions. The GLBs are committed and are outside
+  `materialize --check`.

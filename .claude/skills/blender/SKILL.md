@@ -9,9 +9,14 @@ allowed-tools: Read, Glob, Grep, Write, Bash
 # Blender for the studio
 
 Blender is the studio's eye. Any CCGS skill or agent that changes how the game looks or moves renders the result here
-and compares it with the governing design document before it reports. The game's assets themselves are **not** made
-in Blender: the C++ ArtKit writes them byte-identically (`materialize --check`), and outside material enters only
-through the CC0 import pipeline (`import-glb`). Nothing edited by hand in Blender is committed as game content.
+and compares it with the governing design document before it reports. The world, the settlements, the cast and the
+props are **not** made in Blender: the C++ ArtKit writes them byte-identically (`materialize --check`), and outside
+material enters only through the CC0 import pipeline (`import-glb`).
+
+**The bosses are the exception (owner's decision, 2026-11-11).** The ArtKit's boss models were rejected as not
+triple-A ("look at Elden Ring ... make them in Blender"). Bosses are therefore sculpted, detailed and baked in Blender
+by the forge scripts in section 6, and their GLBs are committed under `Assets/Art/Creatures/`. Nothing is edited by
+hand: every boss is rebuilt by running its script, which is written from the boss's design document.
 
 The scripts below are development tooling for the assistant. They live outside `Source/` and `Tools/`
 (`Docs/NATIVE_CPP_POLICY.md`), the build never uses them, and a render is evidence of the look, never runtime proof
@@ -104,3 +109,28 @@ missing, the verdict is `NOT ASSESSED`.
 | M8 audio | `/team-audio` | Acoustic spaces (cathedral, caves, docks) framed for reference |
 | M9 voice and lip sync | technical-artist | Face shapes and visemes as a sheet |
 | M10 polish | `/team-polish`; performance-analyst, technical-artist | A before-and-after pair for every polish change |
+
+## 6. The boss forge
+
+`scripts/forge/forge.py` is the library; one script per boss beside it, written from `docs/design/bosses/<boss>.md`.
+
+| Step | What happens |
+|---|---|
+| Block-out | Closed forms (lofts, tubes, ellipsoids) placed from the document's anatomy |
+| Fuse | One voxel remesh into a single organic skin, relaxed |
+| Sculpt | Subdivided, then displaced in numpy: scales, plates, cracks, folds (the high-poly, 1-3 M faces) |
+| Paint | Colour and roughness as point attributes on the high-poly, from the same masks |
+| Retopo | The fused skin decimated to the game mesh (60-90 k triangles), unwrapped |
+| Bake | Normal, ambient occlusion, colour and roughness from the high-poly to the game mesh (4K) |
+| Export | One GLB: `Engine/O3DE/DarkArisen/Assets/Art/Creatures/SM_Boss_<Name>.glb` |
+| Present | Arena shots of the game mesh into `Docs/Images/Creatures/` |
+
+Run a boss: `<python with bpy> .claude/skills/blender/scripts/forge/<boss>.py -- [--quick] [--out DIR] [--shots DIR]`.
+
+- Use the `bpy` wheel (setup step 1): the distribution's Blender package is built without OpenImageDenoise. With it the
+  render still runs, prints `NOT DENOISED` and raises the samples; do not present such a render as final.
+- `--quick` is a coarse pass to check forms and lighting (about two minutes). A quick render is never the evidence.
+- The verdict vocabulary of section 4 applies. What a still cannot show (rig, motion, fight effects) is NOT ASSESSED.
+- The forge output is not byte-identical across Blender versions, so the GLB is committed and `materialize --check`
+  does not cover it. Rebuild a boss only on purpose, and say which Blender built it in the commit.
+
