@@ -80,3 +80,55 @@ Mission levels become **places in the world**. The 34 missions keep their contra
   - The Claude Code Game Studios skills and agents are installed by the environment's setup script.
   - The `blender` skill (`.claude/skills/blender`) gives every milestone its visual checks.
   - Level work goes through `/team-level`, for example `production/levels/rexa-city/layout.md`.
+
+## Decided 2026-11-11 (the owner): the bosses are made in Blender
+
+The owner rejected the ArtKit's boss models: "kein Triple-A-Standard, schau dir Elden Ring an ... macht es in Blender,
+damit es gut aussieht".
+
+- **Bosses are sculpted and baked in Blender** by the forge scripts (`.claude/skills/blender/SKILL.md`, section 6):
+  block-out from the boss document, voxel fusion, numpy sculpting, a high-to-low bake (normal, occlusion, colour,
+  roughness) and a GLB under `Assets/Art/Creatures/`. Each boss is judged in an arena shot, not on an empty sky.
+- **The ArtKit's `SM_Art_Creature_*` models are superseded** boss by boss as each forge version lands.
+- **Scope of the exception.** World, settlements, cast and props stay in the C++ ArtKit. The human bosses follow after
+  the creatures, with the same pipeline over the MakeHuman base.
+- **Evidence.** The forge output is not byte-identical across Blender versions. The GLBs are committed and are outside
+  `materialize --check`.
+
+## Decided 2026-11-12 (the owner): the whole game to triple-A in Blender
+
+The owner widened the decision of 2026-11-11: "das ganze Game ... Animationen, Charaktere, Cutscenes, also alles in
+Blender perfekt machen und auch die Welt, Gebäude und Piece Sets immer Triple-A- oder Rockstar-Games-Niveau.
+Überarbeite auch nochmal alles, was nicht auf Triple-A-Niveau ist, und mach die Open World komplett weiter."
+
+**What changes.** Blender becomes the authoring tool for everything the player looks at. The C++ ArtKit keeps what it
+is good at: the terrain, the placement of the world (districts, roads, lots, plantings) and the deterministic build.
+What it places is replaced, set by set, by Blender-forged assets of the same footprint, so no layout moves.
+
+**The quality bar, stated so it can be failed.** An asset passes only if, in an arena or street-level render of the
+game mesh (not the sculpt), all of these hold:
+1. no primitive reads as a primitive (no bare boxes, tubes or flat colours at the distance the player meets it);
+2. baked surface detail: normal, occlusion, colour and roughness from a high-poly, at 2-5 mm a texel where the player
+   stands;
+3. edges are bevelled or broken, and wear follows the form (occlusion dirt, edge wear, damp at the foot);
+4. it matches its design document item by item.
+A render that fails any of these is reported as DEPARTS with the item named, never as done.
+
+**Order of work** (each set: forge script, bake, GLB, render, verdict, then the ArtKit version is retired):
+
+| # | Set | Replaces | State |
+|---|---|---|---|
+| Q1 | Creature bosses (6) | `SM_Art_Creature_*` | Jaw of the Mire built; Ashen Wyrm scripted |
+| Q2 | Rexa's building kit: TC1-TC7, landmarks, wall, arches | `SM_Art_Settlement_*` | open |
+| Q3 | Cast: skin, hair, cloth and faces over the MakeHuman base; the human bosses | `SK_Art_*` | open |
+| Q4 | Weapons and props | `SM_Art_Weapon_*`, street furniture | open |
+| Q5 | Motion: the mocap clips cleaned and retargeted in Blender; creature rigs | motion library | open |
+| Q6 | Cutscenes: blocked, lit and shot in Blender from the cutscene register | Cinematics register (data only) | open |
+| Q7 | The other regions' kits (Stilt, Nordic, Camp, Fort) and the open world's remaining districts | ArtKit variants | open |
+
+**What this does not change.** Runtime proof still needs the GameLauncher on a GPU host, and no money is spent
+(2026-11-09). A Blender render is evidence of the look of an asset, not of the running game.
+
+**An honest limit.** These are scripted sculpts, not weeks of hand sculpting per asset. They are far above the
+ArtKit's primitives; whether a given asset reaches the bar above is decided render by render, and a DEPARTS verdict
+is reworked or said out loud.

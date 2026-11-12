@@ -58,6 +58,7 @@ namespace DarkArisen::Tools::Art
                 static const Size Shanty[] = {{3.5, 4.5, 2.6}, {4.0, 5.0, 2.8}, {5.0, 6.0, 5.4}, {4.5, 7.0, 5.8}, {6.0, 8.0, 3.2}, {8.0, 22.0, 6.5}};
                 return Shanty[V % 6];
             }
+            case Tradition::Ruin: return {6.0 + 1.5 * (V % 3), 8.0, 3.6};  // TC7 R0-R2 (layout.md 4)
             case Tradition::Lighthouse: default: return {5.0, 5.0, 18.0};
             }
         }
@@ -76,6 +77,7 @@ namespace DarkArisen::Tools::Art
             case Tradition::Harbour: return "Harbour";
             case Tradition::Street: return "Street";
             case Tradition::Shanty: return "Shanty";
+            case Tradition::Ruin: return "Ruin";
             case Tradition::Lighthouse: default: return "Lighthouse";
             }
         }
@@ -513,6 +515,65 @@ namespace DarkArisen::Tools::Art
                     for (const double X : {-0.75, 0.75}) Out.Box(Mat(M::Stone), {X - 0.1, -0.22, 0.0}, {X + 0.1, 0.22, 0.42});
                     Out.Box(Mat(M::Timber), {-0.9, -0.25, 0.42}, {0.9, 0.25, 0.48});
                     Out.Box(Mat(M::Timber), {-0.9, 0.2, 0.55}, {0.9, 0.26, 0.85});
+                }
+                return Out;
+            }
+            case Tradition::Ruin:
+            {
+                // TC7 (layout.md 4, 8): a roofless shell, some 60% of its walls still standing, broken to ragged tops; plaster
+                // fallen to the stone beneath; vines down the walls, a rubble apron round it; in R2 a tree has grown up
+                // through where the roof was
+                Mesh Out(Name);
+                Rng R(HashString(Name));
+                const double X0 = -S.W / 2, X1 = S.W / 2, Y0 = -S.D / 2, Y1 = S.D / 2, T = 0.45;
+                Out.Box(Mat(M::StoneDark), {X0 - 0.1, Y0 - 0.1, -0.5}, {X1 + 0.1, Y1 + 0.1, 0.12});
+                Out.Box(Mat(M::Dirt), {X0 + T, Y0 + T, 0.12}, {X1 - T, Y1 - T, 0.16});
+                const struct { V3 A, B, N; } Walls[4] = {{{X0, Y0, 0}, {X1, Y0, 0}, {0, -1, 0}}, {{X1, Y0, 0}, {X1, Y1, 0}, {1, 0, 0}}, {{X1, Y1, 0}, {X0, Y1, 0}, {0, 1, 0}}, {{X0, Y1, 0}, {X0, Y0, 0}, {-1, 0, 0}}};
+                for (int F = 0; F < 4; ++F)
+                {
+                    const V3 Along = Normalize(Walls[F].B - Walls[F].A);
+                    const double Len = Length(Walls[F].B - Walls[F].A);
+                    double Top = S.H * R.Range(0.6, 1.0);
+                    for (double At = 0.0; At < Len - 0.01; At += 0.5)
+                    {
+                        // the top wanders; a third of the wall is down to its stump
+                        Top = Clamp(Top + R.Range(-0.7, 0.6), 0.3, S.H);
+                        const bool Down = (static_cast<int>(At / 0.5) + F * 3) % 9 < 3 && R.Unit() < 0.85;
+                        const double H = Down ? R.Range(0.2, 0.7) : Top;
+                        const bool Door = F == 0 && std::fabs(At + 0.25 - Len / 2) < 0.6;
+                        if (Door) continue;
+                        const V3 P = Walls[F].A + Along * (At + 0.25) - Walls[F].N * (T / 2);
+                        OrientedBox(Out, Mat(M::Stone), {P.X, P.Y, 0.12 + H / 2}, Along.X, Along.Y, {0.255, T / 2, H / 2});
+                        if (!Down && H > 1.2 && R.Unit() < 0.55)
+                        {
+                            const V3 Q = P + Walls[F].N * (T / 2 + 0.012);
+                            const double Hp = H * R.Range(0.4, 0.9);
+                            OrientedBox(Out, Mat(R.Unit() < 0.5 ? M::PlasterOchre : M::Plaster), {Q.X, Q.Y, 0.12 + Hp / 2}, Along.X, Along.Y, {0.25, 0.012, Hp / 2});
+                        }
+                        if (!Down && R.Unit() < 0.3)
+                        {
+                            const V3 Q = P + Walls[F].N * (T / 2 + 0.05);
+                            Out.Tube(Mat(M::LeavesDark), {Q.X, Q.Y, 0.12 + H}, {Q.X + R.Range(-0.3, 0.3), Q.Y, R.Range(0.2, 0.8)}, 0.1, 0.05, 5);
+                        }
+                    }
+                }
+                for (int K = 0; K < 14; ++K)
+                {
+                    const double A = 2.0 * Pi * K / 14 + R.Range(-0.2, 0.2), Rr = std::max(S.W, S.D) / 2 + R.Range(-0.4, 1.2);
+                    Rock(Out, Mat(M::Stone), {Rr * Cos(A) * S.W / std::max(S.W, S.D), Rr * Sin(A) * S.D / std::max(S.W, S.D), 0.0}, R.Range(0.3, 0.65), R.Range(0.35, 0.7), 500u + static_cast<std::uint32_t>(K));
+                }
+                if (V == 2)
+                {
+                    Out.Tube(Mat(M::Bark), {0.6, 0.8, 0.0}, {0.4, 0.5, 4.5}, 0.32, 0.22, 10);
+                    Out.Tube(Mat(M::Bark), {0.4, 0.5, 4.5}, {1.6, 0.2, 7.2}, 0.18, 0.1, 8);
+                    Out.Tube(Mat(M::Bark), {0.4, 0.5, 4.5}, {-1.0, 1.4, 7.0}, 0.16, 0.08, 8);
+                    for (const V3& C : {V3{0.4, 0.5, 7.4}, V3{1.9, 0.0, 7.6}, V3{-1.2, 1.6, 7.3}, V3{0.6, 2.0, 8.1}})
+                        Rock(Out, Mat(M::Leaves), C - V3{0, 0, 1.0}, R.Range(1.8, 2.6), R.Range(1.6, 2.2), 700u + static_cast<std::uint32_t>(C.X * 10.0 + 50.0));
+                    for (int K = 0; K < 6; ++K)
+                    {
+                        const double A = 2.0 * Pi * K / 6;
+                        Out.Tube(Mat(M::Bark), {0.6, 0.8, 0.2}, {0.6 + 1.4 * Cos(A), 0.8 + 1.4 * Sin(A), -0.1}, 0.14, 0.05, 6);
+                    }
                 }
                 return Out;
             }
@@ -1269,8 +1330,8 @@ namespace DarkArisen::Tools::Art
     void Kit::BuildSettlementModels()
     {
         for (const Tradition Kind : {Tradition::Colonial, Tradition::Stilt, Tradition::Nordic, Tradition::Camp, Tradition::Fort, Tradition::Lighthouse, Tradition::Entrance,
-                 Tradition::Civic, Tradition::Harbour, Tradition::Street, Tradition::Shanty})
-            for (int V = 0; V < (Kind == Tradition::Lighthouse ? 1 : Kind == Tradition::Civic ? 19 : Kind == Tradition::Harbour ? 5 : Kind == Tradition::Street ? 3 : Variants); ++V)
+                 Tradition::Civic, Tradition::Harbour, Tradition::Street, Tradition::Shanty, Tradition::Ruin})
+            for (int V = 0; V < (Kind == Tradition::Lighthouse ? 1 : Kind == Tradition::Civic ? 19 : Kind == Tradition::Harbour ? 5 : Kind == Tradition::Street ? 3 : Kind == Tradition::Ruin ? 3 : Variants); ++V)
                 Emit(ModelName(Kind, V), WriteGltf(BuildVariant(Kind, V), "Dark Arisen art kit (settlements)"));
     }
 
@@ -1453,6 +1514,48 @@ namespace DarkArisen::Tools::Art
             return true;
         };
         const Tradition Houses = Spec.Kind == Tradition::Colonial ? Spec.Houses : Spec.Kind;
+        // the jungle reclaims a town's edge (layout.md 8): a quarter of the houses in band B1 (R_f - 20 .. R_f) are ruins, and
+        // ruins at half fill continue out through B2 (R_f .. R_f + 25). Decided from the position, not the layout's stream,
+        // so nothing else in the town moves.
+        const double Rim = Spec.Radius * 0.9;
+        const auto Chance = [](const double X, const double Y, const std::uint32_t Salt)
+        {
+            Rng H(static_cast<std::uint32_t>(std::llround(X * 10.0)) * 73856093u ^ static_cast<std::uint32_t>(std::llround(Y * 10.0)) * 19349663u ^ Salt);
+            return H.Unit();
+        };
+        const auto PlaceHouse = [&](const int V, const double X, const double Y, const double Yaw)
+        {
+            const double D = std::sqrt((X - Spec.X) * (X - Spec.X) + (Y - Spec.Y) * (Y - Spec.Y));
+            if (Spec.Kind == Tradition::Colonial && D > Rim - 20.0 && D <= Rim && Chance(X, Y, 1u) < 0.25)
+                Place(Tradition::Ruin, static_cast<int>(Chance(X, Y, 2u) * 3.0), X, Y, Yaw);
+            else
+                Place(Houses, V, X, Y, Yaw);
+        };
+        const auto EdgeRuins = [&]()
+        {
+            if (Spec.Kind != Tradition::Colonial || Spec.WallRadius > 0.0) return;  // a walled quarter keeps a clean edge
+            for (const double Ring : {Rim + 8.0, Rim + 19.0})
+            {
+                const int Steps = static_cast<int>(2.0 * Pi * Ring / 18.0);
+                for (int K = 0; K < Steps; ++K)
+                {
+                    const double A = 2.0 * Pi * (K + (Ring > Rim + 10.0 ? 0.5 : 0.0)) / Steps;
+                    const double X = Spec.X + Ring * Cos(A), Y = Spec.Y + Ring * Sin(A);
+                    if (Chance(X, Y, 3u) > 0.5) continue;
+                    const int V = static_cast<int>(Chance(X, Y, 4u) * 3.0);
+                    const Size S = VariantSize(Tradition::Ruin, V);
+                    if (!Clear(X, Y, std::max(S.W, S.D) / 2 + 2.0)) continue;
+                    if (Spec.KeepOff && Spec.KeepOff(X, Y, std::max(S.W, S.D) / 2 + 2.0)) continue;
+                    if (std::fabs(Spec.Ground(X + 4.0, Y) - Spec.Ground(X - 4.0, Y)) > 3.0 || std::fabs(Spec.Ground(X, Y + 4.0) - Spec.Ground(X, Y - 4.0)) > 3.0) continue;
+                    if (Spec.Ground(X, Y) < 1.0) continue;
+                    bool Near = false;
+                    for (const Structure& O : Out)
+                        Near = Near || (O.X - X) * (O.X - X) + (O.Y - Y) * (O.Y - Y) < (O.HalfX + O.HalfY + 5.0) * (O.HalfX + O.HalfY + 5.0) * 0.5;
+                    if (Near) continue;
+                    Place(Tradition::Ruin, V, X, Y, A * 180.0 / Pi + 90.0 + (Chance(X, Y, 5u) - 0.5) * 30.0);
+                }
+            }
+        };
         // street furniture (layout.md R-09): kept with the props, so it never counts against the buildings
         const auto Furnish = [&](const int V, const double X, const double Y, const double Yaw)
         {
@@ -1519,7 +1622,7 @@ namespace DarkArisen::Tools::Art
                         const bool OffRoad = !Spec.KeepOff || !Spec.KeepOff(X, Y, Half);
                         if (Spec.Ground(X, Y) >= Spec.MinGround && OffPlaza && OffRoad && Clear(X, Y, Half + 3.0))
                         {
-                            Place(Houses, V, X, Y, Spec.StreetAngle + (Side < 0 ? 0.0 : 180.0));  // doors (-Y) on the street
+                            PlaceHouse(V, X, Y, Spec.StreetAngle + (Side < 0 ? 0.0 : 180.0));  // doors (-Y) on the street
                             if (R.Unit() < 0.3) Dress(Houses, V, X, Y, Spec.StreetAngle + (Side < 0 ? 0.0 : 180.0));
                         }
                         Along += S.W + 0.05;
@@ -1537,6 +1640,7 @@ namespace DarkArisen::Tools::Art
                         }
                 }
             }
+            EdgeRuins();
             Out.insert(Out.end(), Props.begin(), Props.end());
             return Out;
         }
@@ -1567,10 +1671,11 @@ namespace DarkArisen::Tools::Art
             double Along = Ridge;
             if (Gx * Gx + Gy * Gy > 0.04) Along = std::fabs(Gx) > std::fabs(Gy) ? 0.0 : 90.0;  // long side (Y in the model) along the slope's contour
             const double Yaw = Along + Jitter + (R.Unit() < 0.5 ? 180.0 : 0.0);
-            Place(Houses, V, X, Y, Yaw);
+            PlaceHouse(V, X, Y, Yaw);
             if (Spec.Kind != Tradition::Camp && R.Unit() < 0.6) Dress(Houses, V, X, Y, Yaw);
         }
 
+        EdgeRuins();
         Out.insert(Out.end(), Props.begin(), Props.end());
         return Out;
     }
